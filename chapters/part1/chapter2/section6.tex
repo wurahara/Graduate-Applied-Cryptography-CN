@@ -1,0 +1,231 @@
+\section{练习}
+
+\begin{exercise}[乘性一次性密码本]
+我们还可以定义一个``乘法模$p$"的一次性密码本变体。这是一个定义在$(\mathcal{K},\mathcal{M},\mathcal{C})$上的密码$\mathcal{E}=(E,D)$，其中$\mathcal{K}:=\mathcal{M}:=\mathcal{C}:=\{1,\dots,p-1\}$，其中$p$是一个素数。加密和解密算法的定义如下：
+\[
+E(k,m):=k\cdot m \mod p\quad\quad
+D(k,c):=k^{-1}\cdot c \mod p
+\]
+这里，$k^{-1}$表示$k$对$p$的模逆元。验证这个密码的正确性属性，并证明它是完美安全的。
+\end{exercise}
+
+\begin{exercise}[一个好的替换密码]
+考虑例 \ref{exmp:2-3} 中定义的替换密码 $\mathcal{E}=(E,D)$ 的一个变体，其中消息的每个符号都是用\emph{独立的}置换来加密的。也就是说，令 $\mathcal{M}=\mathcal{C}=\Sigma^L$，其中$\Sigma$是某个有限符号表，$L$是某个长度。令密钥空间为$\mathcal{K}=S^L$，其中$S$是$\Sigma$上所有置换的集合。加密算法$E(k, m)$的定义为：
+\[
+E(k,m):=\Big(k[0](m[0]),\;k[1](m[1]),\;\dots,\;k[L-1](m[L-1])\Big)
+\]
+证明$\mathcal{E}$是完美安全的。
+\end{exercise}
+
+\begin{exercise}[链式加密]
+令$\mathcal{E}=(E,D)$ 是一个定义在$(\mathcal{K},\mathcal{M},\mathcal{C})$上的完美安全密码，其中$\mathcal{K}=\mathcal{M}$。令$\mathcal{E}'=(E',D')$ 是一个密码，其加密算法的定义为 $E'((k_1,k_2),m):=\big(E(k_1,k_2),E(k_2,m)\big)$。证明$\mathcal{E}'$是完美安全的。
+\end{exercise}
+
+\begin{exercise}[被破坏的一次性密码本]
+考虑一个消息空间为$\{0,1\}^L$的一次性密码本变体，其密钥空间$\mathcal{K}$被限制为所有包含偶数个$1$的$L$比特字符串所构成的集合。给出一个语义安全优势为$1$的有效对手。
+\end{exercise}
+
+\begin{exercise}[更强的不可能结果]
+这个练习推广了香农定理（定理 \ref{theo:2-5}）。令$\mathcal{E}$是一个定义在$(\mathcal{K},\mathcal{M},\mathcal{C})$上的密码。假设$\mathrm{SS}\mathsf{adv}[\mathcal{A},\mathcal{E}]\leq\epsilon$对\emph{所有的}对手$\mathcal{A}$都成立，甚至包括在\emph{计算上无界的}对手。证明$|\mathcal{K}|\geq(1-\epsilon)|\mathcal{M}|$。
+\end{exercise}
+
+\begin{exercise}[匹配的边界]
+这个练习是对上一个练习的一种逆推。对于$j=0,\dots,L-1$，令$\epsilon=1/2^j$。考虑定义在$(\mathcal{K},\mathcal{M},\mathcal{C})$上的$L$比特一次性密码本变体$\mathcal{E}$，其中$\mathcal{M}=\mathcal{C}=\{0,1\}^L$。密钥空间$\mathcal{K}$被限制为所有前$j$位不全为零的$L$比特字符串所构成的集合，因此 $|\mathcal{K}|=(1-\epsilon)|\mathcal{M}|$。证明：
+\begin{enumerate}[\indent(a)]
+	\item 存在一个有效对手$\mathcal{A}$，使得$\mathrm{SS}\mathsf{adv}[\mathcal{A},\mathcal{E}]=\epsilon/(1-\epsilon)$；
+	\item 对于\emph{所有的}对手$\mathcal{A}$，甚至包括\emph{计算上无界的}对手，都有$\mathrm{SS}\mathsf{adv}[\mathcal{A},\mathcal{E}]\leq\epsilon/(1-\epsilon)$。
+\end{enumerate}
+\textbf{注意：}由于(a)中$\mathcal{A}$的优势是非零的，所以密码$\mathcal{E}$不可能是完美安全的。
+\end{exercise}
+
+\begin{exercise}[确定性密码]
+在这个练习中，我们要求你详细证明例 \ref{exmp:2-9} 中的声称。也就是证明，如果$\mathcal{E}$是一个完美安全的确定性密码，那么对于每个对手 $\mathcal{A}$ 都有 $\mathrm{SS}\mathsf{adv}[\mathcal{A},\mathcal{E}]=0$（记住，$\mathcal{A}$ 可能是概率性的）；同时证明，如果$\mathcal{E}$是变长一次性密码本, 那么对于所有对手 $\mathcal{A}$ 都有 $\mathrm{SS}\mathsf{adv}[\mathcal{A},\mathcal{E}]=0$。
+\end{exercise}
+
+\begin{exercise}[轮盘赌]
+在 \ref{subsec:2-2-4} 小节中，我们论证了如果使用语义安全的密码对一个值$r$进行加密，那么玩家在网络轮盘赌中获胜的几率与真实轮盘赌非常接近。然而，我们的``轮盘赌"游戏相当简单。假设我们有一个更复杂的游戏，不同的结果可能会导致不同的赢利。规则并不那么重要，但假设规则很容易评估（给定一个赌注和数字$r$），每个赌注的结果都是$0,1,\dots,n$美元，其中$n$是多项式边界的。令$\mu$是这个游戏的真实版本（没有加密）的最佳策略中的预期赢利。令$\mu'$是这个游戏的网络版本（有加密）中某个（有效）玩家的预期赢利。假设密码是语义安全的，证明$\mu'\leq\mu+\epsilon$，其中$\epsilon$可忽略不计。
+
+	\vspace{3pt}
+	
+\noindent
+\textbf{提示：}你可能需要利用这样一个事实：如果$\mathsf{X}$是一个在$\{0,1,\dots,n\}$中取值的随机变量，那么$\mathsf{X}$的期望等于$\sum_{i=1}^n\Pr[\mathsf{X}\geq i]$。
+\end{exercise}
+
+\begin{exercise}
+使用 \ref{sec:2-3} 节中的正式定义证明事实 \ref{fact:2-6}。
+\end{exercise}
+
+\begin{exercise}[练习语义安全性的定义]
+令$\mathcal{E}=(E,D)$是一个定义在$(\mathcal{K},\mathcal{M},\mathcal{C})$上的语义安全密码，其中$\mathcal{M}=\mathcal{C}=\{0,1\}^L$。以下哪种加密算法会产生语义安全的方案？要么给出一种攻击，要么通过明确的归约提供一个安全证明。
+\begin{enumerate}[\indent(a)]
+	\item $E_1(k,m):=0\;||\;E(k,m)$
+	\item $E_2(k,m):=E(k,m)\;||\;\mathrm{parity}(m)$
+	\item $E_3(k,m):=\mathrm{reverse}(E(k,m))$
+	\item $E_4(k,m):=E(k,\mathrm{reverse}(m))$
+\end{enumerate}
+这里，对于一个比特串$s$，如果$s$中有奇数个比特$1$，则$\mathrm{parity}(s)$为$1$，否则为$0$；另外，$\mathrm{reverse}(s)$是通过颠倒$s$中比特的顺序得到的字符串，例如，$\mathrm{reverse}(1011)=1101$。
+\end{exercise}
+
+\begin{exercise}[密钥恢复攻击]
+令$\mathcal{E}=(E,D)$是一个定义在$(\mathcal{K},\mathcal{M},\mathcal{C})$上的密码。密钥恢复攻击用下面的挑战者与对手$\mathcal{A}$之间的游戏建模：挑战者在$\mathcal{K}$中选择一个随机密钥$k$，在$\mathcal{M}$中选择一个随机消息$m$，计算$c\overset{\rm R}\leftarrow E(k,m)$，并将$(m,c)$发送给$\mathcal{A}$。$\mathcal{A}$输出一个$\mathcal{K}$中的猜测值$\hat k$作为应答。如果$D(\hat{k},c)=m$，我们就称$\mathcal{A}$赢得了游戏，并将$\mathcal{A}$赢得游戏的概率定义为$\mathrm{KR}\mathsf{adv}[\mathcal{A},\mathcal{E}]$。和往常一样，如果对于所有有效对手$\mathcal{A}$，优势$KRadv[A,E]$都可忽略不计，我们就说$\mathcal{E}$对于密钥恢复攻击是安全的。
+\begin{enumerate}[\indent(a)]
+	\item 证明一次性密码本对密钥恢复攻击是不安全的。
+	\item 证明如果$\mathcal{E}$是语义安全的，并且$\epsilon=|\mathcal{K}|/|\mathcal{M}|$可忽略不计，那么$\mathcal{E}$对密钥恢复攻击是安全的。特别地，证明对于每个有效的密钥恢复对手$\mathcal{A}$，都存在一个有效的语义安全对手$\mathcal{B}$，其中$\mathcal{B}$是围绕$\mathcal{A}$的一个基本包装器，使得：
+	$$\mathrm{KR}\mathsf{adv}[\mathcal{A},\mathcal{E}]\leq\mathrm{SS}\mathsf{adv}[\mathcal{B},\mathcal{E}]+\epsilon$$
+	\textbf{提示：}你的语义安全对手$\mathcal{B}$在语义安全实验$0$中会以$\mathrm{KR}\mathsf{adv}[\mathcal{A},\mathcal{E}]$的概率输出$1$，在实验$1$中以最多$\epsilon$的概率输出$1$。由此可以推导出用$\epsilon$表示的$\mathrm{SS}\mathsf{adv}[\mathcal{B},\mathcal{E}]$的下界，并由该结果得到$\mathrm{KR}\mathsf{adv}[\mathcal{A},\mathcal{E}]$。
+	\item 基于(b)证明，如果 $\mathcal{E}$ 在是语义安全的，并且$|\mathcal{M}|$是超多项式的，那么$|\mathcal{K}|$不可能是多项式边界的。
+
+	\vspace{1pt}
+
+	\textbf{注意：}当$|\mathcal{M}|$是多项式边界的时候，$|\mathcal{K}|$可以是多项式边界的，比如在一次性密码本中。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}[对消息恢复的安全性]
+在 \ref{subsubsec:2-2-3-1} 小节中，我们提出了针对消息恢复的安全性的概念。构建一个对消息恢复安全，但不是语义安全的密码。
+\end{exercise}
+
+\begin{exercise}[在简单环境下计算优势]
+考虑以下两个实验：实验$0$和实验$1$：
+\begin{itemize}
+	\item 在实验$0$中，挑战者抛出一枚公平的硬币（即抛出正面和反面的概率都是$1/2$），并将结果发送给对手$\mathcal{A}$。
+	\item 在实验$1$中，挑战者总是向对手发送``反面"。
+\end{itemize}
+对手的目标是区分这两个实验：在每次实验结束时，对手输出一个比特$0$或$1$，作为其对所处实验的猜测。对于$b=0,1$，令$W_b$为实验$b$中对手输出$1$的事件。对手试图使其区分优势：
+\[
+\big\vert\Pr[W_0]-\Pr[W_1]\big\vert\in[0,1]
+\]
+最大化。如果这个优势对所有有效对手来说都是可忽略不计的，那么我们就称这两个实验是无法区分的。
+\begin{enumerate}[\indent(a)]
+	\item 计算下列对手的优势：
+	\begin{enumerate}[(i)]
+		\item $\mathcal{A}_1$：总是输出$1$。
+		\item $\mathcal{A}_2$：忽略挑战者报告的结果，以相等的概率随机输出$0$或$1$。
+		\item $\mathcal{A}_3$：如果从挑战者收到``正面"，则输出$1$，否则输出$0$。
+		\item $\mathcal{A}_4$：如果从挑战者收到``正面"，则输出$0$，否则输出$1$。
+		\item $\mathcal{A}_5$：如果收到``正面"，则输出$1$；如果收到``反面"，则以相等的概率随机输出$0$或$1$。
+	\end{enumerate}
+	\item 区分这两个实验的最大优势是多少？给出解释。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}[置换密码]
+考虑一个定义在$(\mathcal{K},\mathcal{M},\mathcal{C})$上的密码$(E,D)$，其中$\mathcal{C}=\mathcal{M}=\{0,1\}^\ell$，$\mathcal{K}$是集合$\{0,\dots,\ell\}$的所有$\ell!$个置换排列的集合。对于密钥$k\in\mathcal{K}$和消息$m\in\mathcal{M}$，定义$E(k,m)$为使用置换$k$对$m$的所有比特进行重排列的结果，即$E(k,m)=m[k(0)]\dots m[k(\ell-1)]$。通过展示一个优势为$1$的对手来证明改密码不是语义安全的。
+\end{exercise}
+
+\begin{exercise}[嵌套加密]\label{exer:2-15}
+对于一个密码$\mathcal{E}=(E,D)$，定义嵌套密码$\mathcal{E}'=(E',D')$为：
+\[
+E'\big((k_0,k_1),m\big)=E\big(k_1,E(k_0,m)\big),\quad
+D'\big((k_0,k_1),c\big)=D\big(k_0,D(k_1,c)\big)
+\]
+我们的目标是证明，如果$\mathcal{E}$是语义安全的，那么就算对手得到了$k_0$或$k_1$中的任意一个密钥，$\mathcal{E}'$也是语义安全的。
+\begin{enumerate}[\indent(a)]
+	\item 考虑以下语义安全实验，即实验$0$和实验$1$：在实验$b$中，对于$b=0,1$，对手产生两条消息$m_0$和$m_1$，并得到$k_1$和$E'\big((k_0,k_1),m_b\big)$。对手输出一个$\{0,1\}$中的值$\hat b$。同之前在语义安全的定义中类似，我们定义对手的优势为 $\mathrm{NE}\mathsf{adv}[\mathcal{A},\mathcal{E}]$。证明对于每个攻击$\mathcal{E}'$的嵌套加密对手$\mathcal{A}$，都存在一个攻击$\mathcal{E}$的语义安全对手$\mathcal{B}$，其中$\mathcal{B}$是围绕$\mathcal{A}$的一个基本包装器，满足：
+	\[
+	\mathrm{NE}\mathsf{adv}[\mathcal{A},\mathcal{E}]=\mathrm{SS}\mathsf{adv}[\mathcal{B},\mathcal{E}]
+	\]
+	画一个图，$\mathcal{A}$在右边，$\mathcal{B}$在中间，$\mathcal{B}$的挑战者在左边。在你的安全证明中，展示发生在上述三方之间的信息流。
+	\item 如果在(a)中，对手在实验$0$和实验$1$中得到的是$k_0$（而不是$k_1$）和$E'\big((k_0,k_1),m_b\big)$，重复(a)中的证明。像(a)一样，画一张图展示安全证明中的信息流。
+\end{enumerate}
+这个问题出现在了 \ref{sec:2-4} 节中讨论的互联网匿名路由中。
+\end{exercise}
+
+\begin{exercise}[自指加密]
+证明用一个密钥加密其自身是危险的。令$\mathcal{E}$是一个定义在$(\mathcal{K},\mathcal{M},\mathcal{C})$上的语义安全密码，其中$\mathcal{K}\subseteq\mathcal{M}$，并令$k\overset{\rm R}\leftarrow\mathcal{K}$。一个密文$c_*:=E(k,k)$，即用$k$加密$k$，被称为\textbf{自指加密(self-referential encryption)}。
+\begin{enumerate}[\indent(a)]
+	\item 构建一个派生自$\mathcal{E}$的密码$\mathcal{\tilde{E}}=(\tilde{E},\tilde{D})$，使得$\tilde{E}$在是语义安全的，但如果对手得到了$\tilde{E}(k,k)$，则变得不安全。这证明了语义安全并不意味着加密自己的密钥也是安全的。
+	\item 构建一个派生自$\mathcal{E}$的密码$\mathcal{\hat{E}}=(\hat{E},\hat{D})$，使得$\hat{E}$是语义安全的，并且即使对手得到了$\hat{E}(k,k)$，也能（被证明）保持语义安全性。为了证明$\hat{E}$是语义安全的，你应该证明：对于每个攻击$\mathcal{\hat{E}}$的对手$\mathcal{A}$，都存在一个攻击$\mathcal{E}$的对手$\mathcal{B}$，使得(i) $\mathcal{B}$的运行时间与$\mathcal{A}$差不多，(ii) $\mathrm{SS}\mathsf{adv}[\mathcal{A},\mathcal{\hat{E}}]\leq\mathrm{SS}\mathsf{adv}[\mathcal{B},\mathcal{E}]$。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}[压缩并加密]
+有两个标准委员会提议将压缩与加密相结合以节省带宽（如zip和gzip程序中使用的Lempel-Ziv算法）。这两个委员会都计划使用变长一次性密码本进行加密。
+\begin{itemize}
+	\item 一个委员会提议先压缩后加密。解释一下为什么这是个坏主意。
+
+	\vspace{1pt}
+
+	\textbf{提示：}回顾一下，压缩可以大大缩减某些消息的大小，而对某些消息的长度影响不大。
+	\item 另一个委员会提议先加密后压缩。解释一下为什么这也是个坏主意。
+\end{itemize}
+多年来，在结合加密和压缩时出现过许多问题。CRIME和BREACH攻击就是很有代表性的例子。
+\end{exercise}
+
+\begin{exercise}[投票协议]
+这个练习提供了一种基于加性一次性密码本的简易投票协议（例 \ref{exmp:2-4}）。假设我们有$t$个投票者和一个计票中心。每个投票者都要投$0$或$1$票，计票中心要统计票数并公布总和$S$。然而，他们将使用一个协议，保证没有任何一方（投票者或计票中心）能知道$S$之外的信息（但我们假定每一方都忠实地遵守该协议）。
+
+该协议的工作方式如下。令$n>t$是一个整数。计票中心产生一个对$0$的加密：$c_0\overset{\rm R}\leftarrow\{0,\dots,n-1\}$，并将$c_0$发送给投票者$1$。投票者$1$将他的票$v_1$加到$c_0$上，计算$c_1\leftarrow c_0+v_1 \mod n$，并将$c_1$发送给投票者$2$。这样继续下去，每个投票者$i$把$v_i$加到$c_{i-1}$上，计算$c_i\leftarrow c_{i-1}+v_i \mod n$，并把$c_i$发送给投票者$i+1$，最后投票者$t$把$c_t$发回计票中心。计票中心计算总和为$S\leftarrow c_t-c_0 \mod n$，并将$S$广播给所有投票者。
+\begin{enumerate}[\indent(a)]
+	\item 证明该协议能正确计算出总和。
+	\item 证明该协议在以下意义上是完美安全的。对于投票者$i=1,\dots,t$，定义$View_i:=(S,c_{i-1})$，它代表投票者$i$的``观点"。我们还定义$View_0:=(c_0,c_t)$代表计票中心的``观点"。证明对于每个$i=0,\dots,t$和$S=0,\dots,t$，以下结论成立：
+	\begin{quote}
+		无论$v_1,\dots,v_t$的选择如何变化，在$v_j\in\{0,1\}$和$\sum^t_{j=1}v_j=S$的约束下，$View_i$的分布保持不变。
+	\end{quote}
+	\item 证明如果两个投票者$i$和$j$串通，他们就可以确定第三个投票者$k$的投票。你可以自由选择索引$i$，$j$和$k$。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}[双向分割密钥]
+令$\mathcal{E}=(E,D)$是一个定义在$(\mathcal{K},\mathcal{M},\mathcal{C})$上的语义安全密码，其中$\mathcal{K}=\{0,1\}^d$。假设我们希望将解密密文的能力分给两方，比如 Alice 和 Bob。这样，想要解密密文，这两方都必不可少。对于一个$\mathcal{K}$上的随机密钥$k$，随机从$\mathcal{K}$中选择一个$r$并定义$k_a:=r$和$k_b:=k\oplus r$。现在，如果 Alice 和 Bob 在一起，他们就可以重建密钥$k=k_a\oplus k_b$，然后计算$D(k,c)$来解密密文$c$。我们的目标是证明 Alice 和 Bob 都不能单独解密密文。
+\begin{enumerate}[\indent(a)]
+	\item 构建一个安全概念以捕捉对手在给定 Bob 的密钥 $k_b$ 时打破语义安全性的优势。将这种双向密钥分割优势记为$\mathrm{2KS}\mathsf{adv}[\mathcal{A},\mathcal{E}]$。
+	\item 证明对于每一个双向密钥分割对手$\mathcal{A}$，都存在一个语义安全对手$\mathcal{B}$，使得$\mathrm{2KS}\mathsf{adv}[\mathcal{A},\mathcal{E}]=\mathrm{SS}\mathsf{adv}[\mathcal{B},\mathcal{E}]$。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}[简单的秘密共享]\label{exer:2-20}
+令$\mathcal{E}=(E,D)$是一个语义安全的密码，密钥空间为$\mathcal{K}=\{0,1\}^L$。一家银行希望将一个解密密钥$k\in\{0,1\}^L$分成$p_0$，$p_1$和$p_2$三份，并且解密至少需要其中的两份。每一份都可以交给不同的银行主管保管，并且每次解密都必须要获得三人中的至少两人的部分。这样一来，即使其中一位高管病休，解密也能进行。
+\begin{enumerate}[\indent(a)]
+	\item 为了实现这个方案，银行产生两个随机数对$(k_0,k_0')$和$(k_1,k_1')$，它们满足$k_0\oplus k_0'=k_1\oplus k_1'=k$。银行应如何分配密钥份额，才能使得任何两个部分都能用于解密，但任何单独部分都无法完成任务？
+
+	\vspace{1pt}
+
+	\textbf{提示：}第一个执行者得到的部分是$p_0:=(k_0,k_1)$。
+	\item 推广(a)的方案，使得解密需要5份中的3份。重组密钥只需要使用各部分的异或。任何两部分都不能透露关于密钥$k$的信息。
+	\item 进一步推广，对于任何$t<w$，设计出一个``$w$中选择$t$份"的系统。我们将在 \ref{sec:11-6} 节中看到一个更好的解决该问题的方法。
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}[简单的门限解密]
+令$\mathcal{E}=(E,D)$是一个语义安全的密码，其密钥空间为$\mathcal{K}$。在这个练习中，我们将设计一个系统，让银行能将一个密钥$k$分成$p_0$，$p_1$和$p_2$三份，并且解密至少需要其中的两份，就像练习 \ref{exer:2-20} 中那样。然而，解密时不需要在一个地方重新组建完整的密钥。
+
+我们使用练习 \ref{exer:2-15} 中介绍的嵌套加密。在$\mathcal{K}^4$中随机选择一个密钥$k:=(k_0,k_1,k_2,k_3)$，并对消息$m$进行加密，即：
+\[
+c\overset{\rm R}\leftarrow\Big( E\big(k_1,E(k_0,m)\big),\;\,E\big(k_3,E(k_2,m)\big)\Big)
+\]
+\begin{enumerate}[\indent(a)]
+	\item 构建$p_0$，$p_1$和$p_2$的分配方案，使得任何两个部分都能用于解密，但任何单独部分都无法完成任务。
+
+	\vspace{1pt}
+
+	\textbf{提示：}第一个部分是$p_0:=(k_0,k_3)$。
+	
+	\vspace{1pt}
+
+	\textbf{讨论：}假设持有$p_0$和$p_2$的实体可以进行解密。要解密密文$c$，首先将$c$发送给持有$p_2$的实体以部分解密$c$，然后将结果转发给持有$p_0$的实体以完成解密。这样一来解密就完成了，并不需要在一个地方先组建完整的密钥$k$。
+	\item 推广(a)的方案，使得解密需要5份中的3份。解释如何在不重新组合密钥的情况下进行解密。
+\end{enumerate}
+一种加密方案，如果它的密钥可以被分成若干份，从而使解密需要$w$份中的$t$份，并且解密不需要在单一地点重新装配密钥，就被称为提供\textbf{门限解密(threshold decryption)}。我们将在 \ref{sec:11-6} 节中看到一个更好的解决该问题的方法。
+\end{exercise}
+
+\begin{exercise}[偏差校正]
+再考虑一下语义安全攻击游戏的比特猜测版本（即攻击游戏 \ref{game:2-4}）。假设一个有效对手$\mathcal{A}$能以$1/2+\epsilon$的概率赢得游戏（即猜中隐藏比特$b$），其中$\epsilon$不可忽略不计。请注意，$\epsilon$可以是正数或负数（可忽略不计的定义在绝对值上起作用）。我们的目标是证明存在另一个有效对手$\mathcal{B}$能以$1/2+\epsilon'$的概率赢得游戏，其中$\epsilon'$是一个不可忽略不计的正数。
+\begin{enumerate}[\indent(a)]
+	\item 考虑以下对手$\mathcal{B}$，它将$\mathcal{A}$作为攻击游戏 \ref{game:2-4} 中的一个子程序，进行以下的两阶段攻击。在第一阶段，$\mathcal{B}$扮演$\mathcal{A}$的挑战者，但$\mathcal{B}$生成自己的隐藏比特$b_0$和自己的密钥$k_0$，最终$\mathcal{A}$输出其猜测比特$\hat b_0$。注意，在这个阶段，$\mathcal{B}$在攻击游戏 \ref{game:2-4} 中的挑战者根本没有参与。在第二阶段，$\mathcal{B}$ 重新启动 $\mathcal{A}$，并让 $\mathcal{A}$ 与攻击游戏 \ref{game:2-4} 中``真正的"挑战者互动，最终 $\mathcal{A}$ 输出一个猜测比特$\hat b$。当这种情况发生时，$\mathcal{B}$ 输出 $\hat{b}\oplus\hat{b}_0\oplus b_0$。请注意，$\mathcal{A}$ 的这次运行完全独立于第一次运行——$\mathcal{A}$ 的硬币和系统参数在这两次运行中是独立产生的。
+	
+	\vspace{1pt}
+	
+	证明 $\mathcal{B}$ 赢得攻击游戏 \ref{game:2-4} 的概率为 $1/2+2\epsilon^2$。
+	\item 人们可能会倾向于如下论证。只要构造一个运行 $\mathcal{A}$ 的对抗者 $\mathcal{B}$，当 $\mathcal{A}$ 输出 $\hat b$ 时，对手 $\mathcal{B}$ 输出 $\hat{b}\oplus 1$。现在，我们不知道$\epsilon$是正的还是负的。如果它是正的，那么 $\mathcal{A}$ 就满足我们的要求。如果它是负的，那么 $\mathcal{B}$ 就满足我们的要求。虽然我们不知道这两个对手中的哪一个满足我们的要求，但我们知道其中一个肯定满足，所以存在性就被证明了。
+	
+	\vspace{1pt}
+	
+	这个论证有什么问题？想要解释这一点，你需要了解有关安全参数的数学细节（见 \ref{sec:2-3} 节）。
+	\item 你能想出另一个能以至少 $1/2+|\epsilon|/2$ 的概率赢得比特猜测游戏的有效对手 $\mathcal{B}'$吗？你的对手$\mathcal{B}'$的效率可以比$\mathcal{B}$ 低。
+	
+	\vspace{1pt}
+
+	\textbf{提示：}尝试多次运行对手 $\mathcal{B}$ 的第一阶段。
+\end{enumerate}
+\end{exercise}

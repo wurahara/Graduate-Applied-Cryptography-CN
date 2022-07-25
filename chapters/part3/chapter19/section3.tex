@@ -1,0 +1,34 @@
+\section{案例研究：ECDSA签名}
+
+1991 年，当需要制定数字签名的联邦标准时，美国国家标准研究所 (NIST) 考虑了一些可行的候选方案。由于 Schnorr 系统受专利保护，NIST 选择了一种基于 $\mathbb{Z}_p^*$ 的素阶子群的临时签名方案，该方案后来被称为\textbf{数字签名算法(Digital Signature Algorithm, DSA)}。该标准后来被更新以支持定义在有限域上的椭圆曲线群。由此产生的签名方案被称为 \textbf{ECDSA}，后来被用在许多现实世界的系统中。我们下面会简要介绍 ECDSA 的工作原理，并讨论几个影响它安全性的问题。
+
+ECDSA 签名方案 $(G,S,V)$ 使用有限域 $\mathbb{F}_p$ 上的椭圆曲线点群 $\mathbb{G}$。令 $g$ 是 $\mathbb{G}$ 的一个生成元，素数 $q$ 是群 $\mathbb{G}$ 的阶。我们还需要一个定义在 $(\mathcal{M},\mathbb{Z}_q^*)$ 上的哈希函数 $H$。该方案的工作原理如下：
+\begin{itemize}
+	\item $G()$：选择 $\alpha\overset{\rm R}\leftarrow\mathbb{Z}_q^*$，令 $u\leftarrow g^\alpha\in\mathbb{G}$。输出 $sk:=\alpha$，$pk:=u$。
+	\item $S(sk,m)$：使用私钥 $sk=\alpha$ 签署消息 $m\in\mathcal{M}$：\\
+		\hspace*{30pt} 重复：\\
+		\hspace*{50pt} 选取 $\alpha_{\rm t}\overset{\rm R}\leftarrow\mathbb{Z}_q^*$，计算 $u_{\rm t}\leftarrow g^{\alpha_{\rm t}}$\\
+		\hspace*{50pt} 令 $u_{\rm t}=(x,y)\in\mathbb{G}$，其中 $x,y\in\mathbb{F}_p$\\
+		\hspace*{50pt} 将 $x$ 当作 $[0,p)$ 区间中的一个整数，令 $r\leftarrow[x]_q\in\mathbb{Z}_q$，即计算 $x$ 模 $q$\\
+		\hspace*{50pt} 计算 $s\leftarrow\left({H(m)+r\alpha}\right)/{\alpha_t}\in\mathbb{Z}_q$\\
+		\hspace*{30pt} 直至 $r\neq0$ 且 $s\neq0$\\
+		\hspace*{30pt} 输出 $(r,s)$
+	\item $V(pk,m,\sigma)$：使用公钥 $pk=u\in\mathbb{G}$ 验证对消息 $m\in\mathcal{M}$ 的签名 $\sigma=(r,s)\in(\mathbb{Z}_q^*)^2$：\\
+		\hspace*{30pt} 计算 $a\leftarrow{H(m)}/{s}\in\mathbb{Z}_q$，$b\leftarrow{r}/{s}\in\mathbb{Z}_q$\\
+		\hspace*{30pt} 计算 $\hat u_{\rm t}\leftarrow g^au^b\in\mathbb{G}$\\
+		\hspace*{30pt} 令 $\hat u_{\rm t}=(\hat x,\hat y)\in\mathbb{G}$，其中 $\hat x,\hat y\in\mathbb{F}_p$\\
+		\hspace*{30pt} 将 $\hat x$ 当作 $[0,p)$ 区间中的一个整数，令 $\hat r\leftarrow[\hat x]_q\in\mathbb{Z}_q$，即计算 $\hat x$ 模 $q$\\
+		\hspace*{30pt} 如果 $r=\hat r$ 则输出 $\mathsf{accept}$，否则输出 $\mathsf{reject}$
+\end{itemize}
+
+当使用椭圆曲线 P256 时，$p$ 和 $q$ 都是 $256$ 位素数，因此一个 ECDSA 签名 $\sigma=(r,s)$ 的长度为 $512$ 位。
+
+很容易说明该签名方案是正确的。对于 $G$ 输出的任意密钥对 $(pk,sk)$ 和任意消息 $m\in\mathbb{Z}_q$，如果 $\sigma\overset{\rm R}\leftarrow S(sk,m)$，那么 $V(pk,m,\sigma)$ 必然输出 $\mathsf{accept}$。原因是 $V$ 计算出的 $\hat u_{\rm t}$ 与 $S$ 计算出的 $u_{\rm t}$ 必然是相同的。
+
+在特定强假设和理想的群 $\mathbb{G}$ 下 ECDSA 是安全的。
+
+为了保证安全性，签名期间产生的随机值 $\alpha_{\rm t}$ 必须是新从 $\mathbb{Z}_q^*$ 中均匀挑选出的值。否则该方案会在强意义上变得不安全，因为攻击者可以得到签名私钥 $\alpha$。针对索尼 PlayStation 3 的攻击就曾经利用了这个漏洞，因为在该设计中，$\alpha_{\rm t}$ 对于所有发出的签名都是相同的。除此之外，一些针对比特币钱包的攻击也利用了这个问题，因为在一些硬件平台上生成质量较高的随机数是很困难的。一个常用的解决方案是修改签名算法，使得 $\alpha$ 是使用安全性高的 PRF 确定性地生成的，这种修改后的算法被称为\textbf{确定性 ECDSA}。Schnorr 签名协议也有同样的问题，因此这种优化也同样适用于它。
+
+\begin{snote}[ECDSA不是强安全的.]
+尽管 Schnorr 签名协议是强安全的（见练习19.15），但 ECDSA 方案却不是。给定一个对消息 $m$ 的 ECDSA 签名 $\sigma=(r,s)$，任何人都可以对 $m$ 生成其他合法签名。比如说 $\sigma':=(r,-s)\in(\mathbb{Z}_q^*)^2$ 也是一个对消息 $m$ 的合法签名。这个 $\sigma'$ 之所以合法，是因为椭圆曲线上的点 $u_{\rm t}\in\mathbb{G}$ 的横坐标与另一点 ${1}/{u_{\rm t}}\in\mathbb{G}$ 的横坐标是相同的。
+\end{snote}

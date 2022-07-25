@@ -1,0 +1,112 @@
+\section{Sigma协议的组合：AND和OR证明}
+
+在本节中，我们将展示如何将 Sigma 协议组合起来构成新的 Sigma 协议。在 AND 证明结构中，证明者可以说服验证者他``知道"一对陈述的见证。在 OR 证明结构中，证明者可以说服验证者他``知道"两个陈述中其中一个的见证。
+
+\subsection{AND 证明构造}
+
+假设我们有一个 $\mathcal{R}_0\subseteq\mathcal{X}_0\times\mathcal{Y}_0$ 上的 Sigma 协议 $(P_0,V_0)$ 和一个 $\mathcal{R}_1\subseteq\mathcal{X}_1\times\mathcal{Y}_1$ 上的 Sigma 协议 $(P_1,V_1)$。此外，我们假设这两个 Sigma 协议都使用相同的挑战空间 $\mathcal{C}$。我们可以把它们组合起来构造一个关系：
+\begin{equation}\label{eq:19-22}
+\mathcal{R}_{\rm AND}=
+\bigg\lbrace
+\big((x_0,x_1),(y_0,y_1)\big)\in\left(\mathcal{X}_0\times\mathcal{X}_1\right)\times\left(\mathcal{Y}_0\times\mathcal{Y}_1\right):~(x_0,y_0)\in\mathcal{R}_0,~(x_1,y_1)\in\mathcal{R}_1
+\bigg\rbrace
+\end{equation}
+上的 Sigma 协议。换句话说，给定一对陈述 $y_0\in\mathcal{Y}_0$ 和 $y_1\in\mathcal{Y}_1$，这个 \textbf{AND 协议}允许证明者说服持怀疑态度的验证者，他同时``知道" $y_0$ 的一个见证\emph{和} $y_1$ 的一个见证。该协议 $(P,V)$ 运行如下，其中验证者 $P$ 由 $((x_0,x_1),(y_0,y_1))\in\mathcal{R}_{\rm AND}$ 初始化，验证者 $V$ 由 $(y_0,y_1)\in\mathcal{Y}_0\times\mathcal{Y}_1$ 初始化：
+\begin{enumerate}
+	\item $P$ 运行 $P_0(x_0,y_0)$ 得到一个承诺 $t_0$，运行 $P_1(x_1,y_1)$ 得到一个承诺 $t_1$，并将承诺对 $(t_0,t_1)$发送给 $V$；
+	\item $V$ 选取 $c\overset{\rm R}\leftarrow\mathcal{C}$，并将挑战 $c$ 发送给 $P$；
+	\item $P$ 将挑战 $c$ 投入 $P_0(x_0,y_0)$ 和 $P_1(x_1,y_1)$，得到应答 $z_0$ 和 $z_1$，并将应答对 $(z_0,z_1)$ 发送给 $V$；
+	\item $V$ 检查 $(t_0,c,z_0)$ 是否是 $y_0$ 的一个接受对话，$(t_1,c,z_1)$ 是否是 $y_1$ 的一个接受对话。
+\end{enumerate}
+
+\begin{theorem}
+AND 协议 $(P,V)$ 是式 \ref{eq:19-22} 中定义的关系$\mathcal{R}_{\rm AND}$上的 Sigma 协议。若 $(P_0,V_0)$ 和 $(P_1,V_1)$ 提供知识健全性，则 $(P, V)$ 亦然。若 $(P_0,V_0)$ 和 $(P_1,V_1)$ 都是特殊 HVZK 的，则 $(P,V)$ 亦然。
+\end{theorem}
+
+\begin{proof}[证明简述]
+正确性显然成立。
+
+对于知识健全性，如果 $(P_0,V_0)$ 有提取器 $Ext_0$，$(P_1,V_1)$ 有提取器 $Ext_1$，那么 $(P, V)$ 的提取器是：
+\begin{equation*}
+\begin{aligned}
+Ext
+\Big( & (y_0,y_1),((t_0,t_1),c,(z_0,z_1)),~~((t_0,t_1),c',(z_0',z_1'))
+\Big):=\\
+& \Big(Ext_0(y_0,(t_0,c,z_0),(t_0,c',z_0')),~~Ext_1(y_1,(t_1,c,z_1),(t_1,c',z_1'))\Big)
+\end{aligned}
+\end{equation*}
+
+对于特殊 HVZK，如果 $(P_0,V_0)$ 有模拟器 $Sim_0$，$(P_1,V_1)$ 有模拟器 $Sim_1$，那么 $(P, V)$ 的模拟器是：
+$$
+Sim((y_0,y_1),c):=((t_0,t_1),(z_0,z_1))
+$$
+其中：
+$$
+(t_0,z_0)\overset{\rm R}\leftarrow Sim_0(y_0,c),~~
+(t_1,z_1)\overset{\rm R}\leftarrow Sim_1(y_1,c)
+$$
+
+读者可以自己填补证明的细节部分。我们必须指出，在构建模拟器 $Sim$ 的过程中，我们利用了这样一个事实，即在特殊 HVZK 的定义中，挑战是对模拟器的输入，我们可以将其交给 $Sim_0$ 和 $Sim_1$ 两方。
+\end{proof}
+
+\subsection{OR 证明构造}\label{subsec:19-7-2}
+
+假设我们有一个 $\mathcal{R}_0\subseteq\mathcal{X}_0\times\mathcal{Y}_0$ 上的 Sigma 协议 $(P_0,V_0)$ 和一个 $\mathcal{R}_1\subseteq\mathcal{X}_1\times\mathcal{Y}_1$ 上的 Sigma 协议 $(P_1,V_1)$。我们还要附加几个假设：
+\begin{itemize}
+	\item 这两个 Sigma 协议都使用相同的挑战空间 $\mathcal{C}$，形如 $\mathcal{C}=\{0,1\}^n$。(注意，在我们看到的挑战是数字的例子中，我们总是可以将比特串编码为二进制符号的数字。)
+	\item 这两个 Sigma 协议都是特殊 HVZK 的，它们分别有模拟器 $Sim_0$ 和 $Sim_1$。
+\end{itemize}
+我们可以把它们组合起来构造一个关系：
+\begin{equation}\label{eq:19-23}
+\mathcal{R}_{\rm OR}=
+\bigg\lbrace
+\big((b,x), (y_0,y_1)\big)\in\big(\{0,1\}\times(\mathcal{X}_0\cup\mathcal{X}_1)\big)\times\big(\mathcal{Y}_0\times\mathcal{Y}_1\big):~(x,y_b)\in\mathcal{R}_b
+\bigg\rbrace
+\end{equation}
+上的 Sigma 协议。换句话说，给定一对陈述 $y_0\in\mathcal{Y}_0$ 和 $y_1\in\mathcal{Y}_1$，这个 \textbf{OR 协议}允许证明者说服持怀疑态度的验证者，他``知道" $y_0$ 的一个见证或 $y_1$ 的一个见证，除此之外不会再透露任何其他信息。更具体地，该协议不会透露证明者所拥有的到底是 $y_0$ 的还是 $y_1$ 的见证。
+
+协议 $(P,V)$ 运行如下，其中验证者 $P$ 由 $((b,x),(y_0,y_1))\in\mathcal{R}_{\rm OR}$ 初始化，验证者 $V$ 由 $(y_0,y_1)\in\mathcal{Y}_0\times\mathcal{Y}_1$ 初始化，且 $d:=1-b$：
+\begin{enumerate}
+	\item $P$ 选取 $c_d\overset{\rm R}\leftarrow\mathcal{C}$ 并计算 $(t_d,z_d)\overset{R}\leftarrow Sim_d(y_d,c_d)$\\$P$ 运行 $P_b(x,y_b)$ 得到一个承诺 $t_b$，并将承诺对 $(t_0,t_1)$ 发送给 $V$；
+	\item $V$ 选取 $c\overset{\rm R}\leftarrow\mathcal{C}$，并将挑战 $c$ 发送给 $P$；
+	\item $P$ 计算 $c_b\leftarrow c\oplus c_d$\\$P$ 将挑战 $c_b$ 转发给 $P_b(x,y_b)$，得到一个响应 $z_b$，并将 $(c_0,z_0,z_1)$ 发送给 $V$；
+	\item $V$ 计算 $c_1\leftarrow c\oplus c_0$，并检查 $(t_0,c_0,z_0)$ 是否是 $y_0$ 的接受对话，以及 $(t_1,c_1,z_1)$ 是否是 $y_1$ 的接受对话。
+\end{enumerate}
+
+\begin{theorem}
+OR 协议 $(P,V)$ 是式 \ref{eq:19-23} 中定义的关系$\mathcal{R}_{\rm OR}$上的特殊 HVZK 的 Sigma 协议。若 $(P_0,V_0)$ 和 $(P_1,V_1)$ 提供知识健全性，则 $(P, V)$ 亦然。
+\end{theorem}
+
+\begin{proof}[证明简述]
+正确性显然成立。
+
+对于知识健全性，如果 $(P_0,V_0)$ 有提取器 $Ext_0$，$(P_1,V_1)$ 有提取器 $Ext_1$，那么 $(P, V)$ 的提取器 $Ext$ 的输入是 $(y_0,y_1)$ 和一对接受对话：
+$$
+\big((t_0,t_1),~c,~(c_0,z_0,z_1)\big),~~
+\big((t_0,t_1),~c',~(c_0',z_0',z_1')\big)
+$$
+令 $c_1:=c\oplus c_0$，$c_1':=c\oplus c_0'$。一个重要的观察是，如果 $c\neq c'$，那么 $c_0\neq c_0'$ 和 $c_1\neq c_1'$ 中必有一个成立。因此 $Ext$ 按如下方式运行：
+
+\vspace{8pt}
+
+\hspace*{30pt} 如果 $c_0\neq c_0'$\\
+\hspace*{90pt} 则输出 $\Big(0,~Ext_0(y_0,(t_0,c_0,z_0),(t_0,c_0',z_0'))\Big)$\\
+\hspace*{90pt} 否则输出 $\Big(1,~Ext_1(y_1,(t_1,c_1,z_1),(t_1,c_1',z_1'))\Big)$
+
+\vspace{8pt}
+
+对于特殊 HVZK，$(P, V)$ 的模拟器是：
+$$
+Sim((y_0,y_1),c):=((t_0,t_1),(c_0,z_0,z_1))
+$$
+其中：
+
+$$
+c_0\overset{\rm R}\leftarrow\mathcal{C},~~
+c_1\leftarrow c\oplus c_0,~~
+(t_0,z_0)\overset{\rm R}\leftarrow Sim_0(y_0,c_0),~~
+(t_1,z_1)\overset{\rm R}\leftarrow Sim_1(y_1,c_1)
+$$
+
+读者可以自己填补证明的细节部分。我们必须指出，为了确保正确性，我们利用了这样一个事实：对于特殊 HVZK，模拟器总是会输出一个接受对话。
+\end{proof}

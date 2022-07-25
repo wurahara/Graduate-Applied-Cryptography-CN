@@ -1,0 +1,257 @@
+\section{见证独立性及其应用}
+
+我们下面研究 Sigma 协议的一个有用的属性，称为\textbf{见证独立性(witness independence)}。
+
+我们已经知道，一个给定陈述可能有若干个对应的见证。粗略地说，见证独立性意味着，如果一个``作弊"的验证者 $V^*$（他不需要遵守协议）与诚实证明者 $P$ 交互，$V^*$ 无法知道 $P$ 在使用\emph{哪个}见证。特别地，即使 $V^*$ 非常强大或者非常聪明，以至于它在与 $P$ 交互后能够计算出一个见证，这个见证也与 $P$ 所使用的见证无关。当然，只有在一个特定陈述对应着一个以上的见证时，这个属性才有意义。
+
+下面，我们首先更精确地定义这个属性。其次我们将表明，特殊 HVZK 能够导出见证独立性。这也许有点令人惊讶，因为 HVZK 是一个关于\emph{诚实}验证者的属性，而见证独立性适用于\emph{所有}的验证者（甚至是没有计算性上界的作弊验证者）。最后，我们会展示如何使用见证独立性来设计能够抵抗主动攻击的身份识别协议。这些识别协议简单而高效，其安全性可以基于离散对数假设或 RSA 假设，并且不依赖随机预言机启发法。
+
+\subsection{见证独立性的定义}
+
+我们用一个攻击游戏来定义见证独立性。
+
+\begin{game}[见证独立性]\label{game:19-3}
+令 $\Pi=(P,V)$ 是 $\mathcal{R}\subseteq\mathcal{X}×\mathcal{Y}$ 上的一个 Sigma 协议。对于一个给定对手 $\mathcal{A}$，我们为每个 $(x,y)\in\mathcal{R}$ 定义一个实验 $(x,y)$，它按如下方式运行：
+\begin{itemize}
+	\item 最初，对手 $\mathcal{A}$ 被赋予一个值 $y$。
+	\item 然后，对手 $\mathcal{A}$ 与证明者 $P(x,y)$ 的几个实例进行交互。在这些交互中，挑战者进行证明者的计算，而对手扮演作弊验证者的角色（即他不需要遵循 $V$ 的协议）。这些交互可能是并行的（特别地，对手可能会发出挑战，这些挑战取决于所有证明者实例到目前为止所输出的承诺和应答）。
+	\item 在游戏结束时，对手 $\mathcal{A}$ 输出某个值 $s$，它属于一个有限的\textbf{输出空间} $\mathcal{S}$（该空间可能取决于 $\mathcal{A}$）。
+\end{itemize}
+对于每个 $(x,y)\in\mathcal{R}$ 和 $s\in\mathcal{S}$，我们定义 $\theta_{\mathcal{A},\Pi}(x,y,s)$ 为 $\mathcal{A}$ 在实验 $(x,y)$ 中输出 $s$ 的概率。
+\end{game}
+
+\begin{definition}
+令 $\Pi=(P,V)$ 是 $\mathcal{R}\subseteq\mathcal{X}×\mathcal{Y}$ 上的一个 Sigma 协议。如果对于任意对手 $\mathcal{A}$ 和任意满足 $(x,y)\in\mathcal{R}$ 与 $(x',y)\in\mathcal{R}$ 的 $y\in\mathcal{Y}$ 和 $x,x'\in\mathcal{X}$，以及任意 $\mathcal{A}$ 的输出空间中的 $s$，都有：
+$$
+\theta_{\mathcal{A},\Pi}(x,y,s)=
+\theta_{\mathcal{A},\Pi}(x',y,s)
+$$
+我们就称 $(P,V)$ 是\textbf{见证独立}的。
+\end{definition}
+
+该定义指出，对于任意 $y\in\mathcal{Y}$ 和 $s\in\mathcal{S}$，$\theta_{\mathcal{A},\Pi}(x,y,s)$ 的值对于所有满足 $(x,y)\in\mathcal{R}$ 的 $x\in\mathcal{X}$ 都相同。注意，在这个定义中，$\mathcal{A}$不需要是有效的。我们还可以注意到，在该定义中，如果 Sigma 协议使用了一个系统参数，而这个参数本身可能是随机产生的，我们坚持认为该属性应该对每个可能的系统参数的选择都成立。
+
+这个定义在很强的意义上抓住了一个想法，即对手的行为只取决于陈述，而不取决于证明者所选用的特定见证。
+
+在分析识别方案时，有时可以很方便地应用见证独立性的定义。假设 $(P,V)$ 是 $\mathcal{R}\subseteq\mathcal{X}\times\mathcal{Y}$ 上的 Sigma 协议，$G$ 是 $\mathcal{R}$ 的一个密钥生成算法。假设我们运行密钥生成算法得到 $pk=y$ 和 $sk=(x,y)$，然后用对手 $\mathcal{A}$ 运行攻击游戏 \ref{game:19-3} 中的实验 $(x,y)$。让我们定义随机变量 $\mathsf{X}$，$\mathsf{Y}$，$\mathsf{S}$ 如下：
+\begin{itemize}
+	\item $\mathsf{X}$ 代表由 $G$ 生成的见证 $x$；
+	\item $\mathsf{Y}$ 代表由 $G$ 生成的陈述 $y$；
+	\item $\mathsf{S}$ 代表对手的输出 $s\in\mathcal{S}$。
+\end{itemize}
+
+\begin{fact}\label{fact:19-20}
+如果 $(P,V)$ 是见证独立的，那么对于所有的 $(x,y)\in\mathcal{R}$ 和 $s\in\mathcal{S}$，我们都有：
+\begin{equation}\label{eq:19-24}
+\Pr[\mathsf{X}=x\land\mathsf{S}=s\,|\,\mathsf{Y}=y]=
+\Pr[\mathsf{X}=x\,|\,\mathsf{Y}=y]\cdot
+\Pr[\mathsf{S}=s\,|\,\mathsf{Y}=y]
+\end{equation}
+\end{fact}
+
+我们把事实 \ref{fact:19-20} 的证明留给读者，作为一个简单的练习。式 \ref{eq:19-24} 表明，对于任何特定的以 $\mathsf{Y}=y$ 为条件的$y$，随机变量 $\mathsf{X}$ 和 $\mathsf{S}$ 都是独立的。我们可以用许多不同的方式重写式 \ref{eq:19-24}，举例来说，它等价于：
+\begin{equation}\label{eq:19-25}
+\Pr[\mathsf{X}=x\,|\,\mathsf{S}=s\land\mathsf{Y}=y]=
+\Pr[\mathsf{X}=x\,|\,\mathsf{Y}=y]
+\end{equation}
+
+\begin{example}
+下面的定理 \ref{theo:19-21} 将表明，\ref{subsec:19-7-2} 小节介绍的 OR 协议和 \ref{subsec:19-5-1} 小节介绍的 Okamoto 协议都是见证独立的协议。
+\end{example}
+
+\subsection{特殊 HVZK 意味着见证独立性}
+
+我们下面证明特殊 HVZK 能够导出见证独立性。
+
+\begin{theorem}[特殊 HVZK $\Longrightarrow$ 见证独立性]\label{theo:19-21}
+如果一个 Sigma 协议是特殊 HVZK 的，那么它必然也是见证独立的。
+\end{theorem}
+
+\begin{proof}
+令 $(P,V)$ 是 $\mathcal{R}\subseteq\mathcal{X}×\mathcal{Y}$ 上的一个 Sigma 协议。假设所有的对话 $(t,c,z)$ 都落在 $\mathcal{T}\times\mathcal{C}\times\mathcal{Z}$ 中。
+
+令 $\mathsf{Coins}$ 为一个随机变量，它代表 $P$ 可能做出的随机选择 $coins$。比如在 Schnorr 协议中，$coins$ 就是 $\alpha_{\rm t}\in\mathbb{Z}_q$ 的取值，并且 $\mathsf{Coins}$ 在 $\mathbb{Z}_q$ 上均匀分布。证明者 $P$ 的逻辑可以完全由某个函数 $\gamma$ 来描述，该函数将 $(x,y,c,coins)$ 映射到 $(t,z)$ 上，其中 $(x,y)\in\mathcal{R}$，$(t,c,z)\in\mathcal{T}\times\mathcal{C}\times\mathcal{Z}$。
+
+考虑 $P(x,y)$ 和 $V(y)$ 之间的真实交互产生一个特定对话 $(t,c,z)$ 的概率，其值为：
+\begin{equation}\label{eq:19-26}
+{\Pr[\gamma(x,y,c,\mathsf{Coins})=(t,z)]}\,/\,{|\mathcal{C}|}
+\end{equation}
+
+
+现在考虑一个由特殊 HVZK 属性保证的模拟器 $Sim$。对于任意 $(x,y)\in\mathcal{R}$，$c\in\mathcal{C}$ 和 $(t,z)\in\mathcal{T}\times\mathcal{Z}$，我们定义 $p(y,t,c,z)$ 为 $Sim(y,c)$ 输出 $(t,z)$ 的概率。在随机挑战上运行模拟器所产生的对话等于特定对话 $(t,c,z)$ 的概率为：
+\begin{equation}\label{eq:19-27}
+{p(y,t,c,z)}\,/\,{|\mathcal{C}|}
+\end{equation}
+由于式 \ref{eq:19-26} 和式 \ref{eq:19-27} 中的概率必然相等，我们能够得出结论，对于任意的 $(x,y)\in\mathcal{R}$ 和 $(t,c,z)\in\mathcal{T}\times\mathcal{C}\times\mathcal{Z}$，都有：
+$$
+\Pr[\gamma(x,y,c,\mathsf{Coins})=(t,z)]=p(y,t,c,z)
+$$
+且该值并不取决于 $x$。虽然细节有点复杂，但这个事实是证明的关键。
+
+现在考虑攻击游戏 \ref{game:19-3} 中的实验 $(x,y)$，假设对手 $\mathcal{A}$ 与证明者 $P$ 的 $Q$ 个拷贝交互。我们用函数 $\gamma^*$ 来描述所有这些证明者实例的逻辑，该函数将 $(x,y,c^*,coins^*)$ 映射到 $(t^*,z^*)$ 上，其中 $t^*$，$c^*$，$z^*$ 和 $coins^*$ 是长度为 $Q$ 的向量。此外，如果用 $\mathsf{Coins}^*$ 表示随机变量 $\mathsf{Coins}$ 的 $Q$ 个独立副本组成的向量，那么对于任意 $(x,y)\in\mathcal{R}$ 和 $(t^*,c^*,z^*)\in\mathcal{T}^Q\times\mathcal{C}^Q\times\mathcal{Z}^Q$，我们都有：
+$$
+\Pr[\gamma^*(x,y,c^*,\mathsf{Coins}^*)=(t^*,z^*)]=\prod_{i}p(y,t^*[i],c^*[i], z^*[i])
+$$
+这个概率也是不取决于 $x$ 的。
+
+令 $\mathsf{Coins}'$ 为一个随机变量，它代表对手可能做出的随机选择 $coins'$。用函数 $\gamma'$ 描述对手的运行逻辑，该函数将 $(y,t^*,z^*,coins')$ 映射到 $(c^*,s)$ 上，其中 $(t^*,c^*,z^*)\in\mathcal{T}^Q\times\mathcal{C}^Q\times\mathcal{Z}^Q$，$s\in\mathcal{S}$ 是对手的输出，$coins'$ 表示对手的特定随机选择。
+
+令 $\mathsf{S}_{x,y}$ 为一个随机变量，它代表对手 $\mathcal{A}$ 在攻击游戏中的实验 $(x,y)$ 中的输出。令 $\mathsf{T}_{x,y}$ 为一个随机变量，它代表可能的交互记录 $t=(t^*,c^*,z^*)$。对于 $s\in\mathcal{S}$ 和 $t=(t^*,c^*,z^*)$，定义事件 $\boldsymbol{\Gamma}^*(x,y;t)$ 和 $\boldsymbol{\Gamma}'(y,s;t)$ 如下：
+$$
+\boldsymbol{\Gamma}^*(x,y;t):\gamma^*(x,y,c^*, \mathsf{Coins}^*)=(t^*,z^*),~~~~~~~~
+\boldsymbol{\Gamma}'(y,s;t):\gamma'(y,t^*,z^*, \mathsf{Coins}')=(c^*,s)
+$$
+注意，$\boldsymbol{\Gamma}^*(x,y;t)$ 和 $\boldsymbol{\Gamma}'(y,s;t)$ 是独立事件。另外，正如我们上面所观察到的，概率 $\Pr[\boldsymbol{\Gamma}^*(x,y;t)]$ 与 $x$ 无关。
+
+对于 $s\in\mathcal{S}$，通过对所有可能的交互记录 $t$ 进行求和，用全概率公式可以计算出 $\Pr[\mathsf{S}_{x,y}=s]$：
+\begin{equation*}
+\begin{aligned}
+\Pr[\mathsf{S}_{x,y}=s]
+&=\sum_{t}\Pr[\mathsf{S}_{x,y}=s\land\mathsf{T}_{x,y}=t]\\
+&=\sum_{t}\Pr[\boldsymbol{\Gamma}^*(x,y;t)\land\boldsymbol{\Gamma}'(y,s;t)]\\
+&=\sum_{t}\Pr[\boldsymbol{\Gamma}^*(x,y;t)]\cdot\Pr[\boldsymbol{\Gamma}'(y,s;t)]\text{ \emph{（独立性）}}
+\end{aligned}
+\end{equation*}
+在最后一个式子中，我们可以观察到 $\Pr[\boldsymbol{\Gamma}^*(x,y;t)]$ 和 $\Pr[\boldsymbol{\Gamma}'(y,s;t)]$ 都与 $x$ 无关，这就证明了定理。
+\end{proof}
+
+\subsection{主动安全的身份识别协议}
+
+我们下面将展示如何使用见证独立性来设计主动安全的识别协议。该构造是相当通用的，其基本构件是一个 Sigma 协议和一个单向密钥生成算法。我们还利用了 \ref{subsec:19-7-2} 小节中介绍的 OR 证明构造。
+
+令 $(P,V)$ 是 $\mathcal{R}\subseteq\mathcal{X}×\mathcal{Y}$ 上的一个 Sigma 协议。我们假设 $(P,V)$ 是特殊 HVZK 的，其挑战空间形如 $\mathcal{C}=\{0,1\}^n$。以上假设使得我们可以应用 \ref{subsec:19-7-2} 小节中介绍的 OR 证明构造。在安全分析中，我们还需要假设 $(P,V)$ 具备知识健全性。
+
+正如我们在 \ref{sec:19-6} 节中所介绍的，为了使用 $(P,V)$ 构建一个身份识别协议，我们还需要一个关系 $\mathcal{R}$ 上的单向密钥生成算法 $G$。识别方案 $\mathcal{I}:=(G,P,V)$ 对\emph{窃听}是安全的。然而不需要太多努力，也不需要做任何额外的假设，我们就可以建立一个能够抵抗\emph{主动}攻击的身份识别协议（如 \ref{sec:18-6} 节的定义）。
+
+首先，我们通过对 $(P_0,V_0):=(P,V)$ 和 $(P_1,V_1):=(P,V)$ 应用 OR 证明构造建立一个新的 Sigma 协议 $(P',V')$。令 $\mathcal{R}':=\mathcal{R}_{\rm OR}$ 为对应于该 OR 构造的关系：$\mathcal{R}'$ 上的陈述形如 $Y=(y_0,y_1)\in\mathcal{Y}^2$，而 $Y$ 的见证形如 $X=(b,x)\in\{0,1\}\times\mathcal{X}$，其中 $(x,y_b)\in\mathcal{R}$。对于一个见证$X = (b,x)$，我们称 $b$ 这一比特为其\textbf{类型 (type)}。
+
+其次，我们为关系 $\mathcal{R}'$ 构造一个新的密钥生成算法 $G'$，它按以下方式运行：
+
+\vspace{8pt}
+
+\hspace*{40pt} $(y_0,(x_0,y_0))\overset{\rm R}\leftarrow G()$，
+               $(y_1,(x_1,y_1))\overset{\rm R}\leftarrow G()$\\
+\hspace*{62pt} $b\overset{\rm R}\leftarrow\{0,1\}$\\
+\hspace*{62pt} $Y\leftarrow(y_0,y_1)$\\
+\hspace*{62pt} $X\leftarrow(b,x_b)$\\
+\hspace*{62pt} 输出 $(Y,(X,Y))$
+
+\vspace{8pt}
+
+\noindent
+$G'$ 的一个关键属性是，作为随机变量，$Y$ 和 $b$ 是相互独立的。也就是说，当我们获取陈述 $Y$ 时，我们无法推断 $X$ 是 $(0,x_0)$ 还是 $(1,x_1)$。
+
+我们下面证明识别协议 $\mathcal{I}':=(G',P',V')$ 对于主动攻击是安全的。
+
+\begin{theorem}\label{theo:19-22}
+令 $(P,V)$ 是有效关系 $\mathcal{R}$ 上的 Sigma 协议，有形如 $\{0,1\}^n$ 的大挑战空间。假设 $(P,V)$ 是特殊 HVZK 的，且能提供知识健全性。进一步地，假设 $\mathcal{R}$ 上的密钥生成算法 $G$ 是单向的。那么上面定义的识别方案 $\mathcal{I}':=(G',P',V')$ 对主动攻击是安全的。
+\begin{quote}
+特别地，假设 $\mathcal{A}$ 是一个冒充对手，它使用攻击游戏 18.3 中的主动攻击方式来攻击 $\mathcal{I}'$，其优势为 $\epsilon:={\rm ID3\mathsf{adv}}[\mathcal{A},\mathcal{I}']$。那么必然存在一个有效对手 $\mathcal{B}$，其运行时间大约是 $\mathcal{A}$ 的两倍，使得：
+\end{quote}
+$$
+{\rm OW\mathsf{adv}}[\mathcal{B},G]\geq\frac{1}{2}\left(\epsilon^2-\frac{\epsilon}{N}\right)
+$$
+\begin{quote}
+其中 $N:=2^n$。
+\end{quote}
+\end{theorem}
+
+\begin{proof}
+我们首先回顾一下针对 $(P',V')$ 的主动冒充攻击是怎么进行的。它包含三个阶段。
+
+\emph{密钥生成阶段。}挑战者运行密钥生成算法 $G'$，获得一个公钥 $pk'=Y$ 和一个私钥 $sk'=(X,Y)$，并将 $pk'$ 发送给对手 $\mathcal{A}$。
+
+\emph{主动探测阶段。}对手 $\mathcal{A}$ 与验证者 $P'(sk')$ 交互。这里挑战者扮演证明者的角色，而对手 $\mathcal{A}$ 扮演可能作弊的验证者的角色。对手可能与多个证明者实例同时交互。
+
+\emph{冒充尝试。}与直接攻击一样，对手现在与验证者 $V'(pk')$ 进行交互，试图使其输出 $\mathsf{accept}$。这里挑战者扮演验证者的角色，而对手 $\mathcal{A}$ 则扮演可能作弊的证明者。在该阶段，对手会提供一个承诺，挑战者将用一个随机的挑战来应答。如果对手对随机挑战的应答能够产生一个接受对话，它就赢得了游戏。
+
+所以，令 $\epsilon$ 为 $\mathcal{A}$ 赢得该游戏的概率。
+
+现在，我们描述我们想要构造的对手 $\mathcal{B}$，他被设计用来打破 $G$ 的单向性假设。首先，$\mathcal{B}$ 的挑战者计算 $(y^*,(x^*,y^*))\overset{\rm R}\leftarrow G()$，并将 $y^*$ 发送给 $\mathcal{B}$。$\mathcal{B}$ 的目标是计算一个 $y^*$ 的见证。
+
+对手 $\mathcal{B}$ 首先扮演 $\mathcal{A}$ 的挑战者，在所有三个阶段中运行一次 $\mathcal{A}$。在密钥生成阶段，$\mathcal{B}$ 计算 $(pk',sk')=(Y,(X,Y))$，方法如下：
+
+\vspace{8pt}
+
+\hspace*{40pt} $b\overset{R}\leftarrow\{0,1\}$\\
+\hspace*{62pt} $(y,(x,y))\overset{\rm R}\leftarrow G()$\\
+\hspace*{62pt} 如果 $b=0$\\
+\hspace*{82pt} 则 $Y\leftarrow(y,y^*)$\\
+\hspace*{82pt} 否则 $Y\leftarrow(y^*,y)$\\
+\hspace*{62pt} $X\leftarrow(b,x)$
+
+\vspace{8pt}
+
+\noindent
+注意 $(pk',sk')$ 的分布正好与 $G'$ 的输出分布相同。
+
+在运行所有三个阶段后，$\mathcal{B}$ 将 $\mathcal{A}$ 回溯到第三阶段中挑战者（作为验证者）向 $\mathcal{A}$ 发送随机挑战的那一时刻，并向 $\mathcal{A}$ 发送一个新的随机挑战。如果这样做能够构造出两个不同挑战的接受对话，那么根据知识健全性，$\mathcal{B}$ 必然可以为陈述 $Y$ 提取一个见证 $\widehat X=(\hat b,\hat x)$。此外，如果 $\hat b\neq b$，那么 $\hat x$ 就是 $y^*$ 的一个见证。
+
+因此，剩下的工作就是分析 $\mathcal{B}$ 的成功概率了。现在，如果 $\mathcal{B}$ 从 $\mathcal{A}$ 中提取了一个见证 $\widehat X$，并且 $\widehat X$ 和 $X$ 的类型不同，那么 $\mathcal{B}$ 就成功了。根据回溯引理（引理 \ref{theo:19-2}），我们知道 $\mathcal{B}$ 从 $\mathcal{A}$ 中提取某个见证 $\widehat X$ 的最小概率为 $\epsilon^2-{\epsilon}/{N}$。此外，我们知道 $Y$ 本身没有向 $\mathcal{A}$ 透露任何关于 $X$ 的类型的信息，而见证独立性在本质上说，主动探测阶段没有向 $\mathcal{A}$ 透露更多关于 $X$ 的类型的信息。因此，对于 $\mathcal{B}$ 所提取的任何\emph{特定}见证，其类型与 $X$ 匹配的概率恰好是 ${1}/{2}$，这意味着 $\mathcal{B}$ 的总体成功概率最小是 $1/2\times(\epsilon^2-\epsilon/N)$，恰如要求。
+
+如果我们愿意，我们也可以直接使用见证独立性的定义（以式 \ref{eq:19-25} 的形式），使上述关于 $\mathcal{B}$ 的成功概率的论证更严格一些。为此，我们用 $\mathsf{X}$，$\mathsf{\widehat X}$，$\mathsf{Y}$ 表示随机变量，用 $X$，$\widehat X$，$Y$ 来表示这些随机变量的特定取值。如果 $\mathcal{B}$ 未能提取到一个见证，我们就定义 $\mathsf{\widehat X}:=\;\perp$。记 $\sigma$ 为 $\mathcal{B}$ 的成功概率，那么我们有：
+$$
+\sigma=\Pr[(\mathsf{\widehat X},\mathsf{Y})\in\mathcal{R}'\;\land\;{\rm type}(\mathsf{X})\neq{\rm type}(\mathsf{\widehat X})] 
+$$
+使用全概率公式，我们可以对所有 $(\widehat X,Y)\in\mathcal{R}'$ 求和：
+$$
+\begin{aligned}
+\sigma
+&=\sum_{(\widehat X,Y)\in\mathcal{R}'}\Pr[{\rm type}(\mathsf{X})\neq{\rm type}(\mathsf{\widehat X})\land\mathsf{\widehat X}=\widehat X\land\mathsf{Y}=Y]\\
+&=\sum_{(\widehat X,Y)\in\mathcal{R}'}\Pr[{\rm type}(\mathsf{X})\neq{\rm type}(\mathsf{\widehat X})\;|\;\mathsf{\widehat X}=\widehat X\land\mathsf{Y}=Y]\cdot\Pr[\mathsf{\widehat X}=\widehat X\land\mathsf{Y}=Y]\\
+&=\sum_{(\widehat X,Y)\in\mathcal{R}'}\Pr[{\rm type}(\mathsf{X})\neq{\rm type}(\mathsf{\widehat X})\;|\;\mathsf{Y}=Y]\cdot\Pr[\mathsf{\widehat X}=\widehat X\land\mathsf{Y}=Y]\text{ \emph{（见证独立性）}}\\
+&=\frac{1}{2}\sum_{(\widehat X,Y)\in\mathcal{R}'}\Pr[\mathsf{\widehat X}=\widehat X\land\mathsf{Y}=Y]\text{ \emph{（}\,}\mathsf{Y}\text{\emph{ 与 }}{\rm type}(\mathsf{X})\text{ \emph{相互独立）}}\\
+&=\frac{1}{2}\Pr[(\mathsf{\widehat X},\mathsf{Y})\in\mathcal{R}']\geq \frac{1}{2}\left(\epsilon^2-\frac{\epsilon}{N}\right)
+\end{aligned}
+$$
+\end{proof}
+
+\begin{snote}[具体的实例化.]
+	上述构造立即就为我们提供了两个具体的识别协议，它们对于主动攻击都是安全的。一个来自 Schnorr 协议，其安全性基于离散对数假设；另一个来自 GQ 协议，其安全性基于 RSA 假设。这两个主动安全协议的成本（在计算和带宽方面）大约是其抗窃听的对应协议的两倍。
+\end{snote}
+
+\subsection{Okamoto 身份识别协议}
+
+我们刚刚看到了如何建立一个身份识别协议，其对主动攻击的安全性是基于离散对数假设的。现在，我们介绍一种更高效的方法，这种方法基于 Okamoto 协议。
+
+首先让我们回顾一下 \ref{subsec:19-5-1} 小节介绍的 Okamoto 协议 $(P,V)$。除了由 $g\in\mathbb{G}$ 生成的 $q$ 阶循环群 $\mathbb{G}$，这个协议还利用了第二个群元素 $h\in\mathbb{G}$，我们将其看作是一个系统参数。该协议最自然的密钥生成算法 $G$ 是计算 $\alpha,\beta\overset{\rm R}\leftarrow\mathbb{Z}_q$，并输出 $pk=u$ 和 $sk=((\alpha,\beta),u)$，其中 $u:=g^\alpha h^\beta\in\mathbb{G}$。这就给我们提供了一个新的身份识别协议 $\mathcal{I}_{\rm O}=(G,P,V)$，我们称之为 \textbf{Okamoto 身份识别协议}。利用见证独立性的概念，我们不难证明 $\mathcal{I}_{\rm O}$ 对主动攻击是安全的。
+
+\begin{theorem}\label{theo:19-23}
+令 $\mathcal{I}_{\rm O}=(G,P,V)$ 是一个 Okamoto 身份识别协议。假设其挑战空间很大，同时假设系统参数 $h$ 是从 $\mathbb{G}$ 中均匀随机选取的。那么，只要$\mathbb{G}$上的离散对数假设成立，$\mathcal{I}_{\rm O}$ 对主动攻击就是安全的。
+\begin{quote}
+特别地，假设 $\mathcal{A}$ 是一个冒充攻击对手，他通过攻击游戏 18.3 中的主动攻击来攻击 $\mathcal{I}_{\rm O}$，其优势为 $\epsilon:={\rm ID3\mathsf{adv}}[\mathcal{A},\mathcal{I}_{\rm O}]$。那么必然存在一个有效对手 $\mathcal{B}$，其运行时间大约是 $\mathcal{A}$ 的两倍，满足：
+$$
+{\rm DL\mathsf{adv}}[\mathcal{B},\mathbb{G}]\geq\left(1-\frac{1}{q}\right)\left(\epsilon^2-\frac{\epsilon}{N}\right)
+$$
+其中 $N$ 是挑战空间的大小。
+\end{quote}
+\end{theorem}
+
+\begin{proof}
+定理 \ref{theo:19-23} 的证明与定理 \ref{theo:19-22} 的证明结构基本相同。
+
+假设 $\mathcal{A}$ 在攻击游戏 18.3 中攻击 $\mathcal{I}_{\rm O}$ 时的优势为 $\epsilon$。我们的离散对数对手 $\mathcal{B}$ 从他的挑战者处收到一个随机的群元素 $h\in\mathbb{G}$。$\mathcal{B}$ 的目标是利用 $\mathcal{A}$ 计算 $\mathsf{Dlog}_gh$。
+
+对手 $\mathcal{B}$ 首先会扮演 $\mathcal{A}$ 的挑战者的角色，在攻击游戏 18.3 中的所有三个阶段运行一次 $\mathcal{A}$。我们的对手 $\mathcal{B}$ 使用群元素 $h$ 作为 Okamoto 协议的系统参数，但在其他方面遵循攻击游戏 18.3 中挑战者的逻辑，没有其他修改。其运行流程如下：
+
+\vspace*{5pt}
+
+\emph{密钥生成阶段。}
+$\mathcal{B}$ 计算 $\alpha,\beta\overset{\rm R}\leftarrow\mathbb{Z}_q$，$u\leftarrow g^\alpha h^\beta$，并将公钥 $pk:=u$ 发送给 $\mathcal{A}$，自己保留私钥 $sk:=((\alpha,\beta),u)$。
+
+\vspace*{5pt}
+
+\emph{主动探测阶段。}
+$\mathcal{A}$ 与证明者 $P(sk)$ 的若干实例进行交互（可能是同时进行的）。这些证明者的角色由 $\mathcal{B}$ 来扮演。
+
+\vspace*{5pt}
+
+\emph{冒充尝试。}
+$\mathcal{A}$ 试图让验证者 $V(pk)$ 输出 $\mathsf{accept}$。验证者的角色由 $\mathcal{B}$ 扮演。
+
+\vspace*{5pt}
+
+在运行所有三个阶段后，$\mathcal{B}$ 将 $\mathcal{A}$ 回溯到第三阶段中验证者向 $\mathcal{A}$ 发送随机挑战的那一时刻，并向 $\mathcal{A}$ 发送一个新的随机挑战。如果这样做能够构造出两个不同挑战的接受对话，那么根据知识健全性，$\mathcal{B}$ 必然可以为陈述 $u$ 提取一个见证 $(\hat\alpha,\hat\beta)$。此外，如果 $(\alpha,\beta)\neq(\hat\alpha,\hat\beta)$，我们就拥有 $u$ 的两个不同的表示，这样 $\mathcal{B}$ 就能采用事实 10.3 中的方法计算 $\mathsf{Dlog}_gh$。
+
+如果我们的对手 $\mathcal{B}$ 能从 $\mathcal{A}$ 中提取一个与 $(\alpha,\beta)$ 不同的见证，那么它就成功了。根据回溯引理（引理 \ref{theo:19-2}），我们知道 $\mathcal{B}$ 从 $\mathcal{A}$ 中提取出\emph{某个}见证的最小概率为 $\epsilon^2-{\epsilon}/{N}$。此外，我们知道 $u$ 本身并没有揭示 $\mathcal{B}$ 使用的是 $u$ 的 $q$ 个可能见证中的哪一个，而见证独立性表明，主动探测阶段没有向 $\mathcal{A}$ 透露更多关于这个见证的信息。 因此，对于 $\mathcal{B}$ 从 $\mathcal{A}$ 那里提取的任何\emph{特定}见证，它恰好等于 $(\alpha,\beta)$ 的概率是 ${1}/{q}$。这意味着 $\mathcal{B}$ 的总体成功概率最小是 $(1-{1}/{q})\times(\epsilon^2-{\epsilon}/{N})$，恰如要求。
+\end{proof}

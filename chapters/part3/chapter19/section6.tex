@@ -1,0 +1,179 @@
+\section{基于Sigma协议的身份识别和签名}\label{sec:19-6}
+
+通过模仿 Schnorr 构造，我们很容易将任何 Sigma 协议转换成相应的识别方案和签名方案。
+
+假设我们有一个关系 $\mathcal{R}\subseteq\mathcal{X}×\mathcal{Y}$ 上的 Sigma 协议 $(P,V)$。除了算法 $P$ 和 $V$ 之外，我们还需要一个 $\mathcal{R}$ \textbf{上的密钥生成算法}。它是一个概率算法 $G$，生成一个公私钥对 $(pk,sk)$，其中 $pk=y$，$sk=(x,y)$，$(x,y)\in\mathcal{R}$。
+
+为了得到安全的识别和签名方案，我们需要以下的``单向性"特征：给定 $G$ 输出的公钥 $pk=y\in\mathcal{Y}$，应该很难计算出一个 $\hat x\in\mathcal{X}$ 满足 $(\hat x,y)\in\mathcal{R}$。我们用下面的攻击游戏来更加精准地描述这个概念。
+
+\begin{game}[单向密钥生成]\label{game:19-2}
+令 $G$ 是 $\mathcal{R}\subseteq\mathcal{X}×\mathcal{Y}$ 上的一个密钥生成算法。对于一个给定对手 $\mathcal{A}$，攻击游戏按如下方式运行：
+\begin{itemize}
+	\item 挑战者运行 $(pk,sk)\overset{\rm R}\leftarrow G()$，并将 $pk=y$ 发送给 $\mathcal{A}$；
+	\item $\mathcal{A}$ 输出 $\hat x\in\mathcal{X}$。
+\end{itemize}
+如果 $(\hat x,y)\in\mathcal{R}$，我们就称对手赢得了攻击游戏。我们将 $\mathcal{A}$ 相对于 $\mathbb{G}$ 的优势定义为 ${\rm OW\mathsf{adv}}[\mathcal{A},\mathbb{G}]$，其值为 $\mathcal{A}$ 赢得游戏的概率。
+\end{game}
+
+\begin{definition}
+如果对于所有有效对手 $\mathcal{A}$，${\rm OW\mathsf{adv}}[\mathcal{A},\mathbb{G}]$ 的值都是可忽略不计的，我们就称密钥生成算法 $G$ 是\textbf{单向的}。
+\end{definition}
+
+\begin{example}\label{exmp:19-4}
+对于例 \ref{exmp:19-1} 介绍的 Schnorr的Sigma 协议，最自然的密钥生成算法是计算 $\alpha\overset{\rm R}\leftarrow\mathbb{Z}_q$ 和 $u\leftarrow g^\alpha\in\mathbb{G}$，并输出 $pk:=u$ 和 $sk:=(\alpha,u)$。在离散对数假设下，这种密钥生成算法显然是单向的。
+\end{example}
+
+\begin{example}\label{exmp:19-5}
+考虑 \ref{subsec:19-5-5} 小节介绍的 GQ 协议，其中 RSA 公钥 $(n, e)$ 被视为一个系统参数。最自然的密钥生成算法是计算 $x\overset{\rm R}\leftarrow\mathbb{Z}_n^*$ 和 $y\leftarrow x^e\in\mathbb{Z}_n^*$，并输出 $pk:=y$ 和 $sk:=(x,y)$。在 RSA 假设下，这种密钥生成算法显然也是单向的（见定理10.5）。
+\end{example}
+
+一个含有密钥生成算法 $G$ 的 Sigma 协议 $(P,V)$ 能够提供一个身份识别方案 $(G,P,V)$。接下来的两个定理将证明它对窃听攻击是安全的。
+
+\begin{theorem}
+令 $(P,V)$ 是一个具有大挑战空间的有效关系 $\mathcal{R}$ 上的 Sigma 协议。令 $G$ 是$\mathcal{R}$ 的一个密钥生成算法。如果 $(P,V)$ 提供知识健全性，并且 $G$ 是单向的，那么身份识别方案 $\mathcal{I}:=(G,P,V)$ 对于直接攻击是安全的。
+
+\begin{quote}
+特别地，假设 $\mathcal{A}$ 是一个有效冒充对手，他通过攻击游戏 \ref{game:18-1} 中的直接攻击来攻击 $\mathcal{I}$，其优势为 $\epsilon:=\rm{ID1\mathsf{adv}}[\mathcal{A},\mathcal{I}]$。则必然存在一个有效对手 $\mathcal{B}$如攻击游戏 \ref{game:19-2} 那样攻击 $G$，其运行时间大约是 $\mathcal{A}$ 的两倍，其优势 $\epsilon':={\rm OW\mathsf{adv}}[\mathcal{A},\mathbb{G}]$，那么：
+\end{quote}
+\begin{equation}\label{eq:19-17}
+\epsilon'\geq \epsilon^2-\frac{\epsilon}{N}
+\end{equation}
+\begin{quote}
+其中 $N$ 是挑战空间的大小，这意味着：
+\end{quote}
+\begin{equation}\label{eq:19-18}
+\epsilon\leq\frac{1}{N}+\sqrt{\epsilon'}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+我们可以模仿定理 \ref{theo:19-1} 的证明。利用冒充对手 $\mathcal{A}$，我们可以使用下述方法建立一个打破 $G$ 的单向性的对手 $\mathcal{B}$。对手 $\mathcal{B}$ 从其挑战者那里得到一个公钥 $pk = y$，而我们的目标是让 $\mathcal{B}$ 在 $\mathcal{A}$ 的帮助下计算出一个满足 $(\hat x,y)\in\mathcal{R}$的$\hat x$。$\mathcal{B}$ 的行为可以分为两个阶段。
+
+在第一阶段，$\mathcal{B}$ 扮演 $\mathcal{A}$ 的挑战者的角色，给 $\mathcal{A}$ 提供值 $pk=y$ 作为验证公钥。使用与定理 \ref{theo:19-1} 的证明中相同的回溯方法，对手 $\mathcal{B}$ 可以以至少 $\epsilon^2-{\epsilon}/{N}$ 的概率获得 $y$ 的两个接受对话 $(t,c,z)$ 和 $(t,c',z')$，其中 $c\neq c'$。更具体地说，$\mathcal{B}$ 等待来自 $\mathcal{A}$ 的承诺 $t$，接着向 $\mathcal{A}$ 发送一个随机挑战 $c$，并等待 $\mathcal{A}$ 的应答 $z$。在此之后，$\mathcal{B}$ 将 $\mathcal{A}$ 的内部状态回溯到它产生 $t$ 的那一时刻，然后向 $\mathcal{A}$ 发送另一个随机挑战 $c'$，并等待 $\mathcal{A}$ 的应答 $z'$。根据回溯引理（引理\ref{theo:19-2}），这个过程将以至少 $\epsilon^2-{\epsilon}/{N}$ 的概率产生两个接受对话。
+
+在计算的第二阶段，$\mathcal{B}$ 将这两个接受对话送入见证提取器（由知识健全性保证存在），以为 $y$ 提取一个见证 $\hat x$。
+
+这样我们就证明了式 \ref{eq:19-17}，而式 \ref{eq:19-18}可以通过与定理 \ref{theo:19-1} 相同的方式得到。
+\end{proof}
+
+定理 \ref{theo:19-3} 显然适用于从特殊 HVZK 的 Sigma 协议衍生出来的身份识别协议：
+
+\begin{theorem}\label{theo:19-15}
+令 $(P,V)$ 是一个有效关系 $\mathcal{R}$ 上的 Sigma 协议。令 $G$ $\mathcal{R}$ 的一个密钥生成算法。如果一个身份识别协议 $\mathcal{I}=(G,P,V)$ 对于直接攻击是安全的，且$(P,V)$是特殊 HVZK 的，那么 $\mathcal{I}$ 对于窃听攻击也是安全的。
+\begin{quote}
+特别地，对于每一个通过攻击游戏 18.2 中的窃听攻击来攻击 $\mathcal{I}$ 的冒充对手 $\mathcal{A}$，必然存在一个通过攻击游戏 \ref{game:18-1} 中的直接攻击来攻击 $\mathcal{I}$ 的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是 $\mathcal{A}$ 的一个基本包装器，使得：
+\end{quote}
+$$
+{\rm ID2\mathsf{adv}}[\mathcal{A},\mathcal{I}]=
+{\rm ID1\mathsf{adv}}[\mathcal{B},\mathcal{I}]
+$$
+\end{theorem}
+
+\begin{example}\label{exmp:19-6}
+如果我们用例 \ref{exmp:19-5} 中的密钥生成算法 $G$ 来增强 GQ 协议 $(P,V)$，我们就能够得到识别方案 $\mathcal{I}_{\rm GQ}=(G,P,V)$，只要挑战空间足够大，该识别方案在 RSA 假设下对窃听攻击就是安全的。
+\end{example}
+
+\subsection{用于签名的 Fiat-Shamir 启发式算法}\label{subsec:19-6-1}
+
+使用 \ref{sec:19-2} 节中介绍的技术，我们就可以将 Sigma 协议转换为签名方案。这个普适的技术最早由 Fiat 和 Shamir 提出，它包含如下几个部分：
+\begin{itemize}
+	\item 一个关系 $\mathcal{R}\subseteq\mathcal{X}×\mathcal{Y}$ 上的 Sigma 协议 $(P,V)$。我们假设对话形如 $(t,c,z)$，其中 $t\in\mathcal{T}$，$c\in\mathcal{C}$，$z\in\mathcal{Z}$；
+	\item 一个关系 $\mathcal{R}$ 的密钥生成算法 $G$；
+	\item 一个哈希函数 $H:\mathcal{M}\times\mathcal{T}\to\mathcal{C}$，它被建模为一个随机预言机。集合 $\mathcal{M}$ 也同样是签名方案的消息空间。
+\end{itemize}
+
+由 $G$ 和 $(P, V)$ 派生出的\textbf{Fiat-Shamir 签名方案}的工作原理如下：
+\begin{itemize}
+	\item 密钥生成算法为 $G$，所以公钥形如 $pk=y$, 其中$y\in\mathcal{Y}$，私钥形如 $sk=(x,y)\in\mathcal{R}$。
+	\item 使用私钥 $sk = (x, y)$ 对消息 $m\in\mathcal{M}$ 进行签名，签名算法运行如下：
+	\begin{itemize}
+		\item 运行验证者 $P(x,y)$ 并获得一个承诺 $t\in\mathcal{T}$；
+		\item 计算挑战 $c\leftarrow H(m,t)$；
+		\item 最后，将 $c$ 发送给证明者并得到一个应答 $z$，然后输出签名 $\sigma:=(t,z)\in\mathcal{T}\times\mathcal{Z}$。
+	\end{itemize}
+	\item 为了使用公钥 $pk=y$ 验证对消息 $m\in\mathcal{M}$ 的签名 $\sigma=(t,z)\in\mathcal{T}\times\mathcal{Z}$，验证算法计算 $c\leftarrow H(m,t)$，并检查 $(t,c,z)$ 是否是 $y$ 的接受对话。
+\end{itemize}
+
+正如我们对 Schnorr 协议所做的那样，我们下面会证明如果对应的识别方案 $(G,P,V)$ 对窃听攻击是安全的，那么 Fiat-Shamir 签名方案在随机预言机模型下是安全的。然而，我们还需要一个技术上的假设，基本上所有我们感兴趣的 Sigma 协议都满足这个假设。
+
+\begin{definition}[不可预测承诺]\label{def:19-7}
+令 $(P,V)$ 是关系 $\mathcal{R}\subseteq\mathcal{X}×\mathcal{Y}$ 上的 Sigma 协议，并假定所有对话 $(t,c,z)$ 都位于 $\mathcal{T}\times\mathcal{C}\times\mathcal{Z}$ 中。如果对于任意 $(x,y)$ 和 $\hat t\in\mathcal{T}$，$P(x,y)$ 和 $V(y)$ 之间的交互会以最多 $\delta$ 的概率产生一个对话 $(t,c,z)$ 满足 $t=\hat t$，则称 $(P,V)$ 有 \textbf{$\delta$-不可预测承诺 ($\delta$-unpredictable commitments)}。如果 $(P,V)$ 有 $\delta$-不可预测承诺，且 $\delta$ 的值不可忽略不计，我们就称 $(P,V)$ 有不可预测承诺。
+\end{definition}
+
+\begin{theorem}\label{theo:19-16}
+如果 $H$ 被建模为一个随机预言机，身份识别方案 $\mathcal{I}=(G,P,V)$ 对窃听攻击是安全的，并且 $(P,V)$ 有不可预测承诺，那么从 $G$ 和 $(P, V)$ 派生出的 Fiat-Shamir 签名方案 $\mathcal{S}$ 是安全的。
+\begin{quote}
+	特别地，令 $\mathcal{A}$ 是一个像在攻击游戏 13.1 的随机预言机版本中一样的攻击 $\mathcal{S}$ 的对手。此外，假设 $\mathcal{A}$ 最多可以发起 $Q_{\rm s}$ 次签名查询和 $Q_{\rm ro}$ 次随机预言机查询，并且 $(P, V)$ 有 $\delta$-不可预测承诺。那么必然存在一个 $(Q_{\rm ro}+1)$ 次重复冒充攻击对手 $\mathcal{B}$，它能够通过攻击游戏 \ref{game:19-1} 中的窃听攻击来攻击 $\mathcal{I}$，其中 $\mathcal{B}$ 是 $\mathcal{A}$ 的一个基本包装器，使得：
+\end{quote}
+$$
+{\rm SIG^{ro}\mathsf{adv}}[\mathcal{A},\mathcal{S}]\leq Q_{\rm s}(Q_{\rm s}+Q_{\rm ro}+1)\delta+{\rm rID2\mathsf{adv}}[\mathcal{B},\mathcal{I},Q_{\rm ro}+1]
+$$
+\end{theorem}
+
+这个定理的证明与定理 \ref{theo:19-7} 的证明几乎相同，读者可以尝试自己证明该定理。
+
+把以上结论结合起来，假设我们从一个 Sigma 协议 $(P, V)$ 开始，该协议是特殊 HVZK 的，并且它能提供知识健全性。此外，假设 $(P, V)$ 有不可预测承诺和一个大的挑战空间。那么，如果我们把 $(P, V)$ 和一个单向密钥生成算法 $G$ 结合起来，就可以利用 Fiat-Shamir 签名构造法基于一个随机预言机 $H$ 构建一个安全的签名方案。事实上，Schnorr 签名方案就是这个结构的一个特例。
+
+就像我们对 Schnorr 签名所做的那样，我们也可以使用引理 \ref{theo:19-6} 将问题从 $r$ 次重复冒充规约到 $1$ 次冒充。但是更严格的规约也是有可能的，事实上引理 \ref{theo:19-8} 的证明在这里也是成立的，基本上不需要更改太多内容：
+
+\begin{lemma}\label{theo:19-17}
+令 $(P,V)$ 是一个关系 $\mathcal{R}\subseteq\mathcal{X}×\mathcal{Y}$ 上的特殊 HVZK 的 Sigma 协议，$G$ 是 $\mathcal{R}$ 上的一个密钥生成算法，考虑由此产生的身份识别协议 $\mathcal{I}=(G,P,V)$。假设 $\mathcal{A}$ 是一个如攻击游戏 \ref{game:19-1} 中那样的针对 $\mathcal{I}$ 的有效的 $r$ 次重复冒充窃听攻击对手，其优势为 $\epsilon:={\rm rID2\mathsf{adv}}[\mathcal{A},\mathcal{I},r]$。那么必然存在一个如攻击游戏 19.2 中那样的针对 $G$ 的有效对手 $\mathcal{B}$，其运行时间大约是 $\mathcal{A}$ 的两倍，其优势为 $\epsilon:={\rm OW\mathsf{adv}}[\mathcal{B},G]$，使得：
+\begin{equation}
+\epsilon'\geq\frac{\epsilon^2}{r}-\frac{\epsilon}{N}
+\end{equation}
+其中 $N$ 是挑战空间的大小，这意味着：
+\begin{equation}\label{eq:19-20}
+\epsilon\leq\frac{r}{N}+\sqrt{r\epsilon'}
+\end{equation}
+\end{lemma}
+
+利用这一点，在 $(P, V )$ 是特殊 HVZK 的情况下，我们可以进一步确定定理 \ref{theo:19-16} 中给出的安全上界：
+
+\begin{quote}
+\emph{假设 $\mathcal{A}$ 是一个如攻击游戏 13.1 的随机预言机版本那样攻击 $\mathcal{S}$ 的有效对手。此外，假设 $\mathcal{A}$ 最多发起 $Q_{\rm s}$ 次签名查询和 $Q_{\rm ro}$ 次随机预言机查询。那么必然存在一个如攻击游戏 \ref{game:19-2} 中那样的针对 $G$ 的有效对手 $\mathcal{B}$，其运行时间大约是 $\mathcal{A}$ 的两倍，使得：}
+\end{quote}
+\begin{equation}
+{\rm SIG^{ro}\mathsf{adv}}[\mathcal{A},\mathcal{S}]\leq Q_{\rm s}(Q_{\rm s}+Q_{\rm ro}+1)\delta+\frac{Q_{\rm ro}+1}{N}+\sqrt{(Q_{\rm ro}+1)\cdot{\rm OW\mathsf{adv}}[\mathcal{B},G]}
+\end{equation}
+\begin{quote}
+\emph{其中 $N$ 是挑战空间的大小。}
+\end{quote}
+
+\subsubsection{GQ 签名方案}
+
+将上面介绍的 Fiat-Shamir 签名构造应用于 GQ 协议（见 \ref{subsec:19-5-5} 小节），我们就可以构造出一个基于 RSA 的新签名方案。该方案利用 RSA 公钥 $(n,e)$ 作为系统参数，其中的指数 $e$ 是一个大素数。如果有需要的话，该系统参数可以被许多用户共享。我们需要一个哈希函数 $H:\mathcal{M}\times\mathcal{T}\to\mathcal{C}$，其中 $\mathcal{T}$ 是由 $\mathbb{Z}_n^*$ 中的所有元素编码后组成的集合，$\mathcal{M}$ 是签名方案的消息空间，$\mathcal{C}$ 是 $\{0,\dots,e-1\}$ 的一个子集。GQ 签名方案 $\mathcal{S}_{\rm GQ}=(G,S,V)$ 的组成部分如下：
+\begin{itemize}
+	\item 密钥生成算法 $G$ 计算：
+	$$
+    x\overset{\rm R}\leftarrow\mathbb{Z}_n^*,~~
+    y\leftarrow x^e
+    $$
+	公钥为 $pk:=y$，私钥为 $sk:=x$。
+	\item 为了使用私钥 $sk=x$ 对消息 $m\in\mathcal{M}$ 签名，签名算法$S(sk,m)$计算：
+    $$
+    x_{\rm t}\overset{\rm R}\leftarrow \mathbb{Z}_n^*,~~
+    y_{\rm t}\leftarrow x_{\rm t}^e,~~
+    c\leftarrow H(m,y_{\rm t}),~~
+    x_{\rm z}\leftarrow x_{\rm t}\cdot x^c
+    $$
+    输出签名 $\sigma:=(y_{\rm t},x_{\rm z})$。
+	\item 为了使用公钥 $pk=y$ 验证对消息 $m\in\mathcal{M}$ 的签名  $\sigma=(y_{\rm t},x_{\rm z})$，签名验证算法 $V$ 计算 $c:=H(m,y_t)$，当$x_{\rm z}^e=y_{\rm t}\cdot y^c$时输出$\mathsf{accept}$，否则输出$\mathsf{reject}$。
+\end{itemize}    
+
+正如我们在例 \ref{exmp:19-6} 中看到的那样，在 RSA 假设下，只要挑战空间足够大，GQ 识别方案对窃听攻击就是安全的。另外，可以观察到 GQ 协议有 ${1}/{\phi(n)}$-不可预测承诺。由定理 \ref{theo:19-16} 可知，在 RSA 假设下，相应的签名方案在随机预言机模型下是安全的。
+
+GQ 签名相比 RSA 签名（如 $\mathcal{S}_{\rm RSA-FDH}$）的优势在于，它的签名算法要快得多。使用 $\mathcal{S}_{\rm RSA-FDH}$ 签名需要进行一个大指数运算，而 GQ 签名虽然需要进行 $e$ 和 $c$ 这两个指数运算，但这两个指数都只有 $128$ 位。当签名者是一个计算力孱弱的设备时，快速签名的能力是很重要的，比如使用芯片的信用卡在每笔交易中签名的场景。
+
+\begin{snote}[一个优化.]
+GQ 签名方案可以用和 Schnorr 签名方案相同的方式进行优化。在之前，我们定义的对消息 $m$ 的签名是一个数对  $(y_{\rm t},x_{\rm z})$，它满足：
+$$
+x_{\rm z}^e=y_{\rm t}\cdot y^c
+$$
+其中 $c:=H(m,y_{\rm t})$。为了进一步优化该签名方案，我们可以将签名定义为数对 $(c,x_{\rm z})$，它满足：
+$$
+c=H(m,y_{\rm t})
+$$
+其中 $y_{\rm t}:={x_{\rm z}^e}/{y^c}$。此外，我们可以在公钥中存储 $y^{-1}$ 而不是 $y$，这能够进一步将加快验证速度。
+
+事实证明，这种优化也可以应用于Fiat-Shamir签名构造的大多数实例，参见练习 19.17。
+\end{snote}

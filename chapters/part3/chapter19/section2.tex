@@ -1,0 +1,237 @@
+\section{从身份识别协议到签名}\label{sec:19-2}
+
+在本节中，我们将展示如何将 Schnorr 协议转换为一个签名方案。在离散对数假设下，该签名方案在随机预言机模型下是安全的。在本章的稍后部分，我们将看到这个构造实际上是一个更一般的结构的一个具体实例。
+
+我们从 Schnorr 识别协议 $\mathcal{I}_{\rm sch}$ 开始，它定义在阶为素数 $q$ 的循环群 $\mathbb{G}$ 上，该群有生成元 $g\in\mathbb{G}$。此外，其挑战空间 $\mathcal{C}\subseteq\mathbb{Z}_q$。除此之外，我们还需要一个哈希函数 $H:\mathcal{M}\times\mathbb{G}\to\mathcal{C}$，该函数在安全证明中被建模为一个随机预言机。这里的 $\mathcal{M}$ 将会是签名方案的消息空间。
+
+签名方案的构造思想是，对于消息 $m\in\mathcal{M}$ 的签名是一个元组 $(u_{\rm t},\alpha_{\rm z})$，其中 $(u_{\rm t},c,\alpha_{\rm z})$ 是在 Schnorr 识别协议 $\mathcal{I}_{\rm sch}$ 中对验证密钥 $u$ 的接受对话，挑战则来自 $c\leftarrow H(m,u_{\rm t})$。直观地讲，哈希函数 $H$ 在这里扮演 Schnorr 身份识别协议中验证者的角色。
+
+具体地，Schnorr 签名方案为 $\mathcal{S}_{\rm sch}=(G,S,V)$，其中：
+\begin{itemize}
+	\item 密钥生成算法 $G$ 按如下方式运行：
+	    $$\alpha\overset{\rm R}\leftarrow\mathbb{Z}_q, ~~u\leftarrow g^\alpha$$
+	    其中公钥为 $pk:=u$，私钥为 $sk:=\alpha$。
+	\item 为了使用私钥 $sk=\alpha$ 对消息 $m\in\mathcal{M}$ 进行签名，签名算法 $S$ 按如下方式运行：
+		$$\alpha_{\rm t}\overset{\rm R}\leftarrow\mathbb{Z}_q,~~
+			u_{\rm t}\leftarrow g^{\alpha_{\rm t}},~~
+			c\leftarrow H(m,u_{\rm t}),~~
+			\alpha_{\rm z}\leftarrow\alpha_{\rm t}+\alpha c$$
+		输出签名 $\sigma:=(u_{\rm t},\alpha_{\rm z})$。
+	\item 为了使用公钥 $pk=u$ 验证消息 $m\in\mathcal{M}$ 的签名 $\sigma=(u_{\rm t},\alpha_{\rm z})$，签名验证算法 $V$ 计算 $c\leftarrow H(m,u_{\rm t})$，当 $g^{\alpha_{\rm z}}=u_{\rm t}\cdot u^c$ 成立时输出 $\mathsf{accept}$，否则输出 $\mathsf{reject}$。
+\end{itemize}
+
+尽管我们把签名算法描述为一种随机化算法，但这并不是必须的。练习 13.6 展示了如何对签名算法进行去随机化。这种去随机化在实践中很重要，因为它可以避免不良随机性攻击，就像练习 19.1 所展示的那样。
+
+我们下面将要说明，如果把 $H$ 建模为一个随机预言机，那么如果 Schnorr 识别协议对窃听攻击是安全的，那么 Schnorr 签名方案也一定是安全的。而我们已经在定理 \ref{theo:19-5} 中证明了前者。然而，首先考虑窃听攻击游戏的一个稍微增强的版本是有好处的。
+
+\subsection{一个有用的抽象：重复冒充攻击}
+
+我们考虑一种增强版本的针对识别协议的冒充攻击，在这种攻击中，我们允许对手反复进行冒充尝试，这些冒充尝试针对的是验证者的不同实例，它们同时运行，并使用相同的验证公钥。我们可以为直接攻击、窃听攻击和主动攻击定义这个概念，但我们目前先考虑窃听攻击，因为这就是我们的应用所需要的。另外，我们只考虑无状态和有验证公钥的识别协议。
+
+下面是攻击游戏的更多细节。
+
+\begin{game}[$r$ 次重复冒充窃听攻击]\label{game:19-1}
+给定识别协议 $\mathcal{I}=(G,P,V)$，正整数 $r$ 和对手 $\mathcal{A}$，攻击游戏按以下流程运行。其密钥生成阶段和窃听阶段与攻击游戏 18.2 完全相同。
+
+唯一不同的是冒充阶段。现在，我们允许对手 $\mathcal{A}$ 与最多 $r$ 个验证者同时互动。挑战者扮演这些验证者的角色，他们都使用在密钥生成阶段产生的相同的验证公钥。如果对手使这些验证者中的任何一个输出 $\mathsf{accept}$，我们就称他赢得了该游戏。
+
+我们将 $\mathcal{A}$ 对于 $\mathcal{I}$ 和 $r$ 的优势记为 ${\rm rID2\mathsf{adv}}[\mathcal{A},\mathcal{I},r]$，其值等于 $\mathcal{A}$ 赢得该游戏的概率。
+\end{game}
+
+下面的引理将表明，$r$ 次重复冒充窃听攻击等价于普通的窃听攻击。也就是说，赢得攻击游戏 \ref{game:19-1} 并不会比赢得攻击游戏 18.2 更容易。
+
+\begin{lemma}\label{theo:19-6}
+令 $\mathcal{I}$ 是一个身份识别协议。对于每个 $r$ 次重复冒充窃听攻击对手 $\mathcal{A}$，都存在一个标准窃听对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是 $\mathcal{A}$ 的一个基本包装器，满足：
+
+\begin{equation}
+{\rm rID2\mathsf{adv}}[\mathcal{A},\mathcal{I},r]\leq r\cdot{\rm ID2\mathsf{adv}}[\mathcal{B}, \mathcal{I}]
+\end{equation}
+
+\end{lemma}
+
+\begin{proof}[证明简述]
+这是一个简单的“猜测论证”。对手 $\mathcal{B}$ 随机选择 $\omega\in\{1,\dots,r\}$，然后扮演 $\mathcal{A}$ 的挑战者。它首先从自己的挑战者那里获得验证公钥和几条对话记录，并将这些传递给 $\mathcal{A}$。在冒充阶段，对于验证者的第 $j$ 个实例，如果 $j\neq\omega$，对手 $\mathcal{B}$ 自己扮演验证者；否则，如果 $j=\omega$，对手 $\mathcal{B}$ 就作为 $\mathcal{A}$ 和攻击游戏 18.2 中他自己的挑战者之间的简单管道。显然，$\mathcal{A}$ 在与 $\mathcal{B}$ 游戏时让其中一个验证者输出 $\mathsf{accept}$ 的概率与攻击游戏 \ref{game:19-1} 中相同。此外，如果 $\mathcal{B}$ 猜到了其中一个输出 $\mathsf{accept}$ 的验证者的索引，他就赢得了攻击游戏，这发生的概率至少是 ${1}/{r}$。
+\end{proof}
+
+\subsection{Schnorr 签名的安全性分析}
+
+我们下面将表明，只要 Schnorr 身份识别协议对窃听攻击是安全的，Schnorr 签名方案在随机预言机模型下就是安全的。
+
+\begin{theorem}\label{theo:19-7}
+如果 $H$ 是一个随机预言机，且 Schnorr 身份识别协议对窃听攻击是安全的，那么 Schnorr 签名方案也是安全的。
+
+\begin{quote}
+特别地，令 $\mathcal{A}$ 是如攻击游戏 13.1 的随机预言机模型那样攻击  $\mathcal{S}_{\rm sch}$ 的一个对手，假设 $\mathcal{A}$ 最多发起 $Q_{\rm s}$ 次签名查询和 $Q_{\rm ro}$ 次随机预言机查询。那么必然存在一个 $(Q_{\rm ro}+1)$ 次重复冒充攻击对手 $\mathcal{B}$ 能够通过攻击游戏 \ref{game:19-1} 中的窃听攻击来攻击  $\mathcal{I}_{\rm sch}$，且 $\mathcal{B}$ 是一个 $\mathcal{A}$ 的基本包装器，并有：
+\end{quote}
+\begin{equation}\label{eq:19-5}
+{\rm SIG^{ro}\mathsf{adv}}[\mathcal{A}, \mathcal{S}_{\rm sch}]\leq\frac{Q_{\rm s}(Q_{\rm s}+Q_{\rm ro}+1)}{q}+{\rm rID2\mathsf{adv}}[\mathcal{B},\mathcal{I}_{\rm sch},Q_{\rm ro}+1]
+\end{equation}
+\end{theorem}
+
+\begin{proof}[证明思路]
+我们的目标是将伪造签名的对手 $\mathcal{A}$ 转化为在 $r$ 次重复冒充窃听攻击中破坏 Schnorr 身份识别协议安全性的对手 $\mathcal{B}$，其中 $r:=Q_{\rm ro}+1$。
+
+第一个想法是，我们必须以某种方式在不使用私钥的情况下响应 $\mathcal{A}$ 的签名查询。想要实现这一点，可以通过利用窃听攻击中获取的对话记录来建立所需的签名，并``修正"随机预言机 $H$，使其与签名一致。只有当随机预言机在已经被查询过的位置重新被查询时，这种修复才会失败。但由于随机预言机的输入包括一个随机群元素，因此发生的概率极低。这也就是公式 \ref{eq:19-5} 中出现 ${Q_s(Q_s+Q_{\rm ro}+1)}/{q}$ 修正项的原因。
+
+一旦摆脱了签名查询，我们认为，如果对手成功地伪造了签名，他就可以有效地被用于对  $\mathcal{I}_{\rm sch}$ 的 $r$ 次重复冒充窃听攻击。我们再次利用了 $H$ 被建模为一个随机预言机的事实。由于签名伪造必须被包含在没有被作为签名查询而提交的信息中，因此相应的随机预言机查询必须与所有签名查询的位置相异。由于伪造签名与签名查询不能同时作为同一条消息提交，因此相应的随机预言机查询必须与所有签名查询的位置相异。所以，该位置上随机预言机的输出值在身份识别协议的运行中基本上可以视作一个随机挑战。我们事先并不知道哪一个随机预言机查询对应于一个伪造签名，这就是我们必须使用 $r$ 次重复冒充窃听攻击游戏的原因。
+\end{proof}
+
+\begin{proof}
+为了简化分析，我们将假设当 $\mathcal{A}$ 输出一个伪造签名 $(m,\sigma)$，$\sigma=(u_{\rm t},\alpha_{\rm z})$ 时，$\mathcal{A}$ 一定已经在 $(m,u_{\rm t})$ 这一点上显式地查询了随机预言机。如有必要，我们会修改 $\mathcal{A}$ 以确保这种情况，以使得修改后的 $\mathcal{A}$ 所进行的随机预言机查询次数最多为 $Q_{\rm ro}+1$。
+
+我们下面将定义两个攻击游戏。游戏 0 基本上就是原始的签名攻击游戏，其中 $H$ 被建模为一个随机预言机。游戏 1 是一个少量修改后的版本。对于 $j=0,1$，我们记 $W_j$ 是 $\mathcal{A}$ 在游戏 $j$ 中获胜的事件。
+
+\noindent
+\textbf{游戏 0。}
+挑战者的工作方式与攻击游戏 13.1 的随机预言机版本相同。与往常一样，我们用一个关联数组 $Map:\mathcal{M}\times\mathbb{G}\to\mathcal{C}$ 来实现随机预言机。我们还维护一个关联数组 $Explicit:\mathcal{M}\times\mathbb{G}\to\mathbb{Z}$ 以记录那些随机预言机第一次被对手显式查询的位置，而不包含被签名算法隐式地查询的位置。挑战者的工作逻辑如图 \ref{fig:19-3}。
+
+\begin{figure}
+  \hspace*{45pt} 初始化：\\
+  \hspace*{70pt} 令 $\alpha\overset{\rm R}\leftarrow\mathbb{Z}_q$，计算 $u\leftarrow g^\alpha$\\
+  \hspace*{70pt} 初始化两个空的关联数组 $Map:\mathcal{M}\times\mathbb{G}\to\mathcal{C}$ 和 $Explicit:\mathcal{M}\times\mathbb{G}\to\mathbb{Z}$\\
+  \hspace*{70pt} 将公钥 $u$ 发送给 $\mathcal{A}$；\\
+  \hspace*{45pt} 当收到第 $i$ 个签名查询 $m_i\in\mathcal{M}$ 时：\\
+  \hspace*{70pt} 令 $\alpha_{{\rm t}i}\overset{\rm R}\leftarrow\mathbb{Z}_q$，$c_i\overset{\rm R}\leftarrow\mathcal{C}$，计算 $u_{{\rm t}i}\leftarrow g^{\alpha_{{\rm t}i}}$\\
+  \hspace*{30pt} (1)
+  \hspace*{43pt} 如果 $(m_i,u_{{\rm t}i})\in{\rm Domain}(Map)$，则令 $c_i\leftarrow Map[m_i,u_{{\rm t}i}]$\\
+  \hspace*{70pt} 令 $Map[m_i,u_{{\rm t}i}]\leftarrow c_i$\\
+  \hspace*{70pt} 计算 $\alpha_{{\rm z}i}\leftarrow\alpha_{{\rm t}i}+\alpha c_i$\\
+  \hspace*{70pt} 将 $(u_{{\rm t}i},\alpha_{{\rm z}i})$ 发送给 $\mathcal{A}$；\\
+  \hspace*{45pt} 当收到第 $j$ 个随机预言机查询 $(\hat m_j,\hat u_j)\in\mathcal{M}\times\mathbb{G}$ 时：\\
+  \hspace*{70pt} 如果 $(\widehat m_j,\widehat u_j)\notin{\rm Domain}(Map)$：\\
+  \hspace*{95pt} 令 $Map[\widehat m_j,\widehat u_j]\overset{\rm R}\leftarrow\mathcal{C}$，$Explicit[\widehat m_j,\widehat u_j]\leftarrow j$\\
+  \hspace*{70pt} 将 $Map[\hat m_j,\hat u_j]$ 发送给 $\mathcal{A}$；\\
+  \hspace*{45pt} 当收到一个伪造尝试 $(m,u_{\rm t},\alpha_{\rm z})$ 时：\\
+  \hspace*{70pt} // \emph{根据假设，有 $(m,u_{\rm t})\in{\rm Domain}(Explicit)$}\\
+  \hspace*{70pt} 如果 $g^{\alpha_{\rm z}}=u_{\rm t}\cdot u^c$，其中 $c=Map[m,u_{\rm t}]$：\\
+  \hspace*{95pt} 则输出 ``win"\\
+  \hspace*{95pt} 否则输出 ``lose"\\
+  \caption{游戏0的挑战者}
+  \label{fig:19-3}
+\end{figure}
+
+为了处理一个签名查询 $m_i$，挑战者像往常一样运行签名算法：他首先生成一个随机的 $\alpha_{{\rm t}i}\in\mathbb{Z}_q$ 并计算 $u_{{\rm t}i}\leftarrow g^{\alpha_{{\rm t}i}}$。然后它为 $Map[m_i,u_{{\rm t}i}]$ 的值生成一个随机``默认"值 $c_i\in\mathcal{C}$，如果通过行(1)的测试发现 $Map[m_i,u_{{\rm t}i}]$ 已经被定义，那么就使用那个先前定义的值，而不是默认值。
+
+为了处理一个随机预言机查询 $(\widehat m_j,\widehat u_j)$，如果 $Map[\widehat m_j,\widehat u_j]$ 的值尚未被之前的签名查询或随机预言机查询所定义，就在此时定义它，并设定 $Explicit[\widehat m_j,\widehat u_j]\leftarrow j$。
+
+假设对手提交一个伪造尝试 $(m,u_t,\alpha_{\rm z})$，且 $m$ 与作为签名查询提交的所有 $m_i$ 都不同，根据我们的简化假设，对手必须在之前曾将 $(m,u_{\rm t})$ 作为随机预言机查询提交，因此此时 $(m,u_{\rm t})$ 一定在 ${\rm Domain}(Explicit)$ 中。由此可见，如果 $(u_{\rm t},\alpha_{\rm z})$ 是一个有效签名，那么挑战者将输出 ``win"，因此:
+$$
+{\rm SIG^{ro}\mathsf{adv}}[\mathcal{A}, \mathcal{S}_{\rm sch}]\leq\Pr[W_0]
+$$
+
+\noindent
+\textbf{游戏 1。}
+游戏 1 与游戏 0 基本相同，只是删去了图 \ref{fig:19-3} 中行(1)的测试。直接应用差分引理，我们就可以得到：
+$$
+|\Pr[W_1]-\Pr[W_0]|\leq\frac{Q_{\rm s}(Q_{\rm s}+Q_{\rm ro}+1)}{q}
+$$
+事实上，对于第 $i$ 个签名查询，$u_{{\rm t}i}$ 在 $\mathbb{G}$ 上均匀分布，联合约束意味着随机预言机已经在 $(m,u_{{\rm t}i})$ 位置上被查询过的概率最多是 ${Q_s(Q_s+Q_{\rm ro}+1)}/{q}$，查询既可能是对手发出的，也可能是之前的签名查询间接导致的。联合约束还意味着对于任何签名来说，发生该情况的概率的总上界为 ${Q_s(Q_s+Q_{\rm ro}+1)}/{q}$。
+
+做出这一改变的意义在于，现在在游戏 1 中，一个新的随机挑战被用来处理每个签名查询，就像 Schnorr 身份识别协议中的诚实验证者一样。
+
+基于此，很容易构建一个对手 $\mathcal{B}$，它对挑战者进行 $r=Q_{\rm ro}+1$ 的 $r$ 次重复冒充窃听攻击游戏，并且自己在游戏 1 中扮演 $\mathcal{A}$ 的挑战者的角色，因而：
+$$
+\Pr[W_1] = {\rm rID2\mathsf{adv}}[\mathcal{B},\mathcal{I}_{\rm sch},r]
+$$
+$\mathcal{B}$ 的工作逻辑如图 \ref{fig:19-4} 所示。对于 $j=1,\dots,r$，我们用 $V_j$ 表示在 $r$ 次重复冒充窃听攻击游戏中的第 $j$ 个验证者。这样定理 \ref{theo:19-7} 得证。
+\end{proof}
+
+\begin{figure}
+  \hspace*{45pt} 初始化：\\
+  \hspace*{70pt} 从挑战者处收到验证公钥 $u$\\
+  \hspace*{70pt} 从挑战者处获取窃听对话 $(u_{{\rm t}i},c_i,\alpha_{{\rm z}i})$, $i=1,\dots,Q_s$\\
+  \hspace*{70pt} 初始化两个空的关联数组 $Map:\mathcal{M}\times\mathbb{G}\to\mathcal{C}$ 和 $Explicit:\mathcal{M}\times\mathbb{G}\to\mathbb{Z}$\\
+  \hspace*{70pt} 将 $u$ 发送给 $\mathcal{A}$；\\
+  \hspace*{45pt} 当从 $\mathcal{A}$ 处收到第 $i$ 个签名查询 $m_i\in\mathcal{M}$ 时：\\
+  \hspace*{70pt} 令 $Map[m_i,u_{{\rm t}i}]\leftarrow c_i$\\
+  \hspace*{70pt} 将 $(u_{{\rm t}i},\alpha_{{\rm z}i})$ 发送给对手 $\mathcal{A}$；\\
+  \hspace*{45pt} 当收到第 $j$ 个随机预言机查询 $(\widehat m_j,\widehat u_j)\in\mathcal{M}\times\mathbb{G}$ 时：\\
+  \hspace*{70pt} 如果 $(\widehat m_j,\widehat u_j)\notin{\rm Domain}(Map)$：\\
+  \hspace*{95pt} 发起对验证者 $V_j$ 的冒充尝试：\\
+  \hspace*{120pt} 将 $\widehat u_j$ 发送给 $V_j$，后者将回复一个挑战 $\widehat c_j$\\
+  \hspace*{95pt} 令 $Map[\widehat m_j,\widehat u_j]\leftarrow\widehat c_j$，$Explicit[\widehat m_j,\widehat u_j]\leftarrow j$\\
+  \hspace*{70pt} 将 $Map[\widehat m_j,\widehat u_j]$ 发送给 $\mathcal{A}$；\\
+  \hspace*{45pt} 当收到一个伪造尝试 $(m,u_{\rm t},\alpha_{\rm z})$ 时：\\
+  \hspace*{70pt} // \emph{根据假设，有 $(m,u_{\rm t})\in{\rm Domain}(Explicit)$}\\
+  \hspace*{70pt} 向 $V_j$ 发送最终消息 $\alpha_z$，其中 $j=Explicit[m,u_{\rm t}]$\\
+  \caption{对手$\mathcal{B}$}
+  \label{fig:19-4}
+\end{figure}
+
+\noindent
+\textbf{将已有的结论结合起来。}
+如果我们把定理 \ref{theo:19-7}、引理 \ref{theo:19-6}、定理 \ref{theo:19-5} 和定理 \ref{theo:19-1} 的结论结合起来，我们就可以得到下面的从对 Schnorr 签名方案的攻击到计算离散对数的问题规约。
+
+\begin{quote}
+\emph{令 $\mathcal{A}$ 是一个攻击 $\mathcal{S}_{\rm sch}$ 的有效对手，如同攻击游戏 13.1 中的随机预言机版本。此外，假设 $\mathcal{A}$ 最多能发出 $Q_s$ 次签名查询和 $Q_{\rm ro}$ 次随机预言机查询。那么必然存在一个有效离散对数对手 $\mathcal{B}$，其运行时间大约是 $\mathcal{A}$ 的两倍，并使得：}
+\end{quote}
+\begin{equation}\label{eq:19-6}
+{\rm SIG^{ro}\mathsf{adv}}[\mathcal{A},\mathcal{S}_{\rm sch}]\leq\frac{Q_s(Q_s+Q_{\rm ro}+1)}{q}+\frac{Q_{\rm ro}+1}{N}+(Q_{\rm ro}+1)\sqrt{{\rm DL\mathsf{adv}}[\mathcal{B},\mathbb{G}]}
+\end{equation}
+\begin{quote}
+\emph{其中 $N$ 是挑战空间的大小。}
+\end{quote}
+
+这种规约并不是非常严格。将标量 $(Q_{\rm ro}+1)$ 直接与 $\sqrt{{\rm DL\mathsf{adv}}[\mathcal{B},\mathbb{G}]}$ 相乘是很有问题的。事实上可以得到一个更严格的规约，方法是用 $\sqrt{Q_{\rm ro}+1}$ 代替 $(Q_{\rm ro}+1)$，这显然要好得多。诀窍是把引理 \ref{theo:19-6} 中的``猜测阶段"和定理 \ref{theo:19-1} 中的``回溯阶段"结合起来，变成一个单一且直接的规约。
+
+\begin{lemma}\label{theo:19-8}
+考虑定义在群 $\mathbb{G}$ 上的 Schnorr 身份识别协议 $\mathcal{I}_{\rm sch}$，其中 $\mathbb{G}$ 的阶为素数 $q$，有生成元 $g\in\mathbb{G}$，其挑战空间 $\mathcal{C}$ 的大小为 $N$。对于每个优势为 $\epsilon:={\rm rID2\mathsf{adv}}[\mathcal{A},\mathcal{I}_{\rm sch},r]$ 的攻击 $\mathcal{I}_{\rm sch}$ 的有效 $r$ 次重复冒充窃听攻击对手 $\mathcal{A}$ ，必然存在一个有效离散对数对手 $\mathcal{B}$，其运行时间约为 $\mathcal{A}$ 的两倍，其优势为 $\epsilon':={\rm DL\mathsf{adv}}[\mathcal{B},\mathbb{G}]$，使得：
+\begin{equation}\label{eq:19-7}
+\epsilon'\geq\frac{\epsilon^2}{r}-\frac{\epsilon}{N}
+\end{equation}
+这意味着：
+\begin{equation}\label{eq:19-8}
+\epsilon\leq\frac{r}{N}+\sqrt{r\epsilon'}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+让我们首先回顾一下 $\mathcal{A}$ 的攻击游戏是如何进行的。首先，攻击游戏 \ref{game:19-1} 中的挑战者向 $\mathcal{A}$ 发送一个用于 Schnorr 身份识别协议的验证公钥 $u\in\mathbb{G}$。然后，挑战者向 $\mathcal{A}$ 发送了几份交互的对话记录。最后，$\mathcal{A}$ 进入冒充阶段，它试图让$r$个验证者中的至少一个输出$\mathsf{accept}$。更详细的过程是这样的。对于第 $j$ 次运行，其中 $j$ 不大于 $r$，对手 $\mathcal{A}$ 向挑战者发送 $u_{{\rm t}j}$，挑战者用随机挑战 $c_j\in\mathcal{C}$ 来应答。在收到所有挑战后，$\mathcal{A}$ 要么输出 $\mathsf{fail}$，要么输出一个数对 $(i,\alpha_{\rm z})$，使得 $(u_{{\rm t}i},c_i,\alpha_{\rm z})$ 是验证公钥 $u$ 的接受对话。在后一种情况下，我们称 $\mathcal{A}$ \emph{在验证者 $i$ 处成功}。注意到 $\mathcal{A}$ 的优势是 $\epsilon=\sum_{j=1}^r\epsilon_j$，其中 $\epsilon_j$ 是 $\mathcal{A}$ 在验证者 $j$ 处成功的概率。
+
+请注意，我们上面的描述其实稍稍简化了对手 $\mathcal{A}$ 在冒充阶段的行为。然而，由于对手可以自己观察到对话是否被接受，所以这并不是一个真正的限制：任何对手都可以被置于上面所描述的形式中，而完全不改变其优势，也不会显著增加其运行时间。另外，在定理 \ref{theo:19-7} 的证明中构建的 $r$ 次重复冒充窃听攻击对手本质上已经是这种形式了。
+
+我们下面描述我们的离散对数对手 $\mathcal{B}$，他被给予一个 $u\in\mathbb{G}$，任务是计算出 $\mathsf{Dlog}_gu$。像往常一样，$\mathcal{B}$ 扮演 $\mathcal{A}$ 的挑战者的角色。首先，$\mathcal{B}$ 将 $u$ 作为验证公钥发送给 $\mathcal{A}$。然后，$\mathcal{B}$ 使用定理 \ref{theo:19-4} 中的模拟器生成对话记录，并将这些记录交给 $\mathcal{A}$。最后，$\mathcal{B}$ 让 $\mathcal{A}$ 完成冒充阶段，并向 $\mathcal{A}$ 提供随机挑战 $c_1,\dots,c_r$。如果 $\mathcal{A}$ 输出一个数对 $(i,\alpha_{\rm z})$，使得 $(u_{{\rm t}i},c_i,\alpha_{\rm z})$ 是验证公钥 $u$ 的接受对话，那么 $\mathcal{B}$ 将 $\mathcal{A}$ 回溯到它向第 $i$ 个验证者提交 $u_{{\rm t}i}$ 的时刻。然后对手 $\mathcal{B}$ 用一个新的随机挑战 $c'\in\mathcal{C}$ 来替换挑战 $c_i$，然后让 $\mathcal{A}$ 继续使用与之前相同的挑战 $c_j$，$j=i+1,\dots,r$完成冒充阶段的剩余部分。如果 $\mathcal{A}$ 输出一个数对 $(i',\alpha_{\rm z}')$ 使得 $i'=i$ 且 $(u_{{\rm t}i},c',\alpha_{\rm z}')$ 是验证公钥 $u$ 的接受对话，并且 $c'\neq c$，那么 $\mathcal{B}$ 就可以使用这两个接受对话来计算 $\mathsf{Dlog}_gu$，就像定理 \ref{theo:19-1} 的证明中那样。在这种情况下，我们称 $\mathcal{B}$ \emph{在验证者 $i$ 处成功}。可以注意到 $\mathcal{B}$ 的优势是 $\epsilon'=\sum_{j=1}^r\epsilon_j'$，其中 $\epsilon_j'$ 是 $\mathcal{B}$ 在验证者 $j$ 处成功的概率。
+
+剩下的工作就是证明式 \ref{eq:19-7}，注意式 \ref{eq:19-8} 可以用与定理 \ref{theo:19-1} 的证明中几乎相同的方法从式 \ref{eq:19-7} 推出。
+
+我们声称，对于 $j=1,\dots,r$，必有：
+\begin{equation}\label{eq:19-9}
+\epsilon_j'\geq\epsilon_j^2-\frac{\epsilon_j}{N}
+\end{equation}
+事实上，对于给定索引 $j$，上述不等式必然成立，这是回溯引理 \ref{theo:19-2} 已经证明了的，其中的 $\mathsf{Y}$ 对应于挑战 $c_j$，$\mathsf{Y}'$ 对应于挑战 $c'$，而 $\mathsf{X}$ 对应于 $\mathcal{A}$、$\mathcal{B}$ 和 $\mathcal{B}$ 的挑战者的所有其他随机选择。如果 $\mathcal{A}$ 在验证者 $j$ 处成功，则引理 19.2 中的函数 $f$ 就被定义为 $1$。因此，如果 $i=j$ 且 $(u_{{\rm t}j},c_j,\alpha_{\rm z})$ 是一个接受对话，就有 $f(\mathsf{X},\mathsf{Y})=1$。同样地，如果 $i'=j$ 且 $(u_{{\rm t}j},c',\alpha_{\rm z}')$ 是一个接受对话，就有 $f(\mathsf{X},\mathsf{Y}')=1$。
+
+由式 \ref{eq:19-9}，我们可以得到：
+$$
+\epsilon'
+=\sum_{j=1}^r\epsilon_j'
+\geq\sum_{j=1}^r\epsilon_j^2-\sum_{j=1}^r\frac{\epsilon_j}{N}
+\geq\frac{\epsilon^2}{r}-\frac{\epsilon}{N}
+$$
+最后一个不等式基于这样一个事实：对于任意函数 $g:\{1,\dots,r\}\to\mathbb{R}$，必然有：
+$$
+r\sum_{j=1}^rg(j)^2\geq(\sum_{j=1}^rg(j))^2
+$$
+这个结论也是显然的。比如在概率论中，对于任意随机变量 $\mathsf{X}$，必有 $E[\mathsf{X}^2]\geq E[\mathsf{X}]^2$。特别地，如果令 $\mathsf{X}:=g(\mathsf{R})$，其中 $\mathsf{R}$ 是在 $\{1,\dots,r\}$ 上的均匀分布，就转化成了我们上面的场景。
+\end{proof}
+
+基于这个结论，我们可以把式 \ref{eq:19-6} 中的约束替换成：
+\begin{equation}
+{\rm SIG^{ro}\mathsf{adv}}[\mathcal{A},\mathcal{S}_{\rm sch}]\leq\frac{Q_{\rm s}(Q_{\rm s}+Q_{\rm ro}+1)}{q}+\frac{Q_{\rm ro}+1}{N}+\sqrt{(Q_{\rm ro}+1)\cdot{\rm DL\mathsf{adv}}[\mathcal{B},\mathbb{G}]}
+\end{equation}
+
+
+\subsection{一个具体实现与一种优化方法}\label{subsec:19-2-3}
+
+我们可以将 $\mathbb{G}$ 看作是定义在有限域 $\mathbb{F}_p$ 上的椭圆曲线群 P256，其中 $p$ 是一个 $256$ 位素数，具体信息可以参见 15.3 节。使用 $128$ 位的挑战就足够了。在这种情况下，Schnorr 签名 $(u_{\rm t},\alpha_{\rm z})$ 中的每个组成部分都是 $256$ 位的，一个 Schnorr 签名总共约为 $512$ 位。
+
+由于挑战的长度比群元素的编码长度要短得多，下面介绍的 Schnorr 签名优化方案可以获得更短的签名。回顾一下，我们之前将 $m$ 上的签名定义为 $(u_{\rm t},\alpha_{\rm z})$，满足：
+$$
+g^{\alpha_{\rm z}}=u_{\rm t}\cdot u^c
+$$
+其中 $c:=H(m,u_{\rm t})$。现在，与之前不同，我们可以把签名定义为数对 $(c,\alpha_{\rm z})$，它满足：
+$$
+c=H(m,u_{\rm t})
+$$
+其中 $u_{\rm t}={g^{\alpha_{\rm z}}}/{u^c}$。变换 $(u_{\rm t},\alpha_{\rm z})\mapsto(H(m,u_{\rm t}),\alpha_{\rm z})$ 可以将一个常规的对 $m$ 的 Schnorr 签名映射到一个优化 Schnorr 签名上，而变换 $(c,\alpha_{\rm z})\mapsto({g^{\alpha_{\rm z}}}/{u^c},\alpha_{\rm z})$ 可以将一个优化 Schnorr 签名映射到一个常规 Schnorr 签名上。由此可见，伪造一个优化 Schnorr 签名等价于伪造一个常规 Schnorr 签名。进一步优化的话，我们还可以在公钥中存储 $u^{-1}$ 而不是 $u$，这将加快签名验证的速度。
+
+通过上述参数的选择，我们可以将签名的长度从 $512$ 位减少到大约 $128+256=384$ 位，这大约减少 $25\%$ 的长度。

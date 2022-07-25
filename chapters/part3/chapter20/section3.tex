@@ -1,0 +1,187 @@
+\section{非交互式证明系统}\label{sec:20-3}
+
+在上一节中，我们介绍了存在健全的 Sigma 协议的概念。在这一节中，我们将展示如何使用 Fiat-Shamir 变换（见 \ref{subsec:19-6-1} 小节）将任意 Sigma 协议转换为一个\emph{非交互式证明系统}。
+
+基本思想非常简单：我们不依靠验证者来生成随机挑战，而是使用哈希函数 $H$ 从陈述和承诺中推导出挑战。如果将 $H$ 建模为一个随机预言机，那么我们可以证明以下事实：
+\begin{enumerate}[(i)]
+	\item 如果 Sigma 协议是存在健全的，那么导出的非交互式证明系统也是存在健全的；
+	\item 如果 Sigma 协议是特殊 HVZK 的，那么运行对应的非交互式证明系统不会透露关于证明者的见证的任何有用信息。
+\end{enumerate}
+
+第一个属性是对存在健全性概念在非交互式环境中的一个相当直接的应用。第二个属性是一个新型的``零知识"属性，定义起来可能有点棘手。
+
+\subsection{例子：一个投票协议}
+
+在给出正式定义之前，我们先通过展示一个投票协议来说明非交互式协议的功能。对投票协议进行正确建模需要相当大的努力，光是全面考虑安全要求就相当具有挑战性，我们不会在这里尝试这样做。相反，我们只会简要阐述基本的想法，并对其他的问题给出简单的提示。
+
+现在假设我们有 $n$ 个投票者，每个投票者都可以投 $0$ 或 $1$ 的票。在投票结束时，所有各方都应该知道票数的总和。当然，每个投票者都可以直接公布他们的投票内容。但是这并不是一个很好的解决方案，因为我们希望允许投票者保有他们的隐私。为此，一些投票协议会使用加密方案，使每个投票者公布其投票的加密信息。
+
+一个方便的方案是 ElGamal 方案的乘性变体，我们已经在 \ref{sec:20-2} 节讨论过部分内容。同样，我们现在有一个由 $g\in\mathbb{G}$ 生成的素阶 $q$ 的循环群 $\mathbb{G}$。私钥 $\alpha\in\mathbb{Z}_q$，公钥 $u:=g^\alpha\in\mathbb{G}$。对消息 $m\in\mathbb{G}$ 的加密能得到 $(v,e)$，其中 $v:=g^\beta$，$e:=u^\beta\cdot m$。
+
+我们下面介绍的设计是一个简单的尝试，它能够在一定程度上保护投票者的隐私。假设我们有一个可信服务器，称为\emph{投票统计中心}（VTC），它能够运行密钥生成算法并获得一个公钥 $pk=u$ 和一个私钥 $sk=\alpha$。它向所有投票者公布 $pk$，然后自己保留 $sk$。
+
+\emph{投票阶段。}
+在投票阶段，第 $i$ 个投票者将他的投票 $b_i\in\{0,1\}$ 加密，即将 $b_i$ 编码为群元素 $g^{b_i}\in\mathbb{G}$，然后用 VTC 的公钥对 $g^{b_i}$ 进行加密，得到密文 $(v_i,e_i)$。注意 $v_i=g^{\beta_i}$，$e_i=u^{\beta_i}\cdot g^{b_i}$，其中 $\beta_i\in\mathbb{Z}_q$ 是随机选出的。所有密文都会被公开。
+
+\emph{计票阶段。}
+VTC 将所有公布的密文聚合为一个单一的密文 $(v_*,e_*)$，其中：    
+$$
+v_*:=\prod_{i=1}^nv_i,~~
+e_*:=\prod_{i=1}^ne_i
+$$
+令 $\beta_*:=\sum_i\beta_i$，$\sigma:=\sum_ib_i$，则有：
+$$
+v_*=g^{\beta_*},~~
+e_*=u^{\beta_*}g^\sigma
+$$
+因此，$(v_*,e_*)$ 就相当于对 $g^\sigma$ 的加密。所以，VTC 可以解密 $(v_*,e_*)$ 并公布结果，这样所有投票者就都可以看到 $g^\sigma$。由于 $\sigma$ 本身是一个小数字，所以不难从 $g^\sigma$ 还原出 $\sigma$，只要通过暴力搜索或查表就可以了。
+
+如果所有的投票者和 VTC 都正确地遵守协议，那么至少从直观上看，ElGamal 加密的语义安全能够确保在投票阶段结束时没有任何一个投票者能知道其他人的投票内容。此外，在计票阶段结束时，任何一个投票者都只能知道票数的总和，没有关于任何单独选票的额外信息会被披露。
+
+上述协议不是很健壮，因为如果任何一个投票者或 VTC 被攻陷，选举结果的正确性和投票内容的隐私都可能受到影响。目前，我们先继续假设 VTC 是诚实的（本章后的一些练习会讨论防止 VTC 作弊的思路）。相对地，让我们把重点放在投票者作弊的可能性上。
+
+投票者作弊的一种方式是将 $0$ 或 $1$ 以外的内容作为投票进行加密。比如说，他可能加密的并不是 $g^0$ 或者 $g^1$，而是 $g^{100}$。这就相当于他投了 $100$ 张内容为 $1$ 的票，这将使投票者能够不公平地影响选举的结果。
+
+为了防止这种情况，当一个投票者投票时，我们应该坚持要求他\emph{证明}其加密的投票 $(v_i,e_i)$ 是\emph{有效的}，即它形如 $(g^\beta,u^\beta\cdot g^b)$，其中 $b\in\{0,1\}$。为了做到这一点，我们对例 \ref{exmp:20-3} 中的 Sigma 协议应用 Fiat-Shamir 变换。投票者（使用见证 $(b,\beta)$）只需运行图 \ref{fig:20-1} 中证明者的逻辑，通过计算陈述和承诺的哈希来自行生成挑战。在此例中为：
+\begin{equation}\label{eq:20-7}
+c\leftarrow H(\;(u,v,e),\;(v_{\rm t0},w_{\rm t0},v_{\rm t1},w_{\rm t1})\;)
+\end{equation}
+投票者随后公布证明：
+\begin{equation}\label{eq:20-8}
+\pi=(\;(v_{\rm t0},w_{\rm t0},v_{\rm t1},w_{\rm t1}),\;(c_0,\beta_{\rm z0},\beta_{\rm z1})\;)
+\end{equation}
+和密文 $(v,e)$。任何人（特别是 VTC）都可以检查证明 $\pi$ 的合法性，即检查 $\pi$ 是否满足图 \ref{fig:20-1} 中验证者会验证的相应条件，区别只是现在 $c$ 是由哈希函数 $H$ 计算出来的，如式 \ref{eq:20-7}。
+
+正如我们将看到的，如果我们把哈希函数 $H$ 建模为一个随机预言机，那么该证明就是健全的。也就是说，如果加密后的投票无效，那么构造出一个合法的证明在计算上是不可行的。此外，零知识属性将确保证明本身不会泄露任何关于投票内容的额外信息。事实上，如果我们定义一个新的、增强的加密方案，其中密文的形式为 $(v,e,\pi)$，那么我们可以证明这个增强的加密方案是语义安全的（在DDH假设下，$H$被建模为一个随机预言机）。我们把这个问题留给读者作为练习。
+
+我们可以按照 \ref{subsec:19-2-3} 小节介绍的优化 Schnorr 签名的思路来优化这个证明系统。也就是说，我们可以使用形如：
+$$
+\pi^*=(c_0,c_1,\beta_{\rm z0},\beta_{\rm z1})
+$$
+的证明来代替式 \ref{eq:20-8} 中的证明 $\pi$。
+
+为了验证该证明，我们可以从验证方程中推导出 $v_{\rm t0},w_{\rm t0},v_{\rm t1},w_{\rm t1}$ 的值（即计算 $v_{\rm t0}\leftarrow{g^{\beta_{\rm z0}}}/{v^{c_0}}$，以此类推），然后检查 $c_0\oplus c_1=H((u,v,e),(v_{\rm t0},w_{\rm t0},v_{\rm t1},w_{\rm t1}))$ 是否成立。在实践中，人们会使用这个优化后的系统，因为其证明更加紧凑，并且提供与未优化系统相同的安全属性（包括健全性和零知识性）。读者可参见练习 20.14 以了解这类优化可能存在的更多一般条件。练习 20.26 探讨了如何加强这个投票协议以对抗恶意的 VTC。
+
+\subsection{非交互式证明：基本语法}
+
+下面我们开始着手定义非交互式证明的一般情况及其安全属性，以及 Fiat-Shamir 变换的细节。
+
+我们首先定义非交互式证明的基本语法。
+
+\begin{definition}[非交互式证明系统]
+令 $\mathcal{R}\subseteq\mathcal{X}\times\mathcal{Y}$ 是一个有效关系。\textbf{$\mathcal R$ 上的非交互式证明系统 (non-interactive proof system for $\mathcal{R}$)} 是一对算法 $(Gen,Check)$，其中：
+\begin{itemize}
+	\item $Gen$ 是一个有效概率性算法，它的调用方式为 $\pi\overset{\rm R}\leftarrow Gen(x,y)$，其中 $(x, y)\in\mathcal{R}$，并且 $\pi$ 属于某个\textbf{证明空间 (proof space)} $\mathcal{PS}$；
+	\item $Check$ 是一个有效确定性算法，它的调用方式为 $Check(y,\pi)$，其中 $y\in\mathcal{Y}$，$\pi\in\mathcal{PS}$。$Check$ 的输出为 $\mathsf{accept}$ 或 $\mathsf{reject}$。如果 $Check(y,\pi)=\mathsf{accept}$，我们就称 \textbf{$\pi$ 是 $y$ 的一个有效证明 (a valid proof for $y$)}。
+\end{itemize}
+我们要求对于所有 $(x, y)\in\mathcal{R}$，$Gen(x,y)$ 的输出总是 $y$ 的有效证明。
+\end{definition}
+
+\subsection{Fiat-Shamir 变换}
+
+我们下面详细介绍将 Sigma 协议转换为非交互式证明系统的 Fiat-Shamir 变换。
+
+令 $\Pi=(P,V)$ 是一个关系 $\mathcal{R}\subseteq\mathcal{X}\times\mathcal{Y}$ 上的 Sigma 协议。假设 $\Pi$ 的对话 $(t,c,z)$ 属于 $\mathcal{T}\times\mathcal{C}\times\mathcal{Z}$。令 $H:\mathcal{Y}\times\mathcal{T}\to\mathcal{C}$ 是一个哈希函数。我们定义 Fiat-Shamir 非交互式证明系统 ${\rm FS}\text{-}\Pi=(Gen,Check)$，其验证空间 $\mathcal{PS}=\mathcal{T}\times\mathcal{Z}$，如下所示：
+\begin{itemize}
+	\item 对于输入 $(x,y)\in\mathcal{R}$，$Gen$ 首先运行 $P(x,y)$ 以获得承诺 $t\in\mathcal{T}$，然后将挑战 $c:=H(y,t)$ 转发给 $P(x,y)$ 获得应答 $z\in\mathcal{Z}$。$Gen$ 的输出为 $(t,z)\in\mathcal{T}\times\mathcal{Z}$；
+	\item 对于输入 $(y,(t,z))\in\mathcal{Y}\times(\mathcal{T}\times\mathcal{Z})$，$Check$ 验证 $(t,c,z)$ 是否是 $y$ 的一个接受对话，其中 $c:=H(y,t)$。
+\end{itemize}
+
+\subsection{非交互式存在健全性}
+
+我们接下来把存在健全性的定义应用到非交互式的环境中。从本质上说，该定义指为一个错误的陈述制造一个有效证明是很难的。
+
+\begin{game}[非交互式存在健全性]\label{game:20-2}
+令 $\Phi=(Gen,Check)$ 是 $\mathcal{R}\subseteq\mathcal{X}\times\mathcal{Y}$ 上的一个非交互式证明系统，其证明空间为 $\mathcal{PS}$。为了攻击 $\Phi$，对抗者 $\mathcal{A}$ 输出一个陈述 $y\in\mathcal{Y}$ 和一个证明 $\pi\in\mathcal{PS}$。
+
+如果 $Check(y,\pi)=\mathsf{accept}$ 但 $y\notin L_{\mathcal R}$，我们就称对手 $\mathcal A$ 赢得游戏。我们将 $\mathcal{A}$ 相对于 $\Phi$ 的优势记为 ${\rm niES\mathsf{adv}}[\mathcal{A},\Phi]$，其值为 $\mathcal{A}$ 赢得该游戏的概率。
+\end{game}
+
+\begin{definition}
+如果对所有有效对手 $\mathcal{A}$，${\rm niES\mathsf{adv}}[\mathcal{A},\Phi]$ 的值都可忽略不计，我们就称 $\Phi$ 是\textbf{存在健全的 (existential sound)}。
+\end{definition}
+
+我们下面会说明，在适当的假设下，如果我们将哈希函数建模为随机预言机，那么 Fiat-Shamir 变换可以导出一个存在健全的非交互式证明系统。
+
+\begin{theorem}
+设 $\Pi$ 是关系 $\mathcal{R}\subseteq\mathcal{X}\times\mathcal{Y}$ 上的一个 Sigma 协议，令 ${\rm FS}\text{-}\Pi$ 是由 $\Pi$ 派生的带有哈希函数 $H$ 的 Fiat-Shamir 非交互式证明系统，如果 $\Pi$ 是存在健全的，且 $H$ 被建模为一个随机预言机，那么 ${\rm FS}\text{-}\Pi$ 是存在健全的。
+\begin{quote}
+特别地，令 $\mathcal{A}$ 是攻击游戏 \ref{game:20-2} 的随机预言机版本中攻击 ${\rm FS}\text{-}\Pi$ 健全性的对手。此外，假设 $\mathcal{A}$ 最多发出 $Q_{\rm ro}$ 次随机预言机查询。那么必然存在一个攻击游戏 \ref{game:20-1} 中攻击 $\Pi$ 存在健全性的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是 $\mathcal{A}$ 的一个基本包装器，使得：
+\end{quote}
+$$
+{\rm niES^{ro}\mathsf{adv}}[\mathcal{A},{\rm FS}_\Pi]\leq(Q_{\rm ro}+1)\cdot{\rm ES\mathsf{adv}}[\mathcal{B},\Pi]
+$$
+\end{theorem}
+
+\begin{proof}[证明简述]
+基本思想类似于我们在证明 Schnorr 签名方案的安全性时的分析（见定理 \ref{theo:19-7}）。假设 $\mathcal{A}$ 在一个错误的陈述 $y$ 上产生一个有效的证明 $(t,z)$，这意味着 $(t,c,z)$ 是 $y$ 的一个有效对话，其中 $c$ 是随机预言机在 $(y,t)$ 点的输出。不失一般性，我们可以假设 $\mathcal{A}$ 在这一点上查询了随机预言机（即使它没有这样做，我们也可以使其如此，即把随机预言机的查询次数增加到 $Q_{\rm ro}+1$）。然后，我们的对手 $\mathcal{B}$ 开始（预先）猜测 $\mathcal{A}$ 的随机预言机查询中的哪一个将是相关的。在 $\mathcal{A}$ 进行随机预言机查询的时候，$\mathcal{B}$ 向自己的挑战者发起证明尝试，提供 $y$ 作为陈述，$t$ 作为承诺；$\mathcal{B}$ 的挑战者则以一个随机挑战 $c$ 作为应答，$\mathcal{B}$ 将其转发给 $\mathcal{A}$，就好像它就是 $(y,t)$ 处随机预言机的值。如果 $\mathcal{B}$ 的猜测是正确的，那么 $\mathcal{A}$ 的证明中的值 $z$ 将让 $\mathcal{B}$ 在他的攻击游戏中获胜。安全约束中存在因子 $(Q_{\rm ro}+1)$ 是由于 $\mathcal{B}$ 猜中的概率恰好为 ${1}/{(Q_{\rm ro}+1)}$。
+\end{proof}
+
+\subsection{非交互式零知识}
+
+令 $\Phi=(Gen,Check)$ 是关系 $\mathcal{R}\subseteq\mathcal{X}\times\mathcal{Y}$ 上的一个非交互式证明系统，其证明空间为 $\mathcal{PS}$。我们希望定义一个有用的``零知识"的概念。直观地讲，我们希望这个概念能够反映出这样的想法，即 $Gen$ 在输入 $(x,y)$ 上的输出，除了 $y\in L_{\mathcal R}$ 这一事实之外不会透露任何其他信息。
+
+定义这样一个概念是相当棘手的。我们采取的方法类似于我们之前定义 HVZK 的方法。即我们想说，有一个\emph{模拟器}在输入 $y\in L_{\mathcal R}$ 时可以忠实地模拟出 $Gen(x,y)$ 的输出分布。不幸的是，如果不给模拟器某种``内部优势"，这个想法基本上是不能奏效的。事实上，如果一个模拟器能够在输入 $y\in L_{\mathcal R}$ 上产生一个有效证明，那么它很可能在输入 $y\notin L_{\mathcal R}$ 时也同样能产生一个有效证明，这就违反了存在健全性；此外，如果模拟器未能在输入 $y\notin L_{\mathcal R}$ 上输出一个有效证明，我们就可以仅依靠模拟器自身来区分 $L_{\mathcal R}$ 中的元素和 $\mathcal{Y}\setminus L_{\mathcal R}$ 中的元素，这对于大多数我们感兴趣的语言来说都是计算上不可行的。
+
+我们将只会尝试在随机预言机模型基础上定义非交互式零知识，而我们赋予模拟器的``内部优势"是允许它同时管理 $Gen$ 的模拟输出和对随机预言机的访问。
+
+假设 $\Phi$ 使用一个哈希函数 $H:\mathcal{U}\to\mathcal{C}$，并且 $H$ 被建模为一个随机预言机。\textbf{$\Phi$ 的模拟器}是一个交互式机器 $Sim$\footnote{正式地说，一个模拟器应当是一个有效接口，如定义 2.12 所示。} ，它能够对一系列的查询作出响应，其中的每个查询都属于以下两类中的一类：
+\begin{itemize}
+	\item \emph{不合理证明查询(unjustified proof query)}，形如 $y\in\mathcal{Y}$，$Sim$ 的应答为 $\pi\in\mathcal{PS}$；
+	\item \emph{随机预言机查询}，形如 $u\in\mathcal{U}$，$Sim$ 的应答为 $c\in\mathcal{C}$。
+\end{itemize}
+
+我们对非交互式零知识 (niZK) 的定义是，一个有效对手无法区分``真实世界"和``模拟世界"，其中前者要求获得真陈述的真实证明，后者只能获得由 $Sim$ 生成的模拟证明。在这两个世界中，哈希函数都 $H$ 被建模为一个随机预言机，对手可以进行随机预言机查询，但在模拟世界中，$Sim$ 也会处理这些查询。
+
+\begin{game}[非交互式零知识]\label{game:20-3}
+令 $\Phi=(Gen,Check)$ 是关系 $\mathcal{R}\subseteq\mathcal{X}\times\mathcal{Y}$ 上的一个非交互式证明系统，其证明空间为 $\mathcal{PS}$。假设 $\Phi$ 使用一个哈希函数 $H:\mathcal{U}\to\mathcal{C}$，它被建模为一个随机预言机。如上所述，令 $Sim$ 为 $\Phi$ 的一个模拟器。对于一个给定对手 $\mathcal{A}$，我们定义两个实验：实验 $0$ 和实验 $1$。在这两个实验中，对手会向挑战者提出一系列查询，形如：
+\begin{itemize}
+	\item \emph{合理证明查询(unjustified proof query)}，形如 $(x,y)\in\mathcal{R}$，挑战者的应答为 $\pi\in\mathcal{PS}$；
+	\item \emph{随机预言机查询}，形如 $u\in\mathcal{U}$，挑战者的应答为 $c\in\mathcal{C}$。
+\end{itemize}
+
+在实验 0（``真实世界"）中，挑战者随机选择 $\mathcal{O}\in{\rm Funs}[\mathcal{U},\mathcal{C}]$，运行 $Gen(x,y)\in\mathcal{R}$ 以应答每个合理证明查询 $(x,y)$。它用 $\mathcal O$ 来代替 $H$，用 $\mathcal{O}(u)$ 应答每个随机预言机查询 $u\in\mathcal{U}$。
+
+在实验 1（``模拟世界"）中，挑战者向 $Sim$ 转发\emph{不合理}证明查询 $y$ 以应答每个合理证明查询 $(x,y)\in\mathcal{R}$。它向 $Sim$ 转发随机预言机查询 $u$ 以响应随机预言机查询 $u\in\mathcal{U}$。
+
+对于$b=0,1$，令 $W_b$ 是对手 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件。我们将对手 $\mathcal{A}$ 对于 $\Phi$ 和 $Sim$ 的优势定义为：
+$$
+{\rm niZK\mathsf{adv}}[\mathcal{A},\Phi,Sim]:=\left|\Pr[W_0]-\Pr[W_1]\right|
+$$
+\end{game}
+
+\begin{definition}\label{def:20-5}
+如果存在一个 $\Phi$ 的有效模拟器 $Sim$ 使得对于任意有效对手 $\mathcal{A}$，${\rm niZK\mathsf{adv}}[\mathcal{A},\Phi,Sim]$ 的值都可忽略不计，我们就称 $\Phi$ \textbf{在随机预言机上提供了非交互式零知识}。
+\end{definition}
+
+我们注意到，在攻击游戏 \ref{game:20-3} 的模拟世界中，对于证明查询，对手必须提供一个见证，尽管这个见证不会被传递给模拟器。因此，模拟器只需要为真陈述生成模拟证明即可。
+
+我们接下来表明，只要底层的 Sigma 协议是特殊 HVZK 的，并且有不可预测承诺（见定义 \ref{def:19-7}），则 Fiat-Shamir 变换总是能导出一个 niZK。
+
+\begin{figure}
+  \hspace*{95pt} 初始化：\\
+  \hspace*{120pt} 初始化一个空的关联数组 $Map:\mathcal{Y}\times\mathcal{T}\to\mathcal{C}$；\\
+  \hspace*{95pt} 当收到第 $i$ 个不合理证明查询 $y_i\in\mathcal{Y}$ 时：\\
+  \hspace*{120pt} 计算 $c_i\overset{\rm R}\leftarrow\mathcal{C}$，$(t_i,z_i)\overset{\rm R}\leftarrow Sim_1(y_i,c_i)$\\
+  \hspace*{120pt} 如果 $(y_i,t_i)\notin{\rm Domain}(Map)$，则令 $Map[y_i,t_i]\leftarrow c_i$\\
+  \hspace*{120pt} 返回 $(t_i,z_i)$；\\
+  \hspace*{95pt} 当收到第 $j$ 个随机预言机查询 $(\widehat{y_j},\widehat{t_j})\in\mathcal{Y}\times\mathcal{T}$ 时：\\
+  \hspace*{120pt} 如果 $(\widehat{y_j},\widehat{t_j})\notin{\rm Domain}(Map)$，则令 $Map[\widehat{y_j},\widehat{t_j}]\overset{R}\leftarrow\mathcal{C}$\\
+  \hspace*{120pt} 返回 $Map[\widehat{y_j},\widehat{t_j}]$
+  \caption{Fiat-Shamir 的 niZK 模拟器}
+  \label{fig:20-2}
+\end{figure}
+
+\begin{theorem}\label{theo:20-3}
+令 $\Pi=(P,V)$ 是关系 $\mathcal{R}\subseteq\mathcal{X}\times\mathcal{Y}$ 上的一个特殊 HVZK 的 Sigma 协议，且其具有不可预测承诺，并令 ${\rm FS}\text{-}\Pi$ 是由 $\Pi$ 导出的含有哈希函数 $H$ 的 Fiat-Shamir 非交互式证明系统，如果 $H$ 被建模为一个随机预言机，那么 ${\rm FS}\text{-}\Pi$ 是 niZK。
+\begin{quote}
+特别地，存在一个模拟器 $Sim$，如果 $\mathcal{A}$ 是一个如攻击游戏 \ref{game:20-3} 中那样攻击 ${\rm FS}\text{-}\Pi$ 和 $Sim$ 的对手，如果他最多能够发起 $Q_{\rm p}$ 次合理证明查询和 $Q_{\rm ro}$ 次随机预言机查询，并且如果 $\Pi$ 有 $\delta$-不可预测承诺，则有：
+\end{quote}
+\begin{equation}
+{\rm niZK\mathsf{adv}}[\mathcal{A},{\rm FS}_\Pi,Sim]\leq Q_{\rm p}(Q_{\rm p}+Q_{\rm ro})\cdot\delta
+\end{equation}
+\end{theorem}
+
+\begin{proof}[证明简述]
+基本思想类似于定理 \ref{theo:19-7} 中 Schnorr 签名方案的安全性证明。我们的 niZK 模拟器的原理见图 \ref{fig:20-2}。这里我们假设 $Sim_1$ 是由 $\Pi$ 的特殊 HVZK 属性保证的模拟器。读者可以自行验证定理 \ref{theo:20-3} 中的不等式，具体的论证过程与定理 \ref{theo:19-7} 的证明非常相似。我们不要求模拟器\emph{总是}返回一个合法的证明（但是如果定义 \ref{def:20-5} 得到满足的话，这应该以压倒性的概率发生）。
+\end{proof}

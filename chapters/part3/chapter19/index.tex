@@ -1,0 +1,23 @@
+\chapter{基于Sigma协议的身份识别与签名}
+
+在上一章中，我们研究了身份识别协议。特别是在 \ref{subsubsec:18-6-1-1} 小节中，我们展示了如何使用安全的签名方案来建立一个挑战-应答身份识别方案，该方案提供了最高级别的安全，即针对主动攻击的安全（见定义18.8）。在本章中，我们考虑相反的方向。
+
+首先，我们使用一种完全不同的技术开发了一种新的身份识别协议，它实现了对窃听攻击的安全性（见定义18.6）。这个协议本身就很有意义，因为它相当优雅，而且可以在DL假设下被证明是安全的。
+
+其次，我们展示了如何将该协议转化为一个非常有效的签名方案，即\textbf{Schnorr签名方案}。在DL假设下，该方案在随机预言机模型下是安全的。
+
+第三，我们归纳这些技术并引入了\textbf{Sigma协议}的概念。我们利用这些更普适的技术开发了几个新的身份识别协议和签名方案。
+
+在下一章中，我们将这些技术用于更高级的用途，设计出允许一方向另一方证明某些事实是真实的协议，同时不透露任何不必要的信息。例如，我们将展示如何证明加密值$m$位于某个范围内而不透露关于$m$的任何其他信息。
+
+\input{chapters/part3/chapter19/section1}
+\input{chapters/part3/chapter19/section2}
+\input{chapters/part3/chapter19/section3}
+\input{chapters/part3/chapter19/section4}
+\input{chapters/part3/chapter19/section5}
+\input{chapters/part3/chapter19/section6}
+\input{chapters/part3/chapter19/section7}
+\input{chapters/part3/chapter19/section8}
+\input{chapters/part3/chapter19/section9}
+\input{chapters/part3/chapter19/section10}
+\input{chapters/part3/chapter19/section11}

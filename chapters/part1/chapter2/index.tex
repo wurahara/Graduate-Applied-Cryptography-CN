@@ -1,0 +1,17 @@
+\chapter{加密}
+
+假设 Alice 和 Bob 共享一个密钥 $k$，Alice 想通过网络向 Bob 传输一条消息 $m$，同时在有窃听对手的情况下保持 $m$ 的机密性。本章初步介绍解决这一问题的基本技术。除了在网络上传输消息外，这些技术还允许 Alice 在磁盘上存储一个文件，使其他能访问磁盘的人无法读取该文件，但 Alice 自己可以在之后读取该文件。
+
+我们强调，尽管我们在本章中介绍的用以解决这一基本问题的技术是重要且有趣的，但它们本身并不能解决与``安全通信"有关的所有问题：
+\begin{itemize}
+	\item 这些技术只在 Alice 使用每个密钥传输单一消息的情况下提供机密性。如果 Alice 想用同一个密钥传输多条消息，那么她必须使用第\ref{chap:5}章中介绍的方法。
+	\item 这些技术没有提供任何对\emph{消息完整性}的保证：如果攻击者有能力在密文从 Alice 到 Bob 的传输过程中修改它的比特，那么 Bob 可能无法意识到这一点，并接受一个与 Alice 发送的原文不同的消息。我们将在第\ref{chap:6}章中讨论提供消息完整性的技术。
+	\item 这些技术并没有提供一种让 Alice 和 Bob 共享密钥的机制。也许他们能够在某个时间点使用一些安全的网络（或物理的、面对面的会面）来共享密钥，然后在之后的某个时间点发送消息。这时 Alice 和 Bob 就可以通过一个不安全的网络进行通信。然而，只要有适当的基础设施，也有一些协议允许 Alice 和 Bob 通过不安全的信道交换密钥，我们将在第\ref{chap:21}章讨论这类协议。
+\end{itemize}
+
+\input{chapters/part1/chapter2/section1}
+\input{chapters/part1/chapter2/section2}
+\input{chapters/part1/chapter2/section3}
+\input{chapters/part1/chapter2/section4}
+\input{chapters/part1/chapter2/section5}
+\input{chapters/part1/chapter2/section6}

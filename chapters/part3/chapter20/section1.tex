@@ -1,0 +1,51 @@
+\section{语言与存在健全性}\label{sec:20-1}
+
+让我们从一个定义开始。
+
+\begin{definition}[真实陈述的语言]
+令 $\mathcal{R}\subseteq\mathcal{X}\times\mathcal{Y}$ 是一个有效关系。如果对于某个 $x\in\mathcal{X}$ 有 $(x,y)\in\mathcal{R}$，那么我们就称陈述 $y\in\mathcal{Y}$ 是一个\textbf{真实陈述 (true statement)}，否则称其为\textbf{虚假陈述 (false statement)}。我们称 $L_{\mathcal{R}}$ 为\textbf{由 $\mathcal{R}$ 定义的语言 (language defined by $\mathcal{R}$)}，即定义在 $\mathcal{R}$ 上的所有真实陈述，也就是说，$L_{\mathcal{R}}:=\{y\in\mathcal{Y}:(x,y)\in\mathcal{R}~\text{for some}~x\in\mathcal{X}\}$。
+\end{definition}
+
+上述定义中的``语言 (language)" 一词来自复杂性理论。在本章中，我们将研究一些有趣的关系 $\mathcal{R}$ 以及由它们所定义的语言集合 $L_{\mathcal{R}}$。举一个上一章的例子，回顾一下，Chaum-Pedersen 协议是一个定义在关系
+$$
+\mathcal{R}:=\bigg\lbrace
+\big(\beta, (u,v,w)\big)\in\mathbb{Z}_q\times\mathbb{G}^3:v=g^\beta, w=u^\beta
+\bigg\rbrace
+$$
+上的 Sigma 协议。那么，由 $\mathcal{R}$ 定义的语言 $L_{\mathcal{R}}$ 就是所有 DH 三元组 $(u,v,w)\in\mathbb{G}^3$ 的集合。
+
+于是，我们就可以用下面的攻击游戏来定义存在健全性的概念：
+
+\begin{game}[存在健全性]\label{game:20-1}
+令 $\Pi=(P,V)$ 是关系 $\mathcal{R}\subseteq\mathcal{X}\times\mathcal{Y}$ 上的一个 Sigma 协议。对于一个给定对手 $\mathcal{A}$，攻击游戏按照如下方式运行：
+\begin{itemize}
+	\item 对手 $\mathcal{A}$ 选择一个陈述 $y\in\mathcal{Y}$，并将其发送给挑战者。
+	\item 对手 $\mathcal{A}$ 与验证者 $V(y)$ 进行交互，其中挑战者扮演验证者的角色，对手 $\mathcal{A}$ 扮演``作弊的"证明者的角色。
+\end{itemize}
+如果 $V(y)$ 在交互结束时输出 $\mathsf{accept}$ 但 $y\notin L_{\mathcal{R}}$，我们就称对手 $\mathcal{A}$ 赢得了该游戏。我们定义 $\mathrm{ES}\mathsf{adv}[\mathcal{A},{\Pi}]$ 为对手 $\mathcal{A}$ 对于 $\Pi$ 的优势，其值为对手 $\mathcal{A}$ 赢得该游戏的概率。
+\end{game}
+
+\begin{definition}
+如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{ES}\mathsf{adv}[\mathcal{A},{\Pi}]$ 的值都可以忽略不计，我们就称 Sigma 协议 $\Pi$ 是\textbf{存在健全 (existentially sound)} 的。
+\end{definition}
+
+\begin{theorem}
+令 $\Pi$ 是一个有大挑战空间的 Sigma 协议，如果 $\Pi$ 提供知识健全性，那么 $\Pi$ 一定是存在健全的。
+\begin{quote}
+特别地，对于所有对手 $\mathcal{A}$，我们都有：
+\end{quote}
+\begin{equation}
+\mathrm{ES}\mathsf{adv}[\mathcal{A},{\Pi}]
+\leq
+\frac{1}{N}
+\end{equation}
+\begin{quote}
+其中 $N$ 是挑战空间的大小。
+\end{quote}
+\end{theorem}
+
+\begin{proof}
+我们只需证明，如果 $\mathcal{A}$ 选择了一个虚假陈述 $y$ 和一个承诺 $t$，那么最多只能有一个挑战 $c$ 使得存在一个应答 $z$ 能够产生一个 $y$ 的接受对话 $(t,c,z)$。观察到，如果有两个这样的挑战，那么 $y$ 将有两个接受对话 $(t,c,z)$ 和 $(t,c',z')$，其中 $c\neq c'$，而知识健全性意味着仅存在一个 $y$ 的见证，这与事实相矛盾。
+\end{proof}
+
+我们指出，对于任意强大的对手，上述定理都\emph{无条件}成立。我们在下一节将这些想法付诸实施。

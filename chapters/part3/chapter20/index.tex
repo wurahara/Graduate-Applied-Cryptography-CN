@@ -1,0 +1,23 @@
+\chapter{零知识的属性证明}
+
+在上一章中，我们介绍了如何使用 Sigma 协议来构建身份识别和签名方案。在这些应用中，我们把 Sigma 协议作为``知识证明"：利用回溯和知识健全性，我们可以有效地从任何有说服力的证明者那里提取出一个见证。
+
+在本章中，我们将介绍如何使用 Sigma 协议来证明某些事实是真实的（不需要披露太多其他信息）。在以这种方式使用 Sigma 协议的应用中，安全性取决于所谓事实的\emph{真实性}，而不是任何\emph{知识}的概念。例如，Chaum-Pedersen 协议（见 \ref{subsec:19-5-2} 小节）允许证明者说服验证者相信一个给定的群元素构成的三元组是一个 DH 三元组。这种能力本身就是构建和分析有趣的加密协议的一个有用工具。
+
+在 \ref{sec:20-1} 节中，我们首先会定义与有效关系相关的\emph{真实陈述的语言}：即存在相应见证的陈述的集合。然后，我们会为 Sigma 协议定义一个\emph{存在健全性}的概念，它意味着任何证明者想要使验证者接受一个不真实的陈述（即不存在对应的见证）是不可行的。这个概念与\emph{知识健全性}不同，因为我们不需要任何种类的见证提取器。然而，我们将会看到，知识健全性本身就意味着存在健全性。
+
+在 \ref{sec:20-2} 节中，我们将提出一系列的例子来说明存在健全性。这些例子围绕着在加密数据上证明属性的想法而展开。
+
+在 \ref{sec:20-3} 节中，然后我们会展示如何使用 Fiat-Shamir 变换（见 \ref{subsec:19-6-1} 小节）的变体将 Sigma 协议变成非交互式证明。
+
+在更后面的章节中，我们将研究构建证明系统的更高级的技术。
+
+\input{chapters/part3/chapter20/section1}
+\input{chapters/part3/chapter20/section2}
+\input{chapters/part3/chapter20/section3}
+\input{chapters/part3/chapter20/section4}
+\input{chapters/part3/chapter20/section5}
+\input{chapters/part3/chapter20/section6}
+\input{chapters/part3/chapter20/section7}
+\input{chapters/part3/chapter20/section8}
+\input{chapters/part3/chapter20/section9}
