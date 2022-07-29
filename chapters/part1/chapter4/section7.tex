@@ -1,5 +1,424 @@
 \section{理想密码模型}
 
+分组密码被用于各种密码学构造中。有时，在标准安全假设下，我们不可能或很难证明其中一些构造的安全性。在这些情况下，有时我们会采用一种启发式的技术，称为\textbf{理想密码模型 (ideal cipher model)}。粗略地说，在这种模型中，我们将分组密码\emph{当作}一个随机置换族，以对其进行安全分析。如果 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码，那么我们可以将随机置换族记为 $\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$，其中的每个 $\Pi_\mathpzc{k}$ 都是 $\mathcal{X}$ 上真正的随机置换，并且 $\Pi_\mathpzc{k}$ 的集合是相互独立的。这些随机置换太大，以至于我们无法将其完整记录下来，也不能将它们用于真正的密码构造。事实上，我们通常用它们来构造一个基于真实分组密码的构造模型，来获得对于特定构造的启发式安全论证。我们需要强调理想密码模型的启发式性质：尽管这个模型的安全证明聊胜于无，但它并不排除对手利用特定分组密码的设计进行攻击，即使该密码在定义 \ref{def:4-1} 的意义上是安全的。
+
 \subsection{正式定义}
 
+假设我们有某种类型的密码学方案 $\mathcal{S}$，它的实现利用了定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码 $\mathcal{E}=(E,D)$。此外，假设方案 $\mathcal{S}$ 在不同的输入 $(\mathpzc{k},\mathpzc{a})\in\mathcal{K}\times\mathcal{X}$ 上评估 $E$，在不同的输入 $(\mathpzc{k},\mathpzc{b})\in\mathcal{K}\times\mathcal{X}$ 上评估 $D$，但不深究 $\mathcal{E}$ 的内部实现。在这种情况下，我们称 $\mathcal{S}$ 将 $\mathcal{E}$ 作为一个预言机(oracle)。
+
+我们想要分析 $\mathcal{S}$ 的安全性。让我们假设我们感兴趣的任何一个安全属性，例如``属性 X"，被建模为挑战者（特定于属性 X）和一个任意对手 $\mathcal{A}$ 之间的游戏（与往常一样）。在应答某些查询时，挑战者可能会计算与方案 $\mathcal{S}$ 有关的各种函数，而这些函数有可能需要在某些时候对算法 $E$ 和/或算法 $D$ 进行评估。该游戏定义了一个优势 ${\rm X}\mathsf{adv}[\mathcal{A},\mathcal{S}]$，而关于属性 X 的安全性意味着，对于所有有效对手 $\mathcal{A}$，这个优势都是可忽略不计的。
+
+如果我们想要在理想密码模型中分析 $\mathcal{S}$，那么定义安全性的攻击游戏就需要修改，这样，$\mathcal{E}$就会被上面所介绍的随机置换族$\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$有效地替换，而对手和挑战者都对这个置换族拥有预言机的访问权限。更确切地说，该游戏会被修改如下：
+\begin{itemize}
+	\item 在游戏开始时，对于每个 $\mathpzc{k}\in\mathcal{K}$，挑战者随机选择 $\Pi_\mathpzc{k}\in\rm{Perms}[\mathcal{K}]$。
+	\item 除了标准查询外，对手 $\mathcal{A}$ 还可以发起\emph{理想密码查询}。包含以下两种类型：$\Pi$-查询和 $\Pi^{-1}$-查询。
+	\begin{itemize}
+		\item 对于一个 $\Pi$-查询，对手提交一对 $(\mathpzc{k},\mathpzc{a})\in\mathcal{K}\times\mathcal{X}$，挑战者以 $\Pi_\mathpzc{k}(\mathpzc{a})$ 作为应答。
+		\item 对于一个 $\Pi^{-1}$-查询，对手提交一对 $(\mathpzc{k},\mathpzc{b})\in\mathcal{K}\times\mathcal{X}$，挑战者以 $\Pi_\mathpzc{k}^{-1}(\mathpzc{b})$ 作为应答。
+	\end{itemize}
+	对手可以发起任何数量的理想密码查询，可任意地与标准查询交错进行。
+	\item 在处理标准查询时，挑战者用 $\Pi_\mathpzc{k}(\mathpzc{a})$ 代替 $E(\mathpzc{k},\mathpzc{a})$，用 $\Pi_\mathpzc{k}^{-1}(\mathpzc{b})$ 代替 $D(\mathpzc{k},\mathpzc{b})$ 进行计算。
+\end{itemize}
+对手优势的定义与之前的规则相同，但表示为 ${\rm X^{ic}}\mathsf{adv}[\mathcal{A},\mathcal{S}]$，以强调这是在\emph{理想密码模型中}的优势。理想密码模型中的安全性意味着 ${\rm X^{ic}}\mathsf{adv}[\mathcal{A},\mathcal{S}]$ 对于所有有效对手 $\mathcal{A}$ 来说都应该是可忽略不计的。
+
+理想密码查询的作用是很重要的。从本质上讲，它们模拟了对手``离线" 评估 $E$ 和 $D$ 的能力。
+
+\begin{snote}[理想置换模型。]
+一些构造，如艾文-曼苏尔构造（下面将要介绍），利用的是一个置换 $\pi:\mathcal{X}\to\mathcal{X}$，而不是一个分组密码。在安全分析中，我们可以启发式地将 $\pi$ 建模为一个随机置换 $\Pi$，攻击游戏中的参与各方都可以对 $\Pi$ 和 $\Pi^{-1}$ 发起预言机查询。我们称其为\textbf{理想置换模型 (ideal permutation model)}。对于某个固定的、公开可访问的密钥 $\mathpzc{k}_0\in\mathcal{K}$，只要简单地定义 $\Pi=\Pi_{\mathpzc{k}_0}$，我们就可以将其看作是理想密码模型的一个特例。
+\end{snote}
+
 \subsection{理想密码模型中的穷举搜索}\label{subsec:4-7-2}
+
+令 $(E, D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码，并令 $k$ 是 $\mathcal{K}$ 上的某个随机密钥。假设一个对手能够截获使用 $k$ 生成的少量输入/输出对 $(x_i,y_i)$：
+\[
+y_i=E(k,x_i)
+\quad\text{ for all }\;
+i=1,\dots,Q
+\]
+对手现在可以通过尝试 $\mathpzc{k}\in\mathcal{K}$ 中所有可能的密钥来试图恢复 $k$，直到找到一个对于所有$i=1,\dots,Q$，$y_i=E(\mathpzc{k},x_i)$都成立的密钥 $\mathpzc{k}$。对于在实践中使用的分组密码，这个 $\mathpzc{k}$ 在很大概率上就等于实际使用的密钥 $k$。这种对密钥空间的\textbf{穷举搜索}可以在 $O(|\mathcal{K}|)$ 时间内使用少量的输入/输出对恢复分组密码的密钥。我们将在下面的定理 \ref{theo:4-12} 中分析攻击成功所需的输入/输出对的数量。
+
+穷举搜索是密钥恢复攻击的一个最简单例子。我们下面将要介绍几种具体的密钥恢复攻击的方法，但是，我们首先要详细定义密钥恢复攻击的攻击游戏。我们将主要使用这个密钥恢复游戏作为展示攻击的手段。
+
+\begin{game}\label{game:4-4}
+对于一个给定的定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码 $\mathcal{E}=(E,D)$，对于一个给定有效对手 $\mathcal{A}$，游戏过程如下：
+\begin{itemize}
+	\item 挑战者随机选取 $k\overset{\rm R}\leftarrow\mathcal{K}$。
+	\item 对手 $\mathcal{A}$ 向挑战者发起多次查询。对于 $i=1,2,\dots$，第 $i$ 次查询包含一条消息 $x_i\in\mathcal{M}$。挑战者在给定 $x_i$ 的情况下计算 $y_i\overset{\rm R}\leftarrow E(k,x_i)$，并将 $y_i$ 发送给 $\mathcal{A}$。
+	\item 最终，$\mathcal{A}$ 输出一个候选密钥 $\mathpzc{k}\in\mathcal{K}$。
+\end{itemize}
+如果 $\mathpzc{k}=k$，我们就称 $\mathcal{A}$ 赢得了游戏。我们令 $\rm{KR}\mathsf{adv}[\mathcal{A},\mathcal{E}]$ 为 $\mathcal{A}$ 赢得该游戏的概率。
+\end{game}
+
+密钥恢复游戏很自然地就能被扩展到理想密码模型中，此时 $E(\mathpzc{k},\mathpzc{a})=\Pi_\mathpzc{k}(\mathpzc{a})$，$D(\mathpzc{k},\mathpzc{b})=\Pi^{-1}_\mathpzc{k}(\mathpzc{b})$，并且 $\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$ 是一个独立随机置换族。在该模型中，除了对 $E(k,\cdot)$ 的标准查询之外，我们还允许对手发起任意地$\Pi$-查询和 $\Pi^{-1}$ 查询。当 $\mathcal{E}$ 是一个理想密码时，我们令 $\rm{KR^{ic}}\mathsf{adv}[\mathcal{A},\mathcal{E}]$ 为对手的密钥恢复优势。
+
+需要注意的是，对密钥恢复攻击的安全性并不意味着不可区分性意义上的安全性（定义 \ref{def:4-1}）。最简单的例子是恒定的分组密码 $E(k,x)=x$，针对它进行密钥恢复是不可能的（因为对手无法获得任何关于密钥 $k$ 的信息），但是我们很容易将其与随机的置换区分开。
+
+\begin{snote}[穷举搜索。]
+假设密码是一个理想密码，下面的定理限制了穷举搜索所需的输入/输出对的数量。对于现实世界中的参数，取 $Q=3$ 基本上就足以确保攻击成功。
+\end{snote}
+
+\begin{theorem}\label{theo:4-12}
+令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码。那么存在一个就 $\mathcal{E}$ 进行攻击游戏 \ref{game:4-4} 的对手 $\mathcal{A}_{{\rm E}X}$，它被建模为一个理想密码，发起 $Q$ 次标准查询和 $Q|\mathcal{K}|$ 次理想密码查询，且满足：
+\begin{equation}\label{eq:4-34}
+\mathrm{KR^{ic}}\mathsf{adv}[\mathcal{A},\mathcal{E}]\geq1-\epsilon
+\quad\text{where}\quad
+\epsilon:=\frac{|\mathcal{K}|}{(|\mathcal{X}|-Q)^Q}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+在理想密码模型中，我们将分组密码 $\mathcal{E}=(E,D)$ 建模为一个 $\mathcal{X}$ 上的随机置换族 $\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$。在攻击游戏 \ref{game:4-4} 中，挑战者随机选择一个 $k\in\mathcal{K}$。对手可以进行标准查询，以获得他选择的点 $x\in\mathcal{X}$ 处的 $E(k,x)=\Pi_k(x)$ 值。对手也可以进行理想密码查询，以获得他选择的点 $\mathpzc{k}\in\mathcal{K}$，$\mathpzc{a},\mathpzc{b}\in\mathcal{X}$ 处的 $\Pi_\mathpzc{k}(\mathpzc{a})$ 和 $\Pi_\mathpzc{k}^{-1}(\mathpzc{b})$ 值。这些理想密码查询对应 $E$ 和 $D$ 的``离线"计算。
+
+我们的对手 $\mathcal{A}_{{\rm E}X}$ 的工作方式如下：
+
+\vspace{5pt}
+
+\hspace*{5pt} 令 $\{x_1,\dots,x_Q\}$ 是 $\mathcal{X}$ 中不同消息的一个任意集合\\
+\hspace*{26pt} 对于 $i=1,\dots,Q$：\\
+\hspace*{50pt} 发起一次标准查询，以获得 $y_i:=E(k,x_i)=\Pi_k(x_i)$\\
+\hspace*{26pt} 对于每个 $\mathpzc{k}\in\mathcal{K}$：\\
+\hspace*{50pt} 对于 $i=1,\dots,Q$：\\
+\hspace*{75pt} 发起一次理想密码查询，以获得 $\mathpzc{b}_i:=\Pi_\mathpzc{k}(x_i)$\\
+\hspace*{50pt} 如果对于所有 $i=1,\dots,Q$ 都有 $y_i=\mathpzc{b}_i$：\\
+\hspace*{75pt} 输出 $\mathpzc{k}$ 并停机。
+
+\vspace{5pt}
+
+\noindent
+令 $k$ 是挑战者的密钥。我们表明，$\mathcal{A}_{{\rm E}X}$ 以至少 $1-\epsilon$ 的概率输出 $k$，$\epsilon$ 的定义如式 \ref{eq:4-34}。由于 $\mathcal{A}_{{\rm E}X}$ 尝试了所有的密钥，这相当于表明，存在一个以上的密钥能够与给定的 $(x_i,y_i)$ 相匹配的概率最多只有 $\epsilon$。我们将表明这对每一个可能的 $k$ 的选择都成立，所以在证明的其余部分，我们将 $k$ 视为固定值。我们还将 $x_1,\dots,x_Q$ 视为固定值，这样，对于$\mathpzc{k}\in\mathcal{K}$，所有的概率都取决于随机置换 $\Pi_\mathpzc{k}$。
+
+对于每个 $\mathpzc{k}\in\mathcal{K}$，令 $W_\mathpzc{k}$ 为对于所有的 $i=1,\dots,Q$，$y_i=\Pi_\mathpzc{k}(x_i)$ 都成立的事件。注意到，根据定义，$W_k$ 的发生概率为 $1$。令 $W$ 是 $W_\mathpzc{k}$ 在某个 $\mathpzc{k}\neq k$ 时发生的事件。我们想要证明 $\Pr[W]\leq\epsilon$。
+
+固定 $\mathpzc{k}\neq k$。由于置换 $\Pi_k$ 的选择与置换 $\Pi_\mathpzc{k}$ 无关，我们可知：
+\[
+\Pr[W_\mathpzc{k}]=
+\frac{1}{|\mathcal{X}|}\cdot\frac{1}{|\mathcal{X}|-1}\cdots\frac{1}{|\mathcal{X}|-Q+1}
+\leq
+\left(
+\frac{1}{|\mathcal{X}|-Q}
+\right)
+^Q
+\]
+由于上式对所有 $\mathpzc{k}\neq k$ 都成立，所以由联合约束就可以得到定理。
+\end{proof}
+
+\subsubsection{$3\mathcal{E}$ 构造的安全性}
+
+定理 \ref{theo:4-2} 中提出的攻击对 $3\mathcal{E}$ 构造同样有效。密钥空间的大小是 $|\mathcal{K}|^3$，但我们可以通过``中间相遇"构造一个密钥恢复算法，其运行时间仅为 $O(|\mathcal{K}^2|\cdot Q)$。对于 Triple-DES 来说，该算法需要计算超过 $2^{2\cdot56}$ 次 Triple-DES，这远超目前计算机的计算能力。
+
+我们现在想要知道的是，是否存在针对 $3\mathcal{E}$ 构造的效率更高的攻击方法。事实上，当 $\mathcal{E}$ 是一个理想密码时，我们可以证明，区分 $3\mathcal{E}$ 密码和随机置换的计算量存在一个下界。
+
+\begin{theorem}\label{theo:4-13}
+令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的理想分组密码。考虑在理想密码模型下针对 $3\mathcal{E}$ 构造的攻击。如果 $\mathcal{A}$ 是一个对手，他在攻击游戏 \ref{game:4-1} 的理想密码变体中最多能够发起 $Q$ 次查询（包括标准查询和理想密码查询），那么：
+\[
+{\rm BC^{ic}\mathsf{adv}}[\mathcal{A},3\mathcal{E}]\leq C_1L\frac{Q^2}{|\mathcal{K}|^3}+C_2\frac{Q^{2/3}}{|\mathcal{K}|^{2/3}|\mathcal{X}|^{1/3}}+C_3\frac{1}{|\mathcal{K}|}
+\]
+其中 $L:=\max({|\mathcal{K}|}/{|\mathcal{X}|},\log_2|\mathcal{X}|)$，并且 $C_1,C_2,C_3$ 都是常数（不取决于 $\mathcal{A}$ 或 $\mathcal{E}$）。
+\end{theorem}
+
+如果我们假设 $|\mathcal{K}|\leq|\mathcal{X}|$，定理的陈述就更加容易理解，就像 DES 的情况一样。在这种情况下，这个约束可以重述为：
+\[
+{\rm BC^{ic}\mathsf{adv}}[\mathcal{A},3\mathcal{E}]\leq C\log_2|\mathcal{X}|\frac{Q^2}{|\mathcal{K}|^3}
+\]
+其中 $C$ 是一个常数。忽略 $\log\mathcal{X}$ 项，这意味着对手必须进行大约 $|\mathcal{K}|^{1.5}$ 次查询才能获得明显的优势。将其与中间相遇攻击进行比较，为了获得显著的优势，对手必须进行大约 $|\mathcal{K}|^2$ 次查询。因此中间相遇攻击可能不是最高效的攻击。
+
+总结我们对 Triple-DES 的讨论，我们可以注意到，$3\mathcal{E}$ 构造并不总是可以加强密码。比如说，如果 $\mathcal{E}=(E,D)$ 满足 $|\mathcal{K}|$ 置换排列 $\{E(\mathpzc{k},\cdot):\mathpzc{k}\in\mathcal{K}\}$ 集合是一个群，那么 $3\mathcal{E}$ 构造并不比 $\mathcal{E}$ 更安全。事实上，在这种情况下，$\pi=E_3((k_1,k_2,k_3),\cdot)$ 与 $E(k,\cdot)$ 对于某些 $k\in\mathcal{K}$ 是相同的。因此，区分 $3\mathcal{E}$ 和随机置换排列并不比区分 $\mathcal{E}$ 与随机置换排列更难。
+
+\subsection{艾文-曼苏尔分组密码和 $\mathcal{E}X$ 构造}
+
+令 $\mathcal{X}=\{0,1\}^n$。令 $\pi:\mathcal{X}\to\mathcal{X}$ 是一个置换，并令 $\pi^{-1}$ 是其反函数。西蒙·艾文(Shimon Even)和伊沙伊·曼苏尔(Yishay Mansour)定义了下面这种简单的分组密码 $\mathcal{E}_{EM}=(E,D)$，它定义在 $(\mathcal{X}^2,\mathcal{X})$ 上：
+\begin{equation}\label{eq:4-35}
+E((P_1,P_2),\;x):=\pi(x\oplus P_1)\oplus P_2
+\quad\quad\text{and}\quad\quad
+D((P_1,P_2),\;y):=\pi^{-1}(y\oplus P_2)\oplus P_1
+\end{equation}
+我们如何分析这个区块密码的安全性？显然，对于某些 $\pi$ 来说，这种构造是不安全的，例如当 $\pi$ 是恒等函数时。那么，当$\pi$满足什么条件时，$\mathcal{E}_{EM}$ 才是一个安全的分组密码？
+
+我们目前知道的分析 $\mathcal{E}_{EM}$ 安全性的唯一方法是将 $\pi$ 建模为集合 $\mathcal{X}$ 上的随机置换 $\Pi$（即在理想密码模型中使用固定密钥）。我们将在下面的定理 \ref{theo:4-14} 中表明，在理想密码模型下，对于所有对手 $\mathcal{A}$，都有：
+\begin{equation}\label{eq:4-36}
+{\rm BC^{ic}\mathsf{adv}}[\mathcal{A},3\mathcal{E}]\leq\frac{2Q_{\rm s}Q_{\rm ic}}{|\mathcal{X}|}
+\end{equation}
+其中 $Q_{\rm s}$ 是 $\mathcal{A}$ 向 $\mathcal{E}_{EM}$ 发起的查询次数，而 $Q_{\rm ic}$ 是 $\mathcal{A}$ 对 $\Pi$ 和 $\Pi^{-1}$ 发起的查询次数。因此，只要 $|\mathcal{X}|$ 足够大，艾文-曼苏尔分组密码（在理想密码模型下）就是安全的。
+
+艾文-曼苏尔安全性定理 \ref{theo:4-14} 并不要求密钥 $P_1$ 和 $P_2$ 是独立的。事实上，如果我们令 $P_1=P_2$，$\mathcal{E}_{EM}$ 的密钥就是 $\mathcal{X}$ 中的单个元素，此时式 \ref{eq:4-36} 中的上界仍然保持不变。我们注意到，如果我们不考虑 $P_1$ 或 $P_2$ 中的任何一个，这个构造就会完全丧失安全性（见练习 4.20）。
+
+\begin{snote}[迭代艾文-曼苏尔密码和 AES。]
+回顾我们对 AES 的描述（图 \ref{fig:4-11}），我们发现艾文-曼苏尔密码看起来很像 AES 中的一轮，其中轮函数 $\Pi_{\rm AES}$ 扮演了 $\pi$ 的角色。当然，一轮 AES 并不是一个安全的分组密码：式 \ref{eq:4-36} 中的上界并不能保证安全性，因为 $\Pi_{\rm AES}$ 并不是一个随机置换。
+
+假设我们将图 \ref{fig:4-11} 中 $\Pi_{\rm AES}$ 的每一次出现都替换称不同的置换，即对AES的每一轮都赋予一个新的函数。那么由此产生的结构，称为\textbf{迭代艾文-曼苏尔 (iterated Even-Mandour)}，可以在理想密码模型下进行分析，它所产生的安全上界比式 \ref{eq:4-36} 中所述的更好。
+
+以上这些结果表明，理想密码模型下的 AES 构造在理论上是合理的。
+\end{snote}
+
+\begin{snote}[$\mathcal{E}X$ 构造和 DESX。]
+如果我们将艾文-曼苏尔构造应用于定义在 $(\mathcal{K},\mathcal{X})$ 上的一个发展完备的分组密码 $\mathcal{E}=(E,D)$，我们就能得到一个新的分组密码 $\mathcal{E}X=(EX,DX)$，其中：
+\begin{equation}\label{eq:4-37}
+EX((k,P_1,P_2),\;x)=E(k,\;x\oplus P_1)\oplus P_2,
+\quad\quad\quad
+DX((k,P_1,P_2),\;y)=D(k,\;y\oplus P_2)\oplus P_1
+\end{equation}
+这个新的密码 $\mathcal{E}X$ 的密钥空间为 $\mathcal{K}\times\mathcal{X}^2$，它比底层密码 $\mathcal{E}$ 的密钥空间大得多。
+
+下面的定理 \ref{theo:4-14} 表明，在理想密码模型下，这种较大的密钥空间意味着更强的安全性：只要 $|\mathcal{X}|$ 足够大，针对 $\mathcal{E}X$ 的最大优势就比针对 $\mathcal{E}$ 的最大优势小得多。
+
+将 $\mathcal{E}X$ 应用于 DES 分组密码，可以提供一种有效的方法，使得 DES 免受穷举搜索攻击。在 $P_1=P_2$ 的情况下，我们可以得到一个称作 \textbf{DESX} 的分组密码，其密钥大小为 $56+64=120$ 比特，这足以抵抗穷举搜索。定理 \ref{theo:4-14} 表明，在理想密码模型下，对这种密码的攻击是不具备可行性的。由于评估 DESX 只需要调用一次 DES，因此 DESX 密码比 Triple-DES 密码快三倍，这使得 DESX 似乎是加强 DES 的首选方式。然而，像差分密码分析和线性密码分析这样的非黑箱攻击仍然适用于 DESX，但它们对 Triple-DES 无效。因此，DESX 在实践中不应该被使用。
+\end{snote}
+
+\subsection{对艾文-曼苏尔和 $\mathcal{E}X$ 定理的证明}
+
+我们下面证明，艾文-曼苏尔分组密码（式 \ref{eq:4-35}）在理想置换模型下是安全的，并且 $\mathcal{E}X$ 构造（式 \ref{eq:4-37}）在理想密码模型下也是安全的。
+
+我们在下面的一个定理中证明它们的安全性。以一个单密钥分组密码（即 $|\mathcal{K}|=1$）来证明艾文-曼苏尔密码在理想置换模型下的安全性。以一个具有较大密钥空间的分组密码来证明 $\mathcal{E}X$ 构造的安全性。请注意，$P_1$ 和 $P_2$ 不需要一定是独立的，就算我们令 $P_2=P_1$，该定理仍然成立。
+
+\begin{theorem}\label{theo:4-14}
+令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码。假设 $\mathcal{E}X=(EX,DX)$ 是由 $\mathcal{E}$ 以式 \ref{eq:4-37} 中介绍的方式派生的分组密码，其中 $P_1$ 和 $P_2$ 各自均匀分布在 $\mathcal{X}$ 的一个子集 $\mathcal{X}'$ 上。 如果我们将 $\mathcal{E}$ 建模为一个理想密码，如果 $\mathcal{A}$ 是攻击游戏 \ref{game:4-1} 中攻击 $\mathcal{E}X$ 的对手，它最多能够发起 $Q_{\rm s}$ 次标准查询（即 $EX$ 查询）和 $Q_{\rm ic}$ 次理想密码查询（即 $\Pi$ 或 $\Pi^{-1}$ 查询），那么我们有：
+\begin{equation}\label{eq:4-38}
+{\rm BC^{ic}\mathsf{adv}}[\mathcal{A},\mathcal{E}X]\leq\frac{2Q_{\rm s}Q_{\rm ic}}{|\mathcal{K}||\mathcal{X}'|}
+\end{equation}
+\end{theorem}
+\noindent
+为了理解 $\mathcal{E}X$ 构造的安全增益，不妨考虑以下情况：将 $\mathcal{E}$ 建模为理想密码模型，那么对于所有的 $\mathcal{A}$，我们都有${\rm BC^{ic}\mathsf{adv}}[\mathcal{A},\mathcal{E}]\leq\frac{Q_{\rm ic}}{|\mathcal{K}|}$。因此，定理 \ref{theo:4-14} 表明，在理想密码模型下，将 $\mathcal{E}X$ 构造应用于 $\mathcal{E}$，会将对手的最大优势缩小 $\frac{2Q_{\rm s}}{|\mathcal{X}'|}$ 倍。
+
+定理 \ref{theo:4-14} 中的上界是严格的，存在一个对手 $\mathcal{A}$ 能实现式 \ref{eq:4-38} 中所示的优势。即使在独立选择 $P_1$ 和 $P_2$ 时，这个 $\mathcal{A}$ 的优势也不会改变。因此，我们不妨总是选择 $P_2=P_1$。
+
+我们还注意到，要证明 $\mathcal{E}X$ 是理想密码模型中的\emph{强安全}分组密码（见 \ref{subsec:4-1-3} 小节）其实并不难，其安全边界与定理 \ref{theo:4-14} 完全相同。
+
+\begin{proof}[证明思路]
+基本思想是证明理想密码查询和标准查询不会相互影响，除非达到了式 \ref{eq:4-38} 中的概率上界。事实上，要使这两类查询相互影响，对手必须使：
+\[
+(\mathpzc{k}=k~{\rm and}~\mathpzc{a}=x\oplus P_1)
+\quad\text{or}\quad
+(\mathpzc{k}=k~{\rm and}~\mathpzc{b}=y\oplus P_2)
+\]
+对于某个标准查询的输入/输出对 $(x,y)$ 和某个理想密码查询的输入/输出三元组 $(\mathpzc{k},\mathpzc{a},\mathpzc{b})$ 成立。从本质上讲，对手必须同时猜测出随机密钥 $k$ 以及随机填充 $P_1$ 或 $P_2$ 中的任意一个。
+
+假设没有这样的交互，我们就可以有效地将所有的标准查询实现为 $\Pi(x\oplus P_1)\oplus P_2$，所使用的随机置换 $\Pi$ 与实现理想密码查询所使用的随机置换无关。但 $\Pi'(x):=\Pi(x\oplus P_1)\oplus P_2$ 只是一个随机置换。
+\end{proof}
+
+在给出定理 \ref{theo:4-14} 的严格证明之前，我们先给出一个技术性的定理，称为\textbf{领域分离引理 (Domain Separation Lemma)}，它将极大地简化证明，并且在分析其他结构时也很有用。
+
+为了引出该引理，不妨考虑以下两个实验。在一个被称为``分离实验"的实验中，对手可以对一个集合$\mathcal{X}$ 上的两个随机置换 $\Pi_1,\Pi_2$进行预言机访问。对手可以进行一系列的查询，每个查询的形式为 $(\mu,d,\mathpzc{z})$，其中 $\mu\in\{1,2\}$ 指定要评估两个置换中的哪一个，$d\in\{\pm1\}$ 指定评估置换的方向，而 $\mathpzc{z}\in\mathcal{X}$ 是置换的输入。对于这样的查询，挑战者的应答是 $\mathpzc{z}':=\Pi_\mu^d(\mathpzc{z})$。另一个实验被称为``聚合实验"，它与分离实验基本相同，只是它只有一个置换排列 $\Pi$，挑战者用 $\mathpzc{z}':=\Pi^d(\mathpzc{z})$ 应答查询 $(\mu,d,\mathpzc{z})$，即完全忽略索引 $\mu$。现在的问题是：在什么条件下，对手能区分这两个实验？
+
+显然，如果对手可以提交一个查询 $(1,+1,\mathpzc{a})$ 和另一个查询 $(2,+1,\mathpzc{a})$，那么在分离实验中，结果几乎肯定是不同的，而在聚合实验中，结果肯定是相同的。对手也可以发起另一种类型的攻击：他可以先提交查询 $(1,+1,\mathpzc{a})$ 并得到一个应答 $\mathpzc{b}$，然后提交查询 $(2,-1,\mathpzc{b})$ 并得到应答 $\mathpzc{a}'$。在分离实验中，$\mathpzc{a}$ 和 $\mathpzc{a}'$ 几乎肯定是不同的。而在聚合实验中，它们肯定是相同的。除了这两种方法，对手也可以将方向调转，这样就又得到了两种方法。领域分离引理基本上就是说，除非对手进行这四种类型的查询，否则他无法区分这两种实验。
+
+当然，领域分离引理只在对手受到某种限制而不能自由选择查询的情况下有用。事实上，我们只会在一个安全定理的证明中使用它，在这个证明中，领域分离引理中的``对手"由一个挑战者和一个更有趣的攻击游戏中的对手组成。
+
+在该定理的更一般的陈述中，我们用一个置换 $\{\Pi_\mu\}_{\mu\in U}$ 代替 $\Pi_1$ 和 $\Pi_2$，并用置换 $\{\overline\Pi_\nu\}_{\nu\in V}$ 代替 $\Pi$。我们还会引入一个函数 $f:U\to V$，它指定了分离实验中的几个置换如何在聚合实验中被折叠成一个置换，即对于每个 $\nu\in V$，分离实验中满足 $f(\mu)=\nu$ 的所有置换 $\Pi_\mu$ 都会在聚合实验中被折叠到单一置换 $\overline\Pi_\nu$ 中。
+
+在区分游戏的推广版本中，如果对手发起一个查询 $(\mu,d,\mathpzc{z})$，那么在分离实验中，挑战者的应答是 $\mathpzc{z}':=\Pi_\mu^d(\mathpzc{z})$；而在聚合实验中，挑战者的应答是 $\mathpzc{z}':=\Pi^d_{f(\mu)}(\mathpzc{z})$。在分离实验中，我们也追踪置换的领域和范围的子集，这些置换对应于对手在分离实验中发起的实际查询。也就是说，对于每个 $\mu\in U$ 和 $d\in\{\pm1\}$，我们都构建集合 ${\rm Dom}^{(d)}_\mu$，使得当且仅当对手发起了一个能够产生 $\mathpzc{a}$ 的，形如 $(\mu,+1,\mathpzc{a})$ 或者 $(\mu,-1,\mathpzc{b})$ 的查询时，有 $\mathpzc{a}\in{\rm Dom}^{(+1)}_\mu$ 成立。类似地，当且仅当对手发起了一个能够产生 $\mathpzc{b}$的，形如 $(\mu,-1,\mathpzc{b})$ 或者 $(\mu,+1,\mathpzc{a})$ 的查询时，有 $\mathpzc{b}\in{\rm Dom}^{(-1)}_\mu$ 成立。我们称 ${\rm Dom}^{(+1)}_\mu$ 为 $\Pi_\mu$ 的\textbf{采样领域 (sampled domain)}，${\rm Dom}^{(-1)}_\mu$ 为 $\Pi_\mu$ 的\textbf{采样范围 (sampled range)}。
+
+\begin{game}[领域分离]\label{game:4-5}
+令 $U,V,X$ 是有限非空集合，并令 $f:U\to V$ 是一个函数。对于一个给定的对手 $\mathcal{A}$，我们定义两个实验：实验$0$和实验$1$。对于$b=0,1$，我们定义：
+
+\noindent\textbf{实验$b$：}
+\begin{itemize}
+	\item 对于每个 $\mu\in U$ 和每个 $\nu\in V$，挑战者令 $\Pi_\mu\overset{\rm R}\leftarrow{\rm Perms}[\mathcal{X}]$，$\bar\Pi_\nu\overset{\rm R}\leftarrow{\rm Perms}[\mathcal{X}]$。\\
+	另外，对于每个 $\mu\in U$ 和 $d\in\{\pm1\}$，挑战者令 ${\rm Dom}^{(d)}_\mu\leftarrow\varnothing$。
+	\item 对手向挑战者提交一系列查询。\\
+	对于$i=1,2,\dots$，第 $i$ 个查询为 $(\mu_i,d_i,\mathpzc{z}_i\in U\times\{\pm1\}\times\mathcal{X}$。\\    
+    如果 $b=0$：挑战者令 $\mathpzc{z}_i'\leftarrow\overline\Pi_{f(\mu_i)}^{d_i}(\mathpzc{z}_i)$。\\    
+    如果 $b = 1$：挑战者令 $\mathpzc{z}_i'\leftarrow\Pi_{\mu_i}^{d_i}(\mathpzc{z}_i)$，并将 $\mathpzc{z}_i$ 添加到集合 ${\rm Dom}^{(d_i)}_{\mu_i}$ 中，将 $\mathpzc{z}_i'$ 添加到集合 ${\rm Dom}^{(-d_i)}_{\mu_i}$ 中。\\
+    在任何一种情况下，挑战者都会将 $\mathpzc{z}_i'$ 发送给对手。
+	\item 最后，对手输出一个比特 $\hat b\in\{0,1\}$。
+\end{itemize}
+
+对于 $b=0,1$，令 $W_b$ 为 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件。我们定义 $\mathcal{A}$ 的\textbf{领域分离区分优势 (domain separation distinguishing advantage)} 为 $|\Pr[W_0]-\Pr[W_1]|$。另外，我们定义\textbf{领域分离失败事件 (domain separation failure event)} $Z$ 为\emph{在实验 $1$ 中}，当游戏结束时，对于某个 $d\in\{\pm1\}$ 和满足 $f(\mu)=f(\mu')$ 的\emph{不同}索引 $\mu,\mu'$，出现 ${\rm Dom}^{(d)}_{\mu}\cap{\rm Dom}^{(d)}_{\mu'}=\varnothing$ 的事件。最后，我们定义\textbf{领域分离失败概率 (domain separation failure probability)} 为 $\Pr[Z]$。
+\end{game}
+
+上述游戏中的实验 $1$ 就是分离实验，实验 $0$ 则是聚合实验。
+
+\begin{theorem}[领域分离引理]\label{theo:4-15}
+在攻击游戏 \ref{game:4-5} 中，一个对手的领域分离区分优势受领域分离失败概率约束。
+\end{theorem}
+
+
+在应用领域分离引理时，我们通常会分析一些攻击游戏，在这些游戏中，置换排列开始是聚合的，然后被强迫分离开。我们可以通过分析攻击游戏中的领域分离失败概率来约束这种变化对攻击结果的影响。在证明领域分离引理之前，我们先看看定理 \ref{theo:4-14} 的证明中是如何使用它的。
+
+定理 4.14 的证明
+
+令 $[\mathcal{A}](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b)$ 是定理陈述中的对手。对于 $b=0,1$，记 $p_b$ 是 $[\mathcal{A}](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b)$ 在理想密码模型下[攻击游戏 4.1](https://www.notion.so/f32864f7c7fd455b879abbfacce26312) 的实验 $b$ 中输出 $1$ 的概率。根据定义，我们有：
+
+$$
+{\rm BC^{ic}\mathsf{adv}}[\mathcal{A},\mathcal{E}X]=|p_0-p_1|
+$$
+
+我们下面构造两个游戏，并利用领域分离引理来证明该定理。
+
+**游戏** $0$
+
+游戏 $0$ 对应于理想密码模型下[攻击游戏 4.1](https://www.notion.so/f32864f7c7fd455b879abbfacce26312) 的实验 $0$。回顾一下，在理想密码模型中，我们有一个随机置换排列族，而加密函数是根据这个置换排列族来实现的。此外，除了能对函数 $E_k(\cdot)$ 发起标准查询外，对手还可以对随机置换排列发起查询。
+
+- 初始化：
+    - 对于每个 $\mathpzc{k}\in\mathcal{K}$，随机选取 $\Pi_\mathpzc{k}\overset{R}\leftarrow{\rm Perms}[\mathcal{X}]$；
+    - 随机选取 $k\overset{R}\leftarrow\mathcal{K}$；
+    - 选取 $P_1,P_2$。
+- 标准 $EX$ 查询 $x$：
+    1. 计算 $\mathpzc{a}\leftarrow x\oplus P_1$；
+    2. 计算 $\mathpzc{b}\leftarrow\Pi_k(\mathpzc{a})$；
+    3. 计算 $y\leftarrow\mathpzc{b}\oplus P_2$；
+    4. 返回 $y$。
+- 理想密码 $\Pi$ 查询 $\mathpzc{k},\mathpzc{a}$:
+    1. 计算 $\mathpzc{b}\leftarrow\Pi_\mathpzc{k}(\mathpzc{a})$；
+    2. 返回 $\mathpzc{b}$。
+- 理想密码 $\Pi^{-1}$ 查询 $\mathpzc{k},\mathpzc{b}$:
+    - 计算 $\mathpzc{a}\leftarrow\Pi_\mathpzc{k}^{-1}(\mathpzc{b})$；
+    - 返回 $\mathpzc{a}$。
+
+记 $W_0$ 为 $[\mathcal{A}](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b)$ 在游戏 $0$ 结束时输出 $1$ 的事件。我们可以根据构造原理得出：
+
+$$
+\Pr[W_0]=p_0
+$$
+
+**游戏 $1$**
+
+在该游戏中，我们应用领域分离引理。基本思想是规定处理标准查询时所使用的随机置换排列与处理理想密码查询时所使用的随机置换排列相互独立。实际上，每个置换排列 $\Pi_\mathpzc{k}$ 都被分割成两个相互独立的置换排列 $\Pi_{{\rm std},\mathpzc{k}}$ 和 $\Pi_{{\rm ic},\mathpzc{k}}$。其中 $\Pi_{{\rm std},\mathpzc{k}}$ 被挑战者用于应答标准 $EX$ 查询，而 $\Pi_{{\rm ic},\mathpzc{k}}$ 被用于应答理想密码查询。
+
+- 初始化：
+    - 对于每个 $\mathpzc{k}\in\mathcal{K}$，随机选取 $\Pi_{{\rm std},\mathpzc{k}}\overset{R}\leftarrow{\rm Perms}[\mathcal{X}]$ 和 $\Pi_{{\rm ic},\mathpzc{k}}\overset{R}\leftarrow{\rm Perms}[\mathcal{X}]$；
+    - 随机选取 $k\overset{R}\leftarrow\mathcal{K}$；
+    - 选取 $P_1,P_2$。
+- 标准 $EX$ 查询 $x$：
+    1. 计算 $\mathpzc{a}\leftarrow x\oplus P_1$；
+    2. 计算 $\mathpzc{b}\leftarrow\Pi_{{\rm std},k}(\mathpzc{a})$，即将 $\mathpzc{a}$ 添加到 $\Pi_{{\rm std},k}$ 的采样域，将 $\mathpzc{b}$ 添加到 $\Pi_{{\rm std},k}$ 的采样范围；
+    3. 计算 $y\leftarrow\mathpzc{b}\oplus P_2$；
+    4. 返回 $y$。
+- 理想密码 $\Pi$ 查询 $\mathpzc{k},\mathpzc{a}$:
+    1. 计算 $\mathpzc{b}\leftarrow\Pi_{{\rm ic},\mathpzc{k}}(\mathpzc{a})$，即将 $\mathpzc{a}$ 添加到 $\Pi_{{\rm ic},\mathpzc{k}}$ 的采样域，将 $\mathpzc{b}$ 添加到 $\Pi_{{\rm ic},\mathpzc{k}}$ 的采样范围；
+    2. 返回 $\mathpzc{b}$。
+- 理想密码 $\Pi^{-1}$ 查询 $\mathpzc{k},\mathpzc{b}$:
+    - 计算 $\mathpzc{a}\leftarrow\Pi_{{\rm ic},\mathpzc{k}}^{-1}(\mathpzc{b})$，即将 $\mathpzc{a}$ 添加到 $\Pi_{{\rm ic},\mathpzc{k}}$ 的采样域，将 $\mathpzc{b}$ 添加到 $\Pi_{{\rm ic},\mathpzc{k}}$ 的采样范围；
+    - 返回 $\mathpzc{a}$。
+
+记 $W_1$ 为 $[\mathcal{A}](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b)$ 在游戏 $1$ 结束时输出 $1$ 的事件。令 $Z$ 表示在游戏 $1$ 中存在 $\mathpzc{k}\in\mathcal{K}$ 使得 $\Pi_{{\rm ic},\mathpzc{k}}$ 和 $\Pi_{{\rm std},\mathpzc{k}}$ 的采样域重叠，或者 $\Pi_{{\rm ic},\mathpzc{k}}$ 和 $\Pi_{{\rm std},\mathpzc{k}}$ 的采样范围重叠的事件。由领域分离引理可以得到：
+
+$$
+|\Pr[W_0]-\Pr[W_1]|\leq\Pr[Z]
+$$
+
+在应用领域分离引理时，聚合函数 $f$ 将 $\{{\rm std},{\rm ic}\}\times\mathcal{K}$ 中的元素映射到 $\mathcal{K}$ 中的元素，即将数对 $(\cdot,\mathpzc{k})$ 映射为 $\mathpzc{k}$。观察到挑战者只对 $\Pi_k$ 进行查询，其中 $k$ 是密钥，因此这样的重叠只能发生在 $\mathpzc{k}=k$ 处。还可以观察到，在游戏 $1$ 中，随机变量 $k$，$P_1$ 和 $P_2$ 完全独立于对手的行为。
+
+因此，当且仅当对于某个由 $\Pi$ 或 $\Pi^{-1}$ 查询产生的输入-输出三元组 $(\mathpzc{k},\mathpzc{a},\mathpzc{b})$ 和某个由 $EX$ 查询产生的输入-输出对 $(x,y)$，有：
+
+$$
+(\mathpzc{k}=k~{\rm and}~\mathpzc{a}=x\oplus P_1)~{\rm or}~(\mathpzc{k}=k~{\rm and}~\mathpzc{b}=y\oplus P_2)
+$$
+
+时，事件 $Z$ 发生。使用联合约束，我们可以将 $\Pr[Z]$ 限制为 $2Q_{\rm s}Q_{\rm ic}$ 个事件的概率和，其中每个事件都满足 $\mathpzc{k}=k,
+\mathpzc{a}=x\oplus P_1$ 或者 $\mathpzc{k}=k,
+\mathpzc{b}=y\oplus P_2$。根据独立性，由于 $k$ 在一个大小为 $|\mathcal{K}|$ 的集合上均匀分布，而 $P_1$ 和 $P_2$ 在一个大小为 $|\mathcal{X}'|$ 的集合上均匀分布，因此每个这样的事件发生的概率最多为 $\frac{1}{|\mathcal{K}||\mathcal{X}'|}$。所以有：
+
+$$
+\Pr[Z]\leq\frac{2Q_{\rm s}Q_{\rm ic}}{|\mathcal{K}||\mathcal{X}'|}
+$$
+
+最后，注意到游戏 $1$ 等同于理想密码模型下[攻击游戏 4.1](https://www.notion.so/f32864f7c7fd455b879abbfacce26312) 的实验 $1$，其中 $EX$ 查询向对手提供了随机置换 $\Pi'(x)=\Pi_{{\rm std},k}(x\oplus P_1) \oplus P_2$，该置换与 $\Pi$ 查询和 $\Pi^{-1}$ 查询中所用的随机置换无关。因此有：
+
+$$
+\Pr[W_1]=p_1
+$$
+
+这样，由[式 4.39](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b)，[式 4.40](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b)，[式 4.41](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b)，[式 4.43](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b) 和[式 4.44](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b)，我们就可以得到[式 4.38](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b)，所以定理 \ref{theo:4-14} 得证。
+
+最后，我们来看看领域分离引理的证明，它是[差分引理](https://www.notion.so/4a824597ec5e4b3692a25a597a91ffa1)和健忘侏儒技术的一个简单的应用。
+
+定理 4.15 的证明
+
+我们定义一连串的游戏。
+
+**游戏 $0$**
+
+该游戏等同于[攻击游戏 4.5](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b) 中的聚合实验，只是设计上更加便于分析。
+
+在这个游戏中，挑战者维护着数对 $(\mathpzc{a},\mathpzc{b})$ 的多个集合 $\Pi$，每个 $\Pi$ 集合代表一个函数，这个函数可以扩展为 $\mathcal{X}$ 上的一个置换排列，对于 $\Pi$ 中的每个 $(\mathpzc{a},\mathpzc{b})$，它能将 $\mathpzc{a}$ 映射到 $\mathpzc{b}$。我们称这样的集合 $\Pi$ 为 $\mathcal{X}$ 上的**部分置换 (partial permutation)**，定义：
+
+$$
+{\rm Domain}(\Pi)=\{\mathpzc{a}\in\mathcal{X}:(\mathpzc{a},\mathpzc{b})\in\Pi,~{\rm for~some~}\mathpzc{b}\in\mathcal{X}\}
+$$
+
+$$
+{\rm Range}(\Pi)=\{b\in\mathcal{X}:(\mathpzc{a},\mathpzc{b})\in\Pi,~{\rm for~some~}\mathpzc{a}\in\mathcal{X}\}
+$$
+
+此外，对于 $\mathpzc{a}\in{\rm Domain}(\Pi)$，定义 $\Pi(\mathpzc{a})$ 为使得 $(\mathpzc{a},\mathpzc{b})\in\Pi$ 的唯一值 $\mathpzc{b}$。同样地，对于 $\mathpzc{b}\in{\rm Range}(\Pi)$，定义 $\Pi^{-1}(\mathpzc{b})$ 为使得 $(\mathpzc{a},\mathpzc{b})\in\Pi$ 的唯一值 $\mathpzc{a}$。
+
+以下是游戏 $0$ 中挑战者的逻辑：
+
+- 初始化：
+    - 对于每一个 $\nu\in V$，初始化部分置换 $\bar\Pi_\nu\leftarrow\varnothing$。
+- 处理查询 $(\mu,+1,\mathpzc{a})$：
+    1. 如果 $\mathpzc{a}\in{\rm Domain}(\bar\Pi_{f(\mu)})$，则令 $\mathpzc{b}\leftarrow\bar\Pi_{f(\mu)}(\mathpzc{a})$，返回 $\mathpzc{b}$；
+    2. 随机选取 $\mathpzc{b}\overset{R}\leftarrow\mathcal{X}\setminus{\rm Range}(\bar\Pi_{f(\mu)})$；
+    3. 将 $(\mathpzc{a},\mathpzc{b})$ 添加到 $\bar\Pi_{f(\mu)}$ 中；
+    4. 返回 $\mathpzc{b}$。
+- 处理查询 $(\mu,-1,\mathpzc{b})$：
+    1. 如果 $\mathpzc{b}\in{\rm Range}(\bar\Pi_{f(\mu)})$，则令 $\mathpzc{a}\leftarrow\bar\Pi_{f(\mu)}^{-1}(\mathpzc{b})$，返回 $\mathpzc{a}$；
+    2. 随机选取 $\mathpzc{a}\overset{R}\leftarrow\mathcal{X}\setminus{\rm Domain}(\bar\Pi_{f(\mu)})$；
+    3. 将 $(\mathpzc{a},\mathpzc{b})$ 添加到 $\bar\Pi_{f(\mu)}$ 中；
+    4. 返回 $\mathpzc{a}$。
+
+该游戏显然等同于[攻击游戏 4.5](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b) 中的聚合实验。记 $W_0$ 为对手在游戏 $0$ 中输出 $1$ 的事件。
+
+**游戏 $1$**
+
+下面我们修改上面的游戏以得到一个等价的游戏，这将有利于在转入下一个游戏时应用差异引理。对于 $\mu,\mu'\in U$，如果 $f(\mu)=f(\mu')$，我们就称 $\mu∼\mu'$。这是 $U$ 上的一个等价关系，我们用 $[\mu]$ 来表示包含 $\mu$ 的等价类。
+
+以下是游戏 $1$ 中挑战者的逻辑：
+
+- 初始化：
+    - 对于每一个 $\mu\in U$，初始化部分置换 $\Pi_\mu\leftarrow\varnothing$。
+- 处理查询 $(\mu,+1,\mathpzc{a})$：
+    1. 如果 $\mathpzc{a}\in{\rm Domain}(\Pi_{\mu})$，则令 $\mathpzc{b}\leftarrow\Pi_{\mu}(\mathpzc{a})$，返回 $\mathpzc{b}$；
+    2. 如果对于某个 $\mu'\in[\mu]$ 有 $\mathpzc{a}\in{\rm Domain}(\Pi_{\mu'})$，则令 $\mathpzc{b}\leftarrow\Pi_{\mu'}(\mathpzc{a})$，返回 $\mathpzc{b}$；
+    3. 随机选取 $\mathpzc{b}\overset{R}\leftarrow\mathcal{X}\setminus{\rm Range}(\Pi_{\mu})$；
+    4. 如果 $\mathpzc{b}\in\bigcup_{\mu'\in[\mu]}{\rm Range}(\Pi_{\mu'})$，就随机选取 $\mathpzc{b}\overset{R}\leftarrow\mathcal{X}\setminus\bigcup_{\mu'\in[\mu]}{\rm Range}(\Pi_{\mu'})$；
+    5. 将 $(\mathpzc{a},\mathpzc{b})$ 添加到 $\Pi_{\mu}$ 中；
+    6. 返回 $\mathpzc{b}$。
+- 处理查询 $(\mu,-1,\mathpzc{b})$：
+    1. 如果 $\mathpzc{b}\in{\rm Range}(\Pi_{\mu})$，则令 $\mathpzc{a}\leftarrow\Pi_{\mu}^{-1}(\mathpzc{b})$，返回 $\mathpzc{a}$；
+    2. 如果对于某个 $\mu'\in[\mu]$ 有 $\mathpzc{b}\in{\rm Domain}(\Pi_{\mu'})$，则令 $\mathpzc{a}\leftarrow\Pi_{\mu'}^{-1}(\mathpzc{b})$，返回 $\mathpzc{a}$；
+    3. 随机选取 $\mathpzc{a}\overset{R}\leftarrow\mathcal{X}\setminus{\rm Domain}(\Pi_{\mu})$；
+    4. 如果 $\mathpzc{a}\in\bigcup_{\mu'\in[\mu]}{\rm Domain}(\Pi_{\mu'})$，就随机选取 $\mathpzc{a}\overset{R}\leftarrow\mathcal{X}\setminus\bigcup_{\mu'\in[\mu]}{\rm Domain}(\Pi_{\mu'})$；
+    5. 将 $(\mathpzc{a},\mathpzc{b})$ 添加到 $\Pi_{\mu}$ 中；
+    6. 返回 $\mathpzc{a}$。
+
+令 $W_1$ 为对手在游戏 $1$ 中输出 $1$ 的事件。
+
+不难看出，挑战者在这个游戏中的行为等同于游戏 $0$ 中的行为，因此有 $\Pr[W_0]=\Pr[W_1]$。我们的想法是，对于每一个 $\nu\in f(U)\subseteq V$，将游戏 $0$ 中的部分置换 $\bar\Pi_\nu$ 拆分成一系列不相干的部分置换族 $\{\Pi_\mu\}_{\mu\in f^{-1}(\nu)}$，使得：
+
+$$
+\bar\Pi_\nu=\bigcup_{\mu\in f^{-1}(\nu)}\Pi_\mu
+$$
+
+并且，对于所有的 $\mu,\mu'\in f^{-1}(\nu)$，$\mu\neq\mu'$，有：
+
+$$
+{\rm Domain}(\Pi_\mu)\cap{\rm Domain}(\Pi_{\mu'})=\varnothing\\
+{\rm Range}(\Pi_\mu)\cup{\rm Range}(\Pi_{\mu'})=\varnothing
+$$
+
+**游戏 $2$**
+
+我们删去游戏 $1$ 中挑战者的几条逻辑，得到以下游戏 $2$ 中挑战者的逻辑：
+
+- 初始化：
+    - 对于每一个 $\mu\in U$，初始化部分置换 $\Pi_\mu\leftarrow\varnothing$。
+- 处理查询 $(\mu,+1,\mathpzc{a})$：
+    1. 如果 $\mathpzc{a}\in{\rm Domain}(\Pi_{\mu})$，则令 $\mathpzc{b}\leftarrow\Pi_{\mu}(\mathpzc{a})$，返回 $\mathpzc{b}$；
+    2. 随机选取 $\mathpzc{b}\overset{R}\leftarrow\mathcal{X}\setminus{\rm Range}(\Pi_{\mu})$；
+    3. 将 $(\mathpzc{a},\mathpzc{b})$ 添加到 $\Pi_{\mu}$ 中；
+    4. 返回 $\mathpzc{b}$。
+- 处理查询 $(\mu,-1,\mathpzc{b})$：
+    1. 如果 $\mathpzc{b}\in{\rm Range}(\Pi_{\mu})$，则令 $\mathpzc{a}\leftarrow\Pi_{\mu}^{-1}(\mathpzc{b})$，返回 $\mathpzc{a}$；
+    2. 随机选取 $\mathpzc{a}\overset{R}\leftarrow\mathcal{X}\setminus{\rm Domain}(\Pi_{\mu})$；
+    3. 将 $(\mathpzc{a},\mathpzc{b})$ 添加到 $\Pi_{\mu}$ 中；
+    4. 返回 $\mathpzc{a}$。
+
+记 $W_2$ 为对手在游戏 $2$ 中输出 $1$ 的事件。
+
+很明显，游戏 $2$ 等同于[攻击游戏 4.5](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b) 中的分离实验，因此 $|\Pr[W_2]-\Pr[W_1]|$ 等于[攻击游戏 4.5](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b) 中对手的优势。我们想用[差分引理](https://www.notion.so/4a824597ec5e4b3692a25a597a91ffa1)来约束 $|\Pr[W_2]-\Pr[W_1]|$。
+
+为了使这一方法完全严谨，我们将游戏 $1$ 和游戏 $2$ 建模在相同的基础概率空间上：我们定义了一个随机变量的集合，代表对手的随机选择和挑战者从 $\mathcal{X}$ 的不同子集选出的多个随机样本。这些随机变量完全描述了游戏 $1$ 和游戏 $2$：这两个游戏之间唯一的区别就是决定结果的确定性计算规则。我们定义 $Z$ 为在游戏 $2$ 结束时，[式 4.45](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b) 不成立的事件。我们可以验证，除非 $Z$ 成立，否则游戏 $1$ 和游戏 $2$ 的执行过程是相同的，所以根据差分定理，我们有 $|\Pr[W_2]-\Pr[W_1]|\leq\Pr[Z]$。此外，$\Pr[Z]$ 显然正是[攻击游戏 4.5](https://www.notion.so/3c5b9276a61042bea1b54f416201ea3b) 中的失败概率。
+
+
+

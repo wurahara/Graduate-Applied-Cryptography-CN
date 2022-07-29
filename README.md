@@ -1,2 +1,2 @@
 # AGCIAC
-The Chinese translation of A Graduate Course in Applied Cryptography by Dan Boneh and Victor Shoup.
+The Chinese translation of _A Graduate Course in Applied Cryptography_ by __Dan Boneh__ and __Victor Shoup__.
