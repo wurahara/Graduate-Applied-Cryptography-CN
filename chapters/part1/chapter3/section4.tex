@@ -15,7 +15,7 @@ $$
 \begin{theorem}\label{theo:3-2}
 如果 $G$ 是一个安全的 PRG，那么 $G$ 的 $n$ 次并行组合 $G'$ 也是一个安全的 PRG。
 \begin{quote}
-特别地，对于每一个如攻击游戏 \ref{game:3-1} 中那样攻击 $G'$ 的 PRG 对手 $\mathcal A$，都存在一个如攻击游戏 \ref{game:3-1} 中那样攻击 $G$ 的 PRG 对手 $\mathcal B$，其中 $\mathcal B$ 是围绕 $\mathcal A$ 的一个基本包装器，满足：
+特别地，对于每一个如攻击游戏 \ref{game:3-1} 中那样攻击 $G'$ 的 PRG 对手 $\mathcal A$，都存在一个如攻击游戏 \ref{game:3-1} 中那样攻击 $G$ 的 PRG 对手 $\mathcal B$，其中 $\mathcal B$ 是一个围绕 $\mathcal A$ 的基本包装器，满足：
 \end{quote}
 $$
 {\rm PRG\mathsf{adv}}[\mathcal{A},G']=n\cdot{\rm PRG\mathsf{adv}}[\mathcal{B},G]
@@ -48,7 +48,7 @@ $$
 \noindent
 请注意，游戏 $1$ 既不对应于攻击游戏 \ref{game:3-1} 中的实验 $0$，也不对应于实验 $1$；相反，它是一个``混合"实验，对应于实验$0$和实验$1$之间的某个状态。 我们所做的就是在游戏 $0$ 中用一个真随机值取代伪随机值 $r_1$（见上面的高亮行）。直观地说，在假设 $G$ 是一个安全 PRG 的情况下，对手 $\mathcal A$ 应该注意不到这种差异。为了更精确地论证这一点，令 $p_1$ 是 $\mathcal A$ 在游戏 $1$ 中输出 $1$ 的概率。
 
-令 $\delta_1:=|p_1-p_0|$。我们声称，假设 $G$ 是一个安全的 PRG，则 $\delta_1$ 是可忽略不计的。事实上，我们很容易构建一个有效 PRG 对手 $\mathcal B_1$，他在攻击游戏 \ref{game:3-1} 中攻击 $G$ 的优势正好等于 $\delta_1$。对手 $\mathcal B_1$ 的工作方式如下：
+令 $\delta_1:=|p_1-p_0|$。我们声称，假设 $G$ 是一个安全的 PRG，则 $\delta_1$ 是可忽略不计的。事实上，我们很容易构建一个有效 PRG 对手 $\mathcal B_1$，它在攻击游戏 \ref{game:3-1} 中攻击 $G$ 的优势正好等于 $\delta_1$。对手 $\mathcal B_1$ 的工作方式如下：
 
 \vspace*{5pt}
 
@@ -76,7 +76,7 @@ $$
 \noindent
 我们所做的就是把游戏 $1$ 中的伪随机值 $r_2$ 替换成一个真正的随机值（见上面的高亮行）。令 $p_2$ 为 $\mathcal A$ 在游戏 $2$ 中输出 $1$ 的概率。请注意，游戏 $2$ 对应于攻击游戏 \ref{game:3-1} 的实验 $1$，因此 $p_2$ 等于攻击游戏 \ref{game:3-1} 的实验 $1$ 中 $\mathcal A$ 相对于 PRG $G'$ 输出 $1$ 的概率。
 
-令 $\delta_2:=|p_2-p_1|$。通过与上面类似的论证，很容易看到当 $G$ 是一个安全的 PRG 时，$\delta_2$ 是可忽略不计的。事实上，我们很容易构建一个有效 PRG 对手 $\mathcal B_2$，他在攻击游戏 \ref{game:3-1} 中攻击 $G$ 的优势正好等于 $\delta_2$。对手 $\mathcal B_2$ 的工作方式如下：
+令 $\delta_2:=|p_2-p_1|$。通过与上面类似的论证，很容易看到当 $G$ 是一个安全的 PRG 时，$\delta_2$ 是可忽略不计的。事实上，我们很容易构建一个有效 PRG 对手 $\mathcal B_2$，它在攻击游戏 \ref{game:3-1} 中攻击 $G$ 的优势正好等于 $\delta_2$。对手 $\mathcal B_2$ 的工作方式如下：
 
 \vspace*{5pt}
 
@@ -142,7 +142,7 @@ $$
 \end{proof}
 
 \begin{proof}
-令 $\mathcal A$ 是一个有效 PRG 对手，他对 $G'$ 进行攻击游戏 \ref{game:3-1} 中的攻击。我们首先引入一个大小为 $n+1$ 的\textbf{混合游戏(hybrid games)}序列，称为混合$0$，混合$1$，$\dots$，混合$n$。对于$j=0,1,\dots,n$，混合 $j$ 是一个 $\mathcal A$ 和挑战者之间的游戏。挑战者会准备一个 $n$ 个值的元组，其中的前 $j$ 个元素是真随机值，其余的 $n-j$ 个元素是由 $G$ 输出的伪随机值；也就是说，挑战者的工作方式如下：
+令 $\mathcal A$ 是一个有效 PRG 对手，它对 $G'$ 进行攻击游戏 \ref{game:3-1} 中的攻击。我们首先引入一个大小为 $n+1$ 的\textbf{混合游戏(hybrid games)}序列，称为混合$0$，混合$1$，$\dots$，混合$n$。对于$j=0,1,\dots,n$，混合 $j$ 是一个 $\mathcal A$ 和挑战者之间的游戏。挑战者会准备一个 $n$ 个值的元组，其中的前 $j$ 个元素是真随机值，其余的 $n-j$ 个元素是由 $G$ 输出的伪随机值；也就是说，挑战者的工作方式如下：
 
 \vspace*{5pt}
 
@@ -261,7 +261,7 @@ $$
 \begin{theorem}\label{theo:3-3}
 如果 $G$ 是一个安全 PRG，那么 $G$ 的 $n$ 次串行组合 $G'$ 也是一个安全 PRG。
 \begin{quote}
-特别地，对于每个就 $G'$ 进行攻击游戏 \ref{game:3-1} 的 PRG 对手 $\mathcal A$，都存在一个就 $G$ 进行攻击游戏 \ref{game:3-1} 的 PRG 对手 $\mathcal B$，其中 $\mathcal B$ 是围绕 $\mathcal A$ 的一个基本包装器，满足：
+特别地，对于每个就 $G'$ 进行攻击游戏 \ref{game:3-1} 的 PRG 对手 $\mathcal A$，都存在一个就 $G$ 进行攻击游戏 \ref{game:3-1} 的 PRG 对手 $\mathcal B$，其中 $\mathcal B$ 是一个围绕 $\mathcal A$ 的基本包装器，满足：
 \end{quote}
 $$
 {\rm PRG\mathsf{adv}}[\mathcal{A},G']=n\cdot{\rm PRG\mathsf{adv}}[\mathcal{B},G]
@@ -269,7 +269,7 @@ $$
 \end{theorem}
 
 \begin{proof}[证明思路]
-该定理的证明是一个混合论证，其思路与定理 \ref{theo:3-2} 的证明非常相似。该证明背后的直觉如下所述。考虑一个 PRG 对手 $\mathcal A$，他在攻击游戏 \ref{game:3-1} 的实验 $0$ 中收到 $(r_1,\dots,r_n,s_n)$。由于 $s=s_0$ 是随机的，而且 $G$ 是一个安全 PRG，我们可以用 $\mathcal{R}\times\mathcal{S}$ 中的一个完全随机的元素来代替 $(r_1,s_1)$，且 $\mathcal A$ 在这个新的混合游戏中输出 $1$ 的概率应该只会发生可忽略不计的变化。现在，由于 $s_1$ 是随机的（同样是因为$G$ 是一个安全 PRG），我们就可以用 $\mathcal{R}\times\mathcal{S}$ 上的一个完全随机的元素来代替 $(r_2,s_2)$，而 $\mathcal A$ 在这第二个混合游戏中输出 $1$ 的概率应该也只会发生可忽略不计的变化。继续这样下去，我们可以用 $\mathcal{R}\times\mathcal{S}$ 中的随机元素逐步替换 $(r_3,s_3)$ 到 $(r_n,s_n)$，在做出这些改变之后，$\mathcal A$ 输出 $1$ 的概率应该都只会发生可忽略不计的变化（假设$n$是多项式边界的）。然而，在这一点上，$\mathcal A$ 输出 $1$ 的概率与他在攻击游戏 \ref{game:3-1} 的实验 $1$ 中输出 $1$ 的概率相同，因此，这个概率与$\mathcal A$在攻击游戏 \ref{game:3-1} 的实验 $0$ 中输出 $1$ 的概率接近得可以忽略不计。
+该定理的证明是一个混合论证，其思路与定理 \ref{theo:3-2} 的证明非常相似。该证明背后的直觉如下所述。考虑一个 PRG 对手 $\mathcal A$，它在攻击游戏 \ref{game:3-1} 的实验 $0$ 中收到 $(r_1,\dots,r_n,s_n)$。由于 $s=s_0$ 是随机的，而且 $G$ 是一个安全 PRG，我们可以用 $\mathcal{R}\times\mathcal{S}$ 中的一个完全随机的元素来代替 $(r_1,s_1)$，且 $\mathcal A$ 在这个新的混合游戏中输出 $1$ 的概率应该只会发生可忽略不计的变化。现在，由于 $s_1$ 是随机的（同样是因为$G$ 是一个安全 PRG），我们就可以用 $\mathcal{R}\times\mathcal{S}$ 上的一个完全随机的元素来代替 $(r_2,s_2)$，而 $\mathcal A$ 在这第二个混合游戏中输出 $1$ 的概率应该也只会发生可忽略不计的变化。继续这样下去，我们可以用 $\mathcal{R}\times\mathcal{S}$ 中的随机元素逐步替换 $(r_3,s_3)$ 到 $(r_n,s_n)$，在做出这些改变之后，$\mathcal A$ 输出 $1$ 的概率应该都只会发生可忽略不计的变化（假设$n$是多项式边界的）。然而，在这一点上，$\mathcal A$ 输出 $1$ 的概率与它在攻击游戏 \ref{game:3-1} 的实验 $1$ 中输出 $1$ 的概率相同，因此，这个概率与$\mathcal A$在攻击游戏 \ref{game:3-1} 的实验 $0$ 中输出 $1$ 的概率接近得可以忽略不计。
 
 这就是我们的想法；然而，就像在定理 \ref{theo:3-2} 的证明中一样，由于技术原因，我们设计了一个攻击$G$的 PRG 对手。
 \end{proof}

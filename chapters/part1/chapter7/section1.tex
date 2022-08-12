@@ -1,1 +1,111 @@
 \section{通用哈希函数}
+
+我们从定义\textbf{带密钥哈希函数}开始我们讨论——它是密码学中广泛使用的一种工具。一个带密钥哈希函数 $H$ 接受两个输入：一个密钥 $k$ 和一个消息 $m$，输出一个短摘要 $t:=H(k,m)$。密钥 $k$ 可以被视作一个哈希函数选择子：对于每个 $k$，我们都能得到一个特定的从消息到摘要的函数 $H(k,\cdot)$。更确切地说，带密钥哈希函数的定义如下：
+
+\begin{definition}[带密钥哈希函数]
+一个\textbf{带密钥哈希函数 (keyed hash function)} $H$ 是一个确定性算法，它接受一个\textbf{密钥} $k$ 和一条\textbf{消息} $m$ 作为输入，其输出 $t:=H(k,x)$ 被称作\textbf{摘要}。与之前一样，我们有以下几个相关的空间：密钥 $k$ 所处的密钥空间 $\mathcal{K}$，消息 $m$ 所处的消息空间 $\mathcal{M}$，以及摘要 $t$ 所处的摘要空间 $\mathcal{T}$。我们称哈希函数 $H$ 定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上。
+\end{definition}
+
+我们注意到，输出的摘要 $t\in\mathcal{T}$ 可以比输入的消息 $m$ 短得多。通常，摘要会有一些固定的长度，比如 $128$ 或 $256$ 比特，且与输入消息的长度无关。一个哈希函数 $H(k,\cdot)$ 可以将数千兆字节长的消息映射成 $256$ 比特的摘要。
+
+如果存在两条消息 $m_0,m_1\in\mathcal{M}$ 满足：
+\[
+H(k,\;m_0)=H(k,\;m_1)
+\quad\text{and}\quad
+m_0\neq m_1
+\]
+我们就称 $m_0$ 和 $m_1$ 制造了一次\textbf{密钥 $k\in\mathcal{K}$ 下 $H$ 的碰撞 (collision for $H$ under key $k$)}。由于摘要空间 $\mathcal{T}$ 通常比消息空间 $\mathcal{M}$ 小得多，因此理论上存在很多这样的碰撞。然而，对于哈希函数，我们期望它具备的一个属性是，真正\emph{找到}一个碰撞是很难的。正如我们最终会看到的，有许多方法来表述这个``抗碰撞"的特性。这些表述在对手试图找到碰撞时能够获得多少关于密钥的信息方面有微妙的不同。在本章中，我们重点讨论这个抗碰撞特性的最弱表述，即对手必须在\emph{完全没有密钥信息}的情况下找到一个碰撞。一方面，这个属性十分弱，我们实际上可以建立非常有效的哈希函数来满足这个属性，而不需要对对手的计算能力作任何假设。但另一方面，这个属性又足够强大，它能确保先哈希后 PRF 范式可以产生一个安全的 MAC。
+
+满足这种非常弱的抗碰撞特性的哈希函数被称为\textbf{通用哈希函数 (universal hash function, UHF)}。通用哈希函数被用于计算机科学的各个分支，最常见的场景就是哈希表的构建。UHF也被广泛用于密码学中。在我们分析先哈希后 PRF 范式的安全性之前，我们先给 UHF 下一个更正式的定义。像往常一样，为了使这个直观的概念更加精确，我们先定义一个攻击游戏。
+
+\begin{game}[通用哈希函数]\label{game:7-1}
+对于一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数 $H$ 和一个给定对手 $\mathcal{A}$，攻击游戏运行如下：
+\begin{itemize}
+	\item 挑战者随机选取一个 $k\overset{\rm R}\leftarrow\mathcal{K}$，并自己保留这个 $k$。
+	\item $\mathcal{A}$ 输出两条互不相同的消息 $m_0,m_1\in\mathcal{M}$。
+\end{itemize}
+如果 $H(k,m_0)=H(k,m_1)$，我们就称 $\mathcal{A}$ 赢得上述游戏。我们将 $\mathcal{A}$ 就 $H$ 的优势定义为 ${\rm UHF}\mathsf{adv}[\mathcal{A},H]$，即 $\mathcal{A}$ 赢得攻击游戏的概率。
+\end{game}
+
+我们下面定义几个不同的 UHF 概念，这些概念取决于对手的能力以及它在上述攻击游戏中的优势。
+
+\begin{definition}\label{def:7-2}
+令 $H$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数。
+\begin{itemize}
+	\item 如果对于所有的对手 $\mathcal{A}$（甚至不是有效的对手），都有 ${\rm UHF}\mathsf{adv}[\mathcal{A},H]\leq\epsilon$，我们就称 $H$ 是一个 \textbf{$\epsilon$-约束通用哈希函数($\epsilon$-bounded universal hash function)}，或 \textbf{$\epsilon$-UHF}。
+	\item 如果存在某个可忽略不计的 $\epsilon$，使得 $H$ 是一个 $\epsilon$-UHF，我们就称 $H$ 是一个\textbf{统计性 UHF (statistical UHF)}。
+	\item 如果对于所有的有效对手 $\mathcal{A}$，${\rm UHF}\mathsf{adv}[\mathcal{A},H]$ 都可忽略不计，我们就称 $H$ 是一个\textbf{计算性 UHF (computational UHF)}。
+\end{itemize}
+\end{definition}
+
+统计性 UHF 对所有的对手都是安全的，无论对手是否有效：没有对手能够以不可忽略不计的优势赢得针对一个统计性 UHF 的攻击游戏 \ref{game:7-1}。我们之所以考虑计算上没有限制的对手，主要是因为，与我们在本文中讨论的大多数其他安全概念不同，所谓的好的 UHF，是指那些我们知道如何建立，而又不对对手设定任何计算性限制的东西。请注意，每个统计性 UHF 都是计算性 UHF，但反之则不一定。
+
+如果 $H$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数，那么 $\epsilon$-UHF 属性的另一种描述如下（见练习 7.3）：
+\begin{equation}\label{eq:7-1}
+\begin{aligned}
+& \text{\emph{对于每一对互不相同的消息}}\;
+m_0,m_1\in\mathcal{M}
+\text{\emph{，我们都有}}\;
+\Pr[H(k,m_0)=H(k,m_1)]\leq\epsilon
+\text{\emph{，}}\\
+& \text{\emph{这里的概率来自对}}\;
+k\in\mathcal{K}\;
+\text{\emph{的随机选择。}}
+\end{aligned}
+\end{equation}
+
+\subsection{多次查询 UHF}
+
+考虑一个对计算性 UHF 的推广。这里，如果对手能够输出一个包含互不相同的消息的列表，该列表中的某一对消息对于 $H(k,\cdot)$ 来说是一个碰撞，我们就称该对手获胜。重点在于，尽管对手可能并不知道列表中到底哪一对消息导致了碰撞，但仍然赢得了游戏。更详细地，我们用下面的攻击游戏来定义多次查询 UHF：
+
+\begin{game}[多次查询 UHF]\label{game:7-2}
+对于一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数 $H$ 和一个给定对手 $\mathcal{A}$，攻击游戏运行如下：
+\begin{itemize}
+	\item 挑战者随机选取一个 $k\overset{\rm R}\leftarrow\mathcal{K}$，并自己保留这个 $k$。
+	\item $\mathcal{A}$ 输出若干条各不相同的消息 $m_1,\dots,m_s\in\mathcal{M}$。
+\end{itemize}
+如果存在索引 $i\neq j$ 使得 $H(k,m_i)=H(k,m_j)$ 成立，我们就称 $\mathcal{A}$ 赢得了上述游戏。我们将 $\mathcal{A}$ 就 $H$ 的优势定义为 ${\rm MUHF}\mathsf{adv}[\mathcal{A},H]$，即 $\mathcal{A}$ 赢得攻击游戏的概率。如果 $\mathcal{A}$ 总是输出一个大小为 $s\leq Q$ 的列表，我们就称其为 \textbf{$Q$ 次查询 UHF 对手 ($Q$-query UHF adversary)}。
+\end{game}
+
+\begin{definition}\label{def:7-3}
+如果对于所有的有效对手 $\mathcal{A}$，${\rm MUHF}\mathsf{adv}[\mathcal{A},H]$ 的值都可忽略不计，我们就称 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的哈希函数 $H$ 是一个\textbf{多次查询 UHF (multi-query UHF)}。
+\end{definition}
+
+下面的引理 7.1 表明，每个 UHF 都是多次查询 UHF。然而，对于具体的构造，我们有时可以得到更好的安全上界。
+
+\begin{lemma}\label{lemma:7-1}
+如果 $H$ 是一个计算性 UHF，那么它也是一个多次查询 UHF。
+\begin{quote}
+特别地，对于每个 $Q$ 次查询 UHF 对手 $\mathcal{A}$，必然存在一个 UHF 对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
+\end{quote}
+\begin{equation}\label{eq:7-2}
+{\rm MUHF}\mathsf{adv}[\mathcal{A},H]\leq{(Q^2/2)}\cdot{\rm UHF}\mathsf{adv}[\mathcal{B},H]
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+UHF 对手 $\mathcal{B}$ 运行 $\mathcal{A}$ 并获得 $s\leq Q$ 条各不相同的消息 $m_1,\dots,m_s$。随后，它从 $\{1,\dots,s\}$ 中随机选取一对不同的索引 $i$ 和 $j$，并输出 $m_i$ 和 $m_j$。$\mathcal{A}$ 生成的列表中包含 $H(k,\cdot)$ 的碰撞的概率为 ${\rm MUHF}\mathsf{adv}[\mathcal{A},H]$，而 $\mathcal{B}$ 选出的索引恰好能够制造碰撞的概率最小为 $2/Q^2$。因此 ${\rm UHF}\mathsf{adv}[\mathcal{B},H]$ 至少是 ${\rm MUHF}\mathsf{adv}[\mathcal{A},H]\cdot{(2/Q^2)}$，符合要求。
+\end{proof}
+
+\subsection{数学细节}\label{subsec:7-1-2}
+
+同之前一样，我们使用 \ref{sec:2-3} 节中定义的术语对 UHF 给出一个更加精确的数学定义。
+
+\begin{definition}[带密钥哈希函数]\label{def:7-4}
+一个\textbf{带密钥哈希函数}是一个有效算法 $H$，以及三个具有系统参数化 $P$ 的空间族：
+\[
+\mathbf{K}=\{\mathcal{K}_{\lambda,\Lambda}\}_{\lambda,\Lambda},\quad
+\mathbf{M}=\{\mathcal{M}_{\lambda,\Lambda}\}_{\lambda,\Lambda},\quad
+\mathbf{T}=\{\mathcal{T}_{\lambda,\Lambda}\}_{\lambda,\Lambda}
+\]
+满足：
+\begin{enumerate}
+	\item $\mathbf{K}$，$\mathbf{M}$ 和 $\mathbf{T}$ 是可有效识别的。
+	\item $\mathbf{K}$ 是可有效采样的。
+	\item 算法 $H$ 是一个有效的确定性算法，对于输入 $\lambda\in\mathbb{Z}_{\geq1}$，$\Lambda\in{\rm Supp}(P(\lambda))$，$k\in\mathcal{K}_{\lambda,\Lambda}$ 和 $m\in\mathcal{M}_{\lambda,\Lambda}$，$H$ 输出 $\mathcal{T}_{\lambda,\Lambda}$ 中的一个元素。
+\end{enumerate}
+\end{definition}
+
+在定义 UHF 时，我们通过安全参数 $\lambda$ 将攻击游戏 \ref{game:7-1} 参数化了，现在优势 ${\rm UHF}\mathsf{adv}[\mathcal{A},H]$ 是安全参数 $\lambda$ 的一个函数。
+
+信息论属性（式 \ref{eq:7-1}）是文献中为没有安全参数或系统参数的单个哈希函数定义 $\epsilon$-UHF 的一个比较传统的方法；在我们的渐进过程中，如果对于每个安全参数和系统参数设置，式 \ref{eq:7-1} 的属性都成立，那么我们对一个 $\epsilon$-UHF 的定义就必然能够得到满足。

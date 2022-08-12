@@ -1,5 +1,22 @@
 \chapter{来自通用哈希的消息完整性}
 
+在上一章中，我们展示了如何使用安全的 PRF 构建安全的 MAC。特别地，我们讨论了 ECBC、NMAC 和 $\mathrm{PMAC}_0$ 等几个构造。我们描述了这些 MAC 的安全定理，但将其证明留到了本章。
+
+在本章中，我们将描述一个使用哈希函数构建 MAC 的一般范式。我们所说的\textbf{哈希函数 (hash function)} 一般是指能将某个大集合 $\mathcal{M}$ 中的输入映射到 $\mathcal{T}$ 中的短输出的函数 $H$。$\mathcal{T}$ 中的元素通常被称为\textbf{消息摘要 (message digest)}。本章中所使用的带密钥的哈希函数，还需要将一个密钥 $k$ 作为输入。
+
+从更高的层次上看，由哈希函数构建的 MAC 分两步工作。首先，我们使用哈希函数将消息 $m$ 哈希成一个简短的摘要 $t$。然后，我们将摘要 $t$ 应用到一个 PRF 上，如图 \ref{fig:7-1} 所示。
+
+正如我们将要看到的，ECBC、NMAC 和 $\mathrm{PMAC}_0$ 都是这种``先哈希后 PRF" 范式的实例。例如，对于 ECBC 来说（见图 \ref{fig:6-5-a}），我们把 CBC 函数作为一个哈希函数，它将长的输入哈希成短的摘要。最后，我们使用一个 PRF 和密钥 $k_2$ 来处理哈希生成的摘要。先哈希后 PRF 范式让我们能够直接和相当容易地推导出 ECBC、NMAC 和 $\mathrm{PMAC}_0$ 的安全性。
+
+先哈希后 PRF 范式是非常通用的，它让我们能够使用各种哈希函数建立新的 MAC。其中的一些哈希函数非常快，所产生的 MAC 也比上一章介绍的要更加高效。
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.45\linewidth]{figures/chapter7/fig1.png}
+  \caption{先哈希后 PRF 范式}
+  \label{fig:7-1}
+\end{figure}
+
 \input{chapters/part1/chapter7/section1}
 \input{chapters/part1/chapter7/section2}
 \input{chapters/part1/chapter7/section3}

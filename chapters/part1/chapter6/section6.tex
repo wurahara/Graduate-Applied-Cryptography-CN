@@ -1,1 +1,43 @@
-\section{从无前缀安全PRF到完全安全PRF（方法2）：无前缀编码}
+\section{从无前缀安全PRF到完全安全PRF（方法2）：无前缀编码}\label{sec:6-6}
+
+将无前缀安全的 PRF 转换为安全 PRF 的另一种方法是对 PRF 的输入进行编码，使得没有任何一条编码后的输入是另一条的前缀。我们定义以下术语：
+\begin{itemize}
+	\item 如果 $S\subseteq\mathcal{X}^{\leq\ell}$ 中的任何元素都不是其他元素的前缀，我们就称 $S$ 是一个\textbf{无前缀集 (prefix-free set)}。例如，如果 $(x_1,x_2,x_3)$ 属于一个无前缀集 $S$，那么 $x_1$ 和 $(x_1,x_2)$ 都不在 $S$ 中。
+	\item 令 $\mathcal{X}^{\leq\ell}_{_{>0}}$ 表示$\mathcal{X}$ 上所有长度不超过 $\ell$ 的非空序列的集合。如果映射 $pf$ 是一个单射（即一对一函数），且 $pf$ 的像是一个无前缀集，我们就称 $pf:\mathcal{M}\to\mathcal{X}^{\leq\ell}_{_{>0}}$ 是一个\textbf{无前缀编码 (prefix-free encoding)}。
+\end{itemize}
+
+令 $PF$ 是一个定义在 $(\mathcal{K},\mathcal{X}^{\leq\ell},\mathcal{Y})$ 上的无前缀安全 PRF，且 $pf:\mathcal{M}\to\mathcal{X}^{\leq\ell}_{_{>0}}$ 是一个无前缀编码。定义派生的 PRF $F$ 为：
+\[
+F(k,m):=PF(k,pf(m))
+\]
+那么 $F$ 定义在 $(\mathcal{K},\mathcal{M},\mathcal{Y})$ 上。于是，我们就可以得到下面的定理。
+
+\begin{theorem}\label{theo:6-8}
+如果 $PF$ 是一个无前缀安全的 PRF，$pf$ 是一个无前缀编码，那么 $F$ 是一个安全的 PRF。
+\end{theorem}
+
+\subsection{无前缀编码}
+
+为了使用定理 \ref{theo:6-8} 构造 PRF，我们介绍两种无前缀编码 $pf:\mathcal{M}\to\mathcal{X}^{\leq\ell}$。我们假设 $\mathcal{X}=\{0,1\}^n$，其中 $n$ 是某个整数。
+
+\begin{snote}[方法 1：前置长度。]
+设 $\mathcal{M}:=\mathcal{X}^{\leq\ell-1}$，并令 $m=(a_1,\dots,a_v)\in\mathcal{M}$。定义：
+\[
+pf(m):=(\langle v\rangle,a_1,\dots,a_v)\quad\in\mathcal{X}^{\leq\ell}_{_{>0}}
+\]
+其中 $\langle v\rangle\in\mathcal{X}$ 是 $v$ 的二进制表示，即 $m$ 的长度。我们假设 $\ell<2^n$，那么消息长度可以被编码为 $n$ 比特的二进制序列。
+
+我们下面论证 $pf$ 是一个无前缀编码。首先，$pf$ 显然是一个单射。为了说明 $pf$ 的像是一个无前缀集，令 $pf(x)$ 和 $pf(y)$ 是 $pf$ 的像中的两个元素。如果 $pf(x)$ 和 $pf(y)$ 包含相同数量的分组，那么它们中的任何一个都不可能是另一个的真前缀。如果 $pf(x)$ 和 $pf(y)$ 包含不同数量的分组，它们就必须在第一个分组上就有所不同，此时它们也同样都不可能是另一个的真前缀。因此，$pf$ 是一个无前缀编码。
+
+这种无前缀编码在实践中并不常用，因为这样所产生的 MAC 不是一个流式 MAC：使用这种 MAC 的应用程序必须提前把消息的长度承诺给 MAC。正如我们之前所说，这对于流媒体应用来说极不实用，因为在这种应用中，数据包的长度可能无法提前预知。
+\end{snote}
+
+\begin{snote}[方法 2：停止比特。]
+设 $\mathcal{\bar{X}}:=\{0,1\}^{n-1}$，并令 $\mathcal{M}=\mathcal{\bar{X}}^{\leq\ell}_{_{>0}}$。对于 $m=(a_1,\dots,a_v)\in\mathcal{M}$，定义：
+\[
+pf(m):=\big((a_1||0),\,(a_2||0),\,\dots,\,(a_{v-1}||0),\,(a_v||1)\big)\quad\in\mathcal{X}^{\leq\ell}_{_{>0}}
+\]
+显然，$pf$ 是一个单射。为了说明 $pf$ 的像是一个无前缀集，令 $pf(x)$ 和 $pf(y)$ 是 $pf$ 的像中的两个元素。设 $v$ 是 $pf(x)$ 中分组的数量。如果 $pf(y)$ 包含 $v$ 个或更少的分组，那么 $pf(x)$ 必然不是 $pf(y)$ 的真前缀。如果 $pf(y)$ 包含多于 $v$ 个分组，那么 $pf(y)$ 中的 $v$ 号分组以 $0$ 结束，而 $pf(x)$ 中的 $v$ 号分组以 $1$ 结束。因此，$pf(x)$ 和 $pf(y)$ 在 $v$ 号分组上有所不同，所以 $pf(x)$ 不是 $pf(y)$ 的真前缀。
+
+这种无前缀编码所产生的 MAC 是一个流式 MAC。然而，这种编码使 MAC 的长度增加了 $v$ 比特。当使用 CBC 或级联计算一个长消息的 MAC 时，这种编码将导致对底层 PRF（比如 AES）的额外计算。相对地，\ref{sec:6-5} 节中介绍的加密 PRF 方法只增加了一次对底层 PRF 的计算。例如，使用 ECBC-AES 和 $pf$ 对一兆字节 （$2^{20}$ 字节） 的消息计算 MAC，除了加密 PRF 方法所需要的，还需要对 AES 进行额外的 $511$ 次评估。在实践中，情况甚至可能更糟。由于计算机更喜欢字节对齐的数据，我们很可能需要在每个分组中附加一整个字节，而不是仅仅一个比特。那么，使用 ECBC-AES 和 $pf$ 对一兆字节的消息计算 MAC，将导致比加密 PRF 方法多出 $4096$ 次 AES 的计算，大约多 $6\%$ 的开销。
+\end{snote}

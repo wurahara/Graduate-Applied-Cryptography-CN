@@ -217,12 +217,12 @@ e^{\gamma_i}=u^{\tau_i}g^{\gamma_{i+1}}\;\;\;
 请注意，这里我们使用的是通用线性协议的推广版本，它能够处理 $\mathbb G$ 和 $\mathbb{Z}_q$ 上的方程（见定理 \ref{theo:19-11} 之后的讨论）。Alice 使用 $\gamma_i:=\gamma^i,~~i=1,\dots,d$ 和 $\tau_i:=\beta\gamma^i,~~i=1,\dots,d-1$ 运行该协议。读者可以证明，这些实际上是满足这个方程组的唯一取值。通过一个简单的归纳论证可以很容易地证明这一点。由此可见，所得到的 Sigma 协议是一个关系 $\mathcal R$ 上存在健全的，特殊 HVZK 的Sigma 协议。
 \end{example}
 
-以上的例子展示了\emph{语言规约}的概念。一般来说，这种从 $\mathcal{R}\subseteq\mathcal{X}\times\mathcal{Y}$ 到 $\mathcal{R}'\subseteq\mathcal{X}'\times\mathcal{Y}'$ 的规约是一对可有效计算的映射 $f:\mathcal{X}\times\mathcal{Y}\to\mathcal{X}'$ 和 $g:\mathcal{Y}\to\mathcal{Y}'$，使得：
+以上的例子展示了\emph{语言归约}的概念。一般来说，这种从 $\mathcal{R}\subseteq\mathcal{X}\times\mathcal{Y}$ 到 $\mathcal{R}'\subseteq\mathcal{X}'\times\mathcal{Y}'$ 的归约是一对可有效计算的映射 $f:\mathcal{X}\times\mathcal{Y}\to\mathcal{X}'$ 和 $g:\mathcal{Y}\to\mathcal{Y}'$，使得：
 \begin{enumerate}[(i)]
 	\item 对于所有 $(x,y)\in\mathcal{R}$ 都有 $(f(x,y),g(y))\in\mathcal{R}'$ 成立，并且
 	\item 对于所有 $y\in\mathcal{Y}$，$g(y)\in L_{\mathcal{R}'}\; \Longrightarrow\; y\in L_{\mathcal R}$。
 \end{enumerate}
-利用这样的规约，我们就可以利用 $\mathcal{R}'$ 上的 Sigma 协议 $\Pi'$ 来构造一个 $\mathcal{R}$ 上的 Sigma 协议 $\Pi$。上面的第一个条件能够确保 $\Pi$ 能够从 $\Pi'$ 处继承正确性和特殊 HVZK 性，第二个条件确保 $\Pi$ 能够从 $\Pi'$ 处继承存在健全性。注意，知识可靠性不一定需要继承。也就是说，我们不要求可以从 $g(y)$ 的见证中恢复 $y$ 的见证。在上述几乎所有的例子中，关系 $\mathcal{R}'$ 都是通用线性关系的特例。唯一的例外是例 \ref{exmp:20-3}，其关系 $\mathcal{R}'$ 来自 OR 证明构造。
+利用这样的归约，我们就可以利用 $\mathcal{R}'$ 上的 Sigma 协议 $\Pi'$ 来构造一个 $\mathcal{R}$ 上的 Sigma 协议 $\Pi$。上面的第一个条件能够确保 $\Pi$ 能够从 $\Pi'$ 处继承正确性和特殊 HVZK 性，第二个条件确保 $\Pi$ 能够从 $\Pi'$ 处继承存在健全性。注意，知识可靠性不一定需要继承。也就是说，我们不要求可以从 $g(y)$ 的见证中恢复 $y$ 的见证。在上述几乎所有的例子中，关系 $\mathcal{R}'$ 都是通用线性关系的特例。唯一的例外是例 \ref{exmp:20-3}，其关系 $\mathcal{R}'$ 来自 OR 证明构造。
 
 \subsection{一种用于非线性关系的通用协议}\label{subsec:20-2-1}
 
@@ -278,7 +278,6 @@ $$
 \end{snote}
 
 \begin{snote}[加密后的 DH 三元组.]
-
 我们也可以尝试使用这种技术来设计例 \ref{exmp:20-4} 中的协议。最明显的方法是让 Alice 向 Charlie 证明，存在：
 $$
 \beta_1,\beta_2,\beta_3,~~~~

@@ -33,7 +33,7 @@
 令 $(P,V)$ 是一个具有大挑战空间的有效关系 $\mathcal{R}$ 上的 Sigma 协议。令 $G$ 是$\mathcal{R}$ 的一个密钥生成算法。如果 $(P,V)$ 提供知识健全性，并且 $G$ 是单向的，那么身份识别方案 $\mathcal{I}:=(G,P,V)$ 对于直接攻击是安全的。
 
 \begin{quote}
-特别地，假设 $\mathcal{A}$ 是一个有效冒充对手，他通过攻击游戏 \ref{game:18-1} 中的直接攻击来攻击 $\mathcal{I}$，其优势为 $\epsilon:=\rm{ID1\mathsf{adv}}[\mathcal{A},\mathcal{I}]$。则必然存在一个有效对手 $\mathcal{B}$如攻击游戏 \ref{game:19-2} 那样攻击 $G$，其运行时间大约是 $\mathcal{A}$ 的两倍，其优势 $\epsilon':={\rm OW\mathsf{adv}}[\mathcal{A},\mathbb{G}]$，那么：
+特别地，假设 $\mathcal{A}$ 是一个有效冒充对手，它通过攻击游戏 \ref{game:18-1} 中的直接攻击来攻击 $\mathcal{I}$，其优势为 $\epsilon:=\rm{ID1\mathsf{adv}}[\mathcal{A},\mathcal{I}]$。则必然存在一个有效对手 $\mathcal{B}$如攻击游戏 \ref{game:19-2} 那样攻击 $G$，其运行时间大约是 $\mathcal{A}$ 的两倍，其优势 $\epsilon':={\rm OW\mathsf{adv}}[\mathcal{A},\mathbb{G}]$，那么：
 \end{quote}
 \begin{equation}\label{eq:19-17}
 \epsilon'\geq \epsilon^2-\frac{\epsilon}{N}
@@ -114,7 +114,7 @@ $$
 
 把以上结论结合起来，假设我们从一个 Sigma 协议 $(P, V)$ 开始，该协议是特殊 HVZK 的，并且它能提供知识健全性。此外，假设 $(P, V)$ 有不可预测承诺和一个大的挑战空间。那么，如果我们把 $(P, V)$ 和一个单向密钥生成算法 $G$ 结合起来，就可以利用 Fiat-Shamir 签名构造法基于一个随机预言机 $H$ 构建一个安全的签名方案。事实上，Schnorr 签名方案就是这个结构的一个特例。
 
-就像我们对 Schnorr 签名所做的那样，我们也可以使用引理 \ref{theo:19-6} 将问题从 $r$ 次重复冒充规约到 $1$ 次冒充。但是更严格的规约也是有可能的，事实上引理 \ref{theo:19-8} 的证明在这里也是成立的，基本上不需要更改太多内容：
+就像我们对 Schnorr 签名所做的那样，我们也可以使用引理 \ref{theo:19-6} 将问题从 $r$ 次重复冒充归约到 $1$ 次冒充。但是更严格的归约也是有可能的，事实上引理 \ref{theo:19-8} 的证明在这里也是成立的，基本上不需要更改太多内容：
 
 \begin{lemma}\label{theo:19-17}
 令 $(P,V)$ 是一个关系 $\mathcal{R}\subseteq\mathcal{X}×\mathcal{Y}$ 上的特殊 HVZK 的 Sigma 协议，$G$ 是 $\mathcal{R}$ 上的一个密钥生成算法，考虑由此产生的身份识别协议 $\mathcal{I}=(G,P,V)$。假设 $\mathcal{A}$ 是一个如攻击游戏 \ref{game:19-1} 中那样的针对 $\mathcal{I}$ 的有效的 $r$ 次重复冒充窃听攻击对手，其优势为 $\epsilon:={\rm rID2\mathsf{adv}}[\mathcal{A},\mathcal{I},r]$。那么必然存在一个如攻击游戏 19.2 中那样的针对 $G$ 的有效对手 $\mathcal{B}$，其运行时间大约是 $\mathcal{A}$ 的两倍，其优势为 $\epsilon:={\rm OW\mathsf{adv}}[\mathcal{B},G]$，使得：

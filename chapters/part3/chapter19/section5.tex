@@ -6,7 +6,7 @@
 
 令 $\mathbb{G}$ 是一个由 $g\in\mathbb{G}$ 生成的素阶 $q$ 的循环群，$h\in\mathbb{G}$ 是任意群元素。我们现在将 $h$ 看作是一个系统参数。所谓系统参数会在系统初始化时一次性生成，并对所有参与方公开。对于一个 $u\in\mathbb{G}$，如果给定 $g$ 和 $h$，可以使用一个数对 $(\alpha,\beta)\in\mathbb{Z}_q^2$ 来表示 $u$，方法是 $g^\alpha h^\beta=u$。
 
-Okamoto 协议允许证明者说服持怀疑态度的验证者，他``知道"一个给定的 $u\in\mathbb{G}$ 的表示，但不需要向验证者透露任何有关该表示的具体信息。更确切地说，它是一个对于关系：
+Okamoto 协议允许证明者说服持怀疑态度的验证者，它``知道"一个给定的 $u\in\mathbb{G}$ 的表示，但不需要向验证者透露任何有关该表示的具体信息。更确切地说，它是一个对于关系：
 \begin{equation}\label{eq:19-11}
 	\mathcal{R}=\bigg\lbrace
 	\big((\alpha,\beta),u\big)\in\mathbb{Z}_q^2\times\mathbb{G}:g^\alpha h^\beta=u
@@ -277,11 +277,11 @@ $$
 
 定理 \ref{theo:19-12} 的证明完全模仿了 Schnorr 协议相应定理的证明。对 $|\mathbb{H}_1|\times|\mathbb{H}_2|$ 的最小素因子的下限要求，是为了确保见证提取器可以从两个接受对话 $(u_{\rm t},c,\alpha_{\rm z})$ 和 $(u_{\rm t},c',\alpha_{\rm z}')$ 中获得一个映射 $\psi$ 的原像。就如同在 Schnorr 协议中的见证提取器中那样，我们可以得到$\psi(\Delta\alpha)=u^{\Delta c}$，其中$\Delta\alpha:=(\alpha_z-\alpha_z')\in\mathbb{H}_1$，$\Delta c=(c-c')\in\mathbb{Z}$。限制 $|\mathbb{H}_1|$ 和 $|\mathbb{H}_2|$ 素因子的下界是为了确保(1)我们可以在 $\mathbb{H}_1$ 中用 $\Delta c$ 除以 $\Delta\alpha$，并且(2)我们可以在等式两边同时升幂 $((\Delta c)^{-1}\mod |\mathbb{H}_2|)\in\mathbb{Z}$，以求得等式右项的 $\Delta c$ 次方根。然后，我们就可以得到$\psi({\Delta\alpha}/{\Delta c})=u$，因此 ${\Delta\alpha}/{\Delta c}\in\mathbb{H}_1$ 就是 $u\in\mathbb{H}_2$ 在映射 $\psi$ 下的原像。
 
-\subsection{一个用于 RSA 的 Sigma 协议}\label{subsec:19-5-5}
+\subsection{一种用于 RSA 的 Sigma 协议}\label{subsec:19-5-5}
 
 为了避免读者认为 Sigma 协议只适用于与离散对数有关的问题，我们下面介绍一个与 RSA 有关的协议。
 
-令 $(n,e)$ 是一个 RSA 公钥，$e$ 是一个素数。我们将 $(n,e)$ 视为一个系统参数。Guillou-Quisquater (GQ) 协议允许证明者说服持怀疑态度的验证者，他``知道" $y\in\mathbb{Z}_n^*$ 的一个 $e$ 次方根，而不透露任何其他信息。更确切地说，GQ 协议是关系：
+令 $(n,e)$ 是一个 RSA 公钥，$e$ 是一个素数。我们将 $(n,e)$ 视为一个系统参数。Guillou-Quisquater (GQ) 协议允许证明者说服持怀疑态度的验证者，它``知道" $y\in\mathbb{Z}_n^*$ 的一个 $e$ 次方根，而不透露任何其他信息。更确切地说，GQ 协议是关系：
 \begin{equation}\label{eq:19-16}
 \mathcal{R}=
 \bigg\lbrace

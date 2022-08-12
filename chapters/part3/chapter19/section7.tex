@@ -1,6 +1,6 @@
 \section{Sigma协议的组合：AND和OR证明}
 
-在本节中，我们将展示如何将 Sigma 协议组合起来构成新的 Sigma 协议。在 AND 证明结构中，证明者可以说服验证者他``知道"一对陈述的见证。在 OR 证明结构中，证明者可以说服验证者他``知道"两个陈述中其中一个的见证。
+在本节中，我们将展示如何将 Sigma 协议组合起来构成新的 Sigma 协议。在 AND 证明结构中，证明者可以说服验证者它``知道"一对陈述的见证。在 OR 证明结构中，证明者可以说服验证者它``知道"两个陈述中其中一个的见证。
 
 \subsection{AND 证明构造}
 
@@ -11,7 +11,7 @@
 \big((x_0,x_1),(y_0,y_1)\big)\in\left(\mathcal{X}_0\times\mathcal{X}_1\right)\times\left(\mathcal{Y}_0\times\mathcal{Y}_1\right):~(x_0,y_0)\in\mathcal{R}_0,~(x_1,y_1)\in\mathcal{R}_1
 \bigg\rbrace
 \end{equation}
-上的 Sigma 协议。换句话说，给定一对陈述 $y_0\in\mathcal{Y}_0$ 和 $y_1\in\mathcal{Y}_1$，这个 \textbf{AND 协议}允许证明者说服持怀疑态度的验证者，他同时``知道" $y_0$ 的一个见证\emph{和} $y_1$ 的一个见证。该协议 $(P,V)$ 运行如下，其中验证者 $P$ 由 $((x_0,x_1),(y_0,y_1))\in\mathcal{R}_{\rm AND}$ 初始化，验证者 $V$ 由 $(y_0,y_1)\in\mathcal{Y}_0\times\mathcal{Y}_1$ 初始化：
+上的 Sigma 协议。换句话说，给定一对陈述 $y_0\in\mathcal{Y}_0$ 和 $y_1\in\mathcal{Y}_1$，这个 \textbf{AND 协议}允许证明者说服持怀疑态度的验证者，它同时``知道" $y_0$ 的一个见证\emph{和} $y_1$ 的一个见证。该协议 $(P,V)$ 运行如下，其中验证者 $P$ 由 $((x_0,x_1),(y_0,y_1))\in\mathcal{R}_{\rm AND}$ 初始化，验证者 $V$ 由 $(y_0,y_1)\in\mathcal{Y}_0\times\mathcal{Y}_1$ 初始化：
 \begin{enumerate}
 	\item $P$ 运行 $P_0(x_0,y_0)$ 得到一个承诺 $t_0$，运行 $P_1(x_1,y_1)$ 得到一个承诺 $t_1$，并将承诺对 $(t_0,t_1)$发送给 $V$；
 	\item $V$ 选取 $c\overset{\rm R}\leftarrow\mathcal{C}$，并将挑战 $c$ 发送给 $P$；
@@ -63,7 +63,7 @@ $$
 \big((b,x), (y_0,y_1)\big)\in\big(\{0,1\}\times(\mathcal{X}_0\cup\mathcal{X}_1)\big)\times\big(\mathcal{Y}_0\times\mathcal{Y}_1\big):~(x,y_b)\in\mathcal{R}_b
 \bigg\rbrace
 \end{equation}
-上的 Sigma 协议。换句话说，给定一对陈述 $y_0\in\mathcal{Y}_0$ 和 $y_1\in\mathcal{Y}_1$，这个 \textbf{OR 协议}允许证明者说服持怀疑态度的验证者，他``知道" $y_0$ 的一个见证或 $y_1$ 的一个见证，除此之外不会再透露任何其他信息。更具体地，该协议不会透露证明者所拥有的到底是 $y_0$ 的还是 $y_1$ 的见证。
+上的 Sigma 协议。换句话说，给定一对陈述 $y_0\in\mathcal{Y}_0$ 和 $y_1\in\mathcal{Y}_1$，这个 \textbf{OR 协议}允许证明者说服持怀疑态度的验证者，它``知道" $y_0$ 的一个见证或 $y_1$ 的一个见证，除此之外不会再透露任何其他信息。更具体地，该协议不会透露证明者所拥有的到底是 $y_0$ 的还是 $y_1$ 的见证。
 
 协议 $(P,V)$ 运行如下，其中验证者 $P$ 由 $((b,x),(y_0,y_1))\in\mathcal{R}_{\rm OR}$ 初始化，验证者 $V$ 由 $(y_0,y_1)\in\mathcal{Y}_0\times\mathcal{Y}_1$ 初始化，且 $d:=1-b$：
 \begin{enumerate}

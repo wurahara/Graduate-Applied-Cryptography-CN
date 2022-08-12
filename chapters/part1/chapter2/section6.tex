@@ -70,7 +70,7 @@ E(k,m):=\Big(k[0](m[0]),\;k[1](m[1]),\;\dots,\;k[L-1](m[L-1])\Big)
 令$\mathcal{E}=(E,D)$是一个定义在$(\mathcal{K},\mathcal{M},\mathcal{C})$上的密码。密钥恢复攻击用下面的挑战者与对手$\mathcal{A}$之间的游戏建模：挑战者在$\mathcal{K}$中选择一个随机密钥$k$，在$\mathcal{M}$中选择一个随机消息$m$，计算$c\overset{\rm R}\leftarrow E(k,m)$，并将$(m,c)$发送给$\mathcal{A}$。$\mathcal{A}$输出一个$\mathcal{K}$中的猜测值$\hat k$作为应答。如果$D(\hat{k},c)=m$，我们就称$\mathcal{A}$赢得了游戏，并将$\mathcal{A}$赢得游戏的概率定义为$\mathrm{KR}\mathsf{adv}[\mathcal{A},\mathcal{E}]$。和往常一样，如果对于所有有效对手$\mathcal{A}$，优势$KRadv[A,E]$都可忽略不计，我们就说$\mathcal{E}$对于密钥恢复攻击是安全的。
 \begin{enumerate}[\indent(a)]
 	\item 证明一次性密码本对密钥恢复攻击是不安全的。
-	\item 证明如果$\mathcal{E}$是语义安全的，并且$\epsilon=|\mathcal{K}|/|\mathcal{M}|$可忽略不计，那么$\mathcal{E}$对密钥恢复攻击是安全的。特别地，证明对于每个有效的密钥恢复对手$\mathcal{A}$，都存在一个有效的语义安全对手$\mathcal{B}$，其中$\mathcal{B}$是围绕$\mathcal{A}$的一个基本包装器，使得：
+	\item 证明如果$\mathcal{E}$是语义安全的，并且$\epsilon=|\mathcal{K}|/|\mathcal{M}|$可忽略不计，那么$\mathcal{E}$对密钥恢复攻击是安全的。特别地，证明对于每个有效的密钥恢复对手$\mathcal{A}$，都存在一个有效的语义安全对手$\mathcal{B}$，其中$\mathcal{B}$是一个围绕$\mathcal{A}$的基本包装器，使得：
 	$$\mathrm{KR}\mathsf{adv}[\mathcal{A},\mathcal{E}]\leq\mathrm{SS}\mathsf{adv}[\mathcal{B},\mathcal{E}]+\epsilon$$
 	\textbf{提示：}你的语义安全对手$\mathcal{B}$在语义安全实验$0$中会以$\mathrm{KR}\mathsf{adv}[\mathcal{A},\mathcal{E}]$的概率输出$1$，在实验$1$中以最多$\epsilon$的概率输出$1$。由此可以推导出用$\epsilon$表示的$\mathrm{SS}\mathsf{adv}[\mathcal{B},\mathcal{E}]$的下界，并由该结果得到$\mathrm{KR}\mathsf{adv}[\mathcal{A},\mathcal{E}]$。
 	\item 基于(b)证明，如果 $\mathcal{E}$ 在是语义安全的，并且$|\mathcal{M}|$是超多项式的，那么$|\mathcal{K}|$不可能是多项式边界的。
@@ -121,7 +121,7 @@ D'\big((k_0,k_1),c\big)=D\big(k_0,D(k_1,c)\big)
 \]
 我们的目标是证明，如果$\mathcal{E}$是语义安全的，那么就算对手得到了$k_0$或$k_1$中的任意一个密钥，$\mathcal{E}'$也是语义安全的。
 \begin{enumerate}[\indent(a)]
-	\item 考虑以下语义安全实验，即实验$0$和实验$1$：在实验$b$中，对于$b=0,1$，对手产生两条消息$m_0$和$m_1$，并得到$k_1$和$E'\big((k_0,k_1),m_b\big)$。对手输出一个$\{0,1\}$中的值$\hat b$。同之前在语义安全的定义中类似，我们定义对手的优势为 $\mathrm{NE}\mathsf{adv}[\mathcal{A},\mathcal{E}]$。证明对于每个攻击$\mathcal{E}'$的嵌套加密对手$\mathcal{A}$，都存在一个攻击$\mathcal{E}$的语义安全对手$\mathcal{B}$，其中$\mathcal{B}$是围绕$\mathcal{A}$的一个基本包装器，满足：
+	\item 考虑以下语义安全实验，即实验$0$和实验$1$：在实验$b$中，对于$b=0,1$，对手产生两条消息$m_0$和$m_1$，并得到$k_1$和$E'\big((k_0,k_1),m_b\big)$。对手输出一个$\{0,1\}$中的值$\hat b$。同之前在语义安全的定义中类似，我们定义对手的优势为 $\mathrm{NE}\mathsf{adv}[\mathcal{A},\mathcal{E}]$。证明对于每个攻击$\mathcal{E}'$的嵌套加密对手$\mathcal{A}$，都存在一个攻击$\mathcal{E}$的语义安全对手$\mathcal{B}$，其中$\mathcal{B}$是一个围绕$\mathcal{A}$的基本包装器，满足：
 	\[
 	\mathrm{NE}\mathsf{adv}[\mathcal{A},\mathcal{E}]=\mathrm{SS}\mathsf{adv}[\mathcal{B},\mathcal{E}]
 	\]
@@ -155,7 +155,7 @@ D'\big((k_0,k_1),c\big)=D\big(k_0,D(k_1,c)\big)
 \begin{exercise}[投票协议]
 这个练习提供了一种基于加性一次性密码本的简易投票协议（例 \ref{exmp:2-4}）。假设我们有$t$个投票者和一个计票中心。每个投票者都要投$0$或$1$票，计票中心要统计票数并公布总和$S$。然而，他们将使用一个协议，保证没有任何一方（投票者或计票中心）能知道$S$之外的信息（但我们假定每一方都忠实地遵守该协议）。
 
-该协议的工作方式如下。令$n>t$是一个整数。计票中心产生一个对$0$的加密：$c_0\overset{\rm R}\leftarrow\{0,\dots,n-1\}$，并将$c_0$发送给投票者$1$。投票者$1$将他的票$v_1$加到$c_0$上，计算$c_1\leftarrow c_0+v_1 \mod n$，并将$c_1$发送给投票者$2$。这样继续下去，每个投票者$i$把$v_i$加到$c_{i-1}$上，计算$c_i\leftarrow c_{i-1}+v_i \mod n$，并把$c_i$发送给投票者$i+1$，最后投票者$t$把$c_t$发回计票中心。计票中心计算总和为$S\leftarrow c_t-c_0 \mod n$，并将$S$广播给所有投票者。
+该协议的工作方式如下。令$n>t$是一个整数。计票中心产生一个对$0$的加密：$c_0\overset{\rm R}\leftarrow\{0,\dots,n-1\}$，并将 $c_0$ 发送给投票者 $1$。投票者 $1$ 将它的票 $v_1$ 加到 $c_0$ 上，计算 $c_1\leftarrow c_0+v_1 \mod n$，并将 $c_1$ 发送给投票者 $2$。这样继续下去，每个投票者 $i$ 把 $v_i$ 加到 $c_{i-1} $上，计算 $c_i\leftarrow c_{i-1}+v_i \mod n$，并把 $c_i$ 发送给投票者 $i+1$，最后投票者 $t$ 把 $c_t$ 发回计票中心。计票中心计算总和为$S\leftarrow c_t-c_0 \mod n$，并将 $S$ 广播给所有投票者。
 \begin{enumerate}[\indent(a)]
 	\item 证明该协议能正确计算出总和。
 	\item 证明该协议在以下意义上是完美安全的。对于投票者$i=1,\dots,t$，定义$View_i:=(S,c_{i-1})$，它代表投票者$i$的``观点"。我们还定义$View_0:=(c_0,c_t)$代表计票中心的``观点"。证明对于每个$i=0,\dots,t$和$S=0,\dots,t$，以下结论成立：

@@ -1,1 +1,134 @@
 \section{针对多密钥攻击的安全性}
+
+回顾一下本章引言中讨论的``文件加密"问题。假设 Alice 选择使用一个语义安全的密码，并使用不同的、独立生成的密钥对她的每个文件进行加密。在这种``多密钥"的设定中，语义安全性是否意味着相应的安全属性？
+
+这个问题的答案是``是的"。我们下面将首先说明在多密钥设定中与语义安全相关的自然安全属性。
+
+\begin{game}[多密钥语义安全性]\label{game:5-1}
+对于一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的给定密码 $\mathcal{E}=(E,D)$ 和一个给定对手 $\mathcal{A}$，我们定义两个实验：实验$0$和实验$1$。对于$b=0,1$，我们定义：
+
+\noindent\textbf{实验$b$：}
+\begin{itemize}
+	\item 对手向挑战者发起一连串的查询。\\
+	对于 $i=1,2,\dots$，第 $i$ 个查询是一对相同长度的消息 $m_{i0},m_{i1}\in\mathcal{M}$。\\
+	挑战者选取 $k_i\overset{\rm R}\leftarrow\mathcal{K}$ 并计算 $c_i\overset{\rm R}\leftarrow E(k_i,m_{ib})$，然后将 $c_i$ 发送给对手。
+	\item 对手输出一个比特 $\hat{b}\in\{0,1\}$。
+\end{itemize}
+
+对于 $b=0,1$，令 $W_b$ 是 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件。我们定义 $\mathcal{A}$ 就 $\mathcal{E}$ 的\textbf{优势}为：
+\[
+{\rm MSS}\mathsf{adv}[\mathcal{A},\mathcal{E}]:=|\Pr[W_0]-\Pr[W_1]|
+\]
+\end{game}
+
+我们强调，在上述攻击游戏中，对手的查询可以是自适应选择的，即对于每个 $i=1,2,\dots$，对手可能以某种方式计算出 $(m_{i0},m_{i1})$，而这种方式可能在某种程度上取决于挑战者在此之前输出的加密 $c_1,\dots,c_{i-1}$。
+
+\begin{definition}[多密钥语义安全性]\label{def:5-1}
+如果对于所有有效对手 $\mathcal{A}$，${\rm MSS}\mathsf{adv}[\mathcal{A},\mathcal{E}]$ 的值都可忽略不计，那么密码 $\mathcal{E}$ 就被称为是\textbf{多密钥语义安全 (multi-key semantically secure)}的。
+\end{definition}
+
+正如我们在 \ref{subsec:2-2-5} 小节中所讨论的，攻击游戏 \ref{game:5-1} 可以被重构为一个``比特猜测"游戏，其中挑战者不再有两个独立的实验，而是随机选择一个 ${b}\in\{0,1\}$，然后对对手 $\mathcal{A}$ 运行实验 $b$。在该游戏中，我们将 $\mathcal{A}$ 的\emph{比特猜测优势}${\rm MSS}\mathsf{adv}[\mathcal{A},\mathcal{E}]$衡量为$|\Pr[\hat{b}=b]-{1}/{2}|$，那么与之前一样（根据式 \ref{eq:2-11}），我们有：
+\begin{equation}\label{eq:5-1}
+{\rm MSS}\mathsf{adv}[\mathcal{A},\mathcal{E}]= 2\cdot{\rm MSS}\mathsf{adv}^*[\mathcal{A},\mathcal{E}]
+\end{equation}
+
+正如下面的定理所示，语义安全性就意味着多密钥语义安全性。
+
+\begin{theorem}\label{theo:5-1}
+如果一个密码 $\mathcal{E}$ 是语义安全的，那么它必然也是多密钥语义安全的。
+\begin{quote}
+特别地，对于每个按照攻击游戏 \ref{game:5-1} 攻击 $\mathcal{E}$ 的 MSS 对手 $\mathcal{A}$，如果它最多能向其挑战者发起 $Q$ 次查询，则必然存在一个按照攻击游戏 \ref{game:2-1} 攻击 $\mathcal{E}$ 的 SS 对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
+\end{quote}
+\[
+{\rm MSS}\mathsf{adv}[\mathcal{A},\mathcal{E}]= Q\cdot{\rm SS\mathsf{adv}}[\mathcal{A},\mathcal{E}]
+\]
+\end{theorem}
+
+\begin{proof}[证明思路]
+该证明是一个直接的混合论证，这是我们在定理 \ref{theo:3-2} 和定理 \ref{theo:3-3} 的证明中介绍的一种证明技术（如有必要，建议读者回顾这两个证明）。在MSS攻击游戏的实验 $0$ 中，挑战者对 $m_{10},m_{20},\dots,m_{Q0}$ 进行加密。直观地说，由于密钥 $k_1$ 只用于加密第一条消息，同时 $\mathcal{E}$ 是语义安全的，那么如果我们修改挑战者，使其加密 $m_{11}$ 而不是 $m_{10}$，对手的行为应该不会有很大的不同。同样地，我们也可以继续修改挑战者，使其加密 $m_{21}$ 而不是 $m_{20}$，对手应该也注意不到这种差别。如果我们继续这个过程，对挑战者进行共计 $Q$ 次修改，那么我们最终会进入攻击游戏 \ref{game:5-1} 的实验 $1$，对手同样应该注意不到这种差别。
+\end{proof}
+
+\begin{proof}
+假设 $\mathcal{E}=(E,D)$ 定义在 $(\mathcal{K},\mathcal{X},\mathcal{Y})$ 上。令 $\mathcal{A}$ 是一个 MSS 对手，它对 $\mathcal{E}$ 进行攻击游戏 \ref{game:5-1}，假设它在该游戏中最多可以向挑战者发起 $Q$ 次查询。
+
+首先，我们引入 $Q+1$ 个混合游戏，即混合$0$，混合$1$，$\dots$，混合$Q$。这些游戏均在 $\mathcal{A}$ 与一个挑战者之间进行。对于$i=0,1,\dots,Q$，当 $\mathcal{A}$ 发出第 $i$ 个查询 $(m_{i0},m_{i1})$ 时，混合 $j$ 中的挑战者按如下方式计算它的应答 $c_i$：
+
+\vspace{5pt}
+
+\hspace*{5pt} 选取 $k_i\overset{\rm R}\leftarrow\mathcal{K}$\\
+\hspace*{26pt} 如果 $i>j$，则令 $c_i\overset{\rm R}\leftarrow E(k_i,m_{i0})$，否则令 $c_i\overset{\rm R}\leftarrow E(k_i,m_{i1})$。
+
+\vspace{5pt}
+
+\noindent
+换句话说，混合 $j$ 中的挑战者加密：
+\[
+m_{11},\dots,m_{j1},
+\quad
+m_{(j+1)0},\dots,m_{Q0}
+\]
+且在每次加密时都使用不同的密钥。
+
+对于 $j=0,1,\dots,Q$，令 $p_j$ 为 $\mathcal{A}$ 在混合 $j$ 中输出 $1$ 的概率。观察到 $p_0$ 等于 $\mathcal{A}$ 在攻击游戏 \ref{game:5-1} 的实验 $0$ 中就 $\mathcal{E}$ 输出 $1$ 的概率，而 $p_Q$ 等于 $\mathcal{A}$ 在攻击游戏 \ref{game:5-1} 的实验 $1$ 中就 $\mathcal{E}$ 输出 $1$ 的概率。因此，我们有：
+\begin{equation}\label{eq:5-2}
+{\rm MSS}\mathsf{adv}[\mathcal{A},\mathcal{E}]=|p_Q-p_0|
+\end{equation}
+
+接下来，我们设计一个 SS 对手 $\mathcal{B}$，它对 $\mathcal{E}$ 进行攻击游戏 \ref{game:2-1}，其工作方式如下：
+
+\vspace{5pt}
+
+\hspace*{5pt} 首先，$\mathcal{B}$ 随机选取 $\omega\in\{1,\dots,Q\}$。\\
+\hspace*{26pt} 然后，$\mathcal{B}$ 扮演 $\mathcal{A}$ 的挑战者，当 $\mathcal{A}$ 发出其第 $i$ 个查询 $(m_{i0},m_{i1})$ 时，$\mathcal{B}$ 按如下方式计算响应 $c_i$：
+
+\vspace{5pt}
+
+
+\hspace*{25pt} 如果 $i>\omega$：\\
+\hspace*{75pt} 选取 $k_i\overset{\rm R}\leftarrow\mathcal{K}$，计算 $c_i\overset{\rm R}\leftarrow E(k_i,m_{i0})$\\
+\hspace*{50pt} 否则，如果 $i=\omega$：\\
+\hspace*{75pt} $\mathcal{B}$ 向其挑战者提交 $(m_{i0},m_{i1})$\\
+\hspace*{75pt} 将挑战者的应答赋值给 $c_i$\\
+\hspace*{50pt} 否则：\quad//\quad$i<\omega$\\
+\hspace*{75pt} 选取 $k_i\overset{\rm R}\leftarrow\mathcal{K}$，计算 $c_i\overset{\rm R}\leftarrow E(k_i,m_{i1})$
+
+\vspace{5pt}
+
+\hspace*{5pt} 最后，$\mathcal{B}$ 输出 $\mathcal{A}$ 所输出的任何东西。
+
+\vspace{5pt}
+
+\noindent
+换句话说，对手 $\mathcal{B}$ 加密：
+\[
+m_{11},\dots,m_{(\omega-1)1}
+\]
+为此，它产生自己的密钥，将 $(m_{\omega0},m_{\omega1})$ 提交给它自己的加密预言机，并产生自己的密钥，再一次加密：
+\[
+m_{(\omega+1)0},\dots,m_{Q0}
+\]
+
+我们声称：
+\begin{equation}\label{eq:5-3}
+{\rm MSS}\mathsf{adv}[\mathcal{A},\mathcal{E}]=Q\cdot{\rm SS\mathsf{adv}}[\mathcal{B},\mathcal{E}]
+\end{equation}
+为了证明这一声称，对于 $b=0,1$，令 $W_b$ 是 $\mathcal{B}$ 在其攻击游戏的实验 $b$ 中输出 $1$ 的事件。如果用 $\omega$ 表示 $\mathcal{B}$ 选择的随机数，那么一个关键性的观察是，对于 $j=1,\dots,Q$，我们有：
+\[
+\Pr[W_0|\omega=j]=p_j-1,
+\quad\text{and}\quad
+\Pr[W_1|\omega=j]=p_j
+\]
+那么，式 \ref{eq:5-3} 就可由这一观察以及式 \ref{eq:5-2} 得出，只需要使用下面这样的简单的放缩计算：
+\[
+\begin{aligned}
+{\rm SS\mathsf{adv}}[\mathcal{B},\mathcal{E}]
+&=|\Pr[W_1]-\Pr[W_0]|\\
+&=\frac{1}{Q}\cdot\left\lvert\sum_{j=1}^Q\Pr[W_1|\omega=j]-\sum_{j=1}^Q\Pr[W_0|\omega=j]\right\rvert\\
+&=\frac{1}{Q}\cdot|p_Q-p_0|\\
+&=\frac{1}{Q}\cdot{\rm MSS}\mathsf{adv}[\mathcal{A},\mathcal{E}]
+\end{aligned}
+\]
+这就证明了上述声称，进而证明了本定理。
+\end{proof}
+
+现在，让我们回到本章引言中所讨论的``文件加密"问题。定理 \ref{theo:5-1} 说的是，如果 Alice 使用独立的密钥和语义安全的密码分别加密她的每个文件，那么即使对手能够得到存储在文件服务器上的密文，它也无法获取关于 Alice 文件明文的有效信息（可能除了一些关于长度的信息）。请注意，即使对手通过某种主动手段试图确定某些文件的内容（比如，就像在引言中讨论的，对手试图向 Alice 发送电子邮件），这一点也同样是成立的。

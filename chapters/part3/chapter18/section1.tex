@@ -4,7 +4,7 @@
 
 一个交互式协议可以在任意数量的参与方之间进行，但在本文中我们主要关注两方协议。不管有多少参与方，一个协议都可以运行很多次。我们把每一次协议的运行称为\textbf{协议实例(protocol instance)}。
 
-在任意一个协议实例中，每一方都会从初始化设置开始。随着协议的运行，各参与方会发送和接收消息，并更新其本地设置。尽管具体细节因协议不同而各异，但是我们可以使用一个\textbf{交互式协议算法}来对协议实例中各方的计算进行建模。这种算法是一个概率性算法 $I$，它接收元组 $({config}_\mathrm{old}, {data}_\mathrm{in})$ 作为输入，并输出一个新元组 $({config}_\mathrm{new}, {data}_\mathrm{out})$。当某一方开始执行一个协议实例时，他首先需要提供一个\textbf{输入值}，这个输入值用于对该参与方的协议实例进行\textbf{初始化设置 (initial configuration)}。当该参与方从网络中收到一个新的消息时，它会调用算法 $I$ 并输入 $({config}_\mathrm{old}, {data}_\mathrm{in})$，其中 ${config}_\mathrm{old}$ 是该方先前的状态，${data}_\mathrm{in}$ 是接收到的消息；$I$ 将会输出元组 $({config}_\mathrm{new}, {data}_\mathrm{out})$，其中 ${config}_\mathrm{new}$ 是该方新的状态，${data}_\mathrm{out}$ 是发出的消息。该方会通过传输信道发送消息给协议的另一参与方。根据协议的要求，上述过程会被反复执行若干次，直到达到某个\textbf{终止设置 (terminal configuration)}。这种终止配置可以指定一个\textbf{输出值}，该输出值可以被
+在任意一个协议实例中，每一方都会从初始化设置开始。随着协议的运行，各参与方会发送和接收消息，并更新其本地设置。尽管具体细节因协议不同而各异，但是我们可以使用一个\textbf{交互式协议算法}来对协议实例中各方的计算进行建模。这种算法是一个概率性算法 $I$，它接收元组 $({config}_\mathrm{old}, {data}_\mathrm{in})$ 作为输入，并输出一个新元组 $({config}_\mathrm{new}, {data}_\mathrm{out})$。当某一方开始执行一个协议实例时，它首先需要提供一个\textbf{输入值}，这个输入值用于对该参与方的协议实例进行\textbf{初始化设置 (initial configuration)}。当该参与方从网络中收到一个新的消息时，它会调用算法 $I$ 并输入 $({config}_\mathrm{old}, {data}_\mathrm{in})$，其中 ${config}_\mathrm{old}$ 是该方先前的状态，${data}_\mathrm{in}$ 是接收到的消息；$I$ 将会输出元组 $({config}_\mathrm{new}, {data}_\mathrm{out})$，其中 ${config}_\mathrm{new}$ 是该方新的状态，${data}_\mathrm{out}$ 是发出的消息。该方会通过传输信道发送消息给协议的另一参与方。根据协议的要求，上述过程会被反复执行若干次，直到达到某个\textbf{终止设置 (terminal configuration)}。这种终止配置可以指定一个\textbf{输出值}，该输出值可以被
 该方使用，比如说用于一些更高层的协议中。
 
 一般来说，一个参与方可能会运行多个协议，或同一协议的多个实例。所有这些不同的协议实例的设置都需要单独维护。

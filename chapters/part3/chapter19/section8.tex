@@ -2,7 +2,7 @@
 
 我们下面研究 Sigma 协议的一个有用的属性，称为\textbf{见证独立性(witness independence)}。
 
-我们已经知道，一个给定陈述可能有若干个对应的见证。粗略地说，见证独立性意味着，如果一个``作弊"的验证者 $V^*$（他不需要遵守协议）与诚实证明者 $P$ 交互，$V^*$ 无法知道 $P$ 在使用\emph{哪个}见证。特别地，即使 $V^*$ 非常强大或者非常聪明，以至于它在与 $P$ 交互后能够计算出一个见证，这个见证也与 $P$ 所使用的见证无关。当然，只有在一个特定陈述对应着一个以上的见证时，这个属性才有意义。
+我们已经知道，一个给定陈述可能有若干个对应的见证。粗略地说，见证独立性意味着，如果一个``作弊"的验证者 $V^*$（它不需要遵守协议）与诚实证明者 $P$ 交互，$V^*$ 无法知道 $P$ 在使用\emph{哪个}见证。特别地，即使 $V^*$ 非常强大或者非常聪明，以至于它在与 $P$ 交互后能够计算出一个见证，这个见证也与 $P$ 所使用的见证无关。当然，只有在一个特定陈述对应着一个以上的见证时，这个属性才有意义。
 
 下面，我们首先更精确地定义这个属性。其次我们将表明，特殊 HVZK 能够导出见证独立性。这也许有点令人惊讶，因为 HVZK 是一个关于\emph{诚实}验证者的属性，而见证独立性适用于\emph{所有}的验证者（甚至是没有计算性上界的作弊验证者）。最后，我们会展示如何使用见证独立性来设计能够抵抗主动攻击的身份识别协议。这些识别协议简单而高效，其安全性可以基于离散对数假设或 RSA 假设，并且不依赖随机预言机启发法。
 
@@ -14,7 +14,7 @@
 令 $\Pi=(P,V)$ 是 $\mathcal{R}\subseteq\mathcal{X}×\mathcal{Y}$ 上的一个 Sigma 协议。对于一个给定对手 $\mathcal{A}$，我们为每个 $(x,y)\in\mathcal{R}$ 定义一个实验 $(x,y)$，它按如下方式运行：
 \begin{itemize}
 	\item 最初，对手 $\mathcal{A}$ 被赋予一个值 $y$。
-	\item 然后，对手 $\mathcal{A}$ 与证明者 $P(x,y)$ 的几个实例进行交互。在这些交互中，挑战者进行证明者的计算，而对手扮演作弊验证者的角色（即他不需要遵循 $V$ 的协议）。这些交互可能是并行的（特别地，对手可能会发出挑战，这些挑战取决于所有证明者实例到目前为止所输出的承诺和应答）。
+	\item 然后，对手 $\mathcal{A}$ 与证明者 $P(x,y)$ 的几个实例进行交互。在这些交互中，挑战者进行证明者的计算，而对手扮演作弊验证者的角色（即它不需要遵循 $V$ 的协议）。这些交互可能是并行的（特别地，对手可能会发出挑战，这些挑战取决于所有证明者实例到目前为止所输出的承诺和应答）。
 	\item 在游戏结束时，对手 $\mathcal{A}$ 输出某个值 $s$，它属于一个有限的\textbf{输出空间} $\mathcal{S}$（该空间可能取决于 $\mathcal{A}$）。
 \end{itemize}
 对于每个 $(x,y)\in\mathcal{R}$ 和 $s\in\mathcal{S}$，我们定义 $\theta_{\mathcal{A},\Pi}(x,y,s)$ 为 $\mathcal{A}$ 在实验 $(x,y)$ 中输出 $s$ 的概率。
@@ -167,7 +167,7 @@ $$
 
 所以，令 $\epsilon$ 为 $\mathcal{A}$ 赢得该游戏的概率。
 
-现在，我们描述我们想要构造的对手 $\mathcal{B}$，他被设计用来打破 $G$ 的单向性假设。首先，$\mathcal{B}$ 的挑战者计算 $(y^*,(x^*,y^*))\overset{\rm R}\leftarrow G()$，并将 $y^*$ 发送给 $\mathcal{B}$。$\mathcal{B}$ 的目标是计算一个 $y^*$ 的见证。
+现在，我们描述我们想要构造的对手 $\mathcal{B}$，它被设计用来打破 $G$ 的单向性假设。首先，$\mathcal{B}$ 的挑战者计算 $(y^*,(x^*,y^*))\overset{\rm R}\leftarrow G()$，并将 $y^*$ 发送给 $\mathcal{B}$。$\mathcal{B}$ 的目标是计算一个 $y^*$ 的见证。
 
 对手 $\mathcal{B}$ 首先扮演 $\mathcal{A}$ 的挑战者，在所有三个阶段中运行一次 $\mathcal{A}$。在密钥生成阶段，$\mathcal{B}$ 计算 $(pk',sk')=(Y,(X,Y))$，方法如下：
 
@@ -194,16 +194,16 @@ $$
 \sigma=\Pr[(\mathsf{\widehat X},\mathsf{Y})\in\mathcal{R}'\;\land\;{\rm type}(\mathsf{X})\neq{\rm type}(\mathsf{\widehat X})] 
 $$
 使用全概率公式，我们可以对所有 $(\widehat X,Y)\in\mathcal{R}'$ 求和：
-$$
+\[
 \begin{aligned}
 \sigma
 &=\sum_{(\widehat X,Y)\in\mathcal{R}'}\Pr[{\rm type}(\mathsf{X})\neq{\rm type}(\mathsf{\widehat X})\land\mathsf{\widehat X}=\widehat X\land\mathsf{Y}=Y]\\
 &=\sum_{(\widehat X,Y)\in\mathcal{R}'}\Pr[{\rm type}(\mathsf{X})\neq{\rm type}(\mathsf{\widehat X})\;|\;\mathsf{\widehat X}=\widehat X\land\mathsf{Y}=Y]\cdot\Pr[\mathsf{\widehat X}=\widehat X\land\mathsf{Y}=Y]\\
 &=\sum_{(\widehat X,Y)\in\mathcal{R}'}\Pr[{\rm type}(\mathsf{X})\neq{\rm type}(\mathsf{\widehat X})\;|\;\mathsf{Y}=Y]\cdot\Pr[\mathsf{\widehat X}=\widehat X\land\mathsf{Y}=Y]\text{ \emph{（见证独立性）}}\\
 &=\frac{1}{2}\sum_{(\widehat X,Y)\in\mathcal{R}'}\Pr[\mathsf{\widehat X}=\widehat X\land\mathsf{Y}=Y]\text{ \emph{（}\,}\mathsf{Y}\text{\emph{ 与 }}{\rm type}(\mathsf{X})\text{ \emph{相互独立）}}\\
-&=\frac{1}{2}\Pr[(\mathsf{\widehat X},\mathsf{Y})\in\mathcal{R}']\geq \frac{1}{2}\left(\epsilon^2-\frac{\epsilon}{N}\right)
+&=\frac{1}{2}\Pr[(\mathsf{\widehat X},\mathsf{Y})\in\mathcal{R}']\geq \frac{1}{2}\left(\epsilon^2-\frac{\epsilon}{N}\right)\qedhere
 \end{aligned}
-$$
+\]
 \end{proof}
 
 \begin{snote}[具体的实例化.]
@@ -219,7 +219,7 @@ $$
 \begin{theorem}\label{theo:19-23}
 令 $\mathcal{I}_{\rm O}=(G,P,V)$ 是一个 Okamoto 身份识别协议。假设其挑战空间很大，同时假设系统参数 $h$ 是从 $\mathbb{G}$ 中均匀随机选取的。那么，只要$\mathbb{G}$上的离散对数假设成立，$\mathcal{I}_{\rm O}$ 对主动攻击就是安全的。
 \begin{quote}
-特别地，假设 $\mathcal{A}$ 是一个冒充攻击对手，他通过攻击游戏 18.3 中的主动攻击来攻击 $\mathcal{I}_{\rm O}$，其优势为 $\epsilon:={\rm ID3\mathsf{adv}}[\mathcal{A},\mathcal{I}_{\rm O}]$。那么必然存在一个有效对手 $\mathcal{B}$，其运行时间大约是 $\mathcal{A}$ 的两倍，满足：
+特别地，假设 $\mathcal{A}$ 是一个冒充攻击对手，它通过攻击游戏 18.3 中的主动攻击来攻击 $\mathcal{I}_{\rm O}$，其优势为 $\epsilon:={\rm ID3\mathsf{adv}}[\mathcal{A},\mathcal{I}_{\rm O}]$。那么必然存在一个有效对手 $\mathcal{B}$，其运行时间大约是 $\mathcal{A}$ 的两倍，满足：
 $$
 {\rm DL\mathsf{adv}}[\mathcal{B},\mathbb{G}]\geq\left(1-\frac{1}{q}\right)\left(\epsilon^2-\frac{\epsilon}{N}\right)
 $$
@@ -230,7 +230,7 @@ $$
 \begin{proof}
 定理 \ref{theo:19-23} 的证明与定理 \ref{theo:19-22} 的证明结构基本相同。
 
-假设 $\mathcal{A}$ 在攻击游戏 18.3 中攻击 $\mathcal{I}_{\rm O}$ 时的优势为 $\epsilon$。我们的离散对数对手 $\mathcal{B}$ 从他的挑战者处收到一个随机的群元素 $h\in\mathbb{G}$。$\mathcal{B}$ 的目标是利用 $\mathcal{A}$ 计算 $\mathsf{Dlog}_gh$。
+假设 $\mathcal{A}$ 在攻击游戏 18.3 中攻击 $\mathcal{I}_{\rm O}$ 时的优势为 $\epsilon$。我们的离散对数对手 $\mathcal{B}$ 从它的挑战者处收到一个随机的群元素 $h\in\mathbb{G}$。$\mathcal{B}$ 的目标是利用 $\mathcal{A}$ 计算 $\mathsf{Dlog}_gh$。
 
 对手 $\mathcal{B}$ 首先会扮演 $\mathcal{A}$ 的挑战者的角色，在攻击游戏 18.3 中的所有三个阶段运行一次 $\mathcal{A}$。我们的对手 $\mathcal{B}$ 使用群元素 $h$ 作为 Okamoto 协议的系统参数，但在其他方面遵循攻击游戏 18.3 中挑战者的逻辑，没有其他修改。其运行流程如下：
 

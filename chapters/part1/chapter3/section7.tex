@@ -84,7 +84,7 @@ r_iw\\r_{i+1}w-b
 e_0\\e_1
 \end{pmatrix}
 \end{equation}
-令$\boldsymbol{u}\in\mathbb{Z}^2$表示未知向量$\boldsymbol{u}:=\boldsymbol{g}+\boldsymbol{e}=s\cdot(1,a)^\mathrm{T}+x\cdot(0,q)^\mathrm{T}$。如果攻击者能够找到$\boldsymbol{u}$，他就可以通过线性代数轻松地从$\boldsymbol{u}$中恢复$s$和$x$。利用$s$，他就可以预测PRG的其余输出。因此，想要破解生成器，只需要找到这样的向量$\boldsymbol{u}$即可。攻击者知道向量$\boldsymbol{g}\in\mathbb{Z}^2$，此外，他也知道$\boldsymbol{e}$很短，即$\lVert\boldsymbol{e}\rVert_\infty$最大为$\sqrt{q}/c$。因此，他知道$\boldsymbol{u}$是``接近" $\boldsymbol{g}$的。
+令$\boldsymbol{u}\in\mathbb{Z}^2$表示未知向量$\boldsymbol{u}:=\boldsymbol{g}+\boldsymbol{e}=s\cdot(1,a)^\mathrm{T}+x\cdot(0,q)^\mathrm{T}$。如果攻击者能够找到$\boldsymbol{u}$，它就可以通过线性代数轻松地从$\boldsymbol{u}$中恢复$s$和$x$。利用$s$，它就可以预测PRG的其余输出。因此，想要破解生成器，只需要找到这样的向量$\boldsymbol{u}$即可。攻击者知道向量$\boldsymbol{g}\in\mathbb{Z}^2$，此外，它也知道$\boldsymbol{e}$很短，即$\lVert\boldsymbol{e}\rVert_\infty$最大为$\sqrt{q}/c$。因此，它知道$\boldsymbol{u}$是``接近" $\boldsymbol{g}$的。
 
 我们下面展示如何由$\boldsymbol{g}$找到$\boldsymbol{u}$。考虑向量$(1,a)^\mathrm{T}$和$(0,q)^\mathrm{T}$的所有整系数线性组合所构成的集合。我们用$\mathcal{L}_a$表示这个集合，它是$\mathbb{Z}^2$的一个子集，包含像$(1,a)^\mathrm{T}$，$(2,2a)^\mathrm{T}$，$(3,3a-2q)^\mathrm{T}$这样的向量。图 \ref{fig:3-9} 展示了集合 $\mathcal{L}_a$，图中的实心点是向量$(1,a)^\mathrm{T}$和$(0,q)^\mathrm{T}$的整系数线性组合。我们称集合$\mathcal{L}_a$为由向量$(1,a)^\mathrm{T}$和$(0,q)^\mathrm{T}$所生成的二维\textbf{网格(lattice)}。
 
@@ -95,7 +95,7 @@ e_0\\e_1
   \label{fig:3-9}
 \end{figure}
 
-现在，攻击者有一个向量$\boldsymbol{g}\in\mathbb{Z}^2$，并且知道他的目标向量$\boldsymbol{u}\in\mathcal{L}_a$接近$\boldsymbol{g}$。如果他能在$\mathcal{L}_a$中找到与$\boldsymbol{g}$最接近的向量，那么这个向量很有可能就是所需的向量$\boldsymbol{u}$。下面的定理将表明，对于大多数的$a\in\mathcal{S}_q$来说，情况确实如此。
+现在，攻击者有一个向量$\boldsymbol{g}\in\mathbb{Z}^2$，并且知道它的目标向量$\boldsymbol{u}\in\mathcal{L}_a$接近$\boldsymbol{g}$。如果它能在$\mathcal{L}_a$中找到与$\boldsymbol{g}$最接近的向量，那么这个向量很有可能就是所需的向量$\boldsymbol{u}$。下面的定理将表明，对于大多数的$a\in\mathcal{S}_q$来说，情况确实如此。
 \end{snote}
 
 \begin{lemma}\label{lemma:3-7}

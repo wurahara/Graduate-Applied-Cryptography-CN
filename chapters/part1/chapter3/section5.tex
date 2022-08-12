@@ -25,7 +25,7 @@
 \begin{theorem}
 令 $G$ 是一个定义在 $(\mathcal{S},\{0,1\}^L)$ 上的 PRG。如果 $G$ 是安全的，那么 $G$ 就是不可预测的。
 \begin{quote}
-特别地，对于每个如攻击游戏 \ref{game:3-2} 那样打破 $G$ 的不可预测性的对手 $\mathcal{A}$，必然存在一个如攻击游戏 \ref{game:3-1} 那样打破 $G$ 的安全性的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是围绕 $\mathcal{A}$ 的一个基本包装器，满足：
+特别地，对于每个如攻击游戏 \ref{game:3-2} 那样打破 $G$ 的不可预测性的对手 $\mathcal{A}$，必然存在一个如攻击游戏 \ref{game:3-1} 那样打破 $G$ 的安全性的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
 \end{quote}
 $$
 {\rm Pred\mathsf{adv}}[\mathcal{A},G]={\rm PRG\mathsf{adv}}[\mathcal{B},G]
@@ -61,7 +61,7 @@ $$
 
 更有趣也更有挑战性的任务是证明不可预测性能够推出着安全性。在详细介绍具体的证明之前，我们先勾勒出高层次的想法。
 
-首先，我们会采用一个混合论证，目的是论证如果 $\mathcal{A}$ 是一个能够有效区分伪随机 $L$ 比特序列和真随机 $L$ 比特序列的有效对手，那么我们必然可以构造一个有效对手 $\mathcal{B}$，他能够有效地区分：
+首先，我们会采用一个混合论证，目的是论证如果 $\mathcal{A}$ 是一个能够有效区分伪随机 $L$ 比特序列和真随机 $L$ 比特序列的有效对手，那么我们必然可以构造一个有效对手 $\mathcal{B}$，它能够有效地区分：
 $$
 x_1\cdots x_j~r
 $$
@@ -149,7 +149,7 @@ $$
 \begin{theorem}
 令 $G$ 是一个定义在 $(\mathcal{S},\{0,1\}^L)$ 上的 PRG。如果 $G$ 是不可预测的，那么 $G$ 就是安全的。
 \begin{quote}
-特别地，对于每个像攻击游戏 \ref{game:3-1} 那样打破 $G$ 的安全性的对手 $\mathcal{A}$，必然存在一个像攻击游戏 \ref{game:3-2} 那样打破 $G$ 的不可预测性的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是围绕 $\mathcal{A}$ 的一个基本包装器，满足：
+特别地，对于每个像攻击游戏 \ref{game:3-1} 那样打破 $G$ 的安全性的对手 $\mathcal{A}$，必然存在一个像攻击游戏 \ref{game:3-2} 那样打破 $G$ 的不可预测性的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
 \end{quote}
 $$
 {\rm PRG\mathsf{adv}}[\mathcal{A},G]=L\cdot{\rm Pred\mathsf{adv}}[\mathcal{B},G]
@@ -171,7 +171,7 @@ r=G(s)[0\dots L-j-1]~||~t
 $$
 和之前一样，$\mathcal{A}$ 在游戏结束时输出 $0$ 或 $1$，我们定义 $p_j$ 为 $\mathcal{A}$ 在混合 $j$ 中输出 $1$ 的概率。注意 $p_0$ 是 $\mathcal{A}$ 在攻击游戏 \ref{game:3-1} 的实验 $0$ 中输出 $1$ 的概率，而 $p_L$ 是 $\mathcal{A}$ 在攻击游戏 \ref{game:3-1} 的实验 $1$ 中输出 $1$ 的概率。
 
-令 $W$ 为 $\mathcal{B}$ 在攻击游戏 \ref{game:3-2} 中获胜的事件（即他正确预测了下一个比特），那么我们有：
+令 $W$ 为 $\mathcal{B}$ 在攻击游戏 \ref{game:3-2} 中获胜的事件（即它正确预测了下一个比特），那么我们有：
 $$
 \begin{aligned}
 \Pr[W]

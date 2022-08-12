@@ -1,1 +1,142 @@
-\section{基于nonce的加密}
+\section{基于nonce的加密}\label{sec:5-5}
+
+到目前为止，我们看到的所有 CPA 安全的加密方案都会受到\emph{密文扩展 (ciphertext expansion)}的影响，即它们的密文都比明文要长。例如，\ref{subsec:5-4-1} 小节介绍的通用混合构造产生了密文 $(x,c)$，其中 $x$ 属于某个 PRF 的输入空间，$c$ 是对消息的加密；\ref{subsec:5-4-2} 小节中的计数器模式所产生的密文 $(x,c)$ 结构也很类似。同样，\ref{subsec:5-4-3} 小节中的 CBC 模式将 IV 作为密文的一部分。
+
+对于非常长的消息来说，即使密文稍微长了一点，其实也无所谓。比方说，如果我们使用 AES 在计数器模式或 CBC 模式下加密一条 1 MB 的消息，密文也只被扩展了 $16$ 个字节，这个扩展率可能完全是可以接受的。然而，如果一条消息本身也只有 $16$ 个字节甚至更短，密文至少就是明文的两倍长。
+
+坏消息是，对于任何 CPA 安全的加密方案来说，一定程度的密文扩展是不可避免的（见练习 5.10）。好消息是，如果施加一些特殊条件，密文扩展也是可以绕过的。比方说，现在我们假设 Alice 和 Bob 是完全同步的，所以 Alice 首先发送 $m_1$ 的加密，然后发送 $m_2$ 的加密，以此类推。而 Bob 首先解密 $m_1$ 的加密，然后解密 $m_2$ 的加密，以此类推。更具体地说，假设 Alice 和 Bob 使用 \ref{subsec:5-4-1} 小节中的通用混合构造。回顾一下，在这种情况下，消息 $m_i$ 对应的密文是 $(x_i,c_i)$，其中 $c_i:=E(k_i,m_i)$，$k_i:=F(x_i)$。为了确保安全性，我们要求 $x_i$ 的值各不相同。当 Alice 和 Bob 完全同步时（即 Alice 发送的密文按顺序到达 Bob），他们只需要在 PRF $F$ 的输入空间上对一个由不同元素组成的固定序列 $x_1,x_2,\dots$ 达成一致。
+
+加密方案的这种操作模式并不真正适合我们的框架。从历史上看，有两种方法可以修改框架以允许这种类型的操作。一种方法是允许\emph{有状态的}加密方案，即加密和解密算法都保持一些内部状态，它们随着算法的每次使用而变化。在上一段的例子中，该状态只包含一个计数器，它的值随着算法的每次使用而递增。这种方法要求加密器和解密器完全同步，这限制了它的适用性，我们不会进一步讨论它。
+
+第二种，也是更流行的一种方法，被称为\emph{基于 nonce 的加密}。在这种方法中，加密和解密算法都没有内部状态，而是接受一个额外的输入 $\mathpzc{N}$，称为 \emph{nonce}。基于 nonce 加密的语法形如：
+\[
+c=E(k,m,{\scriptstyle\mathpzc{N}})
+\]
+其中 $c\in\mathcal{C}$ 是密文，$k\in\mathcal{K}$ 是密钥，$m\in\mathcal{M}$ 是消息，${\scriptstyle\mathpzc{N}}\in\mathpzc{N}$ 是一个 nonce。此外，我们要求加密算法 $E$ 是确定性的。同样地，解密的语法形如：
+\[
+m=D(k,c,{\scriptstyle\mathpzc{N}})
+\]
+其目的是，用特定的 nonce 加密的消息应该能用相同的 nonce 解密，而这取决于使用该加密方案的应用程序。更正式地说，正确性要求是：
+\[
+D(k,\;E(k,m,\mathpzc{N}),\;\mathpzc{N})=m
+\]
+对于任意的 $k\in\mathcal{K}$，$m\in\mathcal{M}$ 和 ${\scriptstyle\mathpzc{N}}\in\mathpzc{N}$ 都成立。我们称基于 nonce 的密码 $\mathcal{E}=(E,D)$ 定义在 $(\mathcal{K},\mathcal{M},\mathcal{C},\mathpzc{N})$ 上。
+
+直观地说，如果一个基于 nonce 的加密方案不会向窃听者泄露任何有用的信息，那么它就是 CPA 安全的，前提是在加密过程中任意一个 nonce 都不会被重复使用。这同样也要由使用该加密方案的应用程序来保证。请注意，这个关于如何使用 nonce 的要求是非常弱的，比要求它们是不可预测的要弱得多，更不用说要求它们是随机选出的了。
+
+通过略微修改 CPA 安全性的原始定义，我们很容易定义这一安全概念。
+
+\begin{game}[基于 nonce 的 CPA 安全性]\label{game:5-3}
+对于一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C},\mathpzc{N})$ 上的给定密码 $\mathcal{E}=(E,D)$ 和一个给定对手 $\mathcal{A}$，我们定义两个实验：实验$0$和实验$1$。对于$b=0,1$，我们定义：
+
+\noindent\textbf{实验$b$：}
+\begin{itemize}
+	\item 挑战者选取 $k\overset{\rm R}\leftarrow\mathcal{K}$。
+	\item 对手向挑战者发起一连串的查询。\\
+	对于$i = 1,2,\dots$，第 $i$ 个查询是一对相同长度的消息 $m_{i0},m_{i1}\in\mathcal{M}$ 和一个 nonce ${\scriptstyle\mathpzc{N}}_i\in\mathpzc{N}\setminus\{{\scriptstyle\mathpzc{N}}_1,\dots,{\scriptstyle\mathpzc{N}}_{i-1}\}$。\\
+	挑战者计算 $c_i\leftarrow E(k,m_{ib},{\scriptstyle\mathpzc{N}}_i)$，并将 $c_i$ 发送给对手。
+	\item 对手输出一个比特 $\hat{b}\in\{0,1\}$。
+\end{itemize}
+
+对于 $b=0,1$，令 $W_b$ 是 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件。 我们定义 $\mathcal{A}$ 就 $\mathcal{E}$ 的\textbf{优势}为：
+\[
+{\rm nCPA}\mathsf{adv}[\mathcal{A},\mathcal{E}]:=|\Pr[W_0]-\Pr[W_1]|
+\]
+\end{game}
+
+请注意，在上述游戏中，nonce 完全在对手的控制之下，只受制于对它们每个元素都是唯一值的约束。
+
+\begin{definition}[基于 nonce 的 CPA 安全性]\label{def:5-3}
+如果对于所有有效对手 $\mathcal{A}$，${\rm nCPA}\mathsf{adv}[\mathcal{A},\mathcal{E}]$ 的值都可忽略不计，那么基于 nonce 的密码 $\mathcal{E}$ 就被称为\textbf{对选择明文攻击是语义安全(semantically secure against chosen plaintext attack, CPA secure)}的。
+\end{definition}
+
+如同在 \ref{subsec:2-2-5} 小节中那样，攻击游戏 \ref{game:5-3} 可以被重构为一个``比特猜测"游戏，我们有：
+\begin{equation}\label{eq:5-30}
+{\rm nCPA}\mathsf{adv}[\mathcal{A},\mathcal{E}]= 2\cdot{\rm nCPA}\mathsf{adv}^*[\mathcal{A},\mathcal{E}]
+\end{equation}
+其中${\rm nCPA}\mathsf{adv}^*[\mathcal{A},\mathcal{E}]:=|\Pr[\hat{b}=b]-{1}/{2}|$处于攻击游戏 \ref{game:5-3} 的一个挑战者只是随机选择 $b$ 的版本中。
+
+\subsection{基于 nonce 的通用混合加密}
+
+让我们把 \ref{subsec:5-4-1} 小节介绍的通用混合构造重构为一个基于 nonce 的加密方案。与之前一样，我们假设 $\mathcal{E}$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的密码，并且坚持它是确定性的，且 $F$ 是一个定义在 $(\mathcal{K}',\mathcal{X},\mathcal{K})$ 上的 PRF。我们下面定义一个基于 nonce 的密码 $\mathcal{E}'$，它定义在 $(\mathcal{K}',\mathcal{M},\mathcal{C},\mathcal{X})$ 上：
+\begin{itemize}
+	\item 对于 $k'\in\mathcal{K}'$，$m\in\mathcal{M}$ 和 $x\in\mathcal{X}$，我们定义 $E'(k',m,x):=E(k,m)$，其中 $k:=F(k',x)$；
+	\item 对于 $k'\in\mathcal{K}'$，$c\in\mathcal{C}$ 和 $x\in\mathcal{X}$，我们定义 $D'(k',c,x):=D(k,c)$，其中 $k:=F(k',x)$。
+\end{itemize}
+我们所做的只是把 $x\in\mathcal{X}$ 当作是一个 nonce；除此之外，该方案与 \ref{subsec:5-4-1} 小节中定义的方案完全相同。
+
+不难验证 $\mathcal{E}'$ 满足正确性要求。此外，我们可以很容易地调整定理 \ref{theo:5-2} 的证明以证明下面的定理。
+
+\begin{theorem}\label{theo:5-5}
+如果 $F$ 是一个安全的 PRF，$\mathcal{E}$ 是一个语义安全的密码，则上面描述的密码 $\mathcal{E}'$ 是一个 CPA 安全的密码。
+\begin{quote}
+特别地，对于每个像攻击游戏 \ref{game:5-3} 的比特猜测版本那样攻击 $\mathcal{E}'$ 的 nCPA 对手 $\mathcal{A}$，假设它最多能向其挑战者发起 $Q$ 次查询，则必然存在一个像攻击游戏 \ref{game:4-2} 中那样攻击 $F$ 的 PRF 对手 $\mathcal{B}_F$，和一个像攻击游戏 \ref{game:2-1} 的比特猜测版本中那样攻击 $\mathcal{E}$ 的 SS 对手 $\mathcal{B}_\mathcal{E}$，其中 $\mathcal{B}_F$ 和 $\mathcal{B}_\mathcal{E}$ 都是围绕 $\mathcal{A}$ 的基本包装器，满足：
+\end{quote}
+\begin{equation}\label{eq:5-31}
+{\rm nCPA}\mathsf{adv}[\mathcal{A},\mathcal{E}']\leq
+2\cdot{\rm PRF}\mathsf{adv}[\mathcal{B}_F,F]+Q\cdot{\rm SS}\mathsf{adv}[\mathcal{B}_\mathcal{E},\mathcal{E}]
+\end{equation}
+\end{theorem}
+
+我们把这个定理的证明留给读者作为练习。请注意，式 \ref{eq:5-5} 中的 ${Q^2}/{N}$ 项表示的是 $F$ 的输入发生碰撞的概率，这一项在式 \ref{eq:5-30} 中被删去了，这是因为根据定义，碰撞是不可能发生的。
+
+\subsection{基于 nonce 的计数器模式}
+
+接下来，我们将 \ref{subsec:5-4-2} 小节中介绍的计数器模式密码重构为一个基于 nonce 的加密方案。作为一个初步的尝试，我们先简单地将该构造中的 $x\in\mathcal{X}$ 作为一个 nonce。
+
+不幸的是，这个方案不能满足基于 nonce 的 CPA 安全性的定义。问题在于，攻击者可以选择两个不同的 nonce $x_1,x_2\in\mathcal{X}$ 使得区间 $\{x_1,\dots,x_1+\ell-1\}$ 和 $\{x_2,\dots,x_2+\ell-1\}$ 是有重叠的（同样，算术运算是模 $N$ 的）。在这种情况下，安全证明将被打破；事实上，我们很容易发起一个破坏性相当大的攻击，正如 \ref{sec:5-1} 节所讨论的，因为攻击者基本上可以迫使加密器重新使用``密钥流"中的一些相同比特。
+
+幸运的是，解决这个问题不是很难。让我们假设 $\ell$ 能整除 $N$（在实践中，$\ell$和$N$都是$2$的整数次幂，所以这并不是一个问题）。然后，我们令 nonce 空间为 $\{0,\dots,{N}/{\ell}-1\}$，并将 nonce ${\scriptstyle\mathpzc{N}}$ 转换为 PRF 的输入 $x:={\scriptstyle\mathpzc{N}}\ell$。不难发现，对于任意两个不同的 nonce ${\scriptstyle\mathpzc{N}}_1$ 和 ${\scriptstyle\mathpzc{N}}_2$，对于 $x_1:={\scriptstyle\mathpzc{N}}_1\ell$ 和 $x_2:={\scriptstyle\mathpzc{N}}_2\ell$，区间 $\{x_1,\dots,x_1+\ell-1\}$ 和 $\{x_2,\dots,x_2+\ell-1\}$ 没有重叠。
+
+有了这样修改后的 $\mathcal{E}$，我们可以很容易地调整定理 \ref{theo:5-3} 的证明，来证明下面的定理。
+
+\begin{theorem}\label{theo:5-6}
+如果 $F$ 是一个安全的 PRF，那么上面描述的基于 nonce 的密码 $\mathcal{E}$ 是一个 CPA 安全的密码。
+\begin{quote}
+特别地，对于每一个如攻击游戏 \ref{game:5-3} 中那样攻击 $\mathcal{E}$ 的 nCPA 对手 $\mathcal{A}$，必然存在一个如攻击游戏 \ref{game:4-2} 中那样攻击 $F$ 的 PRF 对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
+\end{quote}
+\begin{equation}\label{eq:5-32}
+{\rm nCPA}\mathsf{adv}[\mathcal{A},\mathcal{E}]\leq2\cdot{\rm PRF\mathsf{adv}}[\mathcal{B},F]
+\end{equation}
+\end{theorem}
+
+
+我们再次将该定理的证明留给读者作为练习。
+
+\subsection{基于 nonce 的 CBC 模式}
+
+最后，我们考虑如何将 \ref{subsec:5-4-3} 小节中介绍的 CBC 模式加密方案重构为一个基于 nonce 的加密方案。作为一个初步的尝试，我们可以先简单地将 IV $c[0]$ 看作是一个 nonce。不幸的是，这并不能产生一个 CPA 安全的加密方案。在 nCPA 攻击游戏中，对手可以进行两次查询：
+
+\vspace{5pt}
+
+\hspace*{5pt} $(m_{10},m_{11},{\scriptstyle\mathpzc{N}}_1),$\\
+\hspace*{26pt} $(m_{20},m_{21},{\scriptstyle\mathpzc{N}}_2)$
+
+\vspace{5pt}
+
+\noindent
+其中：
+\[
+m_{10}={\scriptstyle\mathpzc{N}}_1\neq{\scriptstyle\mathpzc{N}}_2=m_{20},
+\;\;
+m_{11}=m_{21}
+\]
+这里，所有的消息都是单个分组的消息。在攻击游戏的实验 $0$ 中，产生的密文是相同的，而在实验 $1$ 中，密文是不同的。因此，我们可以完美地区分这两个实验。
+
+同样，对它的修正也是很直接的。我们的想法是通过 PRF 将 nonce 映射为伪随机的 IV。因此，假设我们有一个定义在 $(\mathcal{K}',\mathpzc{N},\mathcal{X})$ 上的 PRF。这里，$F$ 的密钥空间 $\mathcal{K}'$ 和输入空间 $\mathpzc{N}$ 可以是任意的集合，但 $F$ 的输出空间 $\mathcal{X}$ 必须与底层的分组密码 $\mathcal{E}=(E,D)$ 的分组空间相匹配，即把后者定义在 $(\mathcal{K},\mathcal{X})$ 上。在基于 nonce 的 CBC 模式加密方案 $\mathcal{E}'$ 中，密钥空间是 $\mathcal{K}\times\mathcal{K}'$，在加密和解密算法中，IV 是由 nonce ${\scriptstyle\mathpzc{N}}$ 和密钥 $k'$ 计算出来的，即 $c[0]:=F(k',{\scriptstyle\mathpzc{N}})$。
+
+有了这些修改，我们不难证明定理 \ref{theo:5-4} 的下述变体是成立的。
+
+\begin{theorem}\label{theo:5-7}
+如果 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的安全的分组密码，$N:=|\mathcal{X}|$ 是超多项式的，并且 $F$ 是一个定义在 $(\mathcal{K}',\mathpzc{N},\mathcal{X})$ 上的安全的 PRF，那么对于任何多项式约束的 $\ell\geq1$，上面描述的基于 nonce 的密码 $\mathcal{E}'$ 都是一个 CPA 安全的密码。
+\begin{quote}
+特别地，对于每一个如攻击游戏 \ref{game:5-3} 的比特猜测版本那样攻击 $\mathcal{E}'$ 的 nCPA 对手 $\mathcal{A}$，如果它最多能向其挑战者发起 $Q$ 次查询，则必然存在一个如攻击游戏 \ref{game:4-1} 那样攻击 $\mathcal{E}$ 的 BC 对手 $\mathcal{B}$ 和一个如攻击游戏 \ref{game:4-2} 那样攻击 $F$ 的 PRF 对手 $\mathcal{B}_F$，其中 $\mathcal{B}$ 和 $\mathcal{B}_F$ 都是 $\mathcal{A}$ 的基本包装器，满足：
+\end{quote}
+\begin{equation}\label{eq:5-33}
+{\rm CPA}\mathsf{adv}[\mathcal{A},\mathcal{E}']\leq\frac{2Q^2\ell^2}{N}+2\cdot{\rm PRF\mathsf{adv}}[\mathcal{B}_F,F]+2\cdot{\rm BC\mathsf{adv}}[\mathcal{B},\mathcal{E}]
+\end{equation}
+\end{theorem}
+
+同样，我们把定理的证明留给读者作为练习。请注意，在上述构造中，我们可以使用底层的分组密码 $\mathcal{E}$ 作为PRF $F$；但是，必须使用独立的密钥 $k$ 和 $k'$（见练习 5.14）。
+
+上面描述的基于 nonce 的 CBC 模式也被称为 \texttt{CBC-ESSIV}（加密盐扇区 IV），它被用于一些全盘加密系统，如\texttt{dm-crypt} 中。当对磁盘上的一个扇区进行加密时，扇区号被用作 nonce。其它的全盘加密系统使用可调整的加密方式，如练习 4.11 中所讨论的。

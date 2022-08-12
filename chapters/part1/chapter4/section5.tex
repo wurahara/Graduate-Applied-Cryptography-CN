@@ -63,7 +63,7 @@ D((k_1,k_2,k_3),\cdot)=\phi^{-1}_{k_1}\circ\phi^{-1}_{k_2}\circ\phi^{-1}_{k_3}=\
 \begin{theorem}
 如果 $F$ 是一个安全 PRF，且 $N:=|\mathcal{X}|=2^n$ 是超多项式的，那么由 $F$ 构建的卢比-拉克福密码 $\mathcal{E}=(E,D)$ 是一个安全的分组密码。
 \begin{quote}
-特别地，对于每一个如攻击游戏 \ref{game:4-1} 中那样攻击 $\mathcal{E}$ 的 $Q$ 次查询BC对手 $\mathcal{A}$，都存在一个就 $F$ 进行攻击游戏 \ref{game:4-2} 的 PRF 对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是围绕 $\mathcal{A}$ 的一个基本包装器，满足：
+特别地，对于每一个如攻击游戏 \ref{game:4-1} 中那样攻击 $\mathcal{E}$ 的 $Q$ 次查询BC对手 $\mathcal{A}$，都存在一个就 $F$ 进行攻击游戏 \ref{game:4-2} 的 PRF 对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
 \end{quote}
 \[
 {\rm BC\mathsf{adv}}[\mathcal{A},\mathcal{E}]\leq3\cdot{\rm PRF\mathsf{adv}}[\mathcal{B},F]+\frac{Q^2}{N}+\frac{Q^2}{2N^2}
@@ -95,7 +95,7 @@ D((k_1,k_2,k_3),\cdot)=\phi^{-1}_{k_1}\circ\phi^{-1}_{k_2}\circ\phi^{-1}_{k_3}=\
 \begin{itemize}
 	\item $\mathcal{A}_0$ 总是对其挑战者进行恰好 $Q$ 次查询；
 	\item $\mathcal{A}_0$ 不会多次进行相同的查询；
-	\item $\mathcal{A}_0$ 和 $\mathcal{A}$ 一样有效（更确切地说，$\mathcal{A}_0$ 是围绕 $\mathcal{A}$ 的一个基本包装器）；
+	\item $\mathcal{A}_0$ 和 $\mathcal{A}$ 一样有效（更确切地说，$\mathcal{A}_0$ 是一个围绕 $\mathcal{A}$ 的基本包装器）；
 	\item ${\rm PRF\mathsf{adv}}[\mathcal{A}_0, E]={\rm PRF\mathsf{adv}}[\mathcal{A}, E]$。
 \end{itemize}
 对手 $\mathcal{A}_0$ 只是简单地运行与$\mathcal{A}$相同的协议；然而，它保留了一张查询/应答表，以避免重复查询；此外，如有必要，$\mathcal{A}_0$ 会``填充" $\mathcal{A}$ 的执行次数，以确保发起查询的次数正好是 $Q$。
@@ -246,7 +246,7 @@ f_1,\quad
 X_1,\dots,X_Q,\quad
 Y_1,\dots,Y_Q
 \]
-的任何固定值。只要说明 $\mathcal{A}_0$ 的输出在游戏 $2$ 和游戏 $3$ 中都是一样的就足够了。由于查询 $(u_1,v_1)$ 只取决于 $Coins$，我们可以看到变量 $u_1,v_1$，以及 $w_1,x_1,y_1$ 在两个游戏中都有相同的值。由于查询 $(u_2,v_2)$ 只取决于 $Coins$ 和 $(x_1,y_1)$，因此变量 $u_2,v_2$ 以及 $w_2$ 在两个游戏中都有相同的值；而由于 $Z$ 未发生，我们可知 $w_2\neq w_1$，因此变量 $x_2$ 在两个游戏中都有相同的值；同样，由于 $Z$ 未发生，因此有 $x_2\neq x_1$，所以变量 $y_2$ 在两个游戏中有相同值。以此类推，我们可以看到对于 $i=1,\dots,Q$，变量 $u_i,v_i,w_i,x_i,y_i$ 在两个游戏中都有相同值。由于 $\mathcal{A}_0$ 的输出是这些变量和 $Coins$ 的函数，所以他在两个游戏中的输出也是相同的。因此声称 $2$ 得证。
+的任何固定值。只要说明 $\mathcal{A}_0$ 的输出在游戏 $2$ 和游戏 $3$ 中都是一样的就足够了。由于查询 $(u_1,v_1)$ 只取决于 $Coins$，我们可以看到变量 $u_1,v_1$，以及 $w_1,x_1,y_1$ 在两个游戏中都有相同的值。由于查询 $(u_2,v_2)$ 只取决于 $Coins$ 和 $(x_1,y_1)$，因此变量 $u_2,v_2$ 以及 $w_2$ 在两个游戏中都有相同的值；而由于 $Z$ 未发生，我们可知 $w_2\neq w_1$，因此变量 $x_2$ 在两个游戏中都有相同的值；同样，由于 $Z$ 未发生，因此有 $x_2\neq x_1$，所以变量 $y_2$ 在两个游戏中有相同值。以此类推，我们可以看到对于 $i=1,\dots,Q$，变量 $u_i,v_i,w_i,x_i,y_i$ 在两个游戏中都有相同值。由于 $\mathcal{A}_0$ 的输出是这些变量和 $Coins$ 的函数，所以它在两个游戏中的输出也是相同的。因此声称 $2$ 得证。
 
 声称 $2$，连同差分引理（即定理 \ref{theo:4-7}）和联合约束可以导出：
 \begin{equation}\label{eq:4-27}

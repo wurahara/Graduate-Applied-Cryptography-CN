@@ -1,1 +1,123 @@
-\section{MAC验证查询不会帮助攻击者}
+\section{MAC验证查询不会帮助攻击者}\label{sec:6-2}
+
+在我们对安全的 MAC 的定义（攻击游戏 \ref{game:6-1}）中，对手没有办法测试一个给定的信息-标签对是否有效。事实上，对手甚至无法判断它是否赢得了游戏，因为只有挑战者拥有运行验证算法所需的密钥。在现实生活中，一个有能力发动选择消息攻击的攻击者可能也能测试一个给定的消息-标签对是否有效。例如，攻击者可以建立一个有问题的消息-标签对数据包，并将它发送到受害者的机器上。然后，通过查看机器的行为，攻击者就可以知道该数据包是被接受了还是被丢弃了，进而确定该标签是否有效。
+
+因此，通过赋予对手验证信息-标签对的额外权力来扩展攻击游戏 \ref{game:6-1} 是合理的。当然，我们仍然允许对手为它选择的任意消息请求标签。
+
+\begin{game}[允许验证查询的 MAC 安全性]\label{game:6-2}
+对于定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的一个给定的 MAC 系统 $\mathcal{I}=(S,V)$，以及一个给定的对手 $\mathcal{A}$，攻击游戏运行如下：
+\begin{itemize}
+	\item 挑战者随机选取 $k\overset{\rm R}\leftarrow\mathcal{K}$。
+	\item $\mathcal{A}$ 向挑战者发起多次查询，每次查询可以是下面两种类型之一：
+	\begin{itemize}
+		\item \emph{签名查询}：对于 $i=1,2,\dots$，第 $i$ 次签名查询的内容是一条消息 $m_i\in\mathcal{M}$。挑战者计算出一个标签 $t_i\overset{\rm R}\leftarrow S(k,m_i)$，然后将 $t_i$ 交给 $\mathcal{A}$。
+		\item \emph{验证查询}：对于 $j=1,2,\dots$，第 $j$ 次验证查询的内容是一个消息-标签对 $(\hat m_j,\hat t_j)\in\mathcal{M}\times\mathcal{T}$，该数对不在之前的签名对中，即：
+		\[(\hat m_j,\hat t_j)\notin\{(m_1,t_1),(m_2,t_2),\dots\}\]
+		挑战者将 $V(k,\hat m_j,\hat t_j)$ 发送给 $\mathcal{A}$。
+	\end{itemize}
+\end{itemize}
+如果挑战者针对上述所有验证查询中的至少一个给出了 $\mathsf{accept}$ 的应答，我们就称 $\mathcal{A}$ 赢得了上述游戏。我们将 $\mathcal{A}$ 就 $\mathcal{I}$ 的优势表示为 ${\rm MAC^{vq}}\mathsf{adv}[\mathcal{A},\mathcal{I}]$，即 $\mathcal{A}$ 赢得该游戏的概率。
+\end{game}
+
+\begin{snote}[两个定义是等价的。]
+攻击游戏 \ref{game:6-2} 在本质上与之前的攻击游戏 \ref{game:6-1} 是相同的，只是 $\mathcal{A}$ 可以发出 MAC 验证查询。我们证明，这种额外的权力并不能够帮助对手。
+\end{snote}
+
+\begin{theorem}\label{theo:6-1}
+如果 $\mathcal{I}$ 是一个安全的 MAC 系统，那么它在存在验证查询的情况下也是安全的。
+\begin{quote}
+特别地，对于每个按照攻击游戏 \ref{game:6-2} 攻击 $\mathcal{I}$ 的 MAC 对手 $\mathcal{A}$，如果它最多能够发起 $Q_{\rm v}$ 次验证查询和 $Q_{\rm s}$ 次签名查询，则存在一个按照攻击游戏 \ref{game:6-1} 攻击 $\mathcal{I}$ 的 $Q_{\rm s}$ 次查询 MAC 对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，使得：
+\end{quote}
+\[
+{\rm MAC^{vq}}\mathsf{adv}[\mathcal{A},\mathcal{I}]\leq{\rm MAC}\mathsf{adv}[\mathcal{A},\mathcal{I}]\cdot Q_{\rm v}
+\]
+\end{theorem}
+
+\begin{proof}[证明思路]
+假设 $\mathcal{A}$ 是一个 MAC 对手，它像攻击游戏 \ref{game:6-2} 中那样攻击 $\mathcal{I}$，并且最多进行 $Q_{\rm v}$ 次验证查询和 $Q_{\rm s}$ 次签名查询。我们可以基于对手 $\mathcal{A}$ 建立一个对手 $\mathcal{B}$，它如攻击游戏 \ref{game:6-1} 中那样攻击 $\mathcal{I}$，并最多进行 $Q_{\rm s}$ 次签名查询。对手 $\mathcal{B}$ 可以很容易地应答 $\mathcal{A}$ 的签名查询，只需要将这些查询转发给 $\mathcal{B}$ 的挑战者，并将挑战者产生的标签转发给 $\mathcal{A}$ 即可。
+
+问题在于如何应答 $\mathcal{A}$ 的验证查询。根据定义，$\mathcal{A}$ 只会对不在之前已经签署的消息对中的消息提交验证查询。因此，$\mathcal{B}$ 可以采取一个简单的策略，即对 $\mathcal{A}$ 的所有验证查询都回复 $\mathsf{reject}$。如果 $\mathcal{B}$ 的回答是错的，它就得到了一个能够让它赢得攻击游戏 \ref{game:6-1} 的伪造消息。不幸的是，$\mathcal{B}$ 并不知道这些验证查询中的哪一个是伪造的，所以它只能猜测，也就是随机选择一个。由于 $\mathcal{A}$ 最多能发出 $Q_{\rm v}$ 次验证查询，所以 $\mathcal{B}$ 将以至少 ${1}/{Q_{\rm v}}$ 的概率猜对。这就是误差项中 $Q_{\rm v}$ 因子的来源。
+\end{proof}
+
+\begin{proof}
+更详细地说，对手 $\mathcal{B}$ 在攻击游戏 \ref{game:6-2} 中扮演 $\mathcal{A}$ 的挑战者，同时在攻击游戏 \ref{game:6-1} 中扮演对手，并与该游戏中的 MAC 挑战者交互。它的工作逻辑如下：
+
+\vspace{5pt}
+
+\hspace*{5pt} 初始化：\\
+\hspace*{50pt} 选取 $\omega\overset{\rm R}\leftarrow\{1,\dots,Q_{\rm v}\}$\\
+\hspace*{26pt} 当从 $\mathcal{A}$ 处收到签名查询 $m_i\in\mathcal{M}$ 时：\\
+\hspace*{50pt} 将 $m_i$ 转发给 MAC 挑战者，并获得标签 $t_i$\\
+\hspace*{50pt} 将 $t_i$ 发送给 $\mathcal{A}$\\
+\hspace*{26pt} 当从 $\mathcal{A}$ 处收到的验证查询 $(\hat m_j,\hat t_j)\in\mathcal{M}\times\mathcal{T}$ 时：\\
+\hspace*{50pt} 如果 $j=\omega$：\\
+\hspace*{75pt} 输出 $(\hat m_j,\hat t_j)$ 作为一个候选的伪造对，然后停机\\
+\hspace*{50pt} 否则：\\
+\hspace*{75pt} 向 $\mathcal{A}$ 发送 $\mathsf{reject}$
+
+\vspace{5pt}
+
+为了严格论证对手 $\mathcal{B}$ 的构造，我们分析 $\mathcal{A}$ 在以下三个密切相关的游戏中的行为。
+
+\vspace{5pt}
+
+\noindent\textbf{游戏$\mathbf{0}$}。
+这是原始的攻击游戏，就如攻击游戏 \ref{game:6-2} 中 $\mathcal{A}$ 与挑战者之间进行的游戏一样。挑战者在该游戏中的逻辑如下：
+
+\vspace{5pt}
+
+\hspace*{5pt} 初始化：\\
+\hspace*{50pt} 选取 $k\overset{\rm R}\leftarrow\mathcal{K}$\\
+\hspace*{26pt} 当从 $\mathcal{A}$ 处收到签名查询 $m_i\in\mathcal{M}$ 时：\\
+\hspace*{50pt} 令 $t_i\overset{\rm R}\leftarrow S(k,m_i)$\\
+\hspace*{50pt} 将 $t_i$ 发送给 $\mathcal{A}$\\
+\hspace*{26pt} 当从 $\mathcal{A}$ 处收到的验证查询 $(\hat m_j,\hat t_j)\in\mathcal{M}\times\mathcal{T}$ 时：\\
+\hspace*{50pt} 令 $r_j\leftarrow V(k,\hat m_j,\hat t_j)$\\
+\hspace*{10pt} ($*$)
+\hspace*{19.5pt} 将 $r_j$ 发送给 $\mathcal{A}$
+
+\vspace{5pt}
+
+
+记 $W_0$ 为在游戏 $0$ 中，存在某个 $j$ 使得 $r_j=\mathsf{accept}$ 的事件。显然：
+\begin{equation}\label{eq:6-1}
+\Pr[W_0]={\rm MAC^{vq}}\mathsf{adv}[\mathcal{A},\mathcal{I}]
+\end{equation}
+
+\noindent\textbf{游戏$\mathbf{1}$}。
+游戏 $1$ 与游戏 $0$ 基本相同，只是将游戏 $0$ 中标有 ($*$) 的一行改为：
+
+\vspace{5pt}
+
+\hspace*{50pt} 将 $\mathsf{reject}$ 发送给 $\mathcal{A}$
+
+\vspace{5pt}
+
+也就是说，在游戏 $1$ 中，在应答验证查询时，挑战者总是用 $\mathsf{reject}$ 来回应 $\mathcal{A}$。我们定义 $W_1$ 为在游戏 $1$ 中，存在某个 $j$ 使得 $r_j=\mathsf{accept}$ 的事件。尽管在游戏 $1$ 中，挑战者不会通知 $\mathcal{A}$ 事件 $W_1$ 发生了，但是在这个事件发生之前，游戏 $0$ 和游戏 $1$ 的进程事实上都是完全相同的，因此事件 $W_0$ 和 $W_1$ 在本质上是相同的，因此：
+\begin{equation}\label{eq:6-2}
+\Pr[W_1]=\Pr[W_0]
+\end{equation}
+此外，注意到，在游戏 $1$ 中，尽管 $r_j$ 被用来定义获胜的条件，但它们并没有被用于任何其他目的，因此不会以任何方式影响攻击。
+
+\vspace{5pt}
+
+\noindent\textbf{游戏$\mathbf{2}$}。
+游戏 $2$ 与游戏 $1$ 基本相同，只是在游戏开始时，挑战者随机选取 $\omega\overset{\rm R}\leftarrow\{1,\dots,Q_{\rm v}\}$。我们定义 $W_2$ 为游戏 $2$ 中 $r_\omega=\mathsf{accept}$ 成立的事件。由于 $\omega$ 的选择与攻击本身无关，我们有：
+\begin{equation}\label{eq:6-3}
+\Pr[W_2]\geq{\Pr[W_1]}/{Q_{\rm v}}
+\end{equation}
+
+显然，根据构造，我们有：
+\begin{equation}\label{eq:6-4}
+\Pr[W_2]={\rm MAC}\mathsf{adv}[\mathcal{B},\mathcal{I}]
+\end{equation}
+于是，根据式 \ref{eq:6-1}，\ref{eq:6-2} 和 \ref{eq:6-3}，我们就能得到该定理成立。
+\end{proof}
+
+综上所述，我们表明，给予对手更多权力的攻击游戏 \ref{game:6-2} 和定义安全的 MAC 时使用的攻击游戏 \ref{game:6-1} 是等价的。这种归约在误差项中引入了一个 $Q_{\rm v}$ 的系数。在本书中，我们将使用这两个攻击游戏：
+\begin{itemize}
+	\item 当构建安全的 MAC 时，使用攻击游戏 \ref{game:6-1} 更容易，它限制对手只能发起签名查询。这使得我们更容易证明安全性，因为我们只需要考虑一种类型的查询。我们将在整个章节中使用这个攻击游戏。
+	\item 当使用安全的 MAC 来构建更高层次的系统（如验证式加密）时，假设 MAC 对于攻击游戏 \ref{game:6-2} 中描述的更强的对手是安全的，是更方便的。
+\end{itemize}
+
+我们还指出，如果我们使用一个较弱的安全概念，即对手只通过在新消息上给出一个有效标签（而不是新的有效的消息-标签对）而获胜，那么攻击游戏 \ref{game:6-1} 和攻击游戏 \ref{game:6-2} 的类比就\emph{不}等价了（见练习 6.7）。

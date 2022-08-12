@@ -1,1 +1,46 @@
-\section{针对选择明文攻击的语义安全性}
+\section{针对选择明文攻击的语义安全性}\label{sec:5-3}
+
+现在，我们考虑一下 Alice 在本章引言中面临的问题，即她想用一个单一的，并且最好是短的密钥来加密她系统中所有的文件。对于这项任务，正确的安全概念是\textbf{针对选择明文攻击的语义安全性(semantic security against chosen plaintext attack)}，简称为 \textbf{CPA 安全性}。
+
+\begin{game}[CPA安全性]\label{game:5-2}
+对于一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的给定密码 $\mathcal{E}=(E,D)$ 和一个给定对手 $\mathcal{A}$，我们定义两个实验：实验$0$和实验$1$。对于$b=0,1$，我们定义：
+
+\noindent\textbf{实验$b$：}
+\begin{itemize}
+	\item 挑战者选取 $k\overset{\rm R}\leftarrow\mathcal{K}$。
+	\item 对手向挑战者发起一连串的查询。\\
+    对于 $i = 1,2,\dots$，第 $i$ 个查询是一对相同长度的消息 $m_{i0},m_{i1}\in\mathcal{M}$。\\
+    挑战者选取 $c_i\overset{\rm R}\leftarrow E(k,m_{ib})$，然后将 $c_i$ 发送给对手。
+    \item 对手输出一个比特 $\hat{b}\in\{0,1\}$。
+\end{itemize}
+
+对于 $b=0,1$，令 $W_b$ 是 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件。我们定义 $\mathcal{A}$ 就 $\mathcal{E}$ 的\textbf{优势}为：
+\[
+{\rm CPA}\mathsf{adv}[\mathcal{A}, \mathcal{E}]:=|\Pr[W_0]-\Pr[W_1]|
+\]
+\end{game}
+
+CPA攻击游戏 \ref{game:5-2} 和MSS攻击游戏 \ref{game:5-1} 之间的唯一区别是，在CPA攻击游戏中，所有加密都使用相同的密钥，而在MSS攻击游戏中，每次加密都选择不同的密钥。在CPA攻击游戏中，对手的查询可以是自适应的，就像在MSS攻击游戏中一样。
+
+\begin{definition}[CPA 安全性]\label{def:5-2}
+如果对于所有有效对手 $\mathcal{A}$，${\rm CPA}\mathsf{adv}[\mathcal{A}, \mathcal{E}]$ 的值都可忽略不计，我们就称密码 $\mathcal{E}$ \textbf{对选择明文攻击是语义安全 (semantically secure against chosen plaintext attack)} 的，简称为\textbf{CPA 安全 (CPA secure)}的。
+\end{definition}
+
+和 \ref{subsec:2-2-5} 小节一样，攻击游戏 \ref{game:5-2} 可以被重构为一个``比特猜测"游戏，在这个游戏中，挑战者不再有两个独立的实验，而是随机选择一个 $b\in\{0,1\}$，然后对对手 $\mathcal{A}$ 运行实验 $b$。我们将 $\mathcal{A}$ 的\emph{比特猜测优势}记为${\rm CPA}\mathsf{adv}^*[\mathcal{A}, \mathcal{E}]:=|\Pr[\hat{b}=b]-{1}/{2}|$，那么与之前一样（根据式 \ref{eq:2-11}），我们有：
+\begin{equation}\label{eq:5-4}
+{\rm CPA}\mathsf{adv}[\mathcal{A}, \mathcal{E}]=2\cdot{\rm CPA}\mathsf{adv}^*[\mathcal{A}, \mathcal{E}]
+\end{equation}
+
+我们再次回到本章引言中讨论的``文件加密"问题。定义 \ref{def:5-2} 说的是，如果 Alice 只用一个单一的密钥用 CPA 安全密码对她的所有文件进行加密，那么即使对手能够得到存储在文件服务器上的密文，它也无法获取关于 Alice 文件明文的有效信息（可能除了一些关于长度的信息）。请注意，即使对手能够主动地影响 Alice 加密的明文，也无法破坏加密的安全性。
+
+\begin{example}\label{exmp:5-1}
+为了让读者熟悉上面的定义，我们先表明，没有任何确定性密码能够满足 CPA 安全性的定义。假设 $\mathcal{E}=(E,D)$ 是一个确定性密码。我们用如下方式构建一个 CPA 对手 $\mathcal{A}$。假设 $m,m'$ 是 $\mathcal{E}$ 的消息空间中的任意两条不同的消息。对手 $\mathcal{A}$ 向其挑战者发出两个查询：第一个查询是 $(m,m')$，第二个查询是 $(m,m)$。假设挑战者对这两个查询的应答分别为 $c_1$ 和 $c_2$。如果 $c_1=c_2$，对手 $\mathcal{A}$ 输出 $1$，否则就输出 $0$。
+
+我们下面计算 ${\rm CPA}\mathsf{adv}[\mathcal{A}, \mathcal{E}]$。一方面，在攻击游戏 \ref{game:5-2} 的实验 $0$ 中，挑战者在回应两个查询时都加密了 $m$，因此 $c_1=c_2$。所以，$\mathcal{A}$ 在这个实验中输出 $1$ 的概率为 $1$（这正是我们需要 $\mathcal{E}$ 的确定性假设的地方）。另一方面，在实验 $1$ 中，挑战者加密了 $m'$ 和 $m$，所以 $c_1\neq c_2$；因此，$\mathcal{A}$ 在这个实验中输出 $1$ 的概率为 $0$。由此可知，${\rm CPA}\mathsf{adv}[\mathcal{A}, \mathcal{E}]=1$。
+
+将这个例子中的攻击进一步推广，CPA 安全的密码不仅必须是概率性的，还要保证对于同一消息，两次加密所产生的密文相同的可能性尽可能小，见练习 5.12。
+\end{example}
+
+\begin{remark}\label{remark:5-1}
+与定理 \ref{theo:5-1} 类似，可以直接得到，如果一个密码本身是 CPA 安全的，那么它在多密钥的情况下也是 CPA 安全的，见练习 5.2。
+\end{remark}
