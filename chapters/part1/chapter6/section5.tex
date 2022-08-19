@@ -73,7 +73,7 @@ PF(k,\;x\,\Vert\,a)=PF(k,\;y\,\Vert\,a)
 
 将 $EF$ 应用于 CBC 构造就能得到一个经典的 PRF（因而也是一个 MAC），称为\textbf{加密 CBC (encrypted-CBC)} 或 \textbf{ECBC}。这种 MAC 由 ANSI 标准化（见 \ref{sec:6-9} 节），并被广泛用于银行业。ECBC PRF 在 CBC 和最终的加密中使用相同的底层 PRF $F$。因此，ECBC 定义在 $(\mathcal{K}^2,\mathcal{X}^{\leq\ell+1},\mathcal{X})$ 上。
 
-\begin{theorem}[ECBC 的安全性]
+\begin{theorem}[ECBC 的安全性]\label{theo:6-6}
 令 $F$ 是一个定义在 $(\mathcal{K},\mathcal{X},\mathcal{X})$ 上的安全 PRF。假设 $\mathcal{X}$ 是超多项式的，$\ell$ 是一个多项式约束的长度参数。那么 ECBC 是一个定义在 $(\mathcal{K}^2,\mathcal{X}^{\leq\ell+1},\mathcal{X})$ 上的安全 PRF。
 \begin{quote}
 特别地，对于每个按照攻击游戏 \ref{game:4-2} 攻击 ECBC 的 PRF 对手 $\mathcal{A}$，假设它最多能够向其挑战者发起 $Q$ 次查询，则必然存在两个按照攻击游戏 \ref{game:4-2} 攻击 $F$ 的 PRF 对手 $\mathcal{B}_1$ 和 $\mathcal{B}_2$，其中 $\mathcal{B}_1$ 和 $\mathcal{B}_2$ 都是围绕 $\mathcal{A}$ 的基本包装器，满足：

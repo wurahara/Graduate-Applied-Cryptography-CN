@@ -5,10 +5,10 @@
 在实践中，随机比特序列通常是使用\textbf{随机数生成器 (random number generator, RNG)} 生成的。RNG 和 PRG 一样输出一串随机或伪随机的比特。然而 RNG 有一个额外的接口，用于不断向 RNG 的内部状态添加熵，如图 \ref{fig:3-14} 所示。其原理是，每当系统有更多的随机熵贡献给 RNG 时，这些熵就被添加到 RNG 的内部状态中。每当有人从 RNG 中读取比特时，这些比特都是用当前的内部状态生成的。
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.7\linewidth]{figures/chapter3/fig14.png}
-  \caption{一个随机数生成器}
-  \label{fig:3-14}
+	\centering
+	\input{figures/chapter3/fig14.tex}
+	\caption{一个随机数生成器}
+	\label{fig:3-14}
 \end{figure}
 
 一个典型的例子是 Linux 操作系统中的 RNG，它被实现成一个名为 \texttt{/dev/random} 的设备。任何人都可以从该设备中读取到随机比特。你可以在 UNIX shell 中输出 \texttt{cat /dev/random} 来试着玩一玩这个工具，你将会看到一串无休止的、看起来很随机的字符。UNIX RNG 从一些硬件来源获得随机熵，包括：

@@ -5,10 +5,10 @@ RC4流密码由Ron Rivest在1987年设计，历史上曾用于保护网络流量
 RC4密码的核心是一个PRG，称为RC4 PRG。PRG维护一个内部状态，包含一个$256$字节的数组$S$和两个额外的字节$i,j$，作为指入$S$的两个指针。数组$S$包含$\{0,\dots,255\}$中的所有的数字，且每个数字正好出现一次。图 \ref{fig:3-12} 给出了一个 RC4 状态的例子。
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.75\linewidth]{figures/chapter3/fig12.png}
-  \caption{RC4内部状态的一个例子}
-  \label{fig:3-12}
+	\centering
+	\input{figures/chapter3/fig12.tex}
+	\caption{RC4内部状态的一个例子}
+	\label{fig:3-12}
 \end{figure}
 
 RC4流密码的密钥 $s$ 也是 PRG 的种子，用于将数组 $S$ 初始化为数字 $0 \dots 255$ 一个伪随机置换排列。初始化是使用下面的\textbf{设置算法(setup algorithm)}进行的：
@@ -93,10 +93,10 @@ RC4的设置算法基于给定的随机种子将数组$S$初始化为$0 \dots 25
 该引理表明，RC4输出的第二个字节为 $0$ 的概率是它本应有的两倍。这就导出了一个简单的 RC4 PRG 区分器。给定一个序列$x\in\{0,\dots,255\}^\ell$，对于$\ell\geq2$，如果$x$的第二个字节是$0$，区分器输出$0$，否则就输出$1$。根据引理 \ref{lemma:3-8}，这个区分器的优势约为 $1/n$，对于 RC4 来说就是 $0.39\%$。
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.55\linewidth]{figures/chapter3/fig13.png}
-  \caption{引理 \ref{lemma:3-8} 的证明}
-  \label{fig:3-13}
+	\centering
+	\input{figures/chapter3/fig13.tex}
+	\caption{引理 \ref{lemma:3-8} 的证明}
+	\label{fig:3-13}
 \end{figure}
 
 Mantin-Shamir 区分器表明 RC4 输出的第二字节是有偏差的。AlFardan等人推广了这一结论，他们通过测量许多随机密钥上的偏差，表明输出的前$256$个字节中的每一个都有偏差：每个字节的分布都与均匀性相差甚远。这种偏差不像第二字节那样明显，但它仍是不可忽略不计的，足以用来对密码发动攻击。例如，他们表明，给定用 $2^{30}$ 个随机密钥加密的单一明文的对应密文，我们有可能以接近 $1$ 的概率恢复明文的前 $128$ 字节。这种攻击很容易在网络上进行，因为在网络上，一个秘密的 cookie 通常被嵌入到一个消息的前几个字节中。每次浏览器连接到受害者的网络服务器时，这个 cookie 都会用新的密钥重新加密。攻击者可以使用 Javascript 脚本令用户的浏览器反复重连到目标网站，以向攻击者提供发动攻击和暴露 cookie 所需的 $2^{30}$ 个密文。

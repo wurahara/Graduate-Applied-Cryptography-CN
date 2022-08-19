@@ -9,7 +9,7 @@
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.7\linewidth]{figures/chapter4/fig6.png}
+  \input{figures/chapter4/fig6.tex}
   \caption{现实世界中分组密码的加密}
   \label{fig:4-6}
 \end{figure}
@@ -100,14 +100,14 @@ DES 的关键创新之一是由 IBM 的霍斯特·费斯妥 (Horst Feistel) 发�
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.7\linewidth]{figures/chapter4/fig7.png}
+  \input{figures/chapter4/fig7.tex}
   \caption{费斯妥置换法}
   \label{fig:4-7}
 \end{figure}
 
 \begin{figure}[p!]
   \centering
-  \includegraphics[width=0.85\linewidth]{figures/chapter4/fig8.png}
+  \input{figures/chapter4/fig8.tex}
   \caption{DES的轮函数$F(k,x)$}
   \label{fig:4-8}
 \end{figure}
@@ -164,7 +164,7 @@ f(x):=F(k_i,x)
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.6\linewidth]{figures/chapter4/fig9.png}
+  \input{figures/chapter4/fig9.tex}
   \caption{完整的DES电路}
   \label{fig:4-9}
 \end{figure}
@@ -191,7 +191,7 @@ IP 和 FP 没有任何密码学意义，被包括在算法内的原因至今不�
 
 \begin{figure*}[h!]
   \centering
-  \includegraphics[width=0.3\linewidth]{figures/chapter4/fig-vac1.png}
+  \input{figures/chapter4/vac1.tex}
 \end{figure*}
 它由 $3$ 个 DES 分组构成，每个分组为 $8$ 字节，也就是 $64$ 比特。目标是找到一个 DES 密钥，对于 $i=1,2,3$，该密钥能够将 $x_i$ 映射到 $y_i$。得到密钥后，挑战者就能够使用密钥来解密 $y_4,\dots,y_n$ 编码的秘密消息。
 
@@ -265,7 +265,7 @@ i=1,\dots,Q
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.6\linewidth]{figures/chapter4/fig10.png}
+  \input{figures/chapter4/fig10.tex}
   \caption{$2\mathcal{E}$上的中间相遇攻击}
   \label{fig:4-10}
 \end{figure}
@@ -338,7 +338,7 @@ AES-256 & 256 & 128 & 14 \\ \hline
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.7\linewidth]{figures/chapter4/fig11.png}
+  \input{figures/chapter4/fig11.tex}
   \caption{AES-128分组密码的示意图}
   \label{fig:4-11}
 \end{figure}

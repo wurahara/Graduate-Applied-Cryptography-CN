@@ -75,10 +75,10 @@ $$
 攻击游戏 \ref{game:2-1} 的示意图见图 \ref{fig:2-1}。如图所示，$\mathcal{A}$的``输出"实际上只是给挑战者的一个最终消息。
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.5\linewidth]{figures/chapter2/fig1.png}
-  \caption{攻击游戏 \ref{game:2-1} 中的实验 $b$}
-  \label{fig:2-1}
+	\centering
+	\input{figures/chapter2/fig1.tex}
+	\caption{攻击游戏 \ref{game:2-1} 中的实验 $b$}
+	\label{fig:2-1}
 \end{figure}
 
 \begin{definition}[语义安全性]\label{def:2-2}
@@ -294,10 +294,10 @@ $$
 我们的目标是要证明以下定理。
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.6\linewidth]{figures/chapter2/fig2.png}
-  \caption{网络轮盘赌}
-  \label{fig:2-2}
+	\centering
+	\input{figures/chapter2/fig2.tex}
+	\caption{网络轮盘赌}
+	\label{fig:2-2}
 \end{figure}
 
 \begin{theorem}
@@ -315,17 +315,17 @@ $$
 为了分析我们的新对手 $\mathcal{B}$，我们先考虑一个``理想化"的互联网轮盘赌版本。在这个版本中，庄荷不公布实际的 $r$ 的加密，而是公布一个``假"值的加密，例如 $0$。图 \ref{fig:2-3} 展示了这个理想化的网络轮盘赌的逻辑。然而，请注意，在理想化版本的互联网轮盘赌中，庄荷仍然使用 $r$ 的实际值来决定游戏的结果。令 $p_0$ 为 $\mathcal{A}$ 在互联网轮盘赌中获胜的概率，$p_1$ 为 $\mathcal{A}$ 在理想化互联网轮盘赌中获胜的概率。
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.6\linewidth]{figures/chapter2/fig3.png}
-  \caption{网络轮盘赌的理想化版本}
-  \label{fig:2-3}
+	\centering
+	\input{figures/chapter2/fig3.tex}
+	\caption{网络轮盘赌的理想化版本}
+	\label{fig:2-3}
 \end{figure}
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.85\linewidth]{figures/chapter2/fig4.png}
-  \caption{攻击游戏 \ref{game:2-1} 中的语义安全对手 $\mathcal{B}$}
-  \label{fig:2-4}
+	\centering
+	\input{figures/chapter2/fig4.tex}
+	\caption{攻击游戏 \ref{game:2-1} 中的语义安全对手 $\mathcal{B}$}
+	\label{fig:2-4}
 \end{figure}
 
 我们的对手 $\mathcal{B}$ 被设计为在攻击游戏 \ref{game:2-1} 中进行游戏。因此，如果令 $\hat b$ 表示 $\mathcal{B}$ 在该游戏中的输出，我们有：
@@ -366,10 +366,10 @@ $$
 \end{game}
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.5\linewidth]{figures/chapter2/fig5.png}
-  \caption{攻击游戏 \ref{game:2-4}}
-  \label{fig:2-5}
+	\centering
+	\input{figures/chapter2/fig5.tex}
+	\caption{攻击游戏 \ref{game:2-4}}
+	\label{fig:2-5}
 \end{figure}
 
 图 \ref{fig:2-5} 展示了攻击游戏 \ref{game:2-4}。请注意，在这个游戏中，$\mathcal{A}$ 赢得游戏的事件是由 $b$ 与 $k$ 的随机选择、加密算法的随机选择（如果有的话）和对手的随机选择（如果有的话）共同构成的概率空间所定义的。

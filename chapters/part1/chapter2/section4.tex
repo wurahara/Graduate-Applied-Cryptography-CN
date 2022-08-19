@@ -20,10 +20,10 @@ c_1:=E(k_{\rm d},\,\langle\mathsf{Bob},m\rangle)
 接下来，Alice 将 $c_2$ 发送给 Carol。Carol 对 $c_2$ 进行解密并得到明文 $\langle\mathsf{David},c_1\rangle$，这示意她要把 $c_1$ 发送给 David。David 解密 $c_1$ 得到明文 $\langle\mathsf{Bob},m\rangle$，示意他把 $m$ 发送给 Bob。图 \ref{fig:2-7} 展示了这个解密嵌套密文的过程，它类似于一层一层地剥开洋葱。由于这个原因，这种路由过程通常被称为\emph{洋葱路由(onion routing)}。
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.6\linewidth]{figures/chapter2/fig7.png}
-  \caption{一个使用两层混合的洋葱路由的例子}
-  \label{fig:2-7}
+	\centering
+	\input{figures/chapter2/fig7.tex}
+	\caption{一个使用两层混合的洋葱路由的例子}
+	\label{fig:2-7}
 \end{figure}
 
 现在，即使 Carol 监测了所有的网络流量，也不能确定谁在 Bob 的论坛上发布了哪条消息。这对 David 来说也是如此。然而，如果 Carol 和 David 是串通的，他们就能搞清楚这些信息。由于这个原因，Alice 可能会通过两个以上的混合网络来传递她的信息。只要其中的一个混合服务不与其他混合服务共谋，Alice 就能够保护她的匿名性。

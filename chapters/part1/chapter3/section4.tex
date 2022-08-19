@@ -163,10 +163,10 @@ $$
 \end{equation}
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.55\linewidth]{figures/chapter3/fig5.png}
-  \caption{挑战者在混合$0,1,\dots,n$中准备的数值。每个$r_i$都是$\mathcal{R}$上的一个随机元素，每个$s_i$都是$\mathcal{S}$上的一个随机元素。}
-  \label{fig:3-5}
+	\centering
+	\input{figures/chapter3/fig5.tex}
+	\caption{挑战者在混合$0,1,\dots,n$中准备的数值。每个$r_i$都是$\mathcal{R}$上的一个随机元素，每个$s_i$都是$\mathcal{S}$上的一个随机元素。}
+	\label{fig:3-5}
 \end{figure}
 
 接下来我们定义一个 PRG 对手 $\mathcal B$，它对 $G$ 进行攻击游戏 \ref{game:3-1} 中的攻击，其工作方式如下：
@@ -250,10 +250,10 @@ $$
 我们称 $G'$ 为 $G$ 的 \textbf{$n$ 次串行组合 ($n$-wise sequential composition)}。图 \ref{fig:3-6} 是 $n=3$ 时$G'$ 的示意图。
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/chapter3/fig6.png}
-  \caption{$n=3$时的串行构造}
-  \label{fig:3-6}
+	\centering
+	\input{figures/chapter3/fig6.tex}
+	\caption{$n=3$时的串行构造}
+	\label{fig:3-6}
 \end{figure}
 
 我们将在下面的定理 \ref{theo:3-3} 中证明，如果 $G$ 是一个安全 PRG，那么 $G'$ 也是一个安全 PRG。作为这个构造的一个特例，假设 $G$ 是一个定义在 $(\{0,1\}^\ell,\{0,1\}^{t+\ell})$ 上的 PRG，其中 $\ell$ 和 $t$ 是正整数；也就是说，$G$ 把 $\ell$ 比特字符串拉伸为 $t+\ell$ 比特字符串。我们可以很自然地把 $G$ 的输出空间看作是 $\{0,1\}^t\times\{0,1\}^\ell$。应用上述构造，并把输出解释为比特串，我们就能得到一个PRG $G'$，它能把 $\ell$ 位比特串拉伸为 $nt+\ell$ 位比特串。
@@ -322,10 +322,10 @@ $$
 $$
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/chapter3/fig7.png}
-  \caption{$n=3$时，混合游戏中挑战者的计算。圆圈表示随机产生的$\mathcal{S}$或$\mathcal{R}$上的元素，如标签所示。}
-  \label{fig:3-7}
+	\centering
+	\input{figures/chapter3/fig7.tex}
+	\caption{$n=3$时，混合游戏中挑战者的计算。圆圈表示随机产生的$\mathcal{S}$或$\mathcal{R}$上的元素，如标签所示。}
+	\label{fig:3-7}
 \end{figure}
 
 接下来的证明只是简单的计算，与定理 \ref{theo:3-2} 的证明的最后一段\emph{相同}，不再赘述。

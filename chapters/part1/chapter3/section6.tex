@@ -5,10 +5,10 @@
 Salsa20/12 和 Salsa20/20 是由丹尼尔·伯恩斯坦于 2005 年设计的快速流密码。Salsa20/12 是被选入 eStream 流密码组合的四种Profile 1 流密码之一。eStream 是一个选定适合实际使用场景的快速安全的流密码的项目。伯恩斯坦又于 2008 年提出了Salsa20/12 和 Salsa20/20 的变体，分别被称作 ChaCha12 和 ChaCha20。这些流密码已被纳入一些广泛部署的协议，如 TLS 和 SSH。
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.7\linewidth]{figures/chapter3/fig8.png}
-  \caption{Salsa 和 ChaCha PRG 的示意图}
-  \label{fig:3-8}
+	\centering
+	\input{figures/chapter3/fig8.tex}
+	\caption{Salsa 和 ChaCha PRG 的示意图}
+	\label{fig:3-8}
 \end{figure}
 
 让我们先简单介绍一下 Salsa 和 ChaCha 流密码家族的底层 PRG。这些 PRG 将一个 $256$ 比特种子和一个 $64$ 比特的 nonce 作为输入。现在我们忽略 nonce，先简单地将其设置为 $0$，我们会在本节末尾讨论 nonce 的作用。Salsa 和ChaCha PRG 都遵循图 \ref{fig:3-8} 所示的顶层设计结构。它们都包含两个组件：

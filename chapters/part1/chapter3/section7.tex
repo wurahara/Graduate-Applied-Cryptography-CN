@@ -89,10 +89,10 @@ e_0\\e_1
 我们下面展示如何由$\boldsymbol{g}$找到$\boldsymbol{u}$。考虑向量$(1,a)^\mathrm{T}$和$(0,q)^\mathrm{T}$的所有整系数线性组合所构成的集合。我们用$\mathcal{L}_a$表示这个集合，它是$\mathbb{Z}^2$的一个子集，包含像$(1,a)^\mathrm{T}$，$(2,2a)^\mathrm{T}$，$(3,3a-2q)^\mathrm{T}$这样的向量。图 \ref{fig:3-9} 展示了集合 $\mathcal{L}_a$，图中的实心点是向量$(1,a)^\mathrm{T}$和$(0,q)^\mathrm{T}$的整系数线性组合。我们称集合$\mathcal{L}_a$为由向量$(1,a)^\mathrm{T}$和$(0,q)^\mathrm{T}$所生成的二维\textbf{网格(lattice)}。
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.6\linewidth]{figures/chapter3/fig9.png}
-  \caption{与攻击LCG相关的二维网格。这里的网格是由向量$(1,5)^\mathrm{T}$和$(0,29)^\mathrm{T}$生成的。攻击者持有向量$\boldsymbol{g}=(9,7)^\mathrm{T}$，并希望找到最接近的网格向量$\boldsymbol{u}$。在这本图中确实只有一个``接近" $\boldsymbol{g}$ 的网格向量。}
-  \label{fig:3-9}
+	\centering
+	\input{figures/chapter3/fig9.tex}
+	\caption{与攻击LCG相关的二维网格。这里的网格是由向量$(1,5)^\mathrm{T}$和$(0,29)^\mathrm{T}$生成的。攻击者持有向量$\boldsymbol{g}=(9,7)^\mathrm{T}$，并希望找到最接近的网格向量$\boldsymbol{u}$。在这本图中确实只有一个``接近" $\boldsymbol{g}$ 的网格向量。}
+	\label{fig:3-9}
 \end{figure}
 
 现在，攻击者有一个向量$\boldsymbol{g}\in\mathbb{Z}^2$，并且知道它的目标向量$\boldsymbol{u}\in\mathcal{L}_a$接近$\boldsymbol{g}$。如果它能在$\mathcal{L}_a$中找到与$\boldsymbol{g}$最接近的向量，那么这个向量很有可能就是所需的向量$\boldsymbol{u}$。下面的定理将表明，对于大多数的$a\in\mathcal{S}_q$来说，情况确实如此。
@@ -157,18 +157,3 @@ G_{q,\vec{a}}(\boldsymbol{s}):=A\cdot\boldsymbol{s}\;\mathrm{mod}\;q
 \]
 其中，$q$是一个小素数，$A$是一个$\mathcal{S}_q^{n\times m}$上的随机矩阵，$n<m$，并且种子$\boldsymbol{s}$均匀分布在$\{0,1\}^m$上。该生成器将$m$比特的种子映射为$n\log_2q$比特的输出。我们将在第\ref{chap:16}章进一步讨论这个生成器。
 \end{snote}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

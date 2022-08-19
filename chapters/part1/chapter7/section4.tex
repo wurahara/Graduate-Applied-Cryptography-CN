@@ -1,1 +1,293 @@
-\section{Carter-Wegman MAC}
+\section{Carter-Wegman MAC}\label{sec:7-4}
+
+在本节中，我们将提出一个和之前不同的范式来构建安全的 MAC 系统。与 PRF(UHF) 组合相比，这个范式能够提供另一种权衡。
+
+回顾一下，在 PRF(UHF) 组合中，当使用 $\epsilon$-UHF 时，对手在看到 $Q$ 个签名消息后，破解 MAC 的优势会增长到 $\epsilon\cdot{Q^2}/{2}$。因此，为了确保签名多条消息时的安全性，$\epsilon$-UHF 的 $\epsilon$ 必须足够小，以便使 $\epsilon\cdot{Q^2}/{2}$ 也很小。但这也可能会损害像 $H_{\rm poly}$ 这样的 $\epsilon$-UHF 的性能，因为 $\epsilon$ 越小，哈希函数的计算速度就越慢。比如说，假设我们要求在签署了 $Q=2^{32}$ 条消息后，对手破解 MAC 的优势仍然不超过 $2^{-64}$，那么 $\epsilon$ 的值最大就只能是 ${1}/{2^{127}}$。
+
+我们的第二个 MAC 范式，称为 Carter-Wegman MAC，保持了与 PRF(UHF) 组合相同的安全级别，但是 $\epsilon$ 要大得多。在参数和上面的例子相同的情况下，$\epsilon$ 只需要是 ${1}/{2^{64}}$。这可以显著提升哈希函数的计算速度，尤其是在消息很长的情况下。但是，该构造的缺点是所产生的标签可能比 PRF(UHF) 组合所产生的标签要长。在练习 7.5 中，我们将探索另一种随机化的 MAC 构造，它在 $\epsilon$ 相同的条件下实现了与 Carter-Wegman MAC 相同的安全性，但是生成的标签可以更短。
+
+Carter-Wegman MAC 是我们的第一个随机化 MAC 系统实例。它的签名算法是随机性的，也就是说，每条消息都对应着许多条合法的标签。
+
+\vspace{5pt}
+
+为了描述 Carter-Wegman MAC，我们首先固定某个大整数 $N$，并设置 $\mathcal{T}:=\mathbb{Z}_N$，即大小是 $N$ 的群，且群中的加法被定义为``模 $N$" 的算术运算。我们使用一个哈希函数 $H$ 和一个输出为 $\mathbb{Z}_N$ 上的元素的 PRF $F$：
+\begin{itemize}
+	\item $H$ 是一个定义在 $(\mathcal{K}_H,\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数，
+	\item $F$ 是一个定义在 $(\mathcal{K}_F,\mathcal{R},\mathcal{T})$ 上的 PRF。
+\end{itemize}
+Carter-Wegman MAC，表示为 $\mathcal{I}_{\rm CW}$，接受 $\mathcal{M}$ 上的元素作为输入，输出 $\mathcal{R}\times\mathcal{T}$ 中的标签。它使用 $\mathcal{K}_H\times\mathcal{K}_F$ 中的密钥。由 \textbf{$F$ 和 $H$ 派生的 Carter-Wegman MAC} 的工作原理如下（另见图 \ref{fig:7-4}）：
+\begin{itemize}
+	\item 对于密钥 $(k_1,k_2)$ 和消息 $m$，我们定义：
+	\vspace{5pt}
+	
+	\hspace*{5pt} $S\big((k_1,k_2),\,m\big):=$\\
+	\hspace*{26pt} $r\overset{\rm R}\leftarrow\mathcal{R}$\\
+	\hspace*{26pt} $v\leftarrow H(k_1,m)+F(k_2,r)\quad\in\mathbb{Z}_N$
+	\quad\quad// \emph{模}$N$\emph{加法}\\
+	\hspace*{26pt} 输出 $(r, v)$
+	\item 对于密钥 $(k_1,k_2)$，消息 $m$ 和标签 $(r,v)$，我们定义：
+	\vspace{5pt}
+	
+	\hspace*{5pt} $V\big((k_1,k_2),\,m,\,(r,v)\big):=$\\
+	\hspace*{26pt} $v^*\leftarrow H(k_1,m)+F(k_2,r)\quad\in\mathbb{Z}_N$
+	\quad\;\;// \emph{模}$N$\emph{加法}\\
+	\hspace*{26pt} 如果 $v=v^*$ 就输出 $\mathsf{accept}$，否则输出 $\mathsf{reject}$
+\end{itemize}
+
+Carter-Wegman 签名算法中使用了一个随机元 $r\in\mathcal{R}$。正如我们将要看到的，集合 $\mathcal{R}$ 需要足够大，以使得两条标签使用同一个随机元 $r$ 的概率可忽略不计。
+
+\begin{snote}[一种加密 UHF MAC。]
+Carter-Wegman MAC 也可以描述为对哈希函数的输出进行的一种加密。事实上，令 $\mathcal{E}=(E,D)$ 为一个密码：
+\[
+E(k,m):=\big\{r\overset{\rm R}\leftarrow\mathcal{R},\;\text{output }\big(r,m+F(k,r)\big)\big\}
+\quad\quad\text{and}\quad\quad
+D\big(k,(r,c)\big):=c-F(k,r)
+\]
+其中，$F$ 是一个定义在 $(\mathcal{K}_F,\mathcal{R},\mathcal{T})$ 上的 PRF。当 $F$ 是一个安全 PRF 时，这个密码是 CPA 安全的，如例 \ref{exmp:5-2} 所述。那么，Carter-Wegman MAC 可以表示为：
+
+\vspace{5pt}
+
+\hspace*{5pt} $S\big((k_1,k_2),\,m\big):=E\big(k_2,H(k_1,m)\big)$
+
+\vspace{5pt}
+
+\hspace*{5pt} $
+V\big((k_1,k_2),\,m,\,t\big):=\left\{
+\begin{array}{ll}
+\mathsf{accept}, & \text{if }D(k_2,t)=H(k_1,m),\\
+\mathsf{reject}, & \text{otherwise}
+\end{array}
+\right.
+$
+
+\vspace{8pt}
+
+\noindent
+我们称之为\textbf{由 $\mathcal{E}$ 和 $H$ 派生的加密 UHF MAC 系统}。
+
+为什么要对哈希函数的输出进行加密？回顾一下，在 PRF(UHF) 组合 MAC 中，如果对手发现了两条消息 $m_1,m_2$ 在哈希函数上有碰撞（即 $H(k_1,m_1)=H(k_1,m_2)$），那么 $m_1$ 的 MAC 和 $m_2$ 的 MAC 就是一样的。因此，通过请求许多消息的标签，对手就能识别出在哈希函数上发生碰撞的消息 $m_1$ 和 $m_2$（假设在 PRF 上发生碰撞是不太可能的）。UHF 上的碰撞 $m_1,m_2$ 可以暴露出关于哈希函数密钥 $k_1$ 的信息，继而可以完全破坏 MAC。为了防止这种情况，我们必须使用一个足够小的 $\epsilon$-UHF，以确保在极高的概率下，对手永远无法找到一个哈希函数的碰撞。相对的，通过使用 CPA 安全的密码对哈希函数的输出进行加密，我们可以确保对手无法了解哈希函数在何时发生了碰撞：即使 $H(k_1,m_1)=H(k_2,m_2)$，$m_1$ 和 $m_2$ 的标签也大概率是不同的。这就使得我们可以用一个小得多的 $\epsilon$ 来维持安全性。
+
+问题在于，即使 $(E,D)$ 是 CPA 安全的，且 $H$ 是一个 $\epsilon$-UHF，加密 UHF MAC 一般也是不安全的。例如，我们将在下面的备注 \ref{remark:7-5} 中表明，当哈希函数 $H$ 被实例化为 $H_{\rm poly}$ 时，Carter-Wegma MAC 是不安全的。为了得到一个安全的 Carter-Wegman MAC，我们需要进一步加强哈希函数 $H$，要求它满足一个更强的属性，即下面将要定义的差异不可预测性。练习 9.16 将会探讨加密 UHF MAC 的其他方面。
+\end{snote}
+
+\begin{snote}[Carter-Wegman MAC 的安全性。]
+为了证明 $\mathcal{I}_\mathrm{CW}$ 的安全性，我们需要哈希函数 $H$ 满足一个比一般的 UHF 更强的属性。我们把这个更强的属性称为\textbf{差异不可预测性 (difference unpredicability)}。粗略地说，它意味着对于任意两条不同消息，预测它们哈希值的差异（在 $\mathbb{Z}_N$ 中）是很难的。和之前一样，有一个攻击游戏：
+\end{snote}
+
+\begin{game}[差异不可预测性]\label{game:7-3}
+对于一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数 $H$，其中 $\mathcal{T}=\mathbb{Z}_N$，以及一个给定对手 $\mathcal{A}$，攻击游戏运行如下：
+\begin{itemize}
+	\item 挑战者随机选取 $k\overset{\rm R}\leftarrow\mathcal{K}$，并自己保留 $k$。
+	\item $\mathcal{A}$ 输出两条互不相同的消息 $m_0,m_1\in\mathcal{M}$ 和一个值 $\delta\in\mathcal{T}$。
+\end{itemize}
+如果 $H(k,m_1)-H(k,m_0)=\delta$，我们就称 $\mathcal{A}$ 赢得了该游戏。我们把 $\mathcal{A}$ 就 $H$ 的优势记为 ${\rm DUF}\mathsf{adv}[\mathcal{A},H]$，即 $\mathcal{A}$ 赢得该游戏的概率。
+\end{game}
+
+\begin{definition}\label{def:7-5}
+令 $H$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数：
+\begin{itemize}
+	\item 如果对于所有对手 $\mathcal{A}$（甚至是非有效的对手），都有 ${\rm DUF}\mathsf{adv}[\mathcal{A},H]\leq\epsilon$，我们就称 $H$ 是一个 \textbf{$\epsilon$-约束差异不可预测函数 ($\epsilon$-bounded difference unpredictable function)} 或 \textbf{$\epsilon$-DUF}。
+	\item 如果对于某个可忽略不计的 $\epsilon$，$H$ 是一个 $\epsilon$-DUF，我们就称 $H$ 是一个\textbf{统计性 DUF}。
+	\item 如果对于所有有效对手 $\mathcal{A}$，${\rm DUF}\mathsf{adv}[\mathcal{A},H]$ 都可忽略不计，我们就称 $H$ 是一个\textbf{计算性 DUF}。
+\end{itemize}
+\end{definition}
+
+\begin{remark}\label{remark:7-3}
+需要注意的是，由于我们定义的是一个 DUF，为了让讨论更加简单，摘要空间 $\mathcal{T}$ 必须形如 $\mathbb{Z}_N$，其中的 $N$ 是某个整数。更一般地，我们可以为一个带密钥哈希函数定义一个差异不可预测的概念，其摘要空间配备一个适当的差异算子（用抽象代数的语言来说，$\mathcal{T}$ 应该是一个\emph{阿贝尔群}）。除了 $\mathbb{Z}_N$，另一个流行的摘要空间是所有 $n$ 比特序列的集合，即 $\{0,1\}^n$，相对应的差异算子为异或操作。在这种情况下，我们使用术语 \textbf{$\epsilon$-XOR-DUF} 和统计性/计算性 \textbf{XOR-DUF} 来和 $\epsilon$-DUF 和统计性/计算性 DUF 对应。
+\end{remark}
+
+当 $H$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数时，$\epsilon$-DUF 属性的另一种描述如下：
+\begin{quote}
+\emph{对于每个不同消息对 $m_0,m_1\in\mathcal{M}$ 和每个 $\delta\in\mathcal{T}$，不等式 $\Pr[H(k,m_1)-H(k,m_0)=\delta]\leq\epsilon$ 都成立。这里，概率在对 $k\in\mathcal{K}$ 的随机选择上。}
+\end{quote}
+
+显然，如果 $H$ 是一个 $\epsilon$-DUF，那么它也是一个 $\epsilon$-UHF：一个 UHF 对手可以被转换成一个DUF 对手，它们能以相同的概率获胜（只要取 $\delta=0$ 即可）。
+
+我们下面举一个统计性 DUF 的简单例子，它与式 \ref{eq:7-3} 中定义的哈希函数 $H_{\rm poly}$ 非常类似。回顾一下，$H_{\rm poly}$ 是一个定义在 $(\mathbb{Z}_p,(\mathbb{Z}_p)^{\leq\ell},\mathbb{Z}_p)$ 上的 UHF。它显然不是一个 DUF：对于 $a\in\mathbb{Z}_p$，置 $m_0:=(a)$，$m_1:=(a+1)$，那么 $m_0$ 和 $m_1$ 都是 $\mathbb{Z}_p$ 上的长为 $1$ 的元组。于是，对于每个密钥 $k$，我们都有：
+\[
+H_{\rm poly}(k,m_1)-H_{\rm poly}(k,m_0)=(k+a+1)-(k+a)=1
+\]
+这就让攻击者赢得了 DUF 攻击游戏。
+
+简单修改一下 $H_{\rm poly}$ 就能够得到一个好的 DUF。对于一条消息 $m=(a_1,a_2,\dots,a_v)\in\mathbb{Z}_p^{\leq\ell}$ 和密钥 $k\in\mathbb{Z}_p$，定义一个新的哈希函数 $H_{\rm xpoly}(k,m)$ 如下：
+\begin{equation}\label{eq:7-23}
+H_{\rm xpoly}:=k\cdot H_{\rm poly}(k,m)=k^{v+1}+a_1k^v+a_2k^{v-1}+\cdots+a_vk\in\mathbb{Z}_p
+\end{equation}
+
+\begin{lemma}\label{lemma:7-8}
+式 \ref{eq:7-23} 中定义的 $(\mathbb{Z}_p,(\mathbb{Z}_p)^{\leq\ell},\mathbb{Z}_p)$ 上的函数 $H_{\rm xpoly}$ 是一个 ${(\ell+1)}/{p}$-DUF。
+\end{lemma}
+
+\begin{proof}
+考虑 $(\mathbb{Z}_p)^{\leq\ell}$ 上的两条互不相同的消息 $m_0=(a_1,\dots,a_u)$ 和 $m_1=(b_1,\dots,b_v)$ 以及一个任意的值 $\delta\in\mathbb{Z}_p$。我们想要证明 $\Pr[H_{\rm xpoly}(k,m_1)-H_{\rm xpoly}(k,m_0)=\delta]\leq{(l+1)}/{p}$，这里的概率定义在 $\mathbb{Z}_p$ 中随机选择的密钥 $k$ 上。正如引理 \ref{lemma:7-2} 的证明那样，输入值 $m_0$ 和 $m_1$ 定义了 $\mathbb{Z}_p[X]$ 上的两个多项式 $f(X)$ 和 $g(X)$，就像式 \ref{eq:7-4} 中的那样。然而，当且仅当 $k$ 是多项式 $X(g(X)-f(X))-\delta$ 的根时，$H_{\rm xpoly}(k,m_1)-H_{\rm xpoly}(k,m_0)=\delta$ 才成立，而前者是一个最高 $\ell+1$ 阶的非零多项式，因而最多有 $\ell+1$ 个 $\mathbb{Z}_p$ 上的根。因此，选出一个这样的 $k$ 的概率最多是 ${(l+1)}/{p}$。
+\end{proof}
+
+\begin{remark}\label{remark:7-4}
+通过将所有的算术运算从 $\mathbb{Z}_p$ 移到有限域 ${\rm GF}(2^n)$ 上，我们就可以使得 $H_{\rm xpoly}$ 能够对 $n$ 比特分组进行操作。与引理 \ref{lemma:7-8} 中的分析类似，我们能够证明，这样构造出来的哈希函数是一个 ${(l+1)}/{2^n}$-XOR-DUF。
+\end{remark}
+
+我们下面来看看对 Carter-Wegman 构造的安全分析。
+
+\begin{theorem}[Carter-Wegman 的安全性]\label{theo:7-9}
+令 $F$ 是一个定义在 $(\mathcal{K}_F,\mathcal{R},\mathcal{T})$ 上的安全的 PRF，其中 $|\mathcal{R}|$ 是超多项式的。令 $H$ 是一个定义在 $(\mathcal{K}_H,\mathcal{M},\mathcal{T})$ 上的计算性 DUF。那么由 $F$ 和 $H$ 派生的 Carter-Wegman MAC $\mathcal{I}_{\rm CW}$ 是一个安全的 MAC。
+\begin{quote}
+特别地，对于任意按照攻击游戏 \ref{game:6-1} 攻击 $\mathcal{I}_{\rm CW}$ 的 MAC 对手 $\mathcal{A}$，都必然存在一个 PRF 对手 $\mathcal{B}_F$ 和一个 DUF 对手 $\mathcal{B}_H$，其中 $\mathcal{B}_F$ 和 $\mathcal{B}_F$ 都是围绕 $\mathcal{A}$ 的基本包装器，满足：
+\end{quote}
+\begin{equation}\label{eq:7-24}
+{\rm MAC}\mathsf{adv}[\mathcal{A}, \mathcal{I}_{\rm CW}]\leq{\rm PRF}\mathsf{adv}[\mathcal{B}_F,F]+{\rm DUF}\mathsf{adv}[\mathcal{B}_H,H]+\frac{Q^2}{2|\mathcal{R}|}+\frac{1}{|\mathcal{T}|}
+\end{equation}
+\end{theorem}
+
+\begin{remark}\label{remark:7-5}
+为了理解为什么 $H$ 需要是一个 DUF，我们不妨先假设它不是。特别地，假设我们很容易在不知道 $k_1$ 的情况下找到互不相同的 $m_0,m_1\in\mathcal{M}$ 以及 $\delta\in\mathcal{T}$ 使得 $H(k_1,m_1)=H(k_1,m_0)+\delta$。然后，对手就可以请求消息 $m_0$ 的标签，并得到 $(r,v)$，满足 $v=H(k_1,m_0)+F(k_2,r)$。由于：
+\[
+v=H(k_1,m_0)+F(k_2,r)
+\quad\Longrightarrow\quad
+v+\delta=H(k_1,m_1)+F(k_2,r)
+\]
+所以标签 $(r,v+\delta)$ 是 $m_1$ 的一个有效标签。因此，$\big(m_1,(r,v+\delta)\big)$ 就是 $\mathcal{I}_{\rm CW}$ 上的一个存在性伪造。这表明，当哈希函数 $H$ 被实例化为 $H_{\rm poly}$ 时，Carter-Wegman MAC 很容易被破解。
+\end{remark}
+
+\begin{remark}\label{remark:7-6}
+我们还可以注意到，式 \ref{eq:7-24} 中的 ${Q^2}/{2|\mathcal{R}|}$ 项对应的是两个签名查询产生相同随机元的概率。事实上，如果发生这样的碰撞，对于某些 DUF（包括 $H_{\rm poly}$），Carter-Wegman MAC 可能会被完全破解——见练习 7.13 和 7.14。
+\end{remark}
+
+\begin{proof}[证明思路]
+令 $\mathcal{A}$ 是一个就 $\mathcal{I}_{\rm CW}$ 进行攻击游戏 \ref{game:6-1} 的有效 MAC 对手。我们下面推导 ${\rm MAC}\mathsf{adv}[\mathcal{A},\mathcal{I}_{\rm CW}]$ 的上界。同之前一样，我们首先用一个真随机函数 $f\in{\rm Funs}[\mathcal{R},\mathcal{T}]$ 替换底层的安全 PRF $F$，并论证这不会使对手的优势发生很大变化。然后我们表明，只有以下三种情况可以使对手产生一个伪造的消息-标签对，而且每种情况发生的概率都很小：
+\begin{enumerate}
+	\item 挑战者可能不走运，他恰好选取了同一个随机元 $r\in\mathcal{R}$ 来应答两个不同的签名查询。这种情况发生的概率最大是 ${Q^2}/{(2|\mathcal{R}|)}$。
+	\item 对手可能输出一个仿冒 MAC $\big(m,(r,v)\big)$，其中 $r\in\mathcal{R}$ 是一个新的随机元，它从来没有被用来应答 $\mathcal{A}$ 的签名查询。那么，$f(r)$ 与 $\mathcal{A}$ 的观察无关，因而，等式 $v=H(k_1,m)+f(r)$ 将以最大 $1/|\mathcal{T}|$ 的概率成立。
+	\item 对手可能输出一个仿冒 MAC $\big(m,(r,v)\big)$，其中 $r=r_j$，且 $\big(m_j,(r_j,v_j)\big)$ 是某个唯一确定的消息-标签对。但此时：
+	\[
+	v_j=H(k_1,m_j)+f(r_j)
+	\quad\text{and}\quad
+    v=H(k_1,m)+f(r_j)
+    \]
+    用左式减去右式，$f(r_j)$ 项就被消去了，我们可得：
+    \[
+    v_j-v=H(k_1,m_j)-H(k_1,m)
+    \]
+    由于 $H$ 是一个计算性 DUF，所以对手找到这种关系的概率可忽略不计。\qedhere
+\end{enumerate}
+\end{proof}
+    
+\begin{proof}
+为了让上面的直观论证更加严谨，我们考虑 $\mathcal{A}$ 在下面三个密切相关的游戏中的行为。对于 $j=0,1,2$，我们定义 $W_j$ 为 $\mathcal{A}$ 赢得游戏 $j$ 的事件。游戏 $0$ 将和就 $\mathcal{I}$ 的攻击游戏 \ref{game:6-1} 完全相同。接下来，我们依次对每个游戏稍作修改，并论证对手无法发现这些修改。最后，我们论证 $\Pr[W_3]$ 可忽略不计，这也就证明了 $\Pr[W_0]$ 也是可忽略不计的，而这正是定理所要求的。
+
+\vspace{5pt}
+
+\noindent\textbf{游戏 $\mathbf{0}$}。
+我们首先详细描述攻击游戏 \ref{game:6-1} 中就 $\mathcal{I}_{\rm CW}$ 的挑战者。在这个描述中，我们假设对手在攻击游戏的某个特定的执行中实际发起了 $s$ 次签名查询，且 $s$ 不大于 $Q$。
+
+\vspace{5pt}
+
+\hspace*{5pt} 初始化：\\
+\hspace*{50pt} 选取 $k_1\overset{\rm R}\leftarrow\mathcal{K}_H$，$k_2\overset{\rm R}\leftarrow\mathcal{K}_F$\\
+\hspace*{50pt} 选取 $r_1,\dots,r_Q\overset{\rm R}\leftarrow\mathcal{R}$\quad//\quad\emph{准备游戏所需的随机元}\\
+\hspace*{26pt} 当收到第 $i$ 个签名查询 $m_i\in\mathcal{M}$ ($i=1,\dots,s$) 时：\\
+\hspace*{50pt} 令 $v_i\leftarrow H(k_1,m_i)+F(k_2,r_i)\in\mathcal{T}$\\
+\hspace*{50pt} 将 $(r_i,v_i)$ 发送给对手\\
+\hspace*{26pt} 当收到伪造尝试 $(m,(r,v))\notin\{(m_1,(r_1,v_1)),\dots,(m_s,(r_s,v_s))\}$ 时：\\
+\hspace*{50pt} 如果 $v=H(k_1,m)+F(k_2,r)$：\\
+\hspace*{75pt} 则输出``赢"\\
+\hspace*{75pt} 否则输出``输"
+
+\vspace{5pt}
+
+\noindent
+于是，根据构造，我们有：
+\begin{equation}\label{eq:7-25}
+{\rm MAC}\mathsf{adv}[\mathcal{A},\mathcal{I}_{\rm CW}]=\Pr[W_0]
+\end{equation}
+
+\noindent\textbf{游戏 $\mathbf{1}$}。
+接下来，与之前一样，我们打出``PRF牌"，用 ${\rm Funs}[\mathcal{R},\mathcal{T}]$ 中的一个真随机函数 $f$ 代替函数 $F(k_2,\cdot)$，我们用一个忠实的侏儒来实现它（如 \ref{subsec:4-4-2} 小节）。因此，游戏 $1$ 中，我们的挑战者的工作方式如下：
+
+\vspace{5pt}
+
+\hspace*{5pt} 初始化：\\
+\hspace*{50pt} 选取 $k_1\overset{\rm R}\leftarrow\mathcal{K}_H$\\
+\hspace*{50pt} 选取 $r_1,\dots,r_Q\overset{\rm R}\leftarrow\mathcal{R}$\quad//\quad\emph{准备游戏所需的随机元}\\
+\hspace*{50pt} 选取 $u_0',u_1',\dots,u_Q'\overset{\rm R}\leftarrow\mathcal{T}$\quad//\quad\emph{准备$f$的默认输出}\\
+\hspace*{26pt} 当收到第 $i$ 个签名查询 $m_i\in\mathcal{M}$ ($i=1,\dots,s$) 时：\\
+\hspace*{50pt} 令 $u_i\leftarrow u_i'$\\
+\hspace*{1pt} ($1$)
+\hspace*{28.5pt} 如果存在某个 $j<i$ 使得 $r_j=r_i$，就令 $u_i\leftarrow u_j$\\
+\hspace*{50pt} 令 $v_i\leftarrow H(k_1,m_i)+u_i\in\mathcal{T}$\\
+\hspace*{50pt} 将 $(r_i,v_i)$ 发送给对手\\
+\hspace*{26pt} 当收到伪造尝试 $(m,(r,v))\notin\{(m_1,(r_1,v_1)),\dots,(m_s,(r_s,v_s))\}$ 时：\\
+\hspace*{1pt} ($2$)
+\hspace*{28.5pt} 如果存在某个 $j=1,\dots,s$ 使得 $r=r_j$：\\
+\hspace*{75pt} 则令 $u\leftarrow u_j$\\
+\hspace*{75pt} 否则令 $u\leftarrow u_0'$\\
+\hspace*{50pt} 如果 $v=H(k_1,m)+u$：\\
+\hspace*{75pt} 则输出``赢"\\
+\hspace*{75pt} 否则输出``输"
+
+\vspace{5pt}
+
+\noindent
+对于 $i=1,\dots,Q$，值 $u_i'$ 是为 $u_i=f(r_i)$ 事先选定的默认随机值。标有 ($1$) 和 ($2$) 的两行测试确保我们的侏儒是忠实的，即我们确实模拟了一个 ${\rm Funs}[\mathcal{R},\mathcal{T}]$ 上的函数。在 ($2$) 中，如果$u=f(r)$已经被定义过了，我们就使用这个值；否则，我们就使用新的随机值$u_0'$来表示$u$。
+
+和之前一样，我们可以证明，存在一个与 $\mathcal{A}$ 一样有效的 PRF 对手 $\mathcal{B}_F$，使得：
+\begin{equation}\label{eq:7-26}
+\big\lvert\Pr[W_1]-\Pr[W_0]\big\rvert={\rm PRF}\mathsf{adv}[\mathcal{B}_F,F]
+\end{equation}
+
+\noindent\textbf{游戏 $\mathbf{2}$}。
+我们让我们的侏儒变得健忘。我们通过删去挑战者的逻辑中标有 ($1$) 的那一行来做到这一点。此外，我们在标有 ($2$) 的那一行之前插入下面的特殊测试：
+
+\vspace{5pt}
+
+\hspace*{29pt} 如果存在某个 $1\leq i\leq j\leq s$使得$r_i=r_j$，就输出``输"（并停机）
+
+\vspace{5pt}
+
+\noindent
+令 $Z$ 为存在某个 $1\leq i\leq j\leq Q$ 使得 $r_i=r_j$ 成立的事件。根据联合约束，我们可知$\Pr[Z]\leq{Q^2}/{(2|\mathcal{R}|)}$。此外，如果 $Z$ 没有发生，那么游戏 $1$ 和游戏 $2$ 的进程就完全相同。因此，根据差分引理（定理 \ref{theo:4-7}），我们可得：
+\begin{equation}\label{eq:7-27}
+\big\lvert\Pr[W_2]-\Pr[W_1]\big\rvert\leq\Pr[Z]\leq{Q^2}/{(2|\mathcal{R}|)}
+\end{equation}
+
+为了约束 $\Pr[W_2]$，我们将 $W_2$ 分解成两个事件：
+\begin{itemize}
+	\item 事件 $W_2'$：$\mathcal{A}$ 在游戏 $2$ 中获胜，且存在 $j=1,\dots,s$ 使得 $r=r_j$；
+	\item 事件 $W_2''$：$\mathcal{A}$ 在游戏 $2$ 中获胜，且对于所有的 $j=1,\dots,s$ 都有 $r\neq r_j$。
+\end{itemize}
+于是，我们有 $W_2=W_2'\cup W_2''$。因此，我们只需要单独分析这两个事件即可，因为：
+\begin{equation}\label{eq:7-28}
+\Pr[W_2]\leq\Pr[W_2']+\Pr[W_2'']
+\end{equation}
+
+我们先考虑 $W_2''$。如果出现这种情况，则有 $u=u'$，并且 $v=u+H(k_1,m)$；也就是说 $u_0'=v-H(k_1,m)$。但由于 $u_0'$ 和 $v-H(k_1,m)$ 相互独立，这发生的概率为 ${1}/{|\mathcal{T}|}$。所以，我们有：
+\begin{equation}\label{eq:7-29}
+\Pr[W_2'']\leq{1}/{|\mathcal{T}|}
+\end{equation}
+
+接下来，考虑 $W_2'$。在这里，我们的目标是说明，对于一个与 $\mathcal{A}$ 一样有效的 DUF 对手 $\mathcal{B}_F$，有：
+\begin{equation}\label{eq:7-30}
+\Pr[W_2']\leq{\rm DUF}\mathsf{adv}[\mathcal{B}_H,H]
+\end{equation}
+为此，考虑一下，如果 $\mathcal{A}$ 在游戏 $2$ 中获胜，并且存在某个 $j=1,\dots,s$ 使得 $r=r_j$，会发生什么。由于 $\mathcal{A}$ 获胜，并且我们在游戏 $2$ 中标有 ($2$) 的那一行之前插入了特殊测试，因此 $r_1,\dots,r_s$ 的值必然是各不相同的，故而只存在一个这样的索引 $j$，并且 $u=u_j$。因此，我们有下面这两个等式：
+\[
+v_j=H(k_1,m_j)+u_j
+\quad\text{and}\quad
+v=H(k_1,m)+u_j
+\]
+将两式相减，我们可得：
+\begin{equation}\label{eq:7-31}
+v_j-v=H(k_1,m_j)-H(k_1,m)
+\end{equation}
+
+我们声称 $m\neq m_j$。事实上，如果 $m=m_j$，则式 \ref{eq:7-31} 就意味着 $v=v_j$，进而有 $(m,(r,v))=(m_j,(r_j,v_j))$；然而，由于我们已经要求 $\mathcal{A}$ 不能提交之前已经提交过的签名作为伪造尝试，所以这是不可能发生的。
+
+所以，如果事件 $W_2'$ 发生，则必有 $m\neq m_j$，并且式 \ref{eq:7-31} 成立。但请注意，在游戏 $2$ 中，挑战者的应答与 $k_1$ 完全无关，因此我们可以很容易地将 $\mathcal{A}$ 转化为 DUF 对手 $\mathcal{B}_H$，它在攻击游戏 7.3 中获胜的概率至少为 $\Pr[W_2']$。对手 $\mathcal{B}_H$ 的工作原理如下：它与 $\mathcal{A}$ 交互，并模拟游戏 $2$ 中的挑战者，简单地用一对随机的 $(r_i,v_i)\in\mathcal{R}\times\mathcal{T}$ 来回应每一个签名查询；当 $\mathcal{A}$ 输出它的伪造尝试 $(m,(r,v))$ 时，$\mathcal{B}_H$ 检查是否存在某个 $j=1,\dots,s$ 使得 $r=r_j$ 且 $m\neq m_j$ 成立；如果确实如此，$\mathcal{B}_H$ 就输出三元组 $(m_j,m,v_j-v)$。现在，式 \ref{eq:7-30} 中的约束就很清楚了。
+
+根据式 \ref{eq:7-25}，\ref{eq:7-26}，\ref{eq:7-27}，\ref{eq:7-28}，\ref{eq:7-29} 和 \ref{eq:7-30}，可证得该定理。
+\end{proof}
+
+\subsection{将 Carter-Wegman 与多项式 UHF 一起使用}\label{subsec:7-4-1}
+
+如果我们想在基于多项式的 DUF（如 $H_{\rm xpoly}$）中使用 Carter-Wegman 构造，我们就必须进行一些调整，使得哈希函数的摘要空间与 PRF 的输出空间相等。同样地，问题在于，在我们的例子中，$H_{\rm xpoly}$ 的输出在 $\mathbb{Z}_p$ 中，而对于典型的实现，PRF 的输出是 $n$ 比特的分组。
+
+与我们在 \ref{subsec:7-3-2} 小节中所做的类似，我们可以选择一个仅比 $2^n$ 稍大一点的素数作为 $p$。这样，我们就可以将哈希函数的输入也看作是 $n$ 比特的分组。练习 7.23 的 (d) 部分将展示如何做到这一点。我们也可以使用一个比 $2^n$ 稍小一点的素数 $p$（见练习 7.23 的 (a) 部分），但这不太方便，因为哈希函数的输入必须被拆分成不大于 $n$ 的分组。另外，我们也可以使用 $H_{\rm xpoly}$ 的一种变体，其中所有的算术运算都在有限域 $\mathrm{GF}(2^n)$ 上，如备注 \ref{remark:7-4} 所述。
