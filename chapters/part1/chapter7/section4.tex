@@ -34,6 +34,13 @@ Carter-Wegman MAC，表示为 $\mathcal{I}_{\rm CW}$，接受 $\mathcal{M}$ 上�
 	\hspace*{26pt} 如果 $v=v^*$ 就输出 $\mathsf{accept}$，否则输出 $\mathsf{reject}$
 \end{itemize}
 
+\begin{figure}
+	\centering
+	\input{figures/chapter7/fig4.tex}
+	\caption{Carter-Wegman MAC 签名算法}
+	\label{fig:7-4}
+\end{figure}
+
 Carter-Wegman 签名算法中使用了一个随机元 $r\in\mathcal{R}$。正如我们将要看到的，集合 $\mathcal{R}$ 需要足够大，以使得两条标签使用同一个随机元 $r$ 的概率可忽略不计。
 
 \begin{snote}[一种加密 UHF MAC。]

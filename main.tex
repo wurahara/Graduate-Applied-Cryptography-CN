@@ -65,28 +65,15 @@
 \textbf{#1}
 }{\vspace*{5pt}}
 
-%\makeatletter
-%\renewenvironment{proof}[1][\proofname]{\par
-%  \pushQED{\qed}%
-%  \normalfont \topsep6\p@\@plus6\p@\relax
-%  \trivlist
-%  \item[\hskip\labelsep
-%        \itshape
-%    #1\@addpunct{}]\ignorespaces
-%}{%
-%  \popQED\endtrivlist\@endpefalse
-%}
-%\makeatother
-
-
-
-
 \begin{document}
 
+\frontmatter
 \maketitle
 
 \input{chapters/part0/preface}
 \tableofcontents
+
+\mainmatter
 
 \input{chapters/part0/index}
 \input{chapters/part1/index}

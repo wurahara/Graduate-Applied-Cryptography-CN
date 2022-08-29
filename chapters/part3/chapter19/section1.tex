@@ -21,7 +21,8 @@
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.55\linewidth]{figures/chapter19/fig1.png}
+%  \includegraphics[width=0.55\linewidth]{figures/chapter19/fig1.png}
+  \input{figures/chapter19/fig1.tex}
   \caption{Schnorr身份识别协议}
   \label{fig:19-1}
 \end{figure}
@@ -142,7 +143,7 @@ $$
 \begin{aligned}
 	(\epsilon-\frac{1}{N})^2
 	&=\epsilon^2-\frac{2\epsilon}{N}+\frac{1}{N^2}\leq\epsilon^2-\frac{2\epsilon}{N}+\frac{\epsilon}{N} \text{\emph{ （因为 }}\epsilon\geq\frac{1}{N}\text{\,）}\\
-	&=\epsilon^2-\frac{\epsilon}{N}\leq \epsilon' \text{ \emph{（式}\ref{eq:19-1} \emph{）}}
+	&=\epsilon^2-\frac{\epsilon}{N}\leq \epsilon' \text{ \emph{（式} \ref{eq:19-1}\,\emph{）}}
 \end{aligned}
 $$
 因此式 \ref{eq:19-2} 得证。
@@ -165,7 +166,7 @@ $$
 \begin{theorem}\label{theo:19-3}
 	如果一个身份识别协议 $\mathcal{I}=(G,P,V)$ 对于直接攻击是安全的，且该协议是 HVZK 的，那么该协议对于窃听攻击也是安全的。
 	\begin{quote}
-		特别地，如果 $\mathcal{I}$ 是带有模拟器 ${Sim}$ 的 HVZK，那么对于每一个通过攻击游戏 18.2 中的窃听攻击来攻击 $\mathcal{I}$ 的冒充对手 $\mathcal{A}$，如果 $\mathcal{A}$ 最多能获得 $Q$ 次交互记录，必然存在一个通过攻击游戏 \ref{game:18-1} 中的直接攻击来攻击 $\mathcal{I}$ 的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是 $\mathcal{A}$ 的一个基本包装器，并且 $\mathcal{B}$ 最多运行 $Q$ 次 ${Sim}$，使得：
+		特别地，如果 $\mathcal{I}$ 是带有模拟器 ${Sim}$ 的 HVZK，那么对于每一个通过攻击游戏 18.2 中的窃听攻击来攻击 $\mathcal{I}$ 的冒充对手 $\mathcal{A}$，如果 $\mathcal{A}$ 最多能获得 $Q$ 次交互记录，必然存在一个通过攻击游戏 \ref{game:18-1} 中的直接攻击来攻击 $\mathcal{I}$ 的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，并且 $\mathcal{B}$ 最多运行 $Q$ 次 ${Sim}$，满足：
 		$${\rm ID2\mathsf{adv}}[\mathcal{A},\mathcal{I}]=
 			{\rm ID1\mathsf{adv}}[\mathcal{B},\mathcal{I}]$$
 	\end{quote}
@@ -177,7 +178,7 @@ $$
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.65\linewidth]{figures/chapter19/fig2.png}
+  \input{figures/chapter19/fig2.tex}
   \caption{定理 \ref{theo:19-3} 的证明中的对手 $\mathcal{B}$}
   \label{fig:19-2}
 \end{figure}
@@ -204,7 +205,7 @@ $$
 	如果 Schnorr 身份识别协议对直接攻击是安全的，那么它对窃听攻击也是安全的。
 	
 	\begin{quote}
-		特别地，对于每个通过攻击游戏 18.2 中的窃听攻击来攻击 $\mathcal{I}_{\rm sch}$ 的冒充对手 $\mathcal{A}$，都有一个通过攻击游戏 \ref{game:18-1} 中的直接攻击来攻击 $\mathcal{I}_{\rm sch}$ 的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是 $\mathcal{A}$ 的一个基本包装器，满足：
+		特别地，对于每个通过攻击游戏 18.2 中的窃听攻击来攻击 $\mathcal{I}_{\rm sch}$ 的冒充对手 $\mathcal{A}$，都有一个通过攻击游戏 \ref{game:18-1} 中的直接攻击来攻击 $\mathcal{I}_{\rm sch}$ 的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
 		$${\rm ID2\mathsf{adv}}[\mathcal{A},\mathcal{I}_{\rm sch}]=
 		{\rm ID1\mathsf{adv}}[\mathcal{B},\mathcal{I}_{\rm sch}]$$
 	\end{quote}

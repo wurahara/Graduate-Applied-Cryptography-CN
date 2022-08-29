@@ -145,9 +145,16 @@
 \noindent
 对手 $\mathcal{B}_F$ 的工作逻辑可参见图 \ref{fig:5-1}。如之前一样，$\delta(x,y)$ 在 $x=y$ 时等于 $1$，否则等于 $0$。
 
+%\begin{figure}
+%  \centering
+%  \includegraphics[width=0.8\linewidth]{figures/chapter5/fig1.png}
+%  \caption{定理 \ref{theo:5-2} 的证明中的对手 $\mathcal{B}_F$}
+%  \label{fig:5-1}
+%\end{figure}
+
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\linewidth]{figures/chapter5/fig1.png}
+  \input{figures/chapter5/fig1.tex}
   \caption{定理 \ref{theo:5-2} 的证明中的对手 $\mathcal{B}_F$}
   \label{fig:5-1}
 \end{figure}
@@ -216,9 +223,16 @@ $\mathcal{\bar{B}}_\mathcal{E}$ 扮演 $\mathcal{A}$ 的挑战者，在收到 $\
 \end{quote}
 对手 $\mathcal{\bar{B}}_\mathcal{E}$ 的工作原理见图 \ref{fig:5-2}。
 
+%\begin{figure}
+%  \centering
+%  \includegraphics[width=0.8\linewidth]{figures/chapter5/fig2.png}
+%  \caption{定理 \ref{theo:5-2} 的证明中的对手 $\mathcal{\bar{B}}_\mathcal{E}$}
+%  \label{fig:5-2}
+%\end{figure}
+
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\linewidth]{figures/chapter5/fig2.png}
+  \input{figures/chapter5/fig2.tex}
   \caption{定理 \ref{theo:5-2} 的证明中的对手 $\mathcal{\bar{B}}_\mathcal{E}$}
   \label{fig:5-2}
 \end{figure}
@@ -267,11 +281,24 @@ $\mathcal{\bar{B}}_\mathcal{E}$ 扮演 $\mathcal{A}$ 的挑战者，在收到 $\
 
 不难验证 $\mathcal{E}$ 确实是一个（概率性）密码。另外，需要注意的是，$\mathcal{E}$ 的消息空间是可变长的，如果想要使用攻击游戏 \ref{game:5-2} 定义的 CPA 安全性，消息 $m\in\mathcal{Y}^{\leq\ell}$ 的长度应当是其自然长度 $|m|$。
 
-\begin{figure}[p!]
-  \centering
-  \subfigure[加密]{\includegraphics[width=0.65\linewidth]{figures/chapter5/fig3-a.png}}
+%\begin{figure}[p!]
+%  \centering
+%  \subfigure[加密]{\includegraphics[width=0.65\linewidth]{figures/chapter5/fig3-a.png}}
+%
+%  \subfigure[解密]{\includegraphics[width=0.65\linewidth]{figures/chapter5/fig3-b.png}}
+%  \caption{随机化计数器模式($v=3$)}
+%  \label{fig:5-3}
+%\end{figure}
 
-  \subfigure[解密]{\includegraphics[width=0.65\linewidth]{figures/chapter5/fig3-b.png}}
+\begin{figure}
+  \centering
+  \subfigure[加密]{\input{figures/chapter5/fig3-a.tex}}
+  
+  \,
+  
+  \,
+  
+  \subfigure[解密]{\input{figures/chapter5/fig3-b.tex}}
   \caption{随机化计数器模式($v=3$)}
   \label{fig:5-3}
 \end{figure}
@@ -472,11 +499,24 @@ IPsec 协议使用 RFC 3686 中规定的 AES 计数器模式的一个特殊的�
 
 不难验证 $\mathcal{E}'$ 确实是一个（概率性）密码。另外，需要注意的是，$\mathcal{E}$ 的消息空间是可变长的，如果想要使用攻击游戏 \ref{game:5-2} 定义的 CPA 安全性，消息 $m\in\mathcal{X}^{\leq\ell}$ 的长度应当是其自然长度 $|m|$。
 
+%\begin{figure}[p!]
+%  \centering
+%  \subfigure[加密]{\includegraphics[width=0.65\linewidth]{figures/chapter5/fig4-a.png}}
+%
+%  \subfigure[解密]{\includegraphics[width=0.65\linewidth]{figures/chapter5/fig4-b.png}}
+%  \caption{$\ell=3$时CBC模式的加密和解密}
+%  \label{fig:5-4}
+%\end{figure}
+
 \begin{figure}[p!]
   \centering
-  \subfigure[加密]{\includegraphics[width=0.65\linewidth]{figures/chapter5/fig4-a.png}}
-
-  \subfigure[解密]{\includegraphics[width=0.65\linewidth]{figures/chapter5/fig4-b.png}}
+  \subfigure[加密]{\input{figures/chapter5/fig4-a.tex}}
+  
+  \,
+  
+  \,
+  
+  \subfigure[解密]{\input{figures/chapter5/fig4-b.tex}}
   \caption{$\ell=3$时CBC模式的加密和解密}
   \label{fig:5-4}
 \end{figure}

@@ -1,0 +1,83 @@
+\section{有限域上的椭圆曲线}\label{sec:15-2}
+
+式 \ref{eq:15-1} 中的曲线是定义在有理数上的椭圆曲线的一个例子。对于密码学应用，我们主要关心有限域上的椭圆曲线。简单起见，我们只考虑定义在有限域 $\mathbb{F}_p$ 上的椭圆曲线，其中 $p>3$ 是一个素数。
+
+\begin{definition}\label{def:15-1}
+令 $p>3$ 是一个素数，则定义在 $\mathbb{F}_p$ 上的\textbf{椭圆曲线 (elliptic curve)} $E$ 满足方程：
+\begin{equation}\label{eq:15-3}
+y^2=x^3+ax+b
+\end{equation}
+其中 $a,b\in\mathbb{F}_p$ 满足 $4a^3+27b^2\neq0$。我们用 $E/\mathbb{F}_p$ 表示椭圆曲线 $E$ 定义在 $\mathbb{F}_p$ 上。
+\end{definition}
+
+条件 $4a^3+27b^2\neq0$ 确保方程 $x^3+ax+b=0$ 不存在重根。这是为了避免曲线退化所必须的。
+
+\begin{snote}[椭圆曲线上的点集。]
+令 $E/\mathbb{F}_p$ 是一条椭圆曲线，并令 $e\geq 1$。对于点 $(x_1,y_1)$，其中 $x_1,y_1 \in \mathbb{F}_{p^e}$，如果该点满足式 \ref{eq:15-3} 的曲线方程，我们就称该点\textbf{在椭圆曲线$E$上}。当 $e=1$ 时，我们称点 $(x_1,y_1)$ 定义在基域 $\mathbb{F}_p$ 上。而当 $e>1$ 时，我们称点 $(x_1,y_1)$ 定义在 $\mathbb{F}_p$ 的一个扩展域上。
+
+曲线中还包含一个额外的``特殊"点 $\mathcal{O}$，称为\textbf{无穷远点 (the point at infinity)}。稍后我们就会明白定义该点的意义。我们用 $E(\mathbb{F}_{p^e})$ 表示曲线 $E$ 上所有定义在 $\mathbb{F}_{p^e}$ 上的点的集合，包括点 $\mathcal{O}$。
+
+举个例子，考虑一条定义在 $\mathbb{F}_{11}$ 上的椭圆曲线 $E: y^2=x^3+1$。于是：
+\begin{equation}\label{eq:15-4}
+E(\mathbb{F}_{11})=\left\{\mathcal{O},\,(-1,0),\,(0,\pm1),\,(9,\pm2),\,(6,\pm3),\,(8,\pm4),\,(3,\pm5)\right\}
+\end{equation}
+该曲线有 $12$ 个 $\mathbb{F}_{11}$ 上的点，所以我们记 $|E(\mathbb{F}_{11})|=12$。
+
+Hasse 的一个经典结论表明 $|E(\mathbb{F}_{p^e})|=p^e+1-t$，其中 $t$ 是一个区间 $|t|\leq 2\sqrt{p^e}$ 中的整数。这表明 $E(\mathbb{F}_{p^e})$ 上点的数量接近 $p^e+1$。式 \ref{eq:15-4} 中的集合 $E(\mathbb{F}_p)$ 正好有 $p+1$ 个点（因此有 $t=0$）。
+\end{snote}
+
+\begin{remark}\label{remark:15-1}
+Schoof 的一个优雅的算法可以用于计算 $E(\mathbb{F}_{p^e})$ 中点的数量，其时间复杂度为 $\log(p^e)$ 的一个多项式。因此，即使对于一个很大的素数 $p$，我们也可以有效地计算出 $|E(\mathbb{F}_{p^e})|$。
+\end{remark}
+
+\begin{snote}[加法法则。]
+正如我们在上一节中所讨论的，存在一个非常自然的定义在椭圆曲线的点集上的群操作法则。该群操作可以使用符号``$\boxplus$"来表示点的加法。我们将无穷远处的点 $\mathcal{O}$ 定义为单位元：对于所有的 $P\in E(\mathbb{F}_{p^e})$，我们定义 $P\boxplus\mathcal{O}=\mathcal{O} \boxplus P=P$。
+
+现在，令 $P=(x_1, y_1)$ 和 $Q=(x_2,y_2)$ 为 $E(\mathbb{F}_{p^e})$ 上的两个点。那么，这两点的和 $P\boxplus Q$ 由以下三条规则之一定义：
+\begin{itemize}
+	\item 如果 $x_1 \neq x_2$，我们使用割弦法。令 $s_\mathrm{c}:=(y_1-y_2)/(x_1-x_2)$ 为经过点 $P$ 和点 $Q$ 的直线的斜率。定义：
+		\[
+			x_3:=s_\mathrm{c}^2-x_1-x_2
+			\quad\text{and}\quad
+			y_3:=s_\mathrm{c}(x_1-x_3)-y_1
+		\]
+	\item 如果 $x_1=x_2$ 且 $y_1=y_2$（即 $P=Q$），但 $y_1 \neq0$，我们使用切线法。令 $s_\mathrm{t}:=(3x_1^2+a)/(2y_1)$ 为曲线在点 $P$ 处的切线的斜率。定义：
+		\[
+			x_3:=s_\mathrm{t}^2-2x_1
+			\quad\text{and}\quad
+			y_3:=s_\mathrm{t}(x_1-x_3)-y_1
+		\]
+	\item 如果 $x_1=x_2$ 且 $y_1=-y_2$，则定义 $P\boxplus Q:=\mathcal{O}$。
+\end{itemize}
+这个加法法则保证 $E(\mathbb{F}_{p^e})$ 必然是一个群，且该群的单位元就是无穷远点。每个点 $\mathcal{O}\neq P=(x_1,y_1)\in E(\mathbb{F}_{p^e})$ 都有一个加法逆元，即 $-P=(x_1,-y_1)$。最后，我们可以证明，这个加法法则具有结合性。群上的操作显然是可交换的，对于所有的 $P,Q \in E(\mathbb{F}_{p^e})$，我们都有 $P\boxplus Q=Q\boxplus P$，所以该群也必然是一个阿贝尔群。
+
+就像其他群中那样，对于一个点 $P\in E(\mathbb{F}_{p^e})$，我们记 $2P:=P\boxplus P$，$3P:=P\boxplus P\boxplus P$，以此类推。更一般地，对于任意正整数 $\alpha$，我们都有 $\alpha P = (\alpha - 1)P \boxplus P$。注意到，使用平方求幂算法（见附录 \ref{chap:apdx-1}），$\alpha P$ 的计算可以用最多 $2\log_2\alpha$ 次群操作完成。
+\end{snote}
+
+\subsection{Montgomery 曲线和 Edwards 曲线}
+
+式 \ref{eq:15-3} 中的椭圆曲线方程被称为曲线的 \textbf{Weierstrass 形式}。还有有许多等价的描述椭圆曲线的方法，有些比 Weierstrass 形式更适合计算。我们下面举两个例子。
+
+\begin{snote}[Montgomery 曲线。]
+用变量 $u$ 和 $v$ 表示的 \textbf{Montgomery 曲线} $E/\mathbb{F}_p$ 可以被写为：
+\[
+Bv^2=u^3+Au^2+u
+\]
+其中 $A,B\in\mathbb{F}_p$，且 $B(A^2-4)\neq0$。令 $u=Bx-{A/3}$ 和 $v=By$，我们就可以将该曲线方程改写为 Weierstrass 形式。Montgomery 曲线上的点的数量 $|E(\mathbb{F}_{p^e})|$ 总是能被 $4$ 整除。练习 15.4 探讨了 Montgomery 曲线在计算上的优势。它们也会在下一节中出现。
+
+一些定义在 $\mathbb{F}_p$ 上的 Weierstrass 曲线不能通过变量代换被转换成 $\mathbb{F}_p$ 上的 Montgomery 曲线。比如说，如果 Weierstrass 曲线在 $\mathbb{F}_p$ 上有奇数个点，那么它在 $\mathbb{F}_p$ 上就没有 Montgomery 形式。这样的 Weierstrass 曲线就无法受益于 Montgomery 曲线带来的速度提升了。下一节中将要讨论的曲线 P256 就是一个这样的曲线的例子。
+\end{snote}
+
+\begin{snote}[Edwards 曲线。]
+另一种描述椭圆曲线 $E/\mathbb{F}_p$ 的途径是 Edwards 形式，它形如：
+\[
+x^2+y^2=1+dx^2y^2
+\]
+其中 $d\in\mathbb{F}_p$ 满足 $d\neq0,1$。同样地，这条曲线可以通过一个简单的变量代换转换成 Weierstrass 形式。Edwards 形式的优雅之处在于，弦和切线的加法法则非常容易描述。对于 $E(\mathbb{F}_{p^e})$ 中的点 $P=(x_1,y_1)$ 和 $Q=(x_2,y_2)$，我们定义：
+\[
+P\boxplus Q=\left(\frac{x_1y_2+x_2y_1}{1+dx_1x_2y_1y_2},\;\frac{y_1y_2-x_1x_2}{1-dx_1x_2y_1y_2}\right)
+\]
+这就足够了。现在，我们不再需要三条单独的规则了。在这个形式下，单位元是点 $\mathcal{O}=(0,1)$，而点 $(x_1,y_1)$ 的逆元是 $(-x_1,y_1)$。点 $(\pm 1,0)$ 的阶数为 $4$，这意味着 Edwards 曲线上点的个数 $|E(\mathbb{F}_{p^e})|$ 总是能被 $4$ 整除。
+
+Edwards 曲线上加法法则的简单性使得它更容易抵御 \ref{sec:17-6} 节中介绍的计时攻击。同时，这也使得它拥有更加快速的实现。
+\end{snote}

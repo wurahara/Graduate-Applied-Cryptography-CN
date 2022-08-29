@@ -1,1 +1,89 @@
-\section{无条件安全的一次性MAC}
+\section{无条件安全的一次性MAC}\label{sec:7-6}
+
+在第\ref{chap:2}章中，我们看到，只要密钥只被用于加密单一消息，一次性密码本就能提供无条件的安全性。即使是以指数级时间运行的算法也不能打破一次性密码本的语义安全性。不幸的是，如果密钥被使用超过一次，其安全性就完全丧失了。
+
+在本节中，我们对 MAC 提出一个类似的问题：如果密钥只被用来为单条消息提供完整性，那么，我们能否建立一个无条件安全的``一次性 MAC"？
+
+我们可以使用为定义 MAC 安全性的标准 MAC 攻击游戏 \ref{game:6-1} 来模拟一次性 MAC。为了捕捉 MAC 的一次性属性，我们允许对手只发出\emph{一个}签名查询。我们用 $\mathrm{MAC}_1\mathsf{adv}[\mathcal{A},\mathcal{I}]$ 来表示对手在这个受限的游戏中的优势。这个游戏抓住了这样一个事实，即对手只能看到一个信息-标签对，然后试图用这个数对构造一个存在性伪造。
+
+无条件安全意味着，$\mathrm{MAC}_1\mathsf{adv}[\mathcal{A},\mathcal{I}]$ 对所有对手 $\mathcal{A}$ 来说都是可忽略不计的，即使是计算性无界的对手。在本节中，我们将展示如何使用哈希函数来实现有效且无条件安全的一次性 MAC。
+
+\subsection{成对不可预测函数}\label{subsec:7-6-1}
+
+令 $H$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数。直观地说，如果下述情况对随机选出的密钥 $k\in\mathcal{K}$ 成立，那么 $H$ 就是一个\textbf{成对不可预测函数 (pairwise unpredictable function)}：给定值$H(k,m_0)$，对于任意 $m_1\neq m_0$，都很难预测 $H(k,m_1)$。和之前一样，我们用一个攻击游戏来严格定义这个概念。
+
+\begin{game}[成对不可预测性]\label{game:7-5}
+对于一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数 $H$ 以及一个给定对手 $\mathcal{A}$，攻击游戏运行如下：
+\begin{itemize}
+	\item 挑战者随机选取一个 $k\overset{\rm R}\leftarrow\mathcal{K}$，并自己保留 $k$。
+	\item $\mathcal{A}$ 向挑战者发送一条消息 $m_0\in\mathcal{M}$，挑战者应答 $t_0=H(k,m_0)$。
+	\item $\mathcal{A}$ 输出 $(m_1,t_1)\in\mathcal{M}\times\mathcal{T}$，其中 $m_1\neq m_0$。
+\end{itemize}
+如果 $t_1=H(k,m_1)$，我们就称 $\mathcal{A}$ 赢得了该游戏。我们将 $\mathcal{A}$ 就 $H$ 的优势记为 $\mathrm{PUF}\mathsf{adv}[\mathcal{A},H]$，即 $\mathcal{A}$ 赢得该游戏的概率。
+\end{game}
+
+\begin{definition}\label{def:7-7}
+如果对于所有对手 $A$（甚至是非有效对手），都有 $\mathrm{PUF}\mathsf{adv}[\mathcal{A},H]\leq\epsilon$，我们就称 $H$ 是一个 \textbf{$\epsilon$-约束成对不可预测函数 ($\epsilon$-bounded pairwise unpredictable function)}，简称 \textbf{$\epsilon$-PUF}。
+\end{definition}
+
+显然，如果 $H$ 是一个$\epsilon$-PUF，那么 $H$ 也是一个 $\epsilon$-UHF；此外，如果 $\mathcal{T}$ 形如 $\mathbb{Z}_N$（或者像备注 \ref{remark:7-3} 中那样是一个阿贝尔群），那么 $H$ 也是一个 $\epsilon$-DUF。
+
+\subsection{构建不可预测函数}\label{subsec:7-6-2}
+
+到目前为止，我们知道，任何 $\epsilon$-PUF 也都是 $\epsilon$-DUF，反之亦然（见练习 7.28）。然而，我们表明，任何 $\epsilon$-DUF 都可以被调整成为一个 $\epsilon$-PUF。这种调整需要增加密钥的长度。
+
+令 $H$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的哈希函数，其中 $\mathcal{T}=\mathbb{Z}_N$，$N$ 为某个函数。下面，我们建立一个新的哈希函数 $H'$，它由 $H$ 派生而来，且其输入空间与输出空间与 $H$ 相同，但其密钥空间是 $\mathcal{K}\times\mathcal{T}$。函数 $H'$ 的定义如下：
+\begin{equation}\label{eq:7-32}
+H'\big((k_1,k_2),\,m\big)=H(k_1,m)+k_2\quad\in\mathcal{T}
+\end{equation}
+
+\begin{lemma}\label{lemma:7-11}
+如果 $H$ 是一个 $\epsilon$-DUF，那么 $H'$ 也是一个 $\epsilon$-PUF。
+\end{lemma}
+
+\begin{proof}
+令 $\mathcal{A}$ 是一个攻击 $H'$ 的对手，行为与一个 PUF 相似。$\mathcal{A}$ 发起一个查询 $m_0$，然后收到 $t_0:=H(k_1,m_0)+k_2$ 作为应答。注意到 $t_0$ 均匀分布在 $\mathcal{T}$ 上，并且与 $k_1$ 无关。更重要的是，如果 $\mathcal{A}$ 对 $H(k_1,m_1)+k_2$ 的预测值 $t_1$ 是正确的，那么 $t_1-t_0$ 就是差值 $H(k_1,m_1)-H(k_1,m_0)$ 的正确预测值。
+
+因此，我们可以定义一个 DUF 对手 $\mathcal{B}$ 如下：它运行 $\mathcal{A}$，当 $\mathcal{A}$ 提交其查询 $m_0$ 时，$\mathcal{B}$ 应答一个随机的 $t_0\in\mathcal{T}$；当 $\mathcal{A}$ 输出 $(m_1,t_1)$ 时，对手 $\mathcal{B}$ 输出 $(m_0,m_1,t_1-t_0)$。显然有：
+\[
+\mathrm{PUF}\mathsf{adv}[\mathcal{A},H']\leq\mathrm{DUF}\mathsf{adv}[\mathcal{B},H]\leq\epsilon\qedhere
+\]
+\end{proof}
+
+特别是，引理 \ref{lemma:7-11} 展示了如何将式 \ref{eq:7-23} 中定义的函数 $H_\mathrm{xpoly}$ 转换成一个 $(l+1)/p$-PUF。我们可以得到下面这个定义在 $(\mathbb{Z}_p^2,\,\mathbb{Z}_p^{\leq\ell},\,\mathbb{Z}_p)$ 上的带密钥哈希函数：
+\begin{equation}\label{eq:7-33}
+H_\mathrm{xpoly}'\big((k_1,k_2),\,(a_1,\dots,a_v)\big):=k_1^{v+1}+a_1k_1^v+\cdots+a_vk_1+k_2
+\end{equation}
+
+\subsection{从 PUF 到无条件安全的一次性 MAC}\label{subsec:7-6-3}
+
+现在，让我们回到建立无条件安全的一次性 MAC 的问题上。事实上，PUF 正好是一个非常适合这项工作的工具。
+
+令 $H$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数。我们可以用 $H$ 来定义\textbf{由 $H$ 派生}的 MAC 系统 $\mathcal{I}=(S,V)$：
+
+\vspace{5pt}
+
+\hspace*{5pt} $S(k,\,m):=H(k,\,m)$
+
+\vspace{5pt}
+
+\hspace*{5pt} $
+V(k,\,m,\,t):=
+\left\{
+	\begin{array}{ll}
+		\mathsf{accept}, & \text{if }H(k,m)=t\\
+		\mathsf{reject}, & \text{otherwise}
+	\end{array}
+\right.
+$
+
+\vspace{8pt}
+
+\noindent
+下面的定理表明，PUF 是一次性密码本在 MAC 中的类比，因为两者都为一次性的使用提供了无条件的安全性。从定义就可以直接得到对该结论的证明。
+
+\begin{theorem}\label{theo:7-12}
+令 $H$ 是一个$\epsilon$-PUF，$\mathcal{I}$ 是由 $H$ 派生的 MAC 系统，那么对于所有的对手 $\mathcal{A}$（甚至是非有效的对手），我们都有 $\mathrm{MAC}_1\mathsf{adv}[\mathcal{A},\mathcal{I}]\leq\epsilon$。
+\end{theorem}
+
+\ref{subsec:7-6-2} 小节中的 PUF 构造与 Carter-Wegman MAC 非常相似。唯一的区别是 PRF 被一个真随机的填充 $k_2$ 所取代。因此，定理 \ref{theo:7-12} 表明，带有真随机填充的 Carter-Wegman MAC 也是一个无条件安全的一次性 MAC。

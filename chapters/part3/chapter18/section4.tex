@@ -14,7 +14,7 @@ $$
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.3\linewidth]{figures/chapter18/fig4.png}
+  \input{figures/chapter18/fig4.tex}
   \caption{口令文件（版本2）}
   \label{fig:18-4}
 \end{figure}
@@ -60,7 +60,7 @@ $$
 	\begin{equation}
 	{\rm OWsp^{ro}\mathsf{adv}}[\mathcal{A},H]
 	\leq
-	O(\frac{\ell\cdot Q_{\rm ro}}{|\mathcal{S}|\cdot |\mathcal{D}|}+\frac{Q_{\rm ro}}{|\mathcal{D}|})	
+	O\left(\frac{\ell\cdot Q_{\rm ro}}{|\mathcal{S}|\cdot |\mathcal{D}|}+\frac{Q_{\rm ro}}{|\mathcal{D}|}\right)	
 	\end{equation}
 \end{theorem}
 
@@ -78,7 +78,7 @@ $$
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.45\linewidth]{figures/chapter18/fig5.png}
+  \input{figures/chapter18/fig5.tex}
   \caption{口令文件（版本3）}
   \label{fig:18-5}
 \end{figure}
@@ -159,9 +159,28 @@ PBKDF2 的一个重要问题是它容易受到并行硬件攻击。我们知道�
 需要大量内存的哈希函数被称为\textbf{内存困难函数}。已经有一些符合要求的内存难度哈希函数，这些函数能够在随机预言机模型下被严格证明是内存困难的。在我们讨论安全问题之前，让我们先看看一个流行的结构，叫做\textbf{Scrypt}。Scrypt是由一个内存容易的哈希函数$h:\mathcal{X}\rightarrow\mathcal{X}$，其中$\mathcal{X}:=\{0,1\}^n$。得到的函数记作$\text{Scrypt}_h$，如图 \ref{fig:18-6} 所示。
 
 \begin{figure}
-  \centering
-  \includegraphics[width=0.85\linewidth]{figures/chapter18/fig6.png}
-  \caption{函数$\text{Scrypt}_h(x_0,d)$}
+    \hspace*{5pt} 输入：$x_0\in\mathcal{X}$，难度 $d\in\mathbb{Z}^{>0}$
+
+	\vspace{3pt}
+
+	\hspace*{5pt} 1.
+	\hspace*{20pt} 对于 $i=1,\dots,d$： 令 $x_i\leftarrow h(x_{i-1})$
+	\hspace*{20pt} //\quad\emph{那么}$x_i=h^{(i)}(x_0)$\\
+	\hspace*{5pt} 2.
+	\hspace*{20pt} 令 $y_0\leftarrow x_d$\\
+	\hspace*{5pt} 3.
+	\hspace*{20pt} 对于 $i=1,\dots,d$：\\
+	\hspace*{5pt} 4.
+	\hspace*{50pt} 令 $j\leftarrow\mathrm{int}(y_{i-1})\bmod(d+1)$
+	\hspace*{16pt} //\quad$\mathrm{int}(y_{i-1})$\emph{将}$y_{i-1}\in\mathcal{X}$\emph{转换为一个整数}\\
+	\hspace*{5pt} 5.
+	\hspace*{50pt} 令 $y_i\leftarrow h(y_{i-1}\oplus x_j)$
+	\hspace*{52pt} //\quad\emph{从数组}$(x_0,\dots,x_d)$\emph{中读取一个随机位置}
+	
+	\vspace{3pt}
+	
+	\hspace*{5pt} 输出 $y_d\in\mathcal{X}$
+	\caption{函数$\mathrm{Scrypt}_h(x_0,d)$}
   \label{fig:18-6}
 \end{figure}
 
@@ -250,7 +269,7 @@ $$\mathcal{A}:\mathcal{X}\times\mathcal{S}\times\mathcal{Z}^{\leq p}\to\mathcal{
 
 现在，假设对手捕获了一个哈希值 $y$，它是将式 \ref{eq:18-8} 中介绍的Scrypt PBKDF应用于某个带有公共盐的口令 $pw$ 的结果。通常情况下，对手需要发起一个字典攻击，每次尝试都需要大量的时间和\emph{内存}。然而如果对手掌握了进程 $P$ 在计算$pw$的Scrypt哈希时的的内存访问模式，它就可以用很少的内存对 $pw$ 进行字典攻击。
 
-为了说明如何实现攻击，让我们回顾一下图 \ref{fig:18-6} 中所介绍的Scrypt 的实现。算法在第一次执行第 5 步时，需要从数组$(x_0,\dots,x_d)$读取$j$号元素，其中$j={\rm int}(y_0)\mod(d+1)$。
+为了说明如何实现攻击，让我们回顾一下图 \ref{fig:18-6} 中所介绍的Scrypt 的实现。算法在第一次执行第 5 步时，需要从数组$(x_0,\dots,x_d)$读取$j$号元素，其中$j={\rm int}(y_0)\bmod(d+1)$。
 
 通过观察 $P$ 对内存的访问，对手可以看到算法第一次执行第5步时读取了哪一页的内存，这就给了对手一个 $j$ 的近似值 $j_a$。由于一个内存页中可能存储了多个数组单元，所以对手并没有办法获取 $j$ 的精确值。尽管如此，这个 $j_a$ 也足以使用有限的内存来测试一个可能的口令$pw'$，方法是：
 \begin{enumerate}

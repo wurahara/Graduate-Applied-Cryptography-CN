@@ -177,7 +177,7 @@ DX((k,P_1,P_2),\;y)=D(k,\;y\oplus P_2)\oplus P_1
 \end{equation}
 \end{theorem}
 \noindent
-为了理解 $\mathcal{E}X$ 构造的安全增益，不妨考虑以下情况：将 $\mathcal{E}$ 建模为理想密码模型，那么对于所有的 $\mathcal{A}$，我们都有${\rm BC^{ic}\mathsf{adv}}[\mathcal{A},\mathcal{E}]\leq\frac{Q_{\rm ic}}{|\mathcal{K}|}$。因此，定理 \ref{theo:4-14} 表明，在理想密码模型下，将 $\mathcal{E}X$ 构造应用于 $\mathcal{E}$，会将对手的最大优势缩小 $\frac{2Q_{\rm s}}{|\mathcal{X}'|}$ 倍。
+为了理解 $\mathcal{E}X$ 构造的安全增益，不妨考虑以下情况：将 $\mathcal{E}$ 建模为理想密码模型，那么对于所有的 $\mathcal{A}$，我们都有${\rm BC^{ic}\mathsf{adv}}[\mathcal{A},\mathcal{E}]\leq{Q_{\rm ic}}/{|\mathcal{K}|}$。因此，定理 \ref{theo:4-14} 表明，在理想密码模型下，将 $\mathcal{E}X$ 构造应用于 $\mathcal{E}$，会将对手的最大优势缩小 ${2Q_{\rm s}}/{|\mathcal{X}'|}$ 倍。
 
 定理 \ref{theo:4-14} 中的上界是严格的，存在一个对手 $\mathcal{A}$ 能实现式 \ref{eq:4-38} 中所示的优势。即使在独立选择 $P_1$ 和 $P_2$ 时，这个 $\mathcal{A}$ 的优势也不会改变。因此，我们不妨总是选择 $P_2=P_1$。
 

@@ -1,1 +1,67 @@
-\section{基于nonce的MAC}
+\section{基于nonce的MAC}\label{sec:7-5}
+
+在Carter-Wegman构造（见 \ref{sec:7-4} 节）中，我们只要求随机元满足一个基本属性，即它们是各不相同的。这就促使我们研究基于 nonce 的MAC，它其实就是对基于 nonce 的加密（见 \ref{sec:5-5} 节）的一种类比。这种方法不仅可以减少标签的大小，还可以提高安全性。
+
+\textbf{基于 nonce 的 MAC} 与普通的 MAC 类似，由一对\emph{确定性}算法 $S$ 和 $V$ 组成，分别用于签署和验证标签。然而，这些算法还需要一个额外的输入 ${\scriptstyle\mathpzc{N}}$，称为 nonce，它位于一个 \textbf{nonce 空间} $\mathpzc{N}$ 中。算法 $S$ 和 $V$ 的工作方式如下：
+\begin{itemize}
+	\item $S$ 接受一个密钥 $k\in\mathcal{K}$，一条消息 $m\in\mathcal{M}$ 和一个 nonce ${\scriptstyle\mathpzc{N}}\in\mathpzc{N}$ 作为输入，输出一个标签 $t\in\mathcal{T}$。
+	\item $V$ 接受四个值 $k,m,t,{\scriptstyle\mathpzc{N}}$ 作为输入，其中 $k$ 是一个密钥，$m$ 是一条消息，$t$ 是一个标签，而 ${\scriptstyle\mathpzc{N}}$ 是一个 nonce。它输出 $\mathsf{accept}$ 或 $\mathsf{reject}$。
+\end{itemize}
+我们称基于 nonce 的 MAC 定义在 $(\mathcal{K},\mathcal{M},\mathcal{T},\mathpzc{N})$ 上。和之前一样，我们要求，\emph{只要 $S$ 和 $V$ 被赋予相同的 nonce}，那么由 $S$ 生成的标签总是会被 $V$ 接受。MAC 必须满足下面所述的\textbf{正确性属性}：对于所有的密钥 $k$，所有的消息 $m$ 以及所有的 nonce ${\scriptstyle\mathpzc{N}}\in\mathpzc{N}$，都有：
+\[
+\Pr\big[
+V(k,\,m,\,S(k,m,{\scriptstyle\mathpzc{N}}),\,{\scriptstyle\mathpzc{N}})=\mathsf{accept}
+\big]
+=1
+\]
+
+正如 \ref{sec:5-5} 节所述，为了确保安全性，发送方应避免（在同一密钥上）使用两次相同的 nonce。如果发送方能够维护状态，那么它就可以用一个简单的计数器来实现 nonce。此外，它也可以随机选择 nonce，只要 nonce 空间足够大，它就可以确保两次产生相同 nonce 的概率可忽略不计。
+
+\subsection{安全的基于 nonce 的 MAC}\label{subsec:7-5-1}
+
+当 nonce 是由对手选取的时候，基于 nonce 的 MAC 在选择消息攻击下必然是存在性不可伪造的。然而，对手决不可以使用以前曾经被使用过的 nonce 来请求标签。这抓住了一个想法，即只要 nonce 不被重复使用，就可以由任意的选取得到。基于 nonce 的 MAC 的安全性由下面的攻击游戏定义。
+
+\begin{game}[基于 nonce 的 MAC 的安全性]\label{game:7-4}
+对于一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T},\mathpzc{N})$ 上的给定的基于 nonce 的 MAC 系统 $\mathcal{I}=(S,V)$ 以及一个给定对手 $\mathcal{A}$，攻击游戏运行如下：
+\begin{itemize}
+	\item 挑战者随机选取一个 $k\overset{\rm R}\leftarrow\mathcal{K}$。
+	\item $\mathcal{A}$ 对挑战者发起多次查询。对于 $i=1,2,\dots$，第 $i$ 次签名查询是一个数对 $(m_i,{\scriptstyle\mathpzc{N}}_i)$，其中 $m_i\in\mathcal{M}$，${\scriptstyle\mathpzc{N}}_i\in\mathpzc{N}$。我们要求，对于所有的 $j<i$，都有 ${\scriptstyle\mathpzc{N}}_i\neq{\scriptstyle\mathpzc{N}}_j$。挑战者计算 $t_i\overset{\rm R}\leftarrow S(k,m_i,{\scriptstyle\mathpzc{N}}_i)$，并将 $t_i$ 发送给 $\mathcal{A}$。 
+	\item 最终，$\mathcal{A}$ 输出一个候选的伪造三元组$(m,t,{\scriptstyle\mathpzc{N}})\in\mathcal{M}\times\mathcal{T}\times\mathpzc{N}$，其中：
+	\[
+	(m,t,{\scriptstyle\mathpzc{N}})\notin\{(m_1,t_1,{\scriptstyle\mathpzc{N}}_1),\,(m_2,t_1,{\scriptstyle\mathpzc{N}}_2),\,\dots\}
+	\]
+\end{itemize}
+如果$V(k,m,t,{\scriptstyle\mathpzc{N}})=\mathsf{accept}$，我们就称 $\mathcal{A}$ 赢得了该游戏。我们将 $\mathcal{A}$ 就 $\mathcal{I}$ 的优势定义为 $\mathrm{nMAC}\mathsf{adv}[\mathcal{A},\mathcal{I}]$，即 $\mathcal{A}$ 赢得该游戏的概率。
+\end{game}
+
+\begin{definition}\label{def:7-6}
+如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{nMAC}\mathsf{adv}[\mathcal{A},\mathcal{I}]$ 的值都可忽略不计，我们就称基于 nonce 的 MAC 系统 $\mathcal{I}$ 是安全的。
+\end{definition}
+
+\begin{snote}[基于 nonce 的 Carter-Wegman MAC。]
+Carter-Wegman MAC（见 \ref{sec:7-4} 节）可以被重构为一个基于 nonce 的 MAC：我们简单地将随机元 $r\in\mathcal{R}$ 视作一个 nonce，将它作为输入，而不是标签的一个随机生成的部分，提供给签名算法。使用 \ref{sec:7-4} 节中的符号，这样的 MAC 系统就形如：
+\[
+\begin{aligned}
+	S\big((k_1,k_2),\,m,\,{\scriptstyle\mathpzc{N}}\big) & := H(k_1,m)+F(k_2,{\scriptstyle\mathpzc{N}})\\
+	V\big((k_1,k_2),\,m,\,t,\,{\scriptstyle\mathpzc{N}}\big) & :=
+	\left\{
+	\begin{array}{ll}
+		\mathsf{accept}, & t=S\big((k_1,k_2),\,m,\,{\scriptstyle\mathpzc{N}}\big)\\
+		\mathsf{reject}, & \text{otherwise}
+	\end{array}
+	\right.
+\end{aligned}
+\]
+我们可以得到下面的安全定理，它是定理 \ref{theo:7-9} 的一个基于 nonce 的版本。该定理的证明与定理 \ref{theo:7-9} 基本相同。
+\end{snote}
+
+\begin{theorem}\label{theo:7-10}
+使用定理 \ref{theo:7-9} 中的符号，我们有以下约束：
+\[
+\mathrm{nMAC}\mathsf{adv}[\mathcal{A},\mathcal{I}_\mathrm{CW}]\leq\mathrm{PRF}\mathsf{adv}[\mathcal{B}_F,F]+\mathrm{DUF}\mathsf{adv}[\mathcal{B}_H,H]+\frac{1}{|\mathcal{T}|}
+\]
+\end{theorem}
+
+这个约束比式 \ref{eq:7-24} 要严格得多：$Q^2$ 这一项已经没有了。当然，它之所以消失了，是因为我们坚持同一个 nonce 不会被使用两次。如果 nonce 实际上是由签名者随机生成的，那么 $Q^2$ 项就仍然需要加回来；然而，如果签名者将 nonce 作为一个计数器来实现，那么我们就可以避免 $Q^2$ 这项——唯一的要求是签名者不会签署超过 $|\mathcal{R}|$ 个值。关于 $F$ 的实现，请参见练习 7.12，该练习探讨了一个比较具体的问题。
+
+与备注 \ref{remark:7-6} 中的讨论类似，当使用基于 nonce 的 Carter-Wegman MAC 时，至关重要的是 nonce 不能被重复用于不同的消息上。如果发生这种情况，Carter-Wegman MAC 就可能会被完全破坏——见练习 7.13 和 7.14。

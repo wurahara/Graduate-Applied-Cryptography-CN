@@ -18,7 +18,7 @@ m=D(k,c,{\scriptstyle\mathpzc{N}})
 \]
 其目的是，用特定的 nonce 加密的消息应该能用相同的 nonce 解密，而这取决于使用该加密方案的应用程序。更正式地说，正确性要求是：
 \[
-D(k,\;E(k,m,\mathpzc{N}),\;\mathpzc{N})=m
+D(k,\;E(k,m,{\scriptstyle\mathpzc{N}}),\;{\scriptstyle\mathpzc{N}})=m
 \]
 对于任意的 $k\in\mathcal{K}$，$m\in\mathcal{M}$ 和 ${\scriptstyle\mathpzc{N}}\in\mathpzc{N}$ 都成立。我们称基于 nonce 的密码 $\mathcal{E}=(E,D)$ 定义在 $(\mathcal{K},\mathcal{M},\mathcal{C},\mathpzc{N})$ 上。
 

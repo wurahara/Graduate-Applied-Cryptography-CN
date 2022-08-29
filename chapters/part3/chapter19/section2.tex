@@ -41,7 +41,7 @@
 下面的引理将表明，$r$ 次重复冒充窃听攻击等价于普通的窃听攻击。也就是说，赢得攻击游戏 \ref{game:19-1} 并不会比赢得攻击游戏 18.2 更容易。
 
 \begin{lemma}\label{theo:19-6}
-令 $\mathcal{I}$ 是一个身份识别协议。对于每个 $r$ 次重复冒充窃听攻击对手 $\mathcal{A}$，都存在一个标准窃听对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是 $\mathcal{A}$ 的一个基本包装器，满足：
+令 $\mathcal{I}$ 是一个身份识别协议。对于每个 $r$ 次重复冒充窃听攻击对手 $\mathcal{A}$，都存在一个标准窃听对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
 
 \begin{equation}
 {\rm rID2\mathsf{adv}}[\mathcal{A},\mathcal{I},r]\leq r\cdot{\rm ID2\mathsf{adv}}[\mathcal{B}, \mathcal{I}]
@@ -61,7 +61,7 @@
 如果 $H$ 是一个随机预言机，且 Schnorr 身份识别协议对窃听攻击是安全的，那么 Schnorr 签名方案也是安全的。
 
 \begin{quote}
-特别地，令 $\mathcal{A}$ 是如攻击游戏 13.1 的随机预言机模型那样攻击  $\mathcal{S}_{\rm sch}$ 的一个对手，假设 $\mathcal{A}$ 最多发起 $Q_{\rm s}$ 次签名查询和 $Q_{\rm ro}$ 次随机预言机查询。那么必然存在一个 $(Q_{\rm ro}+1)$ 次重复冒充攻击对手 $\mathcal{B}$ 能够通过攻击游戏 \ref{game:19-1} 中的窃听攻击来攻击  $\mathcal{I}_{\rm sch}$，且 $\mathcal{B}$ 是一个 $\mathcal{A}$ 的基本包装器，并有：
+特别地，令 $\mathcal{A}$ 是如攻击游戏 13.1 的随机预言机模型那样攻击  $\mathcal{S}_{\rm sch}$ 的一个对手，假设 $\mathcal{A}$ 最多发起 $Q_{\rm s}$ 次签名查询和 $Q_{\rm ro}$ 次随机预言机查询。那么必然存在一个 $(Q_{\rm ro}+1)$ 次重复冒充攻击对手 $\mathcal{B}$ 能够通过攻击游戏 \ref{game:19-1} 中的窃听攻击来攻击  $\mathcal{I}_{\rm sch}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
 \end{quote}
 \begin{equation}\label{eq:19-5}
 {\rm SIG^{ro}\mathsf{adv}}[\mathcal{A}, \mathcal{S}_{\rm sch}]\leq{Q_{\rm s}(Q_{\rm s}+Q_{\rm ro}+1)}/{q}+{\rm rID2\mathsf{adv}}[\mathcal{B},\mathcal{I}_{\rm sch},Q_{\rm ro}+1]
@@ -163,7 +163,7 @@ $\mathcal{B}$ 的工作逻辑如图 \ref{fig:19-4} 所示。对于 $j=1,\dots,r$
 如果我们把定理 \ref{theo:19-7}、引理 \ref{theo:19-6}、定理 \ref{theo:19-5} 和定理 \ref{theo:19-1} 的结论结合起来，我们就可以得到下面的从对 Schnorr 签名方案的攻击到计算离散对数的问题归约。
 
 \begin{quote}
-\emph{令 $\mathcal{A}$ 是一个攻击 $\mathcal{S}_{\rm sch}$ 的有效对手，如同攻击游戏 13.1 中的随机预言机版本。此外，假设 $\mathcal{A}$ 最多能发出 $Q_s$ 次签名查询和 $Q_{\rm ro}$ 次随机预言机查询。那么必然存在一个有效离散对数对手 $\mathcal{B}$，其运行时间大约是 $\mathcal{A}$ 的两倍，并使得：}
+\emph{令 $\mathcal{A}$ 是一个按照攻击游戏 13.1 中的随机预言机版本攻击 $\mathcal{S}_{\rm sch}$ 的有效对手。此外，假设 $\mathcal{A}$ 最多能发出 $Q_s$ 次签名查询和 $Q_{\rm ro}$ 次随机预言机查询。那么必然存在一个有效离散对数对手 $\mathcal{B}$，其运行时间大约是 $\mathcal{A}$ 的两倍，满足：}
 \end{quote}
 \begin{equation}\label{eq:19-6}
 {\rm SIG^{ro}\mathsf{adv}}[\mathcal{A},\mathcal{S}_{\rm sch}]\leq\frac{Q_s(Q_s+Q_{\rm ro}+1)}{q}+\frac{Q_{\rm ro}+1}{N}+(Q_{\rm ro}+1)\sqrt{{\rm DL\mathsf{adv}}[\mathcal{B},\mathbb{G}]}

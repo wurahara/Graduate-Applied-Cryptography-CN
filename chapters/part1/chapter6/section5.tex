@@ -14,7 +14,8 @@ EF\big((k_1,k_2),\;m\big)=F\big(k_2,\;PF(k_1,m)\big)
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.65\linewidth]{figures/chapter6/fig4.png}
+%  \includegraphics[width=0.65\linewidth]{figures/chapter6/fig4.png}
+  \input{figures/chapter6/fig4.tex}
   \caption{加密 PRF 构造 $EF(k,m)$}
   \label{fig:6-4}
 \end{figure}
@@ -58,12 +59,16 @@ PF(k,\;x\,\Vert\,a)=PF(k,\;y\,\Vert\,a)
 \begin{figure}
   \centering
   \subfigure[ECBC 构造 $\mathrm{ECBC}(k,m)$（加密CBC）]{
-  	\includegraphics[width=0.8\linewidth]{figures/chapter6/fig5-a.png}
+    \input{figures/chapter6/fig5-a.tex}
   	\label{fig:6-5-a}
   }
   
+  \,
+  
+  \,
+  
   \subfigure[NMAC 构造 $\mathrm{NMAC}(k,m)$（加密级联）]{
-  	\includegraphics[width=0.8\linewidth]{figures/chapter6/fig5-b.png}
+  	\input{figures/chapter6/fig5-b.tex}
   	\label{fig:6-5-b}
   }
   \caption{用于变长输入的安全 PRF}

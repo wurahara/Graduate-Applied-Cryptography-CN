@@ -1,0 +1,46 @@
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,129); %set diagram left start at 0, and has height of 129
+
+%Shape: Rectangle [id:dp327980747895382] 
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (60,0) -- (120,0) -- (120,60) -- (60,60) -- cycle ;
+%Shape: Rectangle [id:dp9828223016470583] 
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (390,0) -- (450,0) -- (450,60) -- (390,60) -- cycle ;
+%Straight Lines [id:da637771050031583] 
+\draw    (120,30) -- (387,30) ;
+\draw [shift={(390,30)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
+%Shape: Rectangle [id:dp5111950393400557] 
+\draw [line width=1.2]  (160,0) -- (310,0) -- (310,20) -- (160,20) -- cycle ;
+%Shape: Rectangle [id:dp08220847934325248] 
+\draw [line width=1.2]  (320,0) -- (350,0) -- (350,20) -- (320,20) -- cycle ;
+%Straight Lines [id:da6275809487083464] 
+\draw    (0,30) -- (57,30) ;
+\draw [shift={(60,30)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
+%Straight Lines [id:da21993535174642354] 
+\draw    (450,30) -- (507,30) ;
+\draw [shift={(510,30)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
+
+% Text Node
+\draw (90,30) node   [align=left] {Alice};
+% Text Node
+\draw (2,26.6) node [anchor=south west] [inner sep=0.75pt]    {$m$};
+% Text Node
+\draw (502,26.6) node [anchor=south west] [inner sep=0.75pt]    {$m$};
+% Text Node
+\draw (235,10) node    {$m$};
+% Text Node
+\draw (335,10) node    {$t$};
+% Text Node
+\draw (420,30) node   [align=left] {Bob};
+% Text Node
+\draw (90,80) node   [align=left] {生成标签 $\displaystyle t$};
+% Text Node
+\draw (90,100) node    {$t\leftarrow S( k,m)$};
+% Text Node
+\draw (420,80) node   [align=left] {验证消息-标签对 $\displaystyle ( m,t)$};
+% Text Node
+\draw (420,100) node    {$V( k,m,t)\overset{?}{=}\mathsf{accept}$};
+
+
+\end{tikzpicture}

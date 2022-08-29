@@ -38,9 +38,13 @@ CMAC 算法由两个步骤组成。首先，一个子密钥生成算法被用来
 
 \begin{figure}
   \centering
-  \subfigure[当$\mathrm{length}(m)$ 是 $n$的正整数倍时]{\includegraphics[width=0.43\linewidth]{figures/chapter6/fig8-a.png}}
-  \quad\quad\quad
-  \subfigure[其他情况]{\includegraphics[width=0.43\linewidth]{figures/chapter6/fig8-b.png}}
+  \subfigure[当$\mathrm{length}(m)$ 是 $n$的正整数倍时]{
+    \input{figures/chapter6/fig8-a.tex}
+  }
+  \quad
+  \subfigure[其他情况]{
+    \input{figures/chapter6/fig8-b.tex}
+  }
   \caption{CMAC签名算法}
   \label{fig:6-8}
 \end{figure}
