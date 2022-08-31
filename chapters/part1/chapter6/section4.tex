@@ -69,7 +69,7 @@ $F_{\rm CBC}$ 与图 \ref{fig:5-4}	中介绍的 CBC 模式加密类似，但是�
 \end{theorem}
 
 \noindent
-练习 6.6 提出了一种针对定长 $F_\mathrm{CBC}$ 的攻击，并证明其安全性随 $Q$ 的增长而呈二次递减，这表明式 \ref{eq:6-7} 中的 $Q^2$ 项是必要的。一个更困难的安全性证明表明，安全性只随 $\ell$ 的增长线性递减（见第 \ref{sec:6-13} 节）。特别地，式 \ref{eq:6-7} 中的误差项可以被简化为一个以 $O(Q^2\ell/|\mathcal{X}|)$ 为主成分的表达式。
+练习 \ref{exer:6-6} 提出了一种针对定长 $F_\mathrm{CBC}$ 的攻击，并证明其安全性随 $Q$ 的增长而呈二次递减，这表明式 \ref{eq:6-7} 中的 $Q^2$ 项是必要的。一个更困难的安全性证明表明，安全性只随 $\ell$ 的增长线性递减（见第 \ref{sec:6-13} 节）。特别地，式 \ref{eq:6-7} 中的误差项可以被简化为一个以 $O(Q^2\ell/|\mathcal{X}|)$ 为主成分的表达式。
 
 \begin{proof}[证明思路]
 我们用一棵有根的树来表示对手的查询，树中的边以消息分组（即 $\mathcal{X}$ 中的元素）为标签。记 $m=(a_1,\dots,a_v)\in\mathcal{X}^{v}$，其中 $1\leq v\leq\ell$，则对 $F(k,m)$ 的一次查询就定义了一条树中的路径，该路径从根开始，如下所示：
@@ -196,7 +196,7 @@ root\overset{a_1}\longrightarrow p_1\overset{a_2}\longrightarrow p2 \overset{a_3
 \end{equation}
 \end{theorem}
 
-练习 6.6 提出了一种针对定长 $F^*$ 的攻击，并证明其安全性随 $Q$ 的增长而四次方递减。这令人不安，因为它似乎与式 \ref{eq:6-15} 中对 $Q$ 的线性依赖相矛盾。然而，请读者放心，这里其实并没有矛盾。练习 6.6 中的对手使用 $\ell=3$，当 $Q$ 大约为 $\sqrt{|\mathcal{K}|}$ 时，其优势约为 $1/2$。将 $\mathcal{A}$ 接入定理 \ref{theo:6-4} 的证明中，我们就能够得到一个 PRF 对手 $\mathcal{B}$，它在攻击 PRF $F$ 时大约进行 $Q$ 次查询，获得的优势大约是 $1/Q$。注意到，当 $Q$ 接近 $\sqrt{|\mathcal{K}|}$ 时，我们有 $1/Q\approx|\mathcal{K}|$ 这样的近似关系。这样的对手 $\mathcal{B}$ 并不令人惊讶：它本质上就是练习 4.27 中的通用 PRF 攻击者。因此，式 \ref{eq:6-15} 与练习 6.6 中的攻击本质上是一致的。另一种视角是，式 \ref{eq:6-15} 中已经出现了对 $Q$ 的二次依赖，因为有一个隐藏的 $Q$ 的因子被包含在了 ${\rm PRF\mathsf{adv}}[\mathcal{B},F]$ 这个量中。
+练习 \ref{exer:6-6} 提出了一种针对定长 $F^*$ 的攻击，并证明其安全性随 $Q$ 的增长而四次方递减。这令人不安，因为它似乎与式 \ref{eq:6-15} 中对 $Q$ 的线性依赖相矛盾。然而，请读者放心，这里其实并没有矛盾。练习 \ref{exer:6-6} 中的对手使用 $\ell=3$，当 $Q$ 大约为 $\sqrt{|\mathcal{K}|}$ 时，其优势约为 $1/2$。将 $\mathcal{A}$ 接入定理 \ref{theo:6-4} 的证明中，我们就能够得到一个 PRF 对手 $\mathcal{B}$，它在攻击 PRF $F$ 时大约进行 $Q$ 次查询，获得的优势大约是 $1/Q$。注意到，当 $Q$ 接近 $\sqrt{|\mathcal{K}|}$ 时，我们有 $1/Q\approx|\mathcal{K}|$ 这样的近似关系。这样的对手 $\mathcal{B}$ 并不令人惊讶：它本质上就是练习 \ref{exer:4-27} 中的通用 PRF 攻击者。因此，式 \ref{eq:6-15} 与练习 \ref{exer:6-6} 中的攻击本质上是一致的。另一种视角是，式 \ref{eq:6-15} 中已经出现了对 $Q$ 的二次依赖，因为有一个隐藏的 $Q$ 的因子被包含在了 ${\rm PRF\mathsf{adv}}[\mathcal{B},F]$ 这个量中。
 
 \vspace{5pt}
 
@@ -207,7 +207,7 @@ root\overset{a_1}\longrightarrow p_1\overset{a_2}\longrightarrow p2 \overset{a_3
 
 定理 \ref{theo:4-11} 的证明很容易推广到对任何 PRF 证明定理 \ref{theo:6-4}。比如说，假设 $F$ 定义在 $(\mathcal{K},\{0,1,2\},\mathcal{K})$ 上，那么它就对应于一个 PRF $G$，它将 $k\in\mathcal{K}$ 映射为 $G(k):=(F(k,0),F(k,1),F(k,2))\in\mathcal{K}^3$。如果我们将用于 $F$ 的级联构造看作是一颗三叉树而不是二叉树，那么甚至不需要修改太多，就可以套用定理 \ref{theo:4-11} 的证明。
 
-但为什么要在宽度为 $3$ 的情况下停止呢？我们可以按我们的期望任意设定树的宽度。基于一个定义在 $(\mathcal{K},\mathcal{X},\mathcal{K})$ 上的PRF $F$ 的级联构造就对应于一棵宽度为 $|\mathcal{X}|$ 的树。同样地，定理 \ref{theo:4-11} 的证明也没有发生本质的变化。我们把细节留给感兴趣的读者作为练习（可以参考练习 4.26）。
+但为什么要在宽度为 $3$ 的情况下停止呢？我们可以按我们的期望任意设定树的宽度。基于一个定义在 $(\mathcal{K},\mathcal{X},\mathcal{K})$ 上的PRF $F$ 的级联构造就对应于一棵宽度为 $|\mathcal{X}|$ 的树。同样地，定理 \ref{theo:4-11} 的证明也没有发生本质的变化。我们把细节留给感兴趣的读者作为练习（可以参考练习 \ref{exer:4-26}）。
 \end{snote}
 
 \begin{snote}[CBC 和级联 PRF 的对比。]

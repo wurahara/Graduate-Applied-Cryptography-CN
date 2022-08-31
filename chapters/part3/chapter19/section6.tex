@@ -63,10 +63,10 @@
 \begin{quote}
 特别地，对于每一个通过攻击游戏 18.2 中的窃听攻击来攻击 $\mathcal{I}$ 的冒充对手 $\mathcal{A}$，必然存在一个通过攻击游戏 \ref{game:18-1} 中的直接攻击来攻击 $\mathcal{I}$ 的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是 $\mathcal{A}$ 的一个基本包装器，使得：
 \end{quote}
-$$
+\[
 {\rm ID2\mathsf{adv}}[\mathcal{A},\mathcal{I}]=
 {\rm ID1\mathsf{adv}}[\mathcal{B},\mathcal{I}]
-$$
+\]
 \end{theorem}
 
 \begin{example}\label{exmp:19-6}
@@ -105,9 +105,9 @@ $$
 \begin{quote}
 	特别地，令 $\mathcal{A}$ 是一个像在攻击游戏 13.1 的随机预言机版本中一样的攻击 $\mathcal{S}$ 的对手。此外，假设 $\mathcal{A}$ 最多可以发起 $Q_{\rm s}$ 次签名查询和 $Q_{\rm ro}$ 次随机预言机查询，并且 $(P, V)$ 有 $\delta$-不可预测承诺。那么必然存在一个 $(Q_{\rm ro}+1)$ 次重复冒充攻击对手 $\mathcal{B}$，它能够通过攻击游戏 \ref{game:19-1} 中的窃听攻击来攻击 $\mathcal{I}$，其中 $\mathcal{B}$ 是 $\mathcal{A}$ 的一个基本包装器，使得：
 \end{quote}
-$$
+\[
 {\rm SIG^{ro}\mathsf{adv}}[\mathcal{A},\mathcal{S}]\leq Q_{\rm s}(Q_{\rm s}+Q_{\rm ro}+1)\delta+{\rm rID2\mathsf{adv}}[\mathcal{B},\mathcal{I},Q_{\rm ro}+1]
-$$
+\]
 \end{theorem}
 
 这个定理的证明与定理 \ref{theo:19-7} 的证明几乎相同，读者可以尝试自己证明该定理。
@@ -144,18 +144,22 @@ $$
 将上面介绍的 Fiat-Shamir 签名构造应用于 GQ 协议（见 \ref{subsec:19-5-5} 小节），我们就可以构造出一个基于 RSA 的新签名方案。该方案利用 RSA 公钥 $(n,e)$ 作为系统参数，其中的指数 $e$ 是一个大素数。如果有需要的话，该系统参数可以被许多用户共享。我们需要一个哈希函数 $H:\mathcal{M}\times\mathcal{T}\to\mathcal{C}$，其中 $\mathcal{T}$ 是由 $\mathbb{Z}_n^*$ 中的所有元素编码后组成的集合，$\mathcal{M}$ 是签名方案的消息空间，$\mathcal{C}$ 是 $\{0,\dots,e-1\}$ 的一个子集。GQ 签名方案 $\mathcal{S}_{\rm GQ}=(G,S,V)$ 的组成部分如下：
 \begin{itemize}
 	\item 密钥生成算法 $G$ 计算：
-	$$
-    x\overset{\rm R}\leftarrow\mathbb{Z}_n^*,~~
+	\[
+    x\overset{\rm R}\leftarrow\mathbb{Z}_n^*,
+    \quad
     y\leftarrow x^e
-    $$
+    \]
 	公钥为 $pk:=y$，私钥为 $sk:=x$。
 	\item 为了使用私钥 $sk=x$ 对消息 $m\in\mathcal{M}$ 签名，签名算法$S(sk,m)$计算：
-    $$
-    x_{\rm t}\overset{\rm R}\leftarrow \mathbb{Z}_n^*,~~
-    y_{\rm t}\leftarrow x_{\rm t}^e,~~
-    c\leftarrow H(m,y_{\rm t}),~~
+    \[
+    x_{\rm t}\overset{\rm R}\leftarrow \mathbb{Z}_n^*,
+    \quad
+    y_{\rm t}\leftarrow x_{\rm t}^e,
+    \quad
+    c\leftarrow H(m,y_{\rm t}),
+    \quad
     x_{\rm z}\leftarrow x_{\rm t}\cdot x^c
-    $$
+    \]
     输出签名 $\sigma:=(y_{\rm t},x_{\rm z})$。
 	\item 为了使用公钥 $pk=y$ 验证对消息 $m\in\mathcal{M}$ 的签名  $\sigma=(y_{\rm t},x_{\rm z})$，签名验证算法 $V$ 计算 $c:=H(m,y_t)$，当$x_{\rm z}^e=y_{\rm t}\cdot y^c$时输出$\mathsf{accept}$，否则输出$\mathsf{reject}$。
 \end{itemize}    
@@ -166,14 +170,14 @@ GQ 签名相比 RSA 签名（如 $\mathcal{S}_{\rm RSA-FDH}$）的优势在于�
 
 \begin{snote}[一个优化.]
 GQ 签名方案可以用和 Schnorr 签名方案相同的方式进行优化。在之前，我们定义的对消息 $m$ 的签名是一个数对  $(y_{\rm t},x_{\rm z})$，它满足：
-$$
+\[
 x_{\rm z}^e=y_{\rm t}\cdot y^c
-$$
+\]
 其中 $c:=H(m,y_{\rm t})$。为了进一步优化该签名方案，我们可以将签名定义为数对 $(c,x_{\rm z})$，它满足：
-$$
+\[
 c=H(m,y_{\rm t})
-$$
+\]
 其中 $y_{\rm t}:={x_{\rm z}^e}/{y^c}$。此外，我们可以在公钥中存储 $y^{-1}$ 而不是 $y$，这能够进一步将加快验证速度。
 
-事实证明，这种优化也可以应用于Fiat-Shamir签名构造的大多数实例，参见练习 19.17。
+事实证明，这种优化也可以应用于Fiat-Shamir签名构造的大多数实例，参见练习 \ref{exer:19-17}。
 \end{snote}

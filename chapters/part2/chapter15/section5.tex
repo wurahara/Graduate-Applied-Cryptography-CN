@@ -1,108 +1,94 @@
 \section{来自配对的签名方案}\label{sec:15-5}
 
-配对可以实现许多新的高级加密和签名方案。本节中我们将介绍几种新的基于配对的签名方案。
+配对使得许多新的高级加密和签名方案，以及其他密码学原语成为可能。在这一节中，我们将介绍几种基于配对的新签名方案，它们具备非常有趣的特性。
 
-我们首先会介绍 *BLS 签名方案*。BLS 签名的一个很好的特征是紧凑性：一个签名是一个单一的短的群元素。该方案的另一个很好的特点是它支持*签名聚合*，这是一种可以将许多签名公开压缩成一个单一的短的聚合签名的方法。这是一个我们以前没有见过的签名新功能。
+在 \ref{subsec:15-5-1} 小节，我们会介绍 \emph{BLS 签名方案}。BLS 签名的一个很好的特征是紧凑性——一个签名就是一个单一且简短的群元素。该方案的另一个优异的特性是支持\emph{签名聚合}，这是一种可以将许多签名公开地压缩成一个单一且简短的\emph{聚合}签名的方法。这是一个我们以前从未见过的签名方案的新功能。我们将在 \ref{subsec:15-5-2} 和 \ref{subsec:15-5-3} 两个小节讨论这一问题。最后，在 \ref{subsec:15-5-4} 小节中，我们还会提出两个基于配对的签名方案，它们都可以被证明是安全的，而且不依赖于随机预言机模型。请注意，除了第\ref{chap:14}章（特别是 \ref{sec:14-6} 节）所介绍的基于哈希的签名方案外，我们到目前为止所看到的所有其他签名方案的安全性都依赖于随机预言机模型。我们将要在 \ref{subsec:15-5-4} 小节介绍的基于配对的方案所产生的签名比基于哈希的方案所产生的签名要短得多。
 
-最后，我们还会提出两个基于配对的签名方案，这两个方案可以被证明是安全的，而且不依赖于随机预言机模型。请注意，除了基于哈希的签名方案外，到目前为止我们看到的所有其他签名方案的安全性都依赖于随机预言机模型。我们将要介绍的基于配对的方案产生的签名比基于哈希的方案产生的签名要短得多。
+\subsection{BLS 签名方案}\label{subsec:15-5-1}
 
-BLS 签名方案
+令 $e:\mathbb{G}_0\times\mathbb{G}_1\to\mathbb{G}_\mathrm{T}$ 是一个配对，其中 $\mathbb{G}_0,\mathbb{G}_1,\mathbb{G}_\mathrm{T}$ 是三个 $q$ 阶循环群，$q$ 为素数，并且 $g_0\in\mathbb{G}_0$ 和 $g_1\in\mathbb{G}_1$ 是生成元。此外，我们还需要一个能将有限集 $\mathcal{M}$ 中的消息映射为 $\mathbb{G}_0$ 中元素的哈希函数 $H$。
 
-令 $e:\mathbb{G}_0 \times \mathbb{G}_1 \to \mathbb{G}_T$ 是一个配对，其中 $\mathbb{G}_0,\mathbb{G}_1,\mathbb{G}_T$ 是三个 $q$ 阶循环群，$q$ 为素数，$g_0 \in \mathbb{G}_0$ 和 $g_1 \in \mathbb{G}_1$ 是生成元。此外，我们尚需要一个哈希函数 $H$ 能够将有限集 $\mathcal{M}$ 中的消息映射到 $\mathbb{G}_0$ 中的元素。
+BLS 签名方案，表示为 $\mathcal{S}_{\rm BLS}=(G,S,V)$，有消息空间 $\mathcal{M}$，工作流程如下：
+\begin{itemize}
+	\item $G()$：密钥生成算法运行如下：
+	\[
+		\alpha\stackrel{R}\leftarrow\mathbb{Z}_q,\quad
+    	u\leftarrow g_1^\alpha \in \mathbb{G}_1
+	\]
+	公钥为 $pk:=u$，私钥为 $sk:=\alpha$。
+	\item $S(sk,m)$：为了使用私钥 $sk=\alpha\in\mathbb{Z}_q$ 对消息 $m\in\mathcal{M}$ 进行签名，进行如下操作：
+	\[
+		\sigma\leftarrow H(m)^\alpha\in\mathbb{G}_0
+	\]
+	输出 $\sigma$。
+	\item $V(pk,m,\sigma)$：为了验证消息 $m\in\mathcal{M}$ 上的签名 $\sigma\in\mathbb{G}_0$，使用公钥 $pk=u\in\mathbb{G}_1$，当：
+	\[
+		e\big(H(m),\,u\big)=e(\sigma,g_1)
+	\]
+	时，输出 $\mathsf{accept}$。
+\end{itemize}
 
-BLS 签名方案，表示为 $\mathcal{S}_{\rm BLS}=(G,S,V)$，其消息空间为 $\mathcal{M}$，工作流程如下：
+很容易验证，有效消息总是能被接受：对于所有的公钥 $u\leftarrow g_1^\alpha$ 和消息 $m\in\mathcal{M}$，合法签名 $\sigma \leftarrow H(m)^\alpha$  将会被验证者接受，因为：
+\[
+e\big(H(m),\,u\big)=e\big(H(m),\,g_1^\alpha\big)=e\big(H(m)^\alpha,\,g_1\big)=e(\sigma,\,g_1)
+\]
 
-- 密钥生成算法 $G()$：
-    
-    $$
-    \alpha\stackrel{R}\leftarrow\mathbb{Z}_q,~~
-    u\leftarrow g_1^\alpha \in \mathbb{G}_1
-    $$
-    
-    公钥 $pk = u$，私钥 $sk=\alpha$。
-    
-- 签名算法 $S(sk,m)$：使用私钥 $sk=\alpha \in \mathbb{Z}_q$ 对消息 $m\in\mathcal{M}$ 签名，并输出 $\sigma$：
-    
-    $$
-    \sigma \leftarrow H(m)^\alpha \in \mathbb{G}_0
-    $$
-    
-- 验证算法 $V(pk,m,\sigma)$：为了验证对于消息 $m\in\mathcal{M}$ 的签名 $\sigma \in \mathbb{G}_0$，使用公钥 $pk = u \in \mathbb{G}_1$，当：
-    
-    $$
-    e(H(m),u)\overset{?}=e(\sigma,g_1)
-    $$
-    
-    成立时，接受签名。
-    
+如上所述，签名落在群 $\mathbb{G}_0$ 上，而公钥则在群 $\mathbb{G}_1$ 上。我们在上一节中提到，$\mathbb{G}_0$ 上的元素与 $\mathbb{G}_1$ 上的元素相比有更短的表示。因此，正如所述的，这个签名方案是为短签名而特别优化的——一个签名就是 $\mathbb{G}_0$ 上的一个元素。我们同样可以通过定义一个对称方案来为短公钥的需求进行优化，只要将 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 的角色对调即可：此时签名在群 $\mathbb{G}_1$ 上，而公钥在群 $\mathbb{G}_0$ 上。下面的安全分析同样适用于这种对称方案。
 
-很容易验证有效消息总是能够通过上述验证。对于任意公钥 $u\leftarrow g_1^\alpha$ 和消息 $m\in\mathcal{M}$，合法签名 $\sigma \leftarrow H(m)^\alpha$  将会被验证者接受，因为：
+\begin{snote}[唯一签名。]
+$\mathcal{S}_{\rm BLS}$ 方案是一个\textbf{唯一签名方案 (unique signature scheme)}：对于一个给定的公钥，每条消息 $m\in\mathcal{M}$ 都只有\emph{唯一的}签名 $\sigma\in\mathbb{G}_0$ 能够被验证算法接受为 $m$ 的有效签名。这意味着，如果 $\mathcal{S}_{\rm BLS}$ 是安全的，那么在定义 \ref{def:13-3} 的意义上，它也一定是强安全的。
+\end{snote}
 
-$$
-e(H(m),u)=e(H(m),g_1^\alpha)=e(H(m)^\alpha,g_1)=e(\sigma, g_1)
-$$
+\begin{snote}[安全性。]
+我们可以证明，当 $H:\mathcal{M}\to\mathbb{G}_0$ 被建模为一个随机预言机时，$\mathcal{S}_{\rm BLS}$ 是安全的。我们需要对 CDH 假设做一个微小的改动，使得标准 CDH 假设能够适用于两个群的情况。
+\end{snote}
 
-正如上所述，签名存在于群 $\mathbb{G}_0$ 中，而公钥存在于群 $\mathbb{G}_1$ 中。在之前我们提到，$\mathbb{G}_0$ 中的元素与 $\mathbb{G}_1$ 中的元素相比有更短的表示。因此，这个签名方案是针对短签名优化的，即一个签名就是 $\mathbb{G}_0$ 中的一个元素。我们同样可以通过定义一个对称方案来针对短密钥进行优化，只要将 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 的角色对调即可，此时签名存在于群 $\mathbb{G}_1$ 中，而公钥存在于群 $\mathbb{G}_0$ 中。下面的安全分析对于这种对称方案依然有效。
+\begin{game}[co-CDH]\label{game:15-1}
+对于一个给定对手 $\mathcal{A}$，攻击游戏按照如下方式进行：
+\begin{itemize}
+	\item 挑战者计算：
+	\[
+		\alpha,\beta \overset{\rm R}\leftarrow \mathbb{Z}_q,\quad
+    	u_0 \leftarrow g_0^\alpha,\quad
+    	u_1 \leftarrow g_1^\alpha,\quad
+    	v_0 \leftarrow g_0^\beta,\quad
+    	z_0 \leftarrow g_0^{\alpha\beta}
+	\]
+	并将元组 $(u_0, u_1, v_0)$ 交给对手。注意 $\alpha$ 被使用了两次，一次在 $\mathbb{G}_0$ 上，另一次在 $\mathbb{G}_1$ 上。
+	\item 对手输出某个 $\hat{z}_0 \in \mathbb{G}_0$。
+\end{itemize}
+我们将 $\mathcal{A}$ 解决 $e$ 的 co-CDH 问题的优势表示为 $\mathrm{coCDH}\mathsf{adv}[\mathcal{A},e]$，即 $\hat{z}_0 = z_0$ 成立的概率。
+\end{game}
 
-唯一签名
+这里我们使用 $z_0$ 表示 Diffie-Hellman 秘密 $z_0:=g_0^{\alpha\beta}$。更一般地，在本章的攻击游戏中，我们总是使用变量 $z$ 来表示对手试图从随机采样中计算或区分出的未知值。
 
-$\mathcal{S}_{\rm BLS}$ 方案是一个**唯一签名方案 (unique signature scheme)**：也就是说，对于给定公钥，任意消息 $m\in\mathcal{M}$ 都只有唯一的合法签名 $\sigma \in \mathbb{G}_0$  能够通过验证算法。这意味着如果 $\mathcal{S}_{\rm BLS}$ 是安全的，它也必定是强安全的。
+\begin{definition}[co-CDH 假设。]\label{def:15-3}
+如果对于所有的有效对手 $\mathcal{A}$，$\rm{coCDH\mathsf{adv}}[\mathcal{A},e]$ 的值都可忽略不计，我们就称 \textbf{co-CDH} 假设对配对 $e$ 成立。
+\end{definition}
 
-安全性
+当 $e$ 是一个对称配对时，我们有 $\mathbb{G}_0=\mathbb{G}_1$ 且 $g_0=g_1$，在这种情况下，co-CDH 假设与标准 CDH 假设相同。现在，我们可以证明 $\mathcal{S}_{\rm BLS}$ 的安全性。
 
-我们可以证明，当 $H: \mathcal{M} \to \mathbb{G}_0$ 是一个随机预言机时，$\mathcal{S}_{\rm BLS}$ 是安全的。我们需要对 CDH 假设做一个微小的改变，使得标准 CDH 假设能够用于两个群。
+\begin{theorem}\label{theo:15-1}
+令 $e: \mathbb{G}_0 \times \mathbb{G}_1 \rightarrow \mathbb{G}_\mathrm{T}$ 是一个配对，并令 $H: \mathcal{M} \rightarrow \mathbb{G}_0$ 是一个哈希函数。假设 co-CDH 假设对 $e$ 成立，并且 $H$ 被建模为一个随机预言机，那么派生的 BLS 签名方案 $\mathcal{S}_{\rm BLS}$ 是一个安全的签名方案。
+\begin{quote}
+特别地，令 $\mathcal{A}$ 是一个在攻击游戏 \ref{game:13-1} 的随机预言机版本中攻击 $\mathcal{S}_{\rm BLS}$ 的有效对手。此外，假设 $\mathcal{A}$ 最多能够发起 $Q_{\rm s}$ 次签名查询。那么存在一个有效 co-CDH 对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
+\end{quote}
+\begin{equation}\label{eq:15-6}
+\rm{SIG^{ro}\mathsf{adv}}[\mathcal{A},\mathcal{S}_{BLS}]\leq2.72\cdot(Q_s+1)\cdot\rm{coCDH\mathsf{adv}}[\mathcal{B},e]
+\end{equation}
+\end{theorem}
 
-**攻击博弈 15.1：co-CDH**
+\begin{proof}[证明思路]
+该定理的证明模仿了 RSA-FDH 签名方案（即定理 \ref{theo:13-4}）的安全性证明。对手 $\mathcal{B}$ 被给定一个元组 $(u_0=g_0^\alpha, u_1=g_1^\alpha, v_0=g_0^\beta)$，其中 $\alpha,\beta\overset{\rm R}\leftarrow\mathbb{Z}_q$，就像在 co-CDH 攻击游戏中那样。它需要计算 $z_0:=g_0^{\alpha\beta}=v_0^\alpha$。对手首先向签名伪造者 $\mathcal{A}$ 发送 BLS 公钥 $pk:=u_1$。
 
-对于一个给定对手 $\mathcal{A}$，攻击博弈按照如下方式进行：
+接下来，签名伪造者 $\mathcal{A}$ 向 $H$ 发起一连串的签名查询 $Q_{\rm s}$ 和随机预言机查询 $Q_{\rm ro}$。对于 $j=1,2,\dots$，我们的对手 $\mathcal{B}$ 会应答第 $j$ 个随机预言机查询 $H(m_j)$，方法是随机选取 $\rho_j\overset{\rm R}\leftarrow\mathbb{Z}_q$，并置 $H(m_j):=g_0^{\rho_j}$。这使得对手 $\mathcal{B}$ 能够应答所有来自 $\mathcal{A}$ 的签名查询。消息 $m_j$ 上的签名就是 $\sigma_j=u_0^{\rho_j}$，这是因为 $\sigma_j:=H(m_j)^\alpha=g_0^{\rho_j\alpha}=u_0^{\rho_j}$。我们的 $\mathcal{B}$ 就能够利用 co-CDH 挑战中给定的 $u_0$ 来计算 $\sigma_j$。这就是我们在挑战中包含 $u_0$ 的原因。
 
-- 挑战者计算：
-    
-    $$
-    \alpha,\beta \stackrel{R}\leftarrow \mathbb{Z}_q,~~
-    u_0 \leftarrow g_0^\alpha,~~
-    u_1 \leftarrow g_1^\alpha,~~
-    v_0 \leftarrow g_0^\beta,~~
-    z_0 \leftarrow g_0^{\alpha\beta}
-    $$
-    
-    并将元组 $(u_0, u_1, v_0)$ 交给对手。注意 $\alpha$ 在 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 上各被使用了一次。
-    
-- 对手输出 $\hat{z}_0 \in \mathbb{G}_0$。
+最后，$\mathcal{A}$ 会输出一个有效的签名伪造 $(m,\sigma)$，其中 $\sigma=H(m)^\alpha$。我们知道，$H(m)$ 要不是在 $\mathcal{A}$ 对 $H(m)$ 发出一个显式的随机预言机查询时确定的，要不就是在 $\mathcal{A}$ 输出最终的签名伪造时定义的（需要注意，$m$ 不能出现在 $\mathcal{A}$ 的签名查询中）。因此，$H(m)$ 是在对 $H$ 的 $Q_{\rm ro}+1$ 次查询中的某一次被确定的。假设 $\mathcal{A}$ 在第 $\nu$ 次哈希查询中对 $H(m)$ 发起查询，其中 $1\leq\nu\leq Q_{ro}+1$。一种证明的策略是在游戏开始时让 $\mathcal{B}$ 尝试猜测 $\nu$。$\mathcal{B}$ 在游戏开始时从 $\{1,\dots,Q_{\rm ro}+1\}$ 中随机选择一个 $\omega$，并对第 $\omega$ 次哈希查询应答 $H(m_\omega):=v_0$。如果 $\mathcal{B}$ 很幸运地选中了正确的 $\omega$，即使得 $\omega=\nu$，那么 $\mathcal{A}$ 输出的 $m=m_\omega$ 的签名 $\sigma$ 就满足 $\sigma=H(m)^\alpha=H(m_\omega)^\alpha=v_0^\alpha=z_0$，这也就是 $\mathcal{B}$ 赢得 co-CDH 游戏所需要的值。
 
-我们定义 $\rm{coCDH\mathsf{adv}}[\mathcal{A},e]$ 为对手 $\mathcal{A}$ 在 $e$ 上**解决 co-CDH 问题的优势**，也就是 $\hat{z}_0 = z_0$ 的概率
+这种计算 $z_0$ 的证明策略的效果很好，但是与 $\mathcal{A}$ 相比，$\mathcal{B}$ 的成功概率会有一个 $Q_{\rm ro}+1$ 系数的损失，这是因为 $\mathcal{B}$ 需要在游戏开始的时候正确猜测出 $\nu$。如式 \ref{eq:15-6} 所述，如果使用用于 RSA 假设的引理 \ref{lemma:13-6} 完全相同的参数，就可以将该损失减少到 $2.72\cdot(Q_{\rm s}+1)$。关于引理 \ref{lemma:13-6} 在 CDH 假设下的类比，可参见练习 \ref{exer:15-5}。练习 \ref{exer:15-5} 表明，本安全证明其实与 \ref{subsec:13-4-2} 小节中的 RSA-FDH 的安全证明完全相同，也给出了式 \ref{eq:15-6} 中的约束。
+\end{proof}
 
-这里我们使用 $z_0$ 表示 Diffie-Hellman 秘密 $z_0 = g_0^{\alpha\beta}$。更一般地，在本章的其他攻击博弈中，我们将始终使用变量 $z$ 来表示对手试图从随机变量中计算或甄别出的未知值。
-
-定义 15.3：**co-CDH 假设**
-
-如果对任意有效对手 $\mathcal{A}$，$\rm{coCDH\mathsf{adv}}[\mathcal{A},e]$ 的值都可忽略不计，我们就称 **co-CDH** 假设对于配对 $e$ 成立。
-
-当 $e$ 是一个对称配对时，我们有 $\mathbb{G}_0=\mathbb{G}_1$，$g_0=g_1$，在这种情况下，co-CDH 假设与标准 CDH 假设相同，于是我们就可以证明 $\mathcal{S}_{\rm BLS}$ 的安全性。
-
-**定理 15.1**
-
-给定配对 $e: \mathbb{G}_0 \times \mathbb{G}_1 \rightarrow \mathbb{G}_T$ 和哈希函数 $H: \mathcal{M} \rightarrow \mathbb{G}_0$，如果 co-CDH 假设对于配对 $e$ 成立，且 $H$ 是一个随机预言机，那么 BLS 签名方案 $\mathcal{S}_{\rm BLS}$ 是一个安全签名方案。
-
-特别地，如果 $\mathcal{A}$ 是一个攻击 $\mathcal{S}_{\rm BLS}$ 的有效对手，假设 $\mathcal{A}$ 最多能够发起 $Q_{\rm s}$ 次签名查询，那么必然存在一个有效 co-CDH 对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是 $\mathcal{A}$ 的一个基本包装器，且有：
-
-$$
-\rm{SIG^{ro}\mathsf{adv}}[\mathcal{A},\mathcal{S}_{BLS}]\leq 2.72 \cdot (Q_s+1)\cdot\rm{coCDH\mathsf{adv}}[\mathcal{B},e]
-$$
-
-定理 15.1 的证明
-
-该定理的证明模仿了对 RSA-FDH 签名方案安全性的证明，即定理 13.4 的证明。
-
-对手 $\mathcal{B}$ 被给定一个元组 $(u_0=g_0^\alpha, u_1=g_1^\alpha, v_0=g_0^\beta)$，其中 $\alpha,\beta\overset{R}\leftarrow\mathbb{Z}_q$，就像在[攻击博弈 15.1](https://www.notion.so/ffeb7262455748db88ce901b60686c79) 中的那样。$\mathcal{B}$ 需要计算 $z_0=g_0^{\alpha\beta}=v_0^\alpha$。他首先向签名伪造者 $\mathcal{A}$ 发送 BLS 公钥 $pk=u_1$。
-
-随后，签名伪造者 $\mathcal{A}$ 进行一连串的签名查询 $Q_{\rm s}$ 和随机预言机查询 $Q_{\rm ro}$。对于 $j=1,2,\dots$，对手 $\mathcal{B}$ 会对第 $j$ 个随机预言机查询响应 $H(m_j)$，方法是随机选取 $\rho_j\overset{R}\leftarrow\mathbb{Z}_q$，并令 $H(m_j)=g_0^{\rho_j}$。这使得对手 $\mathcal{B}$ 能够应答所有来自 $\mathcal{A}$ 的签名查询。消息 $m_j$ 上的签名简单来说就是 $\sigma_j=u_0^{\rho_j}$，这是因为 $\sigma_j=H(m_j)^\alpha=g_0^{\rho_j\alpha}=u_0^{\rho_j}$。因此，对手 $\mathcal{B}$ 就能够利用 co-CDH 挑战中给出的 $u_0$ 来计算 $\sigma_j$。这就是我们在挑战中包含 $u_0$ 的原因。
-
-最终 $\mathcal{A}$ 会输出一个有效的伪造签名 $(m,\sigma)$，其中 $\sigma=H(m)^\alpha$。我们知道，$H(m)$ 要不是在 $\mathcal{A}$ 发出一个显式随机预言机查询时确定的，要不就是在 $\mathcal{A}$ 输出最终的伪造签名时定义的（需要注意，明文 $m$ 不能出现在 $\mathcal{A}$ 的签名查询中）。因此，$H(m)$ 是在对 $H$ 的 $Q_{\rm ro}+1$ 次查询中的某一次被确定的。假设 $\mathcal{A}$ 在第 $\nu$ 号查询中对 $H(m)$ 发起查询，其中 $1\leq\nu\leq Q_{ro}+1$。一种证明的策略是在博弈开始时让 $\mathcal{B}$ 尝试猜测 $\nu$。$\mathcal{B}$ 在博弈开始时从 $\{1,\dots,Q_{\rm ro}+1\}$ 中随机选择一个值 $\omega$，对于第 $\omega$ 个随机预言机查询，他的应答是 $H(m_\omega)=v_0$。如果 $\mathcal{B}$ 很幸运地选中了正确的 $\omega$，即使得 $\omega=\nu$，那么 $\mathcal{A}$ 输出的对于 $m=m_\omega$ 的签名 $\sigma$ 就满足 $\sigma=H(m)^\alpha=H(m_\omega)^\alpha=v_0^\alpha=z_0$，这也就是 $\mathcal{B}$ 赢得 co-CDH 博弈所需要的值。
-
-这种用来计算 $z_0$ 的证明策略的效果很好，但是与 $\mathcal{A}$ 相比，$\mathcal{B}$ 的成功概率会有一个 $Q_{\rm ro}+1$ 倍的损失，这是因为 $\mathcal{B}$ 需要在博弈开始的时候正确猜测出 $\nu$。如[式 15.6](https://www.notion.so/ffeb7262455748db88ce901b60686c79) 所述，如果使用与引理 13.6 中完全相同的参数，该损失可以减少到 $2.72\cdot(Q_{\rm s}+1)$。
-
-签名聚合
+\subsection{签名聚合}\label{subsec:15-5-2}
 
 BLS 签名方案是非常灵活的，可以使用 BLS 建立阈值签名方案或者盲签名方案，甚至可以在多方之间分布式地生成密钥。在本节中我们将介绍 BLS 的一个新颖特性，称为**签名聚合 (Signature aggregation)**。
 
@@ -130,18 +116,17 @@ BLS 签名聚合
 
 - 签名聚合算法 $A(\mathbf{pk}\in\mathbb{G}_1^n,\mathbf\sigma\in\mathbb{G}_0^n) = \{\sigma_{\rm ag}\leftarrow \sigma_1 \cdot \sigma_2 \cdots \sigma_n \in \mathbb{G}_0\}$，输出 $\sigma_{\rm ag}\in\mathbb{G}_0$。
 - 签名验证算法 $VA(\mathbf{pk}\in\mathbb{G}_1^n,\mathbf{m}\in\mathcal{M}^n,\sigma_{ag})$ 会在如下情况下接受签名：
-    
-    $$
-    e(\sigma_{\rm ag},g_1)=e(H(m_1),pk_1)~\cdots~e(H(m_n),pk_n)
-    $$
+    \[
+    e(\sigma_{\rm ag},g_1)=e(H(m_1),pk_1)\,\cdots\,e(H(m_n),pk_n)
+    \]
     
 
 上述签名验证算法能够通过对聚合签名 $\sigma_{ag}$ 的验证，这是因为：
 
-$$
+\[
 e(\sigma_{\rm ag},g_1)=e(\sigma_1\cdots\sigma_n,g_1) = \prod_{i=1}^{n}e(\sigma_i,g_1)=\prod_{i=1}^{n}e(H(m_i)^{\alpha_i},g_1)\\
 =\prod_{i=1}^{n}e(H(m_i),g_1^{\alpha_i}) = \prod_{i=1}^{n}e(H(m_i),pk_i)
-$$
+\]
 
 备注 15.2：签名移除
 
@@ -155,11 +140,11 @@ $$
 
 根据[式 15.7](https://www.notion.so/ffeb7262455748db88ce901b60686c79)，验证一个由 $n$ 个单一签名聚合成的聚合签名需要计算 $n+1$ 个配对。当聚合中的所有签名都针对相同的消息时，即 $m_1=m_2=\cdots=m_n=m$ 时，可以进一步简化验证过程。这种情况通常发生在多方对相同的消息 $m$ 进行签名，并需要把这些签名聚合到一个签名 $\sigma_{\rm ag}$ 中的时候。在这种情况下，验证聚合签名 $\sigma_{\rm ag}$ 的[式 15.7](https://www.notion.so/ffeb7262455748db88ce901b60686c79) 可以简化为：
 
-$$
+\[
 e(\sigma_{\rm ag},g_1)\overset{?}=e(H(m),apk),
-~~~~
+\quad
 apk=pk_1\cdot pk_2 \cdots pk_n \in \mathbb{G}_1
-$$
+\]
 
 这样只需要计算两个配对，与 $n$ 无关。上式中的 $apk$ 被称为**聚合公钥 (aggregated public key)**。如果聚合中的签名者是事先固定的，那么这个聚合公钥 $apk$ 也可以预先计算，这样验证者就不需要存储单个用户的公钥 $pk_1,\dots,pk_n$。
 
@@ -169,76 +154,76 @@ $$
 
 为了做到这一点，对手通过选择一个随机的 $\alpha \overset{R}\leftarrow \mathbb{Z}_q$ 制造公钥 $pk_{\rm adv}$，并计算：
 
-$$
+\[
 u\leftarrow g_1^\alpha,
-~~~~
+\quad
 pk_{\rm adv}\leftarrow \frac{u}{u_{\rm B}}\in\mathbb{G}_1
-$$
+\]
 
 公钥 $pk_{\rm adv}$ 对应的私钥是 $\alpha_{\rm adv}=\alpha-\alpha_{\rm B}$，其中 $\alpha_{\rm B}$ 是 Bob 的私钥。对手并不能够计算出私钥 $\alpha_{\rm adv}$，但他仍然可以宣称 $pk_{\rm adv}$ 是他的公钥。这时我们就称 $pk_{\rm adv}$ 是一个**流氓公钥 (rouge public key)**。
 
 公钥 $pk_{\rm B}$ 和 $pk_{\rm adv}$ 的聚合公钥为：
 
-$$
+\[
 apk=pk_{\rm B}\cdot pk_{\rm adv} = u_{\rm B}\cdot\frac{u}{u_{\rm B}} = u = g_1^\alpha
-$$
+\]
 
 由于对手是了解 $\alpha \in \mathbb{Z}_q$ 的，他就能够计算出 $\sigma_{\rm ag}=H(m)^\alpha \in \mathbb{G}_0$。这个 $\sigma_{\rm ag}$ 是由公钥 $pk_{\rm B}$ 和 $pk_{\rm adv}$ 针对消息 $m$ 签发的有效签名，事实上 $\sigma_{\rm ag}$ 总是能够通过验证：
 
-$$
+\[
 e(\sigma_{\rm ag},g_1)=e(H(m)^\alpha,g_1)=e(H(m),g_1^\alpha)=e(H(m),u)=e(H(m),apk)
-$$
+\]
 
 这样，对手就创建了一个聚合签名 $\sigma_{\rm ag}$，使它看起来好像 Bob 也参与了对 $m$ 的签名一样，这是对聚合签名方案的彻底破坏。
 
 安全聚合签名
 
-因此，我们的安全聚合签名定义必须正确的建模上述的流氓公钥攻击。在安全博弈中，对手被要求在一些公钥上创造一个有效的聚合签名，对手能够控制除某一个公钥之外的所有其他公钥。在输出伪造的聚合签名之前，对手可以对其没有掌握的那个公钥发出签名查询。
+因此，我们的安全聚合签名定义必须正确的建模上述的流氓公钥攻击。在安全游戏中，对手被要求在一些公钥上创造一个有效的聚合签名，对手能够控制除某一个公钥之外的所有其他公钥。在输出伪造的聚合签名之前，对手可以对其没有掌握的那个公钥发出签名查询。
 
-攻击博弈 15.2：聚合签名安全性
+攻击游戏 15.2：聚合签名安全性
 
-对于给定的聚合签名方案 $\mathcal{SA}=(G,S,V,A,VA)$，消息空间为 $\mathcal{M}$，给定对手 $\mathcal{A}$，攻击博弈按照如下方式进行：
+对于给定的聚合签名方案 $\mathcal{SA}=(G,S,V,A,VA)$，消息空间为 $\mathcal{M}$，给定对手 $\mathcal{A}$，攻击游戏按照如下方式进行：
 
 - 挑战者计算 $(pk,sk)\overset{R}\leftarrow G()$，并将 $pk$ 发送给 $\mathcal{A}$；
 - $\mathcal{A}$ 向挑战者发起查询。对于 $i=1,2,\dots$，第 $i$ 个签名查询可以表示为消息 $m^{(i)}\in\mathcal{M}$。挑战者计算 $\sigma_{i}\overset{R}\leftarrow S(sk,m^{(i)})$，并将 $\sigma_i$ 发送给 $\mathcal{A}$；
 - 最终 $\mathcal{A}$ 输出一个候选的伪造聚合签名 $(\mathbf{pk},\mathbf{m},\sigma_{\rm ag})$，其中 $\mathbf{pk}=(pk_1, pk_2, \dots, pk_n)$，$\mathbf{m}=(m_1,m_2,\dots,m_n)\in\mathcal{M}^n$。
 
-当下列条件成立时，我们就说对手赢得了这场攻击博弈：
+当下列条件成立时，我们就说对手赢得了这场攻击游戏：
 
 - $VA(\mathbf{pk},\mathbf{m},\sigma_{\rm ag})=\mathsf{accept}$；
 - 至少存在一个 $1\leq j \leq n$ 使得：
     1. $pk_j=pk$；
     2. $\mathcal{A}$ 并没有对消息 $m_j$ 发出过签名查询，即 $m_j \notin \{m^{(1)},m^{(2)},\dots\}$。
 
-我们将对手 $\mathcal{A}$ 对聚合签名方案 $\mathcal{SA}$ 的优势表示为 $\rm{ASIG\mathsf{adv}}[\mathcal{A},\mathcal{SA}]$，其值为 $\mathcal{A}$ 赢得[攻击博弈 15.2](https://www.notion.so/ffeb7262455748db88ce901b60686c79) 的概率。
+我们将对手 $\mathcal{A}$ 对聚合签名方案 $\mathcal{SA}$ 的优势表示为 $\rm{ASIG\mathsf{adv}}[\mathcal{A},\mathcal{SA}]$，其值为 $\mathcal{A}$ 赢得[攻击游戏 15.2](https://www.notion.so/ffeb7262455748db88ce901b60686c79) 的概率。
 
 定义 15.5
 
 对于任意有效对手 $\mathcal{A}$，如果 $\rm{ASIG\mathsf{adv}}[\mathcal{A},\mathcal{SA}]$ 的值都可忽略不计，我们就称聚合签名方案 $\mathcal{SA}$ 是安全的。
 
-安全 BLS 签名聚合
+\subsection{安全的 BLS 聚合}\label{subsec:15-5-3}
 
 现在我们已经了解了安全需求，让我们看看如何增强[式 15.7](https://www.notion.so/ffeb7262455748db88ce901b60686c79) 中介绍的简单签名聚合方案，并保证 BLS 签名聚合的正确性和安全性。有两种方法可以用来防止流氓公钥攻击，我们首先介绍这两种方法，接着会证明这两种方法的安全性。
 
-方法 1: 消息增强
+\subsubsection{方法 1：消息增强}
 
 最简单的进行安全的 BLS 签名聚合的方法是在每个被签名的消息中嵌入签名的公钥。具体来说，修改后的签名方案 $\mathcal{SA}_{BLS}^{(1)}$ 与[式 15.7](https://www.notion.so/ffeb7262455748db88ce901b60686c79) 中定义的签名方案 $\mathcal{SA}_{\rm BLS}$ 大致相同，只是现在的签名算法使用的哈希函数 $H: \mathbb{G}_1 \times \mathcal{M} \to \mathbb{G}_0$ 定义如下：
 
-$$
+\[
 S(sk,m)=H(pk,m)^\alpha
-$$
+\]
 
 其中私钥 $sk=\alpha \in \mathbb{Z}_q$，公钥 $pk \leftarrow g_i^\alpha$。
 
 实际上，被签名的消息是元组 $(pk,m)\in \mathbb{G}_1 \times \mathcal{M}$。聚合签名的验证方法也相应地改为对元组 $(pk,m)$ 进行哈希。具体来说，聚合签名验证算法 $VA(\mathbf{pk}\in\mathbb{G}_1^n,\mathbf{m}\in\mathcal{M}^n,\sigma_{\rm ag})$ 的工作原理是验证：
 
-$$
+\[
 e(\sigma_{\rm ag},g_1)\overset{?}=e(H(pk_1,m_1),pk_1)\cdots e(H(pk_n,m_n),pk_n)
-$$
+\]
 
 我们将在后面证明这种方法是安全的。
 
-方法 2: 私钥拥有证明
+\subsubsection{方法 2：私钥拥有证明}
 
 [方法 1](https://www.notion.so/ffeb7262455748db88ce901b60686c79) 的一个缺点是，当聚合多个相同消息的签名时，我们无法再利用[备注 15.4](https://www.notion.so/ffeb7262455748db88ce901b60686c79) 介绍的快速验证方法。在将公钥嵌入要签名的消息里后，被签名的消息将不再是完全相同的，这使得验证者无法再使用[式 15.8](https://www.notion.so/ffeb7262455748db88ce901b60686c79) 中介绍的优化验证方法。我们下面展示一种新的签名聚合方法，当事先知道公钥集合时，该方法仍能使用快速签名验证方法。
 
@@ -248,9 +233,13 @@ $$
 
 - 密钥生成算法 $G()$：
     
-    $$
-    \alpha \overset{R}\leftarrow \mathbb{Z}_q,~~u\leftarrow g_1^\alpha\in\mathbb{G}_1,~~\pi\leftarrow H'(u)^\alpha\in\mathbb{G}_0\\
-    $$
+    \[
+    \alpha \overset{R}\leftarrow \mathbb{Z}_q,
+    \quad
+    u\leftarrow g_1^\alpha\in\mathbb{G}_1,
+    \quad
+    \pi\leftarrow H'(u)^\alpha\in\mathbb{G}_0
+    \]
     
     公钥为 $pk=(u,\pi)\in\mathbb{G}_1\times\mathbb{G}_0$，私钥为 $sk=\alpha\in\mathbb{Z}_q$。
     
@@ -260,7 +249,7 @@ $$
 
 公钥中的新项 $\pi=H'(u)^\alpha \in \mathbb{G}_0$ 用于证明公钥的所有者也拥有对应的私钥 $\alpha$。这个 $\pi$ 是对公钥 $u\in\mathbb{G}_1$ 的 BLS 签名，只是该签名使用的是辅助哈希函数 $H'$ 而不是 $H$。聚合签名验证算法首先检查公钥中给出的所有 $\pi_1,\pi_2,\dots,\pi_n\in\mathbb{G}_0$ 都是合法的，然后再验证聚合签名 $\sigma_{\rm ag}$ 是否合法。
 
-当使用这个签名方案时，需要注意辅助哈希函数 $H'$ 与用于对消息签名的哈希函数 $H$ 相互独立，否则签名方案会丧失安全性。在实践中，$H$ 和 $H'$ 都可以使用域分离法从同一个哈希算法中导出，比如 SHA256 算法。例如，令 $H(x)={\rm SHA256}(0~||~x)$，$H'(x)={\rm SHA256}(1~||~x)$。
+当使用这个签名方案时，需要注意辅助哈希函数 $H'$ 与用于对消息签名的哈希函数 $H$ 相互独立，否则签名方案会丧失安全性。在实践中，$H$ 和 $H'$ 都可以使用域分离法从同一个哈希算法中导出，比如 SHA256 算法。例如，令 $H(x)={\rm SHA256}(0\,\Vert\,x)$，$H'(x)={\rm SHA256}(1\,\Vert\,x)$。
 
 备注 15.5
 
@@ -274,9 +263,9 @@ $\mathcal{SA}_{\rm BLS}^{(2)}$ 的优点在于，当所有的消息都相同时�
 
 一个验证者通常需要储存它所遇到的所有公钥和签名，以便将来能够对其行为进行审计。如果现有 $n$ 个公钥的集合 $\{pk_i=(u_i,\pi_i)\}_{i=1}^{n}$，由于公钥中包含的私钥拥有证明 $\pi_1,\dots,\pi_n\in\mathbb{G}_0$ 本身也是 BLS 签名，因此将这些证明聚合成一个证明 $\pi=\pi_1\pi_2\cdots\pi_n\in\mathbb{G}_0$，然后只保存 $(u_1,u_2,\dots,u_n,\pi)$ 是很有诱惑力的一种设想。这样操作，存储公钥 $pk_1,pk_2,\dots,pk_n$ 所需的空间就大约减少了一半。同时，任何人都可以通过检查 $e(\pi,g_1)=\prod_{i=1}^ne(H'(u_i),u_i)$ 来验证聚合后的拥有证明 $\pi$。如果上述等式成立，那么公钥集的子集的聚合证明也同样会被承认。但不幸的是，将拥有证明进行聚合将会导致接下来对 $\mathcal{SA}_{\rm BLS}^{(2)}$ 的安全性证明失效。在这个安全性证明中，我们需要每一个公钥中都包含一个非聚合形式的私钥拥有证明。
 
-证明两种聚合方法的安全性
+\subsubsection{证明两种聚合方法的安全性}
 
-非随机预言机模型下的安全签名方案
+\subsection{不依赖随机预言机的安全签名方案}\label{subsec:15-5-4}
 
 为了总结我们对基于配对的签名方案的讨论，我们下面展示如何使用配对理论来构建签名方案，且该方案的安全性不依赖于随机预言模型。特别是当被签名的消息很短时，甚至不需要在签名或验证前对其进行哈希处理。这个特性在某些场景下很有用。
 
@@ -284,66 +273,74 @@ $\mathcal{SA}_{\rm BLS}^{(2)}$ 的优点在于，当所有的消息都相同时�
 
 一种构造
 
-给定配对 $e: \mathbb{G}_0 \times\mathbb{G}_1\to\mathbb{G}_T$，其中 $\mathbb{G}_0$，$\mathbb{G}_1$ 和 $\mathbb{G}_T$ 是 $q$ 阶循环群，$q$ 为素数。有生成元 $g_0\in\mathbb{G}_0$，$g_1\in\mathbb{G}_1$。令 $F$ 为定义在 $(\mathcal{K},\mathbb{Z}_q,\mathbb{Z}_q)$ 上的 PRF，我们可以构造一个消息空间为 $\mathcal{M}=\mathbb{Z}_q$ 的签名方案 $\mathcal{S}_{\rm G}=(G,S,V)$，其原理是：
+给定配对 $e: \mathbb{G}_0 \times\mathbb{G}_1\to\mathbb{G}_\mathrm{T}$，其中 $\mathbb{G}_0$，$\mathbb{G}_1$ 和 $\mathbb{G}_\mathrm{T}$ 是 $q$ 阶循环群，$q$ 为素数。有生成元 $g_0\in\mathbb{G}_0$，$g_1\in\mathbb{G}_1$。令 $F$ 为定义在 $(\mathcal{K},\mathbb{Z}_q,\mathbb{Z}_q)$ 上的 PRF，我们可以构造一个消息空间为 $\mathcal{M}=\mathbb{Z}_q$ 的签名方案 $\mathcal{S}_{\rm G}=(G,S,V)$，其原理是：
 
 - 密钥生成算法 $G()$ ：
     
-    $$
-    \alpha,\beta\overset{R}\leftarrow\mathbb{Z}_q,~~~~
-    k\overset{R}\leftarrow\mathcal{K},~~~~
-    u_1\leftarrow g_1^\alpha,~~~~
-    v_0\leftarrow g_0^\beta,~~~~
-    h_T\leftarrow e(v_0,g_1)\in\mathbb{G}_T
-    $$
+    \[
+    \alpha,\beta\overset{R}\leftarrow\mathbb{Z}_q,
+    \quad
+    k\overset{R}\leftarrow\mathcal{K},
+    \quad
+    u_1\leftarrow g_1^\alpha,
+    \quad
+    v_0\leftarrow g_0^\beta,
+    \quad
+    h_T\leftarrow e(v_0,g_1)\in\mathbb{G}_\mathrm{T}
+    \]
     
-    公钥为 $pk=(u_1,h_T)\in\mathbb{G}_1\times\mathbb{G}_T$，私钥为 $sk=(\alpha,\beta,k)\in\mathbb{Z}_q^2\times\mathcal{K}$。
+    公钥为 $pk=(u_1,h_T)\in\mathbb{G}_1\times\mathbb{G}_\mathrm{T}$，私钥为 $sk=(\alpha,\beta,k)\in\mathbb{Z}_q^2\times\mathcal{K}$。
     
 - 签名算法 $S(sk,m)$：使用私钥 $sk=(\alpha,\beta,k)$ 签名消息 $m\in\mathbb{Z}_q$：
     
-    $$
-    r\overset{R}\leftarrow F(k,m)\in\mathbb{Z}_q,~~
+    \[
+    r\overset{R}\leftarrow F(k,m)\in\mathbb{Z}_q,
+    \quad
     w_0\leftarrow g_0^{\frac{\beta-r}{\alpha-m}}
-    $$
+    \]
     
-    输出 $\sigma \leftarrow (r,w_0)\in\mathbb{Z}_q\times\mathbb{G}_0$。注意，当 $\alpha=m$ 时 $w_0$ 无定义，此时我们令 $w_0\leftarrow 1,~~r\leftarrow \beta$。
+    输出 $\sigma \leftarrow (r,w_0)\in\mathbb{Z}_q\times\mathbb{G}_0$。注意，当 $\alpha=m$ 时 $w_0$ 无定义，此时我们令 $w_0\leftarrow 1$，$r\leftarrow \beta$。
     
 - 签名验证算法 $V(pk,m,\sigma)$：使用公钥 $pk=(u_1,h_T)$ 验证对消息 $m\in\mathbb{Z}_q$ 的签名 $\sigma=(r,w_0)\in\mathbb{Z}_q\times\mathbb{G}_0$，当如下等式成立时接受签名：
 
-$$
+\[
 e(w_0,u_1g_1^{-m})\cdot e(g_0,g_1)^r=h_T
-$$
+\]
 
 合法的签名 $\sigma=(r,w_0)$ 总是能够通过验证，这是因为：
 
-$$
+\[
 e(w_0,u_1g_1^{-m})=e(g_0^{\frac{\beta-r}{\alpha-m}},g_1^{\alpha-m})=e(g_0,g_1)^{\beta-r}=h_T\cdot e(g_0,g_1)^{-r}
-$$
+\]
 
 在签名过程中使用的 PRF 是为了确保签名者在多次签署同一消息时返回的签名全部相同，这不仅在安全证明中是重要的，也是签名方案安全性的需要。但是验证过程中不需要使用 PRF。
 
 为了证明方案的安全性，我们需要一个称为 $d$-CDH 或幂 CDH 的假设，该假设比基础 CDH 强得多。
 
-攻击博弈 15.3：$d$-CDH
+攻击游戏 15.3：$d$-CDH
 
-对于给定对手 $\mathcal{A}$ 和正整数 $d$，攻击博弈依照以下方式进行：
+对于给定对手 $\mathcal{A}$ 和正整数 $d$，攻击游戏依照以下方式进行：
 
 - 挑战者随机选择 $\alpha \overset{R}\leftarrow \mathbb{Z}_q$ 和 $h_1\overset{R}\leftarrow\mathbb{G}_1$，将下面的元组交给对手 $\mathcal{A}$：
     
-    $$
+    \[
     (
     g_0^\alpha,
     g_0^{(\alpha^2)},
     \dots,
-    g_0^{(\alpha^d)},~~
-    g_1^\alpha,~~
-    h_1,~~
+    g_0^{(\alpha^d)},
+    \quad
+    g_1^\alpha,
+    \quad
+    h_1,
+    \quad
     h_1^{(\alpha^{d+2})}
     )
-    $$
+    \]
     
-    令 $z=e(g_0,h_1)^{(\alpha^{d+1})}\in\mathbb{G}_T$；
+    令 $z=e(g_0,h_1)^{(\alpha^{d+1})}\in\mathbb{G}_\mathrm{T}$；
     
-- 对手输出 $\hat{z}\in\mathbb{G}_T$。
+- 对手输出 $\hat{z}\in\mathbb{G}_\mathrm{T}$。
 
 我们将对手 $\mathcal{A}$ 解决 $e$ 上的 $d$-CDH 问题的优势表示为 ${\rm PCDH\mathsf{adv}}[\mathcal{A},e,d]$，即使得 $\hat{z}=z$ 成立的概率。
 
@@ -351,17 +348,17 @@ $$
 
 令 $d$ 为正整数，如果对于任意有效对手 $\mathcal{A}$，${\rm PCDH\mathsf{adv}}[\mathcal{A},e,d]$ 的值都可忽略不计，我们就称 $e$ 满足 $d$-CDH 假设。
 
-当 $d$ 远小于群的阶 $q$ 时，上述假设是成立的。我们可以证明对于一些 $q$ 值，攻击博弈中交给对手 $\mathcal{A}$ 的元组数据可以将找到 $\alpha$ 的难度降低为在 $\mathbb{G}_0$ 上计算离散对数难度的 $\frac{1}{\sqrt{d}}$。在我们的应用中，$d$ 是对手 $\mathcal{A}$ 所发出的签名查询的次数，而这是一个相对较小的数字 (比如小于 $2^{40}$)。谨慎起见，我们可以稍微增大 $q$ 来补偿 $\sqrt{d}$ 的难度损耗。
+当 $d$ 远小于群的阶 $q$ 时，上述假设是成立的。我们可以证明对于一些 $q$ 值，攻击游戏中交给对手 $\mathcal{A}$ 的元组数据可以将找到 $\alpha$ 的难度降低为在 $\mathbb{G}_0$ 上计算离散对数难度的 $\frac{1}{\sqrt{d}}$。在我们的应用中，$d$ 是对手 $\mathcal{A}$ 所发出的签名查询的次数，而这是一个相对较小的数字 (比如小于 $2^{40}$)。谨慎起见，我们可以稍微增大 $q$ 来补偿 $\sqrt{d}$ 的难度损耗。
 
 许多密码学构造中都使用了 $d$-CDH 假设及其变体。下面的观察在应用中，尤其是证明签名方案 $\mathcal{S}_{\rm G}$ 的安全性方面起到了核心作用。令 $P(X)=\sum_{i=0}^{d'}\gamma_i\cdot X^i\in\mathbb{Z}_q[X]$ 为一 $d'$ 阶多项式 ，其中 $d'\leq d$，则基于[式 15.18](https://www.notion.so/ffeb7262455748db88ce901b60686c79) 中的数据，我们可以构造出项 $g_0^{P(\alpha)}\in\mathbb{G}_0$：
 
-$$
+\[
 g_0^{P(\alpha)}=g_0^{\sum_{i=0}^{d'}\gamma_i\cdot\alpha^i}=\prod_{i=0}^{d'}(g_0^{(\alpha^i)})^{\gamma^i}
-$$
+\]
 
 [式 15.19](https://www.notion.so/ffeb7262455748db88ce901b60686c79) 等号右侧的所有项都在[式 15.18](https://www.notion.so/ffeb7262455748db88ce901b60686c79) 中，因此我们可以通过[式 15.19](https://www.notion.so/ffeb7262455748db88ce901b60686c79) 得到 $g_0^{P(\alpha)}$。换言之，我们可以在不知道 $\alpha$ 值的前提下计算出一个 $\alpha$ 的低阶多项式 $P$。
 
-另一种构造
+\subsubsection{另一种构造}
 
 下面我们将介绍另一种基于配对的签名方案，这种方案也是安全的，且不依赖于随机预言模型。不同的是，这种构造在签名算法中不依赖于 PRF。在这种方案下，当签署较短的消息时，消息的签名和验证都是简单的代数算法，而不需要对称基元。这种性质在某些环境下是很有用的，比如签名过程是多方之间的分布式协议的情况。
 
@@ -369,42 +366,47 @@ $$
 
 - 密钥生成算法 $G()$ ：
     
-    $$
-    \alpha,\beta\overset{R}\leftarrow\mathbb{Z}_q,~~~~
-    u_1\leftarrow g_1^\alpha,~~~~
-    v_1\leftarrow g_1^\beta,~~~~
-    h_0\overset{R}\leftarrow \mathbb{G}_0,~~~~
-    h_T\leftarrow e(h_0,g_1)\in\mathbb{G}_T
-    $$
+    \[
+    \alpha,\beta\overset{R}\leftarrow\mathbb{Z}_q,
+    \quad
+    u_1\leftarrow g_1^\alpha,
+    \quad
+    v_1\leftarrow g_1^\beta,
+    \quad
+    h_0\overset{R}\leftarrow \mathbb{G}_0,
+    \quad
+    h_T\leftarrow e(h_0,g_1)\in\mathbb{G}_\mathrm{T}
+    \]
     
-    公钥 $pk=(u_1,v_1, h_T)\in\mathbb{G}_1^2\times\mathbb{G}_T$，私钥 $sk=(\alpha,\beta,h_0)\in\mathbb{Z}_q^2\times\mathbb{G}_0$。
+    公钥 $pk=(u_1,v_1, h_T)\in\mathbb{G}_1^2\times\mathbb{G}_\mathrm{T}$，私钥 $sk=(\alpha,\beta,h_0)\in\mathbb{Z}_q^2\times\mathbb{G}_0$。
     
 - 签名算法 $S(sk,m)$：使用私钥 $sk=(\alpha,\beta,h_0)\in\mathbb{Z}_q^2\times\mathbb{G}_0$ 签名消息 $m\in\mathbb{Z}_q$：
     
-    $$
-    r\overset{R}\leftarrow \mathbb{Z}_q,~~
+    \[
+    r\overset{R}\leftarrow \mathbb{Z}_q,
+    \quad
     w_0\leftarrow h_0^{\frac{1}{\alpha+r\beta+m}}
-    $$
+    \]
     
     输出 $\sigma \leftarrow (r,w_0)\in\mathbb{Z}_q\times\mathbb{G}_0$。注意，当 $\alpha+r\beta+m=0$ 时重新随机选取 $r\overset{R}\leftarrow \mathbb{Z}_q$，然后重复以上过程。或者在选取 $r$ 时就保证 $r\neq\frac{m-\alpha}{\beta}$。
     
 - 签名验证算法 $V(pk,m,\sigma)$：使用公钥 $pk=(u_1,v_1,h_T)$ 验证对消息 $m\in\mathbb{Z}_q$ 的签名 $\sigma=(r,w_0)\in\mathbb{Z}_q\times\mathbb{G}_0$，当如下等式成立时接受签名：
     
-    $$
+    \[
     e(w_0,u_1v_1^rg_1^m)=h_T
-    $$
+    \]
     
 
 合法的签名 $\sigma=(r,w_0)$ 总是能够通过验证，这是因为对于上式中的项 $u_1v_1^rg_1^m$，总有：
 
-$$
+\[
 u_1v_1^rg_1^m=g_1^{\alpha+r\beta+m}
-$$
+\]
 
 而对于有效签名，总是有：
 
-$$
+\[
 w_0=h_0^{\frac{1}{\alpha+r\beta+m}}
-$$
+\]
 
 因此有 $e(h_0,g_1)=h_T$，于是验证通过。

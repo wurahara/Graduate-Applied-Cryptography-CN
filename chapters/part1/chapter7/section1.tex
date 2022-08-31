@@ -40,7 +40,7 @@ m_0\neq m_1
 
 统计性 UHF 对所有的对手都是安全的，无论对手是否有效：没有对手能够以不可忽略不计的优势赢得针对一个统计性 UHF 的攻击游戏 \ref{game:7-1}。我们之所以考虑计算上没有限制的对手，主要是因为，与我们在本文中讨论的大多数其他安全概念不同，所谓的好的 UHF，是指那些我们知道如何建立，而又不对对手设定任何计算性限制的东西。请注意，每个统计性 UHF 都是计算性 UHF，但反之则不一定。
 
-如果 $H$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数，那么 $\epsilon$-UHF 属性的另一种描述如下（见练习 7.3）：
+如果 $H$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数，那么 $\epsilon$-UHF 属性的另一种描述如下（见练习 \ref{exer:7-3}）：
 \begin{equation}\label{eq:7-1}
 \begin{aligned}
 & \text{\emph{对于每一对互不相同的消息}}\;
@@ -106,6 +106,6 @@ UHF 对手 $\mathcal{B}$ 运行 $\mathcal{A}$ 并获得 $s\leq Q$ 条各不相�
 \end{enumerate}
 \end{definition}
 
-在定义 UHF 时，我们通过安全参数 $\lambda$ 将攻击游戏 \ref{game:7-1} 参数化了，现在优势 ${\rm UHF}\mathsf{adv}[\mathcal{A},H]$ 是安全参数 $\lambda$ 的一个函数。
+在定义 UHF 时，我们通过安全参数 $\lambda$ 将攻击游戏 \ref{game:7-1} 参数化，现在优势 ${\rm UHF}\mathsf{adv}[\mathcal{A},H]$ 是安全参数 $\lambda$ 的一个函数。
 
 信息论属性（式 \ref{eq:7-1}）是文献中为没有安全参数或系统参数的单个哈希函数定义 $\epsilon$-UHF 的一个比较传统的方法；在我们的渐进过程中，如果对于每个安全参数和系统参数设置，式 \ref{eq:7-1} 的属性都成立，那么我们对一个 $\epsilon$-UHF 的定义就必然能够得到满足。

@@ -71,11 +71,11 @@ H_{\rm poly}\big(k,\,(a_1,\dots,a_v)\big)=k^v+a_1k^{v-1}+a_2k^{v-2}+\cdots+a_{v-
 \begin{equation}\label{eq:7-5}
 H_{\rm fpoly}\big(k,\,(a_1,\dots,a_v)\big):=a_1k^{v-1}+a_2k^{v-2}+\cdots+a_{v-1}k+a_v\in\mathbb{Z}_p
 \end{equation}
-那么对于变长输入来说，其结果就不是 UHF。比如说，以下两条消息 $m_0=(a_1,a_2)\in\mathbb{Z}^2_p$ 和 $m_1=(0,a_1,a_2)\in\mathbb{Z}^3_p$ 在所有的密钥 $k\in\mathbb{Z}_p$ 下都是对 $H_{\rm fpoly}$ 的碰撞。尽管如此，在练习 7.16 中，我们将会表明，如果我们把 $H_{\rm fpoly}$ 的输入空间限制在定长的消息上，比如 $\mathcal{M}:=\mathbb{Z}_p^\ell$，那么它仍然是一个统计性 UHF。更具体地说，$H_{\rm fpoly}$ 是一个 $(\ell-1)/p$-UHF。相比之下，式 \ref{eq:7-3} 中定义的函数 $H_{\rm fpoly}$ 对于包含变长输入的输入空间 $\mathbb{Z}_p^\ell$ 来说是一个统计性 UHF。
+那么对于变长输入来说，其结果就不是 UHF。比如说，以下两条消息 $m_0=(a_1,a_2)\in\mathbb{Z}^2_p$ 和 $m_1=(0,a_1,a_2)\in\mathbb{Z}^3_p$ 在所有的密钥 $k\in\mathbb{Z}_p$ 下都是对 $H_{\rm fpoly}$ 的碰撞。尽管如此，在练习 \ref{exer:7-16} 中，我们将会表明，如果我们把 $H_{\rm fpoly}$ 的输入空间限制在定长的消息上，比如 $\mathcal{M}:=\mathbb{Z}_p^\ell$，那么它仍然是一个统计性 UHF。更具体地说，$H_{\rm fpoly}$ 是一个 $(\ell-1)/p$-UHF。相比之下，式 \ref{eq:7-3} 中定义的函数 $H_{\rm fpoly}$ 对于包含变长输入的输入空间 $\mathbb{Z}_p^\ell$ 来说是一个统计性 UHF。
 \end{snote}
 
 \begin{remark}\label{remark:7-1}
-函数 $H_{\rm poly}$ 接受 $\mathbb{Z}^{\leq\ell}_p$ 中的输入，并输出 $\mathbb{Z}_p$ 上的值。这并不是十分理想，因为我们更倾向于使用对长为 $n$ 比特的分组进行操作的函数，其中的 $n$ 是某个正整数。我们可以调整式 \ref{eq:7-3} 中对 $H_{\rm poly}$ 的定义，使其不在 $\mathbb{Z}_p$ 上工作，而是在有限域 ${\rm GF}(2^n)$ 上进行算术运算。使用与引理 \ref{lemma:7-2} 完全相同的分析方法，我们可以看到，这个版本的 $H_{\rm poly}$ 是一个 ${(/2^n)}$-UHF。它输出 ${\rm GF}(2^n)$ 上的值。在练习 7.1 中，我们将会表明，简单地将 $H_{\rm poly}$ 定义为模 $2^n$ 运算（即工作在 $\mathbb{Z}_{2^n}$ 上）将得到一个完全不安全的 UHF。
+函数 $H_{\rm poly}$ 接受 $\mathbb{Z}^{\leq\ell}_p$ 中的输入，并输出 $\mathbb{Z}_p$ 上的值。这并不是十分理想，因为我们更倾向于使用对长为 $n$ 比特的分组进行操作的函数，其中的 $n$ 是某个正整数。我们可以调整式 \ref{eq:7-3} 中对 $H_{\rm poly}$ 的定义，使其不在 $\mathbb{Z}_p$ 上工作，而是在有限域 ${\rm GF}(2^n)$ 上进行算术运算。使用与引理 \ref{lemma:7-2} 完全相同的分析方法，我们可以看到，这个版本的 $H_{\rm poly}$ 是一个 ${(/2^n)}$-UHF。它输出 ${\rm GF}(2^n)$ 上的值。在练习 \ref{exer:7-1} 中，我们将会表明，简单地将 $H_{\rm poly}$ 定义为模 $2^n$ 运算（即工作在 $\mathbb{Z}_{2^n}$ 上）将得到一个完全不安全的 UHF。
 \end{remark}
 
 \begin{snote}[使用 UHF 时的注意事项。]
@@ -326,4 +326,4 @@ f(U[i^*],i^*)=\bigoplus_{i\neq i^*}f(U[i],i)\ \ \oplus\ \ \bigoplus_jf(V[j],j)
 于是，根据式 \ref{eq:7-14}，\ref{eq:7-15} 和 \ref{eq:7-17}，定理得证。
 \end{proof}
 
-在练习 7.27 中，我们将对定理 \ref{theo:7-6} 进行推广，得到 $F^\oplus$ 作为一个多次查询 UHF 的约束。
+在练习 \ref{exer:7-27} 中，我们将对定理 \ref{theo:7-6} 进行推广，得到 $F^\oplus$ 作为一个多次查询 UHF 的约束。

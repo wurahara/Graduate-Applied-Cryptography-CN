@@ -30,7 +30,7 @@
 
 \subsection{构建不可预测函数}\label{subsec:7-6-2}
 
-到目前为止，我们知道，任何 $\epsilon$-PUF 也都是 $\epsilon$-DUF，反之亦然（见练习 7.28）。然而，我们表明，任何 $\epsilon$-DUF 都可以被调整成为一个 $\epsilon$-PUF。这种调整需要增加密钥的长度。
+到目前为止，我们知道，任何 $\epsilon$-PUF 也都是 $\epsilon$-DUF，反之亦然（见练习 \ref{exer:7-28}）。然而，我们表明，任何 $\epsilon$-DUF 都可以被调整成为一个 $\epsilon$-PUF。这种调整需要增加密钥的长度。
 
 令 $H$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的哈希函数，其中 $\mathcal{T}=\mathbb{Z}_N$，$N$ 为某个函数。下面，我们建立一个新的哈希函数 $H'$，它由 $H$ 派生而来，且其输入空间与输出空间与 $H$ 相同，但其密钥空间是 $\mathcal{K}\times\mathcal{T}$。函数 $H'$ 的定义如下：
 \begin{equation}\label{eq:7-32}

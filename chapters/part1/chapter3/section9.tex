@@ -64,6 +64,7 @@ RC4 很适合用软件实现。其他流密码，如 Grain 和 Trivium，是为�
     \hline
   \end{tabular}
   \caption{软件实现的流密码的速度比较（速度越高越好）。}
+  \label{tab:3-1}
 \end{table}
 
 \subsection{RC4的安全性}
@@ -85,7 +86,7 @@ RC4的设置算法基于给定的随机种子将数组$S$初始化为$0 \dots 25
 \[
 \begin{aligned}
 \Pr[z_2=0] & =\Pr[(z_2=0)\;|\;P]\cdot\Pr[P]+\Pr[(z_2=0)\;|\;\neg P]\cdot\Pr[\neg P]\\
-& \approx 1\cdot(1/n)+(1/n)\cdot(1-1/n)\approx2/n\qedhere
+& \approx 1\cdot(1/n)+(1/n)\cdot(1-1/n)\approx2/n \qedhere
 \end{aligned}
 \]
 \end{proof}

@@ -140,7 +140,7 @@ D((P_1,P_2),\;y):=\pi^{-1}(y\oplus P_2)\oplus P_1
 \end{equation}
 其中 $Q_{\rm s}$ 是 $\mathcal{A}$ 向 $\mathcal{E}_{EM}$ 发起的查询次数，而 $Q_{\rm ic}$ 是 $\mathcal{A}$ 对 $\Pi$ 和 $\Pi^{-1}$ 发起的查询次数。因此，只要 $|\mathcal{X}|$ 足够大，艾文-曼苏尔分组密码（在理想密码模型下）就是安全的。
 
-艾文-曼苏尔安全性定理 \ref{theo:4-14} 并不要求密钥 $P_1$ 和 $P_2$ 是独立的。事实上，如果我们令 $P_1=P_2$，$\mathcal{E}_{EM}$ 的密钥就是 $\mathcal{X}$ 中的单个元素，此时式 \ref{eq:4-36} 中的上界仍然保持不变。我们注意到，如果我们不考虑 $P_1$ 或 $P_2$ 中的任何一个，这个构造就会完全丧失安全性（见练习 4.20）。
+艾文-曼苏尔安全性定理 \ref{theo:4-14} 并不要求密钥 $P_1$ 和 $P_2$ 是独立的。事实上，如果我们令 $P_1=P_2$，$\mathcal{E}_{EM}$ 的密钥就是 $\mathcal{X}$ 中的单个元素，此时式 \ref{eq:4-36} 中的上界仍然保持不变。我们注意到，如果我们不考虑 $P_1$ 或 $P_2$ 中的任何一个，这个构造就会完全丧失安全性（见练习 \ref{exer:4-20}）。
 
 \begin{snote}[迭代艾文-曼苏尔密码和 AES。]
 回顾我们对 AES 的描述（图 \ref{fig:4-11}），我们发现艾文-曼苏尔密码看起来很像 AES 中的一轮，其中轮函数 $\Pi_{\rm AES}$ 扮演了 $\pi$ 的角色。当然，一轮 AES 并不是一个安全的分组密码：式 \ref{eq:4-36} 中的上界并不能保证安全性，因为 $\Pi_{\rm AES}$ 并不是一个随机置换。
@@ -186,9 +186,9 @@ DX((k,P_1,P_2),\;y)=D(k,\;y\oplus P_2)\oplus P_1
 \begin{proof}[证明思路]
 基本思想是证明理想密码查询和标准查询不会相互影响，除非达到了式 \ref{eq:4-38} 中的概率上界。事实上，要使这两类查询相互影响，对手必须使：
 \[
-(\mathpzc{k}=k~{\rm and}~\mathpzc{a}=x\oplus P_1)
+(\mathpzc{k}=k\;{\rm and}\;\mathpzc{a}=x\oplus P_1)
 \quad\text{or}\quad
-(\mathpzc{k}=k~{\rm and}~\mathpzc{b}=y\oplus P_2)
+(\mathpzc{k}=k\;{\rm and}\;\mathpzc{b}=y\oplus P_2)
 \]
 对于某个标准查询的输入/输出对 $(x,y)$ 和某个理想密码查询的输入/输出三元组 $(\mathpzc{k},\mathpzc{a},\mathpzc{b})$ 成立。从本质上讲，对手必须同时猜测出随机密钥 $k$ 以及随机填充 $P_1$ 或 $P_2$ 中的任意一个。
 
@@ -323,9 +323,9 @@ DX((k,P_1,P_2),\;y)=D(k,\;y\oplus P_2)\oplus P_1
 
 因此，当且仅当对于某个由 $\Pi$-查询或 $\Pi^{-1}$-查询产生的输入/输出三元组 $(\mathpzc{k},\mathpzc{a},\mathpzc{b})$ 和某个由 $\mathcal{E}X$-查询产生的输入/输出对 $(x,y)$，有：
 \begin{equation}
-(\mathpzc{k}=k~{\rm and}~\mathpzc{a}=x\oplus P_1)
+(\mathpzc{k}=k\;{\rm and}\;\mathpzc{a}=x\oplus P_1)
 \quad\text{or}\quad
-(\mathpzc{k}=k~{\rm and}~\mathpzc{b}=y\oplus P_2)
+(\mathpzc{k}=k\;{\rm and}\;\mathpzc{b}=y\oplus P_2)
 \end{equation}
 时，事件 $Z$ 发生。使用联合约束，我们可以将 $\Pr[Z]$ 约束为 $2Q_{\rm s}Q_{\rm ic}$ 个事件的概率之和，其中每个事件都形如 $\mathpzc{k}=k\;\text{and}\;\mathpzc{a}=x\oplus P_1$ 或者 $\mathpzc{k}=k\;\text{and}\;\mathpzc{b}=y\oplus P_2$。根据独立性，由于 $k$ 在一个大小为 $|\mathcal{K}|$ 的集合上均匀分布，而 $P_1$ 和 $P_2$ 在一个大小为 $|\mathcal{X}'|$ 的集合上均匀分布，因此每个这样的事件发生的概率最多为 ${1}/{(|\mathcal{K}||\mathcal{X}'|)}$。由此可见：
 \begin{equation}\label{eq:4-43}
@@ -353,8 +353,8 @@ DX((k,P_1,P_2),\;y)=D(k,\;y\oplus P_2)\oplus P_1
 
 在这个游戏中，挑战者维护着数对 $(\mathpzc{a},\mathpzc{b})$ 的多个集合 $\Pi$，每个 $\Pi$ 集合代表一个可以被扩展为 $\mathcal{X}$ 上的一个置换的函数，对于 $\Pi$ 中的每个 $(\mathpzc{a},\mathpzc{b})$，它能将 $\mathpzc{a}$ 映射到 $\mathpzc{b}$。我们称这样的集合 $\Pi$ 为 \emph{$\mathcal{X}$ 上的部分置换 (partial permutation on $\mathcal{X}$)}，定义：
 \begin{align*}
-	{\rm Domain}(\Pi)=\{\mathpzc{a}\in\mathcal{X}:(\mathpzc{a},\mathpzc{b})\in\Pi,~{\rm for~some~}\mathpzc{b}\in\mathcal{X}\}\\
-	{\rm Range}(\Pi)=\{b\in\mathcal{X}:(\mathpzc{a},\mathpzc{b})\in\Pi,~{\rm for~some~}\mathpzc{a}\in\mathcal{X}\}
+	{\rm Domain}(\Pi)=\{\mathpzc{a}\in\mathcal{X}:(\mathpzc{a},\mathpzc{b})\in\Pi,\;\text{for some}\;\mathpzc{b}\in\mathcal{X}\}\\
+	{\rm Range}(\Pi)=\{\mathpzc{b}\in\mathcal{X}:(\mathpzc{a},\mathpzc{b})\in\Pi,\;\text{for some}\;\mathpzc{a}\in\mathcal{X}\}
 \end{align*}
 此外，对于 $\mathpzc{a}\in{\rm Domain}(\Pi)$，定义 $\Pi(\mathpzc{a})$ 为使得 $(\mathpzc{a},\mathpzc{b})\in\Pi$ 的唯一值 $\mathpzc{b}$。同样地，对于 $\mathpzc{b}\in{\rm Range}(\Pi)$，定义 $\Pi^{-1}(\mathpzc{b})$ 为使得 $(\mathpzc{a},\mathpzc{b})\in\Pi$ 的唯一值 $\mathpzc{a}$。
 

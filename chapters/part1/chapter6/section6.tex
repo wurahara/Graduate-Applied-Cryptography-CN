@@ -35,7 +35,7 @@ pf(m):=(\langle v\rangle,a_1,\dots,a_v)\quad\in\mathcal{X}^{\leq\ell}_{_{>0}}
 \begin{snote}[方法 2：停止比特。]
 设 $\mathcal{\bar{X}}:=\{0,1\}^{n-1}$，并令 $\mathcal{M}=\mathcal{\bar{X}}^{\leq\ell}_{_{>0}}$。对于 $m=(a_1,\dots,a_v)\in\mathcal{M}$，定义：
 \[
-pf(m):=\big((a_1||0),\,(a_2||0),\,\dots,\,(a_{v-1}||0),\,(a_v||1)\big)\quad\in\mathcal{X}^{\leq\ell}_{_{>0}}
+pf(m):=\big((a_1\,\Vert\,0),\,(a_2\,\Vert\,0),\,\dots,\,(a_{v-1}\,\Vert\,0),\,(a_v\,\Vert\,1)\big)\quad\in\mathcal{X}^{\leq\ell}_{_{>0}}
 \]
 显然，$pf$ 是一个单射。为了说明 $pf$ 的像是一个无前缀集，令 $pf(x)$ 和 $pf(y)$ 是 $pf$ 的像中的两个元素。设 $v$ 是 $pf(x)$ 中分组的数量。如果 $pf(y)$ 包含 $v$ 个或更少的分组，那么 $pf(x)$ 必然不是 $pf(y)$ 的真前缀。如果 $pf(y)$ 包含多于 $v$ 个分组，那么 $pf(y)$ 中的 $v$ 号分组以 $0$ 结束，而 $pf(x)$ 中的 $v$ 号分组以 $1$ 结束。因此，$pf(x)$ 和 $pf(y)$ 在 $v$ 号分组上有所不同，所以 $pf(x)$ 不是 $pf(y)$ 的真前缀。
 

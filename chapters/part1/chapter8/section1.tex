@@ -1,1 +1,44 @@
-\section{抗碰撞哈希的定义}
+\section{抗碰撞哈希的定义}\label{sec:8-1}
+
+一个（无密钥）散列函数 $H:\mathcal{M}\to\mathcal{T}$ 是一个可有效计算函数，它将某个（大的）消息空间 $\mathcal{M}$ 上的消息哈希到一个（小的）摘要空间 $\mathcal{T}$ 上。我们称 $H$ 定义在 $(\mathcal{M},\mathcal{T})$ 上。我们用下面的（退化）游戏来定义 $H$ 的抗碰撞性：
+\begin{game}[抗碰撞性]\label{game:8-1}
+对于一个定义在 $(\mathcal{M},\mathcal{T})$ 上的给定哈希函数 $H$ 和一个对手 $\mathcal{A}$，对手不接受任何输入，并输出两条 $\mathcal{M}$ 上的消息 $m_0$ 和 $m_1$。
+
+如果数对 $m_0, m_1$是 $H$ 的碰撞，即 $m_0\neq m_1$ 且 $H(m_0)=H(m_1)$，我们就称 $\mathcal{A}$ 赢得该游戏。我们将 $\mathcal{A}$ 就 $H$ 的优势记为 $\mathrm{CR}\mathsf{adv}[\mathcal{A},H]$，即 $\mathcal{A}$ 赢得该游戏的概率。对手 $\mathcal{A}$ 被称为\textbf{碰撞发现者(collision finder)}。
+\end{game}
+
+\begin{definition}\label{def:8-1}
+如果对于所有有效对手 $\mathcal{A}$，$\mathrm{CR}\mathsf{adv}[\mathcal{A},H]$ 这个值都可忽略不计，我们就称 $(\mathcal{M},\mathcal{T})$ 上的哈希函数 $H$ 是\textbf{抗碰撞的(collision resistant)}。
+\end{definition}
+
+乍一看，抗碰撞函数似乎不可能存在。问题在于：由于 $|\mathcal{M}|>|\mathcal{T}|$，那么 $\mathcal{M}$ 上一定存在碰撞的输入 $m_0$ 和 $m_1$ 使得 $H(m_0)=H(m_1)$。一个简单地输出这样的 $m_0$ 和 $m_1$ 然后停机的对手 $\mathcal{A}$ 就是一个能够打破 $H$ 的抗碰撞性的有效对手。我们可能无法明确地写出 $\mathcal{A}$ 的程序代码（因为我们不知道 $m_0$ 和 $m_1$），但这样的 $\mathcal{A}$ 肯定是存在的。因此，对于任何定义在 $(\mathcal{M},\mathcal{T})$ 上的哈希函数 $H$，都\emph{存在}某个能破坏 $H$ 的抗碰撞性的有效对手 $\mathcal{A}_H$。因此，似乎不存在能够满足定义 \ref{def:8-1} 的函数 $H$。
+
+正式地说，解决这个问题的方法是，让我们的哈希函数由一个系统参数决定：每一个系统参数选择都刻画一个不同的函数 $H$，这样，我们就不能简单地将一个固定的碰撞``硬植入"到一个对手中：一个有效对手必须能够有效地计算一个碰撞，而后者是\emph{系统参数的一个函数}。我们将在下面的数学细节部分更深入的讨论这个概念\footnote{一些作者在处理这个问题时，会让 $H$ 将一个随机选择的密钥 $k$ 作为输入，并在这个攻击游戏的开始时将 $k$ 交给对手。通过将 $k$ 看作是一个系统参数，这种方法实际上与我们的方法是一样的。}。
+
+\subsection{数学细节}\label{subsec:8-1-1}
+
+像往常一样，我们使用 \ref{sec:2-3} 节中定义的术语给抗碰撞哈希函数下一个更精确的数学定义。
+
+\begin{definition}[无密钥哈希函数]\label{def:8-2}
+一个\textbf{无密钥哈希函数}是一个有效算法 $H$，以及两个具有系统参数化 $P$ 的空间族：
+\[
+\mathbf{M}=\{\mathcal{M}_{\lambda,\Lambda}\}_{\lambda,\Lambda},\quad
+\mathbf{T}=\{\mathcal{T}_{\lambda,\Lambda}\}_{\lambda,\Lambda}
+\]
+满足：
+\begin{enumerate}
+	\item $\mathbf{M}$ 和 $\mathbf{T}$ 是可有效识别的。
+	\item 算法 $H$ 是一个有效的确定性算法，对于输入 $\lambda\in\mathbb{Z}_{\geq1}$，$\Lambda\in{\rm Supp}(P(\lambda))$ 和 $m\in\mathcal{M}_{\lambda,\Lambda}$，$H$ 输出 $\mathcal{T}_{\lambda,\Lambda}$ 中的一个元素。
+\end{enumerate}
+\end{definition}
+
+在定义抗碰撞性时，我们通过安全参数 $\lambda$ 将攻击游戏 \ref{game:8-1} 参数化。攻击游戏的渐进版本如图 \ref{fig:8-3} 所示。那么，优势 $\mathrm{CR}\mathsf{adv}[\mathcal{A},H]$ 就是一个 $\lambda$ 的函数。定义 \ref{def:8-1} 应该被理解为：$\mathrm{CR}\mathsf{adv}[\mathcal{A},H](\lambda)$ 是一个可忽略不计函数。
+
+\begin{figure}
+	\centering
+	\input{figures/chapter8/fig3.tex}
+	\caption{攻击游戏 \ref{game:8-1} 的渐进版本}
+	\label{fig:8-3}
+\end{figure}
+
+应该注意的是，安全参数和系统参数都是形式化框架的产物，在理解定义 \ref{def:8-1} 时是有必要的。然而，在现实世界中，这些参数在设计哈希函数时就被挑选好了，然后就会被忽略。比如说，SHA256 就不会接受任何安全参数或者系统参数作为输入。

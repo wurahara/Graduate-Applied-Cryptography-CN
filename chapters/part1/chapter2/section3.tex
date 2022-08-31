@@ -33,9 +33,9 @@
 
 \begin{theorem}
 当且仅当对于所有 $c>0$，都有：
-$$
+\[
 \lim_{n\to\infty}f(n)n^c=0
-$$
+\]
 时，函数 $f:\mathbb{Z}_{\geq1}\to\mathbb{R}$ 是可忽略不计的。
 \end{theorem}
 
@@ -45,13 +45,19 @@ $$
 
 \begin{example}
 一些不可忽略函数的例子：
-$$
-2^{-n},~~2^{-\sqrt{n}},~~n^{-\log n}
-$$
+\[
+2^{-n},
+\quad
+2^{-\sqrt{n}},
+\quad
+n^{-\log n}
+\]
 一些可忽略函数的例子：
-$$
-\frac{1}{1000n^4+n^2\log n},~~\frac{1}{n^{100}}
-$$
+\[
+\frac{1}{1000n^4+n^2\log n},
+\quad
+\frac{1}{n^{100}}
+\]
 \end{example}
 
 当我们正式定义了``可忽略不计"这个术语后，定义``超多项式"就很容易了。
@@ -80,19 +86,19 @@ $$
 	\item 一个\textbf{系统参数(system parameter)}是一个比特串，用$\Lambda$表示。
 \end{itemize}
 因此，现在 $\mathcal{K},\mathcal{M},\mathcal{C}$ 不再单是三个有限集，而是三个有限集族：
-$$
+\[
 \{\mathcal{K}_{\lambda,\Lambda}\}_{\lambda,\Lambda},\quad
 \{\mathcal{M}_{\lambda,\Lambda}\}_{\lambda,\Lambda},\quad
 \{\mathcal{C}_{\lambda,\Lambda}\}_{\lambda,\Lambda}
-$$
+\]
 在本定义中，我们将其视为比特串的集合（可以通过一些规范的编码函数来表示数学对象）。
 
 我们的想法是，当密码 $\mathcal{E}$ 被部署时，安全参数 $\lambda$ 会被固定为某个值。一般来说，$\lambda$ 的值越大，意味着安全水平就越高（即对拥有更多计算资源的对手的具备抵抗力），但也意味着更大的密钥长度，以及更慢的加解密速度。因此，安全参数就像一个我们可以转动的``拨盘"，用于在安全和效率之间进行权衡。
 
 一旦选定了 $\lambda$，系统参数$\Lambda$就会用一种特定于密码的算法生成。我们的想法是，系统参数 $\Lambda$（连同$\lambda$）给出了一个固定密码实例的详细描述，即：
-$$
+\[
 (\mathcal{K},\mathcal{M},\mathcal{C})=(\mathcal{K}_{\lambda,\Lambda},\;\mathcal{M}_{\lambda,\Lambda},\;\mathcal{C}_{\lambda,\Lambda})
-$$
+\]
 这一固定的实例可能会被部署在一个更大的系统中，并被多方使用，其中的$\lambda$和$\Lambda$的值都是公开的，（包括对手在内的）每个人都能知道。
 
 \begin{example}\label{exmp:2-12}
@@ -129,11 +135,11 @@ $$
 
 \begin{definition}[计算性密码]\label{def:2-10}
 一个\textbf{计算性密码}由一对算法 $E$ 和 $D$，以及三个具有系统参数化 $P$ 的空间族：
-$$
+\[
 \mathbf{K}=\{\mathcal{K}_{\lambda,\Lambda}\}_{\lambda,\Lambda},\quad
 \mathbf{M}=\{\mathcal{M}_{\lambda,\Lambda}\}_{\lambda,\Lambda},\quad
 \mathbf{C}=\{\mathcal{C}_{\lambda,\Lambda}\}_{\lambda,\Lambda}
-$$
+\]
 组成，满足：
 \begin{enumerate}
 	\item $\mathbf{K}$，$\mathbf{M}$和$\mathbf{C}$都是可有效识别的。

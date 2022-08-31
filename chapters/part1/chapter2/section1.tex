@@ -7,22 +7,22 @@
 一个\textbf{香农密码}是一个函数对 $\mathcal{E}=(E,D)$，其中：
 \begin{itemize}
 	\item 函数$E$（\textbf{加密函数}）接受一个\textbf{密钥(key)} $k$ 和一条\textbf{消息(message)} $m$（也称作\textbf{明文(plaintext)}）作为输入，输出一条\textbf{密文(ciphertext)} $c$，即：
-	$$c=E(k,m)$$
+	\[c=E(k,m)\]
 	我们称\textbf{$c$ 是 $m$ 在 $k$ 下的加密}。
 	\item 函数$D$（\textbf{解密函数}）接受一个密钥 $k$ 和一条密文 $c$ 作为输入，输出一条消息 $m$，即：
-	$$m=D(k,c)$$
+	\[m=D(k,c)\]
 	我们称 \textbf{$m$ 是 $c$ 在 $k$ 下的解密}。
 	\item 我们要求解密能够``抵消"加密；也就是说，密码必须满足这样的\textbf{正确性属性}：对于所有的密钥 $k$ 和所有的消息 $m$，都有：
-	$$D(k,E(k,m))=m$$
+	\[D(k,E(k,m))=m\]
 \end{itemize}
 
 更正式地说，我们假设 $\mathcal{K}$ 是所有密钥的取值集合（\textbf{密钥空间}）；$\mathcal{M}$ 是所有消息的取值集合（\textbf{消息空间}）；$\mathcal{C}$ 是所有密文的取值集合（\textbf{密文空间}）。基于以上表记，我们可以记：
-$$
+\[
 \begin{aligned}
 & E:\mathcal{K}\times\mathcal{M}\to\mathcal{C}\\
 & D:\mathcal{K}\times\mathcal{C}\to\mathcal{M}
 \end{aligned}
-$$
+\]
 此外，我们可以称密码 $\mathcal{E}$ \textbf{定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上}。
 
 假设 Alice 和 Bob 想使用这样一个密码来保护他们发送的消息。我们的想法是，Alice 和 Bob 必须以某种方式事先就密钥 $k\in\mathcal{K}$ 达成一致。假设做到了这一点，那么当 Alice 想向 Bob 发送一条消息 $m\in\mathcal{M}$ 时，她使用密钥 $k$ 对 $m$ 进行加密，得到密文 $c=E(k,m)\in\mathcal{C}$，然后通过某种通信网络将 $c$ 发送给 Bob。Bob 收到 $c$ 后同样使用 $k$ 对 $c$ 进行解密，正确性属性会确保 $D(k, c)$ 与 Alice 的原始消息 $m$ 相同。要做到这一点，我们必须假设 $c$ 在从 Alice 到 Bob 的传输过程中没有被篡改。当然，从直觉上讲，我们的目标是，一个窃听者在传输过程中可能获得 $c$，但不会了解到太多关于 Alice 的消息 $m$ 的信息，这个直观的概念就是我们在下面探讨的安全的正式定义所要体现的。
@@ -37,91 +37,85 @@ $$
 
 \begin{example}\label{exmp:2-1}
 一个\textbf{一次性密码本(one-time pad)}是一个香农密码 $\mathcal{E}=(E,D)$，其密钥、消息和密文是相同长度的比特序列；也就是说，$\mathcal{E}$ 定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上：
-$$
+\[
 \mathcal{K}:=\mathcal{M}:=\mathcal{C}:=\{0,1\}^L
-$$
+\]
 其中 $L$ 是一个固定参数。对于一个密钥 $k\in\{0,1\}^L$ 和一条消息 $m\in\{0,1\}^L$，加密函数的定义为：
-$$
+\[
 E(k,m):=k\oplus m
-$$
+\]
 对于一个密钥 $k\in\{0,1\}^L$ 和一条密文 $c\in\{0,1\}^L$，解密函数的定义为：
-$$
+\[
 D(k,c):=k\oplus c
-$$
+\]
 其中，``$\oplus$"表示按位异或，也即按位模 $2$ 加法。对于任意比特序列 $x,y,z\in\{0,1\}^L$，都有：
-$$
-x\oplus y=y\oplus x,~~
-x\oplus (y\oplus z)=(x\oplus y)\oplus z,~~
-x\oplus 0^L =x,~~
+\[
+x\oplus y=y\oplus x,
+\quad
+x\oplus (y\oplus z)=(x\oplus y)\oplus z,
+\quad
+x\oplus 0^L =x,
+\quad
 x\oplus x =0^L
-$$
+\]
 我们很容易从模2加法的相应属性中推导出上述属性。利用这些属性，我们不难验证正确性属性对 $\mathcal{E}$ 是成立的，因为对于所有 $k,m\in\{0,1\}^L$，都有：
-$$
+\[
 D(k,E(k,m))=D(k,k\oplus m)=k\oplus (k\oplus m)=(k\oplus k)\oplus m=0^L\oplus m=m
-$$
+\]
 在这种情况下，加密和解密函数恰好是相同的，但是当然，并非所有的密码都有这种特性。
 \end{example}
 
 \begin{example}\label{exmp:2-2}
 一个\textbf{变长一次性密码本(variable length one-time pad)}是一个香农密码 $\mathcal{E}=(E,D)$，其中，密钥是某些固定长度 $L$ 的比特序列，而消息和密文是变长的比特序列，它们的长度最大为 $L$。因此，$\mathcal{E}$ 定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上，且：
-$$
-\mathcal{K}:=\{0,1\}^L,~~
+\[
+\mathcal{K}:=\{0,1\}^L,
+\quad
 \mathcal{M}:=\mathcal{C}:=\{0,1\}^{\leq L}
-$$
+\]
 $L$ 是一个固定参数。这里，$\{0,1\}^{\leq L}$ 表示所有不长于 $L$ 的比特序列的集合（包括空序列）。对于一个密钥 $k\in\{0,1\}^L$ 和一个长度为 $\ell$ 的消息 $m\in\{0,1\}^{\leq L}$，加密函数定义如下：
-$$
+\[
 E(k,m):=k[0\dots\ell-1]\oplus m
-$$
+\]
 而对于密钥 $k\in\{0,1\}^L$ 和一个长度为 $\ell$ 的密文 $c\in\{0,1\}^{\leq L}$，解密函数定义如下：
-$$
+\[
 D(k,m):=k[0\dots\ell-1]\oplus c
-$$
+\]
 这里，$k[0\dots\ell-1]$ 表示将 $k$ 截断到其前 $\ell$ 位。读者可以自行验证 $\mathcal{E}$ 的正确性属性是成立的。
 \end{example}
 
 \begin{example}\label{exmp:2-3}
 一个\textbf{置换密码(substitution cipher)}是一个具有如下形式的香农密码 $\mathcal{E}=(E,D)$。令 $\Sigma$ 是一个有限符号表（例如字母\texttt{A-Z}，加上一个空格符\texttt{␣}）。消息空间 $\mathcal{M}$ 和密文空间 $\mathcal{C}$ 都是来自 $\Sigma$ 的某个固定长度 $L$ 的符号序列，即：
-$$
+\[
 \mathcal{M}:=\mathcal{C}:=\Sigma^L
-$$
+\]
 密钥空间 $\mathcal{K}$ 包含 $\Sigma$ 上的所有全排列；也就是说，每个 $k\in\mathcal{K}$ 都是 $\Sigma$ 上的一个双射。注意，$\mathcal{K}$ 是一个非常大的集合；事实上$|\mathcal{K}|=|\Sigma|!$（对于 $|\Sigma|=27$，$|\mathcal{K}|\approx 1.09\times10^{28}$）。
 
 用密钥 $k\in\mathcal{K}$（$\Sigma$的一个全排列）加密一条消息 $m\in\Sigma^L$ 的加密函数定义如下：
-$$
-E(k,m):=
-\big(
-\,
-k(m[0]),k(m[1]),\dots,k(m[L-1])
-\,
-\big)
-$$
+\[
+E(k,m):=\big(k(m[0]),\,k(m[1]),\,\dots,\,k(m[L-1])\big)
+\]
 其中 $m[i]$ 表示 $m$ 的第 $i$ 项（下标从零开始），$k(m[i])$ 表示对符号 $m[i]$ 的做$k$置换后的结果。因此，要用 $k$ 加密 $m$，我们只需将置换 $k$ 分别按顺序应用于序列 $m$ 中的每一项。使用密钥 $k\in\mathcal{K}$ 解密一条密文 $c\in\Sigma^L$ 的解密函数定义如下：
-$$
-D(k,c):=
-\big(
-\,
-k^{-1}(c[0]),k^{-1}(c[1]),\dots,k^{-1}(c[L-1])
-\,
-\big)
-$$
+\[
+D(k,c):=\big(k^{-1}(c[0]),\,k^{-1}(c[1]),\,\dots,\,k^{-1}(c[L-1])\big)
+\]
 这里，$k^{-1}$ 是 $k$ 的逆置换。为了用 $k$ 解密 $c$，我们只需将 $k^{-1}$ 分别按顺序应用于序列 $c$ 中的每一项。置换密码的正确性属性很容易验证：对于一条消息 $m\in\Sigma^L$ 和密钥 $k\in\mathcal{K}$，我们有：
-$$
+\[
 \begin{aligned}
 D(k,E(k,m))
-&=D(k,(k(m[0]),k(m[1]),\dots,k(m[L−1]))\\
-&=(k^{−1}(k(m[0])),k^{−1}(k(m[1])),\dots,k^{−1}(k(m[L−1])))\\
-& =(m[0],m[1],...,m[L−1])=m
+&=D(k,(k(m[0]),\,k(m[1]),\,\dots,\,k(m[L−1]))\\
+&=(k^{−1}(k(m[0])),\,k^{−1}(k(m[1])),\,\dots,\,k^{−1}(k(m[L−1])))\\
+& =(m[0],\,m[1],\,\dots,\,m[L−1])=m
 \end{aligned}
-$$
+\]
 \end{example}
 
 \begin{example}[加性一次性密码本]\label{exmp:2-4}
 我们还可以定义一个``加法模$n$"的一次性密码本的变体。它是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的密码 $\mathcal{E}=(E,D)$，其中 $\mathcal{K}:=\mathcal{M}:=\mathcal{C}:=\{0,\dots,n-1\}$，$n$ 是一个正整数。加密和解密的定义如下：
-$$
-E(k,m)=m+k \mod n,
+\[
+E(k,m)=m+k \bmod n,
 \quad
-D(k,c)=c-k \mod n
-$$
+D(k,c)=c-k \bmod n
+\]
 读者很容易验证正确性属性对 $\mathcal{E}$ 成立。
 \end{example}
 
@@ -137,9 +131,9 @@ $$
 
 \begin{definition}[完美安全性]
 令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。考虑一个概率实验，其中随机变量 $\mathsf{k}$ 均匀分布在 $\mathcal{K}$ 上。如果对于所有的 $m_0,m_1\in\mathcal{M}$ 和所有的 $c\in\mathcal{C}$，都有：
-$$
+\[
 \Pr[E(\mathsf{k},m_0)=c]=\Pr[E(\mathsf{k},m_1)=c]
-$$
+\]
 我们就说 $\mathcal{E}$ 是一个\textbf{完美安全的}香农密码。
 \end{definition}
 
@@ -150,9 +144,9 @@ $$
 \begin{enumerate}[(i)]
 	\item $\mathcal{E}$ 是完美安全的。
 	\item 对于任意 $c\in\mathcal{C}$，存在 $N_c$（可能取决于$c$）使得对于所有 $m\in\mathcal{M}$，都有：
-	$$
-    |\{k\in\mathcal{K}:E(k,m)=c\}| = N_c
-    $$
+	\[
+    \big\lvert\{k\in\mathcal{K}:E(k,m)=c\}\big\rvert = N_c
+    \]
     \item 如果随机变量 $\mathsf{k}$ 均匀分布在 $\mathcal{K}$ 上，那么对于 $m\in\mathcal{M}$，每个随机变量 $E(\mathsf{k},m)$ 的分布都相同。
 \end{enumerate}
 \end{theorem}
@@ -181,18 +175,19 @@ $$
 
 \begin{proof}
 假设香农密码 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的一次性密码本，其中 $\mathcal{K}:=\mathcal{M}:=\mathcal{C}:=\{0,1\}^L$。对于任意固定消息 $m\in\{0,1\}^L$ 和密文 $c\in\{0,1\}^L$，都存在一个唯一密钥 $k\in\{0,1\}^L$ 满足：
-$$
+\[
 k\oplus m =c
-$$
+\]
 即 $k:=m\oplus c$。因此 $\mathcal{E}$ 满足定理 \ref{theo:2-1} 中的(ii)（对每个$c$都有$N_c=1$）。
 \end{proof}
 
 \begin{example}\label{exmp:2-5}
 再考虑一下例 \ref{exmp:2-2} 中定义的变长一次性密码本。这种密码并不符合我们对完美安全的定义，因为一个密文的长度与相应的明文相同。事实上，如果我们选择一个长度为 $1$ 的任意字符串 $m_0$ 以及一个长度为 $2$ 的任意字符串 $m_1$。此外，假设 $c$ 是一个长度为 $1$ 的任意字符串，而 $\mathsf{k}$ 是一个在密钥空间均匀分布的随机变量。那么我们有：
-$$
-\Pr[E(\mathsf{k},m_0)=c]={1}/{2},\quad\quad
+\[
+\Pr[E(\mathsf{k},m_0)=c]={1}/{2},
+\quad\quad
 \Pr[E(\mathsf{k},m_1)=c]=0
-$$
+\]
 这恰好是定理 \ref{theo:2-1} 的一个直接的反例。
 
 直观地说，变长一次性密码本不能满足我们对完美安全的定义，因为任何密文都会泄露相应的明文的\emph{长度}。然而，在某种意义上（我们现在尚不明确），这确实是\emph{唯一}泄露的信息，因此，不清楚这应该被看作是密码的问题，还是我们对完美安全的定义的问题。一方面，我们可以想象消息长度可能会有很大变化的场景，虽然我们总是可以通过``填充"的手段来把较短的消息补充到同样的长度，但从实际的角度来看，这可能是不可接受的，因为这会造成带宽上的浪费。另一方面，我们必须意识到，在某些应用中，仅仅泄露信息的长度也可能是危险的：如果你正在加密一个问题的``yes"或``no"的答案，那么仅仅是这些字符串的 ASCII 编码长度就会泄露\emph{一切}，所以你最好把``no"填充到三个字符长。
@@ -203,16 +198,17 @@ $$
 再考虑一下例 \ref{exmp:2-3} 中定义的置换密码的情况。有几种不同的方法可以看出这个密码也不是完美安全的。
 
 比方说，选择一对消息 $m_0,m_1\in\Sigma^L$，其中 $m_0$ 的前两项是相等的，而 $m_1$ 的前两项不想等，即：
-$$
-m_0[0]=m0[1],\quad
+\[
+m_0[0]=m0[1],
+\quad
 m_1[0]\neq m_1[1]
-$$
+\]
 那么对于每个密钥 $k$，也就是 $\Sigma$ 上的一种置换，如果 $c = E(k,m_0)$，那么必然有 $c[0] = c[1]$；而如果 $c = E(k,m_1)$，那么也必然有 $c[0]\neq c[1]$。由此可见，如果 $\mathsf{k}$ 在密钥空间上是均匀分布的，那么 $E(\mathsf{k},m_0)$ 和 $E(\mathsf{k},m_1)$ 的分布就不会相同。
 
 有的人可能会认为上面描述的弱点显得有些刻意，但还有一种更加现实的对替换密码的攻击方式。假设置换密码被用来加密电子邮件信息。众所周知，电子邮件以一个``标准首部"开始，如 \texttt{"FROM"}。假设密文 $c\in\Sigma^L$ 被对手截获。因为密钥 $k$ 其实就是 $\Sigma$ 的一个排列组合。对手知道：
-$$
+\[
 c[0\dots3]=(k(\mathtt F),k(\mathtt R),k(\mathtt O),k(\mathtt M))
-$$
+\]
 因此，如果原始消息 $m\in\Sigma^L$，对手现在可以找到 $m$ 中所有出现 $\mathtt F$、$\mathtt R$、$\mathtt O$ 和 $\mathtt M$ 的位置。仅仅根据这些信息，再加上关于消息的具体上下文信息和关于字母频率的一般信息，对手就可能能够推断出关于原始消息的相当多的信息。
 \end{example}
 
@@ -225,23 +221,23 @@ $$
 
 \begin{theorem}\label{theo:2-3}
 令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。考虑一个概率实验，其中 $\mathsf{k}$ 是一个在 $\mathcal{K}$ 上均匀分布的随机变量。那么，当且仅当对于 $\mathcal{C}$ 上的每个谓词 $\phi$ 和所有的 $m_0,m_1\in\mathcal{M}$，我们都有：
-$$
+\[
 \Pr[\phi(E(\mathsf{k},m_0))]=
 \Pr[\phi(E(\mathsf{k}, m_1))]
-$$
+\]
 时，$\mathcal{E}$ 是完美安全的。
 \end{theorem}
 
 \begin{proof}
 这实际上只是一个简单的计算。一方面，假设 $\mathcal{E}$ 是完美安全的，并给定 $\phi$，$m_0$ 和 $m_1$，令 $S:=\{c\in\mathcal{C}:\phi(c)\}$，那么我们有：
-$$
+\[
 \Pr[\phi(E(\mathsf{k}, m_0))]=\sum_{c\in S}\Pr[E(\mathsf{k}, m_0) = c]=\sum_{c\in S}\Pr[E(\mathsf{k}, m_1) = c]=\Pr[\phi(E(\mathsf{k}, m_1) )]
-$$
+\]
 这里，我们在建立第二个等号时使用了 $\mathcal{E}$ 是完美安全的假设。另一方面，假设 $\mathcal{E}$ 不是完全安全的，那么必然存在 $m_0$，$m_1$ 和 $c$ 使得：
-$$
+\[
 \Pr[E(\mathsf{k},m_0)=c]\neq
 \Pr[E(\mathsf{k},m_1)=c]
-$$
+\]
 不妨定义谓词 $\phi$ 对该特定密文 $c$ 输出真，对所有其他密文都输出假，我们可以发现：
 \[
 \pushQED{\qed}
@@ -255,21 +251,21 @@ $$
 下一个定理以另一种方式说明，完美安全性保证了密文不会泄露任何关于明文消息的信息。假设 $\mathsf{m}$ 是分布在消息空间 $\mathcal{M}$ 上的一个随机变量，我们并没有假设 $\mathsf{m}$ 是均匀分布在 $\mathcal{M}$ 上的。现在假设 $\mathsf{k}$ 是均匀分布在密钥空间 $\mathcal{K}$ 上的一个随机变量，与 $\mathsf{m}$ 无关，并定义 $\mathsf{c}:=E(\mathsf{k},\mathsf{m})$ 是分布在密文空间 $\mathcal{C}$ 上的一个随机变量。那么下面的定理将表明，完美安全性会保证随机变量 $\mathsf{c}$ 和 $\mathsf{m}$ 相互独立。
 
 描述这种独立性的一种方法是，对于每个以非零概率出现的密文 $\mathsf{c}\in\mathcal{C}$和每个消息 $\mathsf{m}\in\mathcal{M}$，我们都有：
-$$
+\[
 \Pr[\mathsf{m}=m\;|\;\mathsf{c}=c]=
 \Pr[\mathsf{m}=m]
-$$
+\]
 
 直观上说，这意味着在看到一个密文后，我们对消息的了解不会比在看到密文之前更多。
 
 另一种描述这种独立性的方法是，对于每个以非零概率出现的消息 $\mathsf{m}\in\mathcal{M}$和每个密文 $\mathsf{c}\in\mathcal{C}$，我们都有：
-$$
+\[
 \Pr[\mathsf{c}=c\;|\;\mathsf{m}=m]=
 \Pr[\mathsf{c}=c]
-$$
+\]
 直观上说，这意味着明文消息的选择对密文的分布没有任何影响。
 
-限制 $\mathsf{m}$ 和 $\mathsf{k}$ 是相互独立的随机变量是明智的：在使用任何密码时，根据消息选择密钥是一个非常糟糕的主意，反之亦然（参见练习 2.16）。
+限制 $\mathsf{m}$ 和 $\mathsf{k}$ 是相互独立的随机变量是明智的：在使用任何密码时，根据消息选择密钥是一个非常糟糕的主意，反之亦然（参见练习 \ref{exer:2-16}）。
 
 \begin{theorem}\label{theo:2-4}
 令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。考虑一个随机实验，其中 $\mathsf{k}$ 和 $\mathsf{m}$ 是随机变量，满足：
@@ -287,13 +283,13 @@ $$
 
 \begin{proof}
 对于第一个结论，假设 $\mathcal{E}$ 是完美安全的。考虑任意给定的 $\mathsf{m}\in\mathcal{M}$ 和 $\mathsf{c}\in\mathcal{C}$，我们想要证明：
-$$
+\[
 \Pr[\mathsf{c}=c\land\mathsf{m}=m]=
 \Pr[\mathsf{c}=c]
 \Pr[\mathsf{m}=m]
-$$
+\]
 我们有：
-$$
+\[
 \begin{aligned}
 \Pr[\mathsf{c}=c\land\mathsf{m}=m]
 &=\Pr[E(\mathsf{k},\mathsf{m})
@@ -301,9 +297,9 @@ $$
 &=\Pr[E(\mathsf{k},m)=c\land\mathsf{m}=m]\\
 &=\Pr[E(\mathsf{k},m)=c]\Pr[\mathsf{m}=m]\quad\text{\emph{（}\,} \mathsf{k} \text{\emph{\,和\,}} \mathsf{m} \text{\,\emph{相互独立）}}
 \end{aligned}
-$$
+\]
 因此下面只需要证明 $\Pr[E(\mathsf{k},m)=c]=\Pr[\mathsf{c}=c]$ 就够了。我们有：
-$$
+\[
 \begin{aligned}
 \Pr[\mathsf{c}=c]&=
 \Pr[E(\mathsf{k},\mathsf{m})=c]\\
@@ -314,7 +310,7 @@ $$
 &=\Pr[E(\mathsf{k},m)=c]\sum_{m'\in\mathcal{M}}\Pr[\mathsf{m}=m']\\
 &=\Pr[E(\mathsf{k},m)=c]\quad\text{\emph{（全概率）}}
 \end{aligned}
-$$
+\]
 
 对于第二个结论，假设 $\mathsf{c}$ 和 $\mathsf{m}$ 相互独立，并且 $\mathcal{M}$ 中的每个消息都以非零概率出现。令 $m\in\mathcal{M}$，$c\in\mathcal{C}$。我们将要证明$\Pr[E(\mathsf{k},m)=c]=\Pr[\mathsf{c}=c]$，这样自然就能证明 $\mathcal{E}$ 是完美安全的。由于 $\Pr[\mathsf{m}=m]\neq0$，我们可以看出：
 \[
@@ -350,18 +346,18 @@ Pr[E(\mathsf{k},m)=c]\Pr[\mathsf{m}=m]
 为了做到这一点，我们选择某个消息 $m_0\in\mathcal{M}$ 和某个密钥 $k_0\in\mathcal{K}$。令 $c:=E(k_0,m_0)$。很明显，此时式 \ref{eq:2-1} 成立。
 
 接下来，令：
-$$
+\[
 S:=\{D(k_1,c):k_1\in\mathcal{K}\}
-$$
+\]
 明显有：
-$$
- |S|\leq|\mathcal{K}|<|\mathcal{M}|
-$$
+\[
+|S|\leq|\mathcal{K}|<|\mathcal{M}|
+\]
 这样，我们就可以选取一个消息 $m_1\in \mathcal{M}\setminus S$。
 
 为了证明式 \ref{eq:2-2} 也成立，我们需要说明不存在密钥 $k_1$ 能使 $E(k_1,m_1) = c$。相反地，我们假设存在一个密钥 $k_1$ 使得 $E(k_1,m_1) = c$成立，那么对于这个密钥 $k_1$，根据密码的正确性属性，我们有：
-$$
+\[
 D(k_1,c)=D(k_1,E(k_1,m_1))=m_1
-$$
+\]
 这就意味着 $m_1$ 属于 $S$，而事实并非如此。因此式 \ref{eq:2-2} 成立，定理得证。
 \end{proof}

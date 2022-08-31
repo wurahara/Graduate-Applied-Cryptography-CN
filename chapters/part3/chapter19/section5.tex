@@ -17,18 +17,21 @@ Okamoto 协议允许证明者说服持怀疑态度的验证者，它``知道"一
 通常假定 Okamoto 协议的挑战空间 $\mathcal{C}$ 是 $\mathbb{Z}_q$ 的一个子集。协议 $(P,V)$ 按如下方式运行，其中证明者 $P$ 由 $((\alpha,\beta),u)\in\mathcal{R}$ 初始化，验证者 $V$ 由 $u\in\mathbb{G}$ 初始化：
 \begin{enumerate}
 	\item $P$ 计算：
-	$$
-    \alpha_{\rm t}\overset{\rm R}\leftarrow\mathbb{Z}_q,~~
-    \beta_{\rm t}\overset{\rm R}\leftarrow\mathbb{Z}_q,~~
+	\[
+    \alpha_{\rm t}\overset{\rm R}\leftarrow\mathbb{Z}_q,
+    \quad
+    \beta_{\rm t}\overset{\rm R}\leftarrow\mathbb{Z}_q,
+    \quad
     u_{\rm t}\leftarrow g^{\alpha_{\rm t}}h^{\beta_{\rm t}}
-    $$
+    \]
     并将承诺 $u_{\rm t}$ 发送给 $V$；
 	\item $V$ 选取$c\overset{R}\leftarrow\mathcal{C}$，然后将挑战 $c$ 发送给 $P$；
 	\item $P$ 计算：
-	$$
-    \alpha_{\rm z}\leftarrow\alpha_{\rm t}+\alpha c\in\mathbb{Z}_q,~~
+	\[
+    \alpha_{\rm z}\leftarrow\alpha_{\rm t}+\alpha c\in\mathbb{Z}_q,
+    \quad
     \beta_{\rm z}\leftarrow\beta_{\rm t}+\beta c\in\mathbb{Z}_q
-    $$
+    \]
     并将应答 $(\alpha_{\rm z}, \beta_{\rm z})$ 发送给 $V$；
 	\item $V$ 检查$g^{\alpha_{\rm z}}h^{\beta_{\rm z}}\overset{?}=u_{\rm t}\cdot u^c$是否成立。如果是，$V$ 输出 $\mathsf{accept}$，否则 $V$ 输出 $\mathsf{reject}$。
 \end{enumerate}
@@ -48,50 +51,60 @@ Okamoto 协议是针对式 \ref{eq:19-11} 中定义的关系$\mathcal{R}$的一�
 
 \begin{proof}
 显然，Okamoto 协议具有 Sigma 协议所要求的语法结构。陈述 $u\in\mathbb{G}$ 的一个接受对话形如：
-$$
-(u_{\rm t},c,(\alpha_{\rm z},\beta_{\rm z})) \text{~~s.t.~~} g^{\alpha_{\rm z}}h^{\beta_{\rm z}}=u_{\rm t}\cdot u^c
-$$
+\[
+(u_{\rm t},c,(\alpha_{\rm z},\beta_{\rm z}))
+\quad\text{s.t.}\quad
+g^{\alpha_{\rm z}}h^{\beta_{\rm z}}=u_{\rm t}\cdot u^c
+\]
 
 \noindent
 \emph{正确性.}
 我们首先必须验证 Okamoto 协议是否满足基本的正确性要求，即诚实证明者和诚实验证者之间的交互总是能够产生一个接受对话。这很容易验证，因为如果：
-$$
-u_{\rm t}=g^{\alpha_{\rm t}}h^{\beta_{\rm t}},~~
-\alpha_{\rm z}=\alpha_{\rm t}+\alpha c,~~
+\[
+u_{\rm t}=g^{\alpha_{\rm t}}h^{\beta_{\rm t}},
+\quad
+\alpha_{\rm z}=\alpha_{\rm t}+\alpha c,
+\quad
 \beta_{\rm z}=\beta_{\rm t}+\beta c
-$$
+\]
 则我们有：
-$$
+\[
 g^{\alpha_{\rm z}}h^{\beta_{\rm z}}=
 g^{\alpha_{\rm t}+\alpha c}h^{\beta_{\rm t}+\beta c}=
 g^{\alpha_{\rm t}}h^{\beta_{\rm t}}\cdot(g^\alpha h^\beta)^c=
 u_{\rm t}\cdot u^c
-$$
+\]
 
 \noindent
 \emph{知识健全性.}
 我们下面证明 Okamoto 协议提供知识健全性。假设我们现在有两个陈述 $u$ 的接受对话：
-$$
-(u_{\rm t},c,(\alpha_{\rm z},\beta_{\rm z})),~~
+\[
+(u_{\rm t},c,(\alpha_{\rm z},\beta_{\rm z})),
+\quad
 (u_{\rm t},c',(\alpha_{\rm z}',\beta_{\rm z}'))
-$$
+\]
 其中 $c\neq c'$。我们需要说明如何从这两个对话中有效提取 $u$ 的表示。这里的计算与 Schnorr 协议中的计算非常类似。注意到：
-$$
-g^{\alpha_{\rm z}}h^{\beta_{\rm z}}=u_{\rm t}\cdot u^c,~~
+\[
+g^{\alpha_{\rm z}}h^{\beta_{\rm z}}=u_{\rm t}\cdot u^c,
+\quad
 g^{\alpha_{\rm z}'}h^{\beta_{\rm z}'}=u_{\rm t}\cdot u^{c'}
-$$
+\]
 将第一个等式除以第二个等式，$u_{\rm t}$ 就被抵消了，于是我们有：
-$$
-g^{\Delta\alpha}h^{\Delta\beta}=u^{\Delta c},~~~~
-\Delta\alpha:=\alpha_{\rm z}-\alpha_{\rm z}',~~
-\Delta\beta:=\beta_{\rm z}-\beta_{\rm z}',~~
+\[
+g^{\Delta\alpha}h^{\Delta\beta}=u^{\Delta c},
+\quad
+\Delta\alpha:=\alpha_{\rm z}-\alpha_{\rm z}',
+\quad
+\Delta\beta:=\beta_{\rm z}-\beta_{\rm z}',
+\quad
 \Delta c:=c-c'
-$$
+\]
 因此，见证提取器可以用：
-$$
-\alpha\leftarrow{\Delta\alpha}/{c},~~
+\[
+\alpha\leftarrow{\Delta\alpha}/{c},
+\quad
 \beta\leftarrow{\Delta\beta}/{c}
-$$
+\]
 有效地计算出 $u$ 的一个表示 $(\alpha,\beta)\in\mathbb{Z}_q^2$。需要注意的是，由于 $c\neq c'$，$\Delta c$ 在 $\mathbb{Z}_q$ 中是可逆的。我们在这里利用了$q$是一个素数这个事实。
 
 \vspace{5pt}
@@ -99,18 +112,20 @@ $$
 \noindent
 \emph{特殊 HVZK.}
 最后，我们通过给出一个模拟器来证明 Okamoto 协议是特殊 HVZK 的。这同样与 Schnorr 协议非常相似。对于输入 $u\in\mathbb{G}$ 和 $c\in\mathcal{C}$，模拟器计算：
-$$
-\alpha_{\rm z}\overset{\rm R}\leftarrow\mathbb{Z}_q,~~
-\beta_{\rm z}\overset{\rm R}\leftarrow\mathbb{Z}_q,~~
+\[
+\alpha_{\rm z}\overset{\rm R}\leftarrow\mathbb{Z}_q,
+\quad
+\beta_{\rm z}\overset{\rm R}\leftarrow\mathbb{Z}_q,
+\quad
 u_{\rm t}\leftarrow{g^{\alpha_{\rm z}}h^{\beta_{\rm z}}}/{u^c}
-$$
+\]
 并输出 $(u_{\rm t},(\alpha_{\rm z},\beta_{\rm z}))$。可以发现，输出总是会产生一个符合要求的接受对话。
 
 下面我们论证，当 $c\in\mathcal{C}$ 是随机选出的时候，模拟器在输入 $u,c$ 上的输出具有正确的分布。注意到在真实的对话中，$c$，$\alpha_{\rm z}$ 与 $\beta_{\rm z}$ 相互独立，其中 $c$ 在 $\mathcal{C}$ 上均匀分布，$\alpha_{\rm z}$ 和 $\beta_{\rm z}$ 在 $\mathbb{Z}_q$ 上均匀分布。此外，如果给定 $c$、$\alpha_{\rm z}$ 和 $\beta_{\rm z}$，$u_{\rm t}$ 的值由方程：
 
-$$
+\[
 g^{\alpha_{\rm z}}h^{\beta_{\rm z}}=u_{\rm t}\cdot u^c
-$$
+\]
 唯一决定。而这显然与模拟器的输出分布是一致的。
 \end{proof}
 
@@ -143,24 +158,27 @@ Chaum-Pedersen 协议是式 \ref{eq:19-12} 中定义的关系$\mathcal R$上的�
 
 \begin{proof}
 显然，Chaum-Pedersen 协议具有 Sigma 协议所要求的语法结构。陈述 $(u,v,w)\in\mathbb{G}^3$ 的一个接受对话形如：
-$$
-((v_{\rm t},w_{\rm t}),c,\beta_{\rm z}) \text{~~s.t.~~} 
-g^{\beta_{\rm z}}=v_{\rm t}\cdot v^c,~~
+\[
+\big((v_{\rm t},w_{\rm t}),c,\beta_{\rm z}\big)
+\quad\text{s.t.}\quad
+g^{\beta_{\rm z}}=v_{\rm t}\cdot v^c,
+\quad
 y^{\beta_{\rm z}}=w_{\rm t}\cdot w^c
-$$
+\]
 不难证明，一个诚实证明者与一个诚实验证者之间总是能够产生接受对话。
 
 \noindent
 \emph{知识健全性.}
 假设我们有两个陈述 $(u,v,w)$ 的接受对话
-$$
-((v_{\rm t},w_{\rm t}),c,\beta_{\rm z}),~~
-((v_{\rm t},w_{\rm t}),c',\beta_{\rm z}')
-$$
+\[
+\big((v_{\rm t},w_{\rm t}),c,\beta_{\rm z}\big),
+\quad
+\big((v_{\rm t},w_{\rm t}),c',\beta_{\rm z}'\big)
+\]
 其中 $c\neq c'$。不难发现
-$$
+\[
 \beta:={\Delta\beta}/{\Delta c}
-$$
+\]
 是陈述 $(u,v,w)\in\mathbb{G}^3$ 对应的见证，其中$\Delta\beta:=\beta_{\rm z}-\beta_{\rm z}'$，$\Delta c:=c-c'$。
 
 \vspace{5pt}
@@ -168,18 +186,21 @@ $$
 \noindent
 \emph{特殊 HVZK.}
 对于输入 $(u,v,w)\in\mathbb{G}^3$ 和 $c\in\mathcal{C}$ 时，模拟器计算：
-$$
-\beta_{\rm z}\overset{\rm R}\leftarrow\mathbb{Z}_q,~~
-v_{\rm t}\leftarrow{g^{\beta_{\rm z}}}/{v^c},~~
+\[
+\beta_{\rm z}\overset{\rm R}\leftarrow\mathbb{Z}_q,
+\quad
+v_{\rm t}\leftarrow{g^{\beta_{\rm z}}}/{v^c},
+\quad
 w_{\rm t}\leftarrow{u^{\beta_{\rm z}}}/{w^c}
-$$
+\]
 并输出 $((v_{\rm t},w_{\rm t}),c,\beta_{\rm z})$。可以发现，输出总是会产生一个符合要求的接受对话。
 
 下面我们论证，当 $c\in\mathcal{C}$ 是随机选出的时候，模拟器在输入 $((u,v,w),c)$ 上的输出具有正确的分布。注意到在真实的对话中，$c$ 和 $\beta_{\rm z}$ 相互独立，其中 $c$ 在 $\mathcal{C}$ 上均匀分布，$\beta_{\rm z}$ 在 $\mathbb{Z}_q$ 上均匀分布。此外，如果给定 $c$ 和 $\beta_{\rm z}$，$v_{\rm t}$ 和 $w_{\rm t}$ 的值由
-$$
-g^{\beta_{\rm z}}=v_{\rm t}\cdot v^c, ~~
+\[
+g^{\beta_{\rm z}}=v_{\rm t}\cdot v^c,
+\quad
 u^{\beta_{\rm z}} =w_{\rm t}\cdot w^c
-$$
+\]
 唯一决定。而这显然与模拟器的输出分布是一致的。
 \end{proof}
 
@@ -191,7 +212,9 @@ $$
 \begin{equation}\label{eq:19-13}
 \phi(x_1,\dots,x_n):=
 \left\{
-~u_1=\prod^n_{j=1}g_{1j}^{x_j} ~~\land~~\cdots~~\land~~ u_m=\prod^n_{j=1}g_{mj}^{x_j}~
+u_1=\prod^n_{j=1}g_{1j}^{x_j}
+\;\;\land\;\;\cdots\;\;\land\;\;
+u_m=\prod^n_{j=1}g_{mj}^{x_j}
 \right\}
 \end{equation}
 的布尔表达式 $\phi$。其中所有的 $g_{ij}$ 和 $u_i$ 都是 $\mathbb{G}$ 中的元素，这些元素中的有些可以是系统参数甚至是常数，有些是表达式特有的。$\phi$ 中的 $x_i$ 是公式的变量。当我们给 $x_1,\dots,x_n$ 赋 $\mathbb{Z}_q$ 中的值时，如果式 \ref{eq:19-13} 中的所有等式都成立，$\phi$ 就会输出 true。
@@ -203,13 +226,17 @@ $$
 \Big(
 (\alpha_1,\dots,\alpha_n),\phi
 \Big)
-\in\mathbb{Z}_q^n\times\mathcal{F}: ~\phi(x_1,\dots,x_n)={\rm{true}}~
+\in\mathbb{Z}_q^n\times\mathcal{F}:
+\;\;
+\phi(x_1,\dots,x_n)={\rm{true}}\,
 \bigg\rbrace
 \end{equation}
 因此，陈述是一个表达式 $\phi\in\mathcal{F}$，$\phi$ 的见证是能使得表达式 $\phi$ 输出 true 的 $x_1,\dots,x_n$ 的一组赋值 $(\alpha_1,\dots,\alpha_n)\in\mathbb{Z}_q^n$。我们之所以称其为``线性"关系集，是因为如果我们取离散对数，式 \ref{eq:19-13} 就可以改写为如下的线性方程组：
-$$
-{\rm\mathsf{Dlog}}_g(u_j)=\sum_{j=1}^nx_i\cdot {\rm\mathsf{Dlog}}_g(g_{ij})~~~~(i=1,2,\dots,m)
-$$
+\[
+{\rm\mathsf{Dlog}}_g(u_j)=\sum_{j=1}^nx_i\cdot {\rm\mathsf{Dlog}}_g(g_{ij})
+\quad
+(i=1,2,\dots,m)
+\]
 而见证就是上述线性方程组的一组解。
 
 \begin{figure}
@@ -257,17 +284,23 @@ $$
 \begin{itemize}
 	\item Okamoto 协议对应着 $\mathbb{H}_1:=\mathbb{Z}_q^2$，$\mathbb{H}_2:=\mathbb{G}$ 且 $\psi_1(x,y):=g^xh^y$ 的特殊情况。
 	\item Chaum-Pedersen 协议对应着
-	$$\mathbb{H}_1:=\mathbb{Z}_q,~~\mathbb{H}_2:=\mathbb{G}^2, ~~\psi_2(x):=(g^x,u^x)$$
+	\[
+	\mathbb{H}_1:=\mathbb{Z}_q,
+	\quad
+	\mathbb{H}_2:=\mathbb{G}^2,
+	\quad
+	\psi_2(x):=(g^x,u^x)
+	\]
 	的特殊情况。我们甚至可以令 $\mathbb{H}_2=\mathbb{G}_1\times\mathbb{G}_2$，其中 $g\in\mathbb{G}_1$，$u\in\mathbb{G}_2$，并且 $|\mathbb{G}_1|=|\mathbb{G}_2|$。那么对于一个给定的 $(v,w)\in\mathbb{G}_1\times\mathbb{G}_2$，提供$(v, w)$ 在 $\psi_2$ 上的一个原像与计算群 $\mathbb{G}_1$ 和 $\mathbb{G}_2$ 上的离散对数问题 $\mathsf{Dlog}_g(v)=\mathsf{Dlog}_u(w)$ 等价。
 	\item 图 \ref{fig:19-8} 中的通用线性协议对应着
-	$$
-    \mathbb{H}_1:=(\mathbb{Z}_q)^n,~~
-    \mathbb{H}_2:=\mathbb{G}^m,~~
+	\[
+    \mathbb{H}_1:=(\mathbb{Z}_q)^n,
+    \quad
+    \mathbb{H}_2:=\mathbb{G}^m,
+    \quad
     \psi_3(x_1,\dots,x_n):=
-    \left(
-    ~\prod_{j=1}^ng_{1j}^{x_j},~\dots,~\prod_{j=1}^ng_{mj}^{x_j}~
-    \right)
-    $$
+    \left(\,\prod_{j=1}^ng_{1j}^{x_j},\,\dots,\,\prod_{j=1}^ng_{mj}^{x_j}\right)
+    \]
     的特殊情况。其中，对于所有的$i=1,\dots,m$和$j=1,\dots,n$，都有$g_{ij}\in\mathbb{G}$。
 \end{itemize}
 我们可以很容易地验证 $\psi_1,\psi_2,\psi_3$ 的映射都是群同态的。通过在图 \ref{fig:19-9} 中的协议使用这些同态映射，我们可以得到本节中介绍的所有 Sigma 协议实例。
@@ -299,7 +332,7 @@ $$
 \end{figure}
 
 
-图 \ref{fig:19-10} 展示了 GQ 协议 $(P,V)$ 的工作流程。其挑战空间 $\mathcal{C}$ 是 $\{0,\dots,e-1\}$ 的一个子集。需要注意的是，当 $e$ 很小时，挑战空间也很小。如果需要，我们可以用练习 19.5 中介绍的方法将其扩大。然而在使用该协议时，我们通常会将 $e$ 设定为一个大素数来确保挑战空间是足够大的。
+图 \ref{fig:19-10} 展示了 GQ 协议 $(P,V)$ 的工作流程。其挑战空间 $\mathcal{C}$ 是 $\{0,\dots,e-1\}$ 的一个子集。需要注意的是，当 $e$ 很小时，挑战空间也很小。如果需要，我们可以用练习 \ref{exer:19-5} 中介绍的方法将其扩大。然而在使用该协议时，我们通常会将 $e$ 设定为一个大素数来确保挑战空间是足够大的。
 
 图 \ref{fig:19-10} 中的 GQ 协议也是图 \ref{fig:19-9} 中展示的用于同态原像的 Sigma 协议的一个特例。此时群同态是 $\psi:\mathbb{Z}_n^*\to\mathbb{Z}_n^*$，定义为 $\psi(x)=x^e$。然而，我们无法像定理 \ref{theo:19-12} 那样证明 GO 协议提供知识健全性，因为群 $\mathbb{Z}_n^*$ 的阶是未知的。相反地，我们必须对这些属性进行单独证明。我们有下面的定理。
 
@@ -315,14 +348,15 @@ $y$ 的一个接受对话形如 $(x_{\rm t},c,x_{\rm z})$，其中 $x^e_{\rm z}=
 \noindent
 \emph{知识健全性.}
 下面我们将证明 GQ 协议具备知识健全性。假设我们有两个陈述 $y$ 的接受对话 $(x_{\rm t},c,x_{\rm z})$ 和 $(x_{\rm t},c',x_{\rm z}')$，其中 $c\neq c'$。我们必须证明能够有效计算出 $y$ 的 $e$ 次方根。观察到：
-$$
-x^e_{\rm z}=y_{\rm t}\cdot y^c,~~
+\[
+x^e_{\rm z}=y_{\rm t}\cdot y^c,
+\quad
 (x_{\rm z}')^e=y_{\rm t}\cdot y^{c'}
-$$
+\]
 将第一个方程除以第二个方程，可以得到：
-$$
+\[
 (\Delta x)^e=y^{\Delta c}
-$$
+\]
 其中：$\Delta x:={x_{\rm z}}/{x_{\rm z}'}$，$\Delta c:=c-c'$。由于 $c\neq c'$，且 $c$ 和 $c'$ 都属于区间 $\{0,\dots,e-1\}$，因此有 $0<|\Delta c|<e$，所以 $e\nmid\Delta c$。此外由于 $e$ 是素数，所以 $\gcd(e,\Delta c)=1$。因此当给定 $e$，$f:=\Delta c$，$w:=\Delta x$ 时，我们可以利用定理 10.6 求得 $y$ 的 $e$ 次方根。
 
 读者应该注意到，这里给出的从两个接受对话中计算 RSA 逆变换的技术与定理 10.7 的证明中使用的方法基本相同。事实上，这两个接受对话制造了哈希函数 $H_{\rm rsa}(a,b)=a^ey^b$ 上的一次碰撞 $((x_{\rm z},-c\mod e),(x_{\rm z}',-c'\mod e))$。
@@ -332,9 +366,10 @@ $$
 \noindent
 \emph{特殊 HVZK.}
 最后，我们通过给出一个模拟器来证明 GQ 协议是特殊 HVZK 的。对于输入 $y\in\mathbb{Z}_n^*$ 和 $c\in\mathcal{C}$，模拟器计算：
-$$
-x_{\rm z}\overset{\rm R}\leftarrow\mathbb{Z}_n^*,~~
+\[
+x_{\rm z}\overset{\rm R}\leftarrow\mathbb{Z}_n^*,
+\quad
 y_{\rm t}\leftarrow{x_{\rm z}^e}/{y^c}
-$$
+\]
 并输出 $(y_{\rm t},x_{\rm z})$。注意到在真实的对话中，$c$ 和 $x_{\rm z}$ 是相互独立的，$c$ 在 $\mathcal{C}$ 上均匀分布，$x_z$ 在 $\mathbb{Z}_n^*$ 上均匀分布。此外，如果给定 $c$ 和 $x_z$，$y_t$ 的值由方程$x^e_{\rm z}=y_{\rm t}\cdot y^c$唯一决定。而这显然与模拟器的输出分布是一致的。
 \end{proof}

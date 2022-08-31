@@ -3,15 +3,15 @@
 让我们从一个定义开始。
 
 \begin{definition}[真实陈述的语言]
-令 $\mathcal{R}\subseteq\mathcal{X}\times\mathcal{Y}$ 是一个有效关系。如果对于某个 $x\in\mathcal{X}$ 有 $(x,y)\in\mathcal{R}$，那么我们就称陈述 $y\in\mathcal{Y}$ 是一个\textbf{真实陈述 (true statement)}，否则称其为\textbf{虚假陈述 (false statement)}。我们称 $L_{\mathcal{R}}$ 为\textbf{由 $\mathcal{R}$ 定义的语言 (language defined by $\mathcal{R}$)}，即定义在 $\mathcal{R}$ 上的所有真实陈述，也就是说，$L_{\mathcal{R}}:=\{y\in\mathcal{Y}:(x,y)\in\mathcal{R}~\text{for some}~x\in\mathcal{X}\}$。
+令 $\mathcal{R}\subseteq\mathcal{X}\times\mathcal{Y}$ 是一个有效关系。如果对于某个 $x\in\mathcal{X}$ 有 $(x,y)\in\mathcal{R}$，那么我们就称陈述 $y\in\mathcal{Y}$ 是一个\textbf{真实陈述 (true statement)}，否则称其为\textbf{虚假陈述 (false statement)}。我们称 $L_{\mathcal{R}}$ 为\textbf{由 $\mathcal{R}$ 定义的语言 (language defined by $\mathcal{R}$)}，即定义在 $\mathcal{R}$ 上的所有真实陈述，也就是说，$L_{\mathcal{R}}:=\{y\in\mathcal{Y}:(x,y)\in\mathcal{R}\;\text{for some}\;x\in\mathcal{X}\}$。
 \end{definition}
 
 上述定义中的``语言 (language)" 一词来自复杂性理论。在本章中，我们将研究一些有趣的关系 $\mathcal{R}$ 以及由它们所定义的语言集合 $L_{\mathcal{R}}$。举一个上一章的例子，回顾一下，Chaum-Pedersen 协议是一个定义在关系
-$$
+\[
 \mathcal{R}:=\bigg\lbrace
 \big(\beta, (u,v,w)\big)\in\mathbb{Z}_q\times\mathbb{G}^3:v=g^\beta, w=u^\beta
 \bigg\rbrace
-$$
+\]
 上的 Sigma 协议。那么，由 $\mathcal{R}$ 定义的语言 $L_{\mathcal{R}}$ 就是所有 DH 三元组 $(u,v,w)\in\mathbb{G}^3$ 的集合。
 
 于是，我们就可以用下面的攻击游戏来定义存在健全性的概念：

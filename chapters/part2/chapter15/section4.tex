@@ -5,7 +5,7 @@
 为了介绍基于配对的方案，我们将把重点放在配对带来的新功能上，并抽象出椭圆曲线群的细枝末节。同前几章一样，我们把群操作用乘法形式表示。注意，这与本章的前几节不同。此前，为了与传统的椭圆曲线密码学的数学符号保持一致，我们一直在使用加法形式表示群操作。
 
 \begin{definition}\label{def:15-2}
-令 $\mathbb{G}_0,\mathbb{G}_1,\mathbb{G}_T$ 是三个 $q$ 阶循环群，其中 $q$ 为素数，$g_0\in\mathbb{G}_0$ 和 $g_1\in\mathbb{G}_1$ 是生成元。一个\textbf{配对 (pairing)}是满足以下性质的一个可有效计算函数 $e:\mathbb{G}_0\times\mathbb{G}_1\to\mathbb{G}_T$：
+令 $\mathbb{G}_0,\mathbb{G}_1,\mathbb{G}_\mathrm{T}$ 是三个 $q$ 阶循环群，其中 $q$ 为素数，$g_0\in\mathbb{G}_0$ 和 $g_1\in\mathbb{G}_1$ 是生成元。一个\textbf{配对 (pairing)}是满足以下性质的一个可有效计算函数 $e:\mathbb{G}_0\times\mathbb{G}_1\to\mathbb{G}_\mathrm{T}$：
 \begin{enumerate}
 	\item 双线性 (bilinear)：对于所有的 $u,u'\in\mathbb{G}_0$ 和 $v,v'\in\mathbb{G}_1$，我们有：
 	\[
@@ -13,78 +13,74 @@
 		\quad\text{and}\quad
 		e(u,\,v\cdot v')=e(u,v)\cdot e(u,v')
 	\]
-	\item 非退化性 (non-degenerate)：$g_T:=e(g_0,g_1)$ 是 $\mathbb{G}_T$ 的一个生成元。
+	\item 非退化性 (non-degenerate)：$g_\mathrm{T}:=e(g_0,g_1)$ 是 $\mathbb{G}_\mathrm{T}$ 的一个生成元。
 \end{enumerate}
-当 $\mathbb{G}_0=\mathbb{G}_1$ 时，我们称该配对为一个\textbf{对称配对 (symmetric pairing)}。我们将 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 称为\textbf{配对群 (pairing groups)} 或原群 (source groups)，将 $\mathbb{G}_T$ 称为\textbf{目标群 (target group)}。
+当 $\mathbb{G}_0=\mathbb{G}_1$ 时，我们称该配对为一个\textbf{对称配对 (symmetric pairing)}。我们将 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 称为\textbf{配对群 (pairing groups)} 或原群 (source groups)，将 $\mathbb{G}_\mathrm{T}$ 称为\textbf{目标群 (target group)}。
 \end{definition}
 
-双线性意味着配对有下面将要介绍的核心属性可以应用于所有的结构：对于任意 $\alpha,\beta \in \mathbb{Z}_q$，有：
+双线性意味着配对有下述的核心属性，它能被应用于我们所有的构造中：对于所有的 $\alpha,\beta\in\mathbb{Z}_q$，我们都有：
+\begin{equation}\label{eq:15-5}
+e(g_0^\alpha,g_1^\beta)=e(g_0,g_1)^{\alpha\cdot\beta}=e(g_0^\beta,g_1^\alpha)
+\end{equation}
+该等式是由 $e(g_0^\alpha,g_1^\beta)=e(g_0,g_1^\beta)^{\alpha}=e(g_0^\alpha,g_1)^\beta$这个有用的等式推出的，而后者本身就是双线性的直接结果。我们注意到，在 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 这样的循环群中，式 \ref{eq:15-5} 也等价于定义 \ref{def:15-2} 中所述的双线性性质。
 
-$$
-e(g_0^\alpha,g_1^\beta)=e(g_0,g_1)^{\alpha,\beta}=e(g_0^\beta,g_1^\alpha)
-$$
+定义 \ref{def:15-2} 中的非退化性要求确保配对 $e$ 对于所有输入并不总是输出 $1\in\mathbb{G}_\mathrm{T}$。这样的配对确实是双线性的，但是意义不大。此外，我们希望离散对数问题在群 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 上都是困难的。很多构造还要求其他的一些问题是困难的，比如 CDH 和 DDH 的某些变体。
 
-上述等式从下面的等式中得出：
+\begin{snote}[直接的后果。]
+配对 $e:\mathbb{G}_0\times\mathbb{G}_1\to\mathbb{G}_\mathrm{T}$ 会给群 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 带来一些额外的后果。首先，当 $\mathbb{G}_0=\mathbb{G}_1$ 时，$\mathbb{G}_0$ 上的确定性 Diffie-Hellman (DDH) 问题是很容易的。想要知道为什么，注意到，给定一个三元组 $(u,v,w)=(g_0^\alpha,g_0^\beta,g_0^\gamma)\in\mathbb{G}^3$，我们可以通过检查：
+\[
+e(u,v)=e(g_0,w)
+\]
+是否成立来确认$\gamma=\alpha\cdot\beta$ 是否在 $\mathbb{Z}_q$ 上成立。根据式 \ref{eq:15-5}，当且仅当$e(g_0,g_0)^{\alpha\beta}=e(g_0,g_0)^\gamma$时，上述等式才成立，而前者当且仅当 $\gamma=\alpha\cdot\beta$ 时成立。正是此时，$(u,v,w)$ 才是一个 DH 三元组。因此，DDH 是容易的。
 
-$$
-e(g_0^\alpha,g_1^\beta)=e(g_0,g_1^\beta)^{\alpha}=e(g_0^\alpha,g_1)^\beta
-$$
+上述结论的一个结果是，乘性 ElGamal 加密方案在对称配对群中会丧失语义安全性，因此不应该在这样的群中被实例化。同样地，\ref{sec:11-5} 节中的完整 ElGamal 加密方案 $\mathcal{E}_{\rm EG}$ 也不能用基于 DDH 的分析来证明其安全性。然而，$\mathcal{E}_{\rm EG}$ 仍然可以通过 \ref{subsec:11-5-1} 中的分析，在随机预言机模型中基于 CDH 证明其安全性。
 
-而该等式本身就是双线性的直接结果。我们可以注意到，在 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 这样的循环群中，上述两个等式也等价于配对的双线性性质。
+对于\textbf{非对称配对(asymmetric pairing)}，即 $\mathbb{G}_0\neq\mathbb{G}_1$ 的情况，DDH 假设仍有可能在 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 上都成立。事实上，对于来自椭圆曲线的最有效的非对称配对，DDH 假设被认为在 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 上都仍然成立。
 
-而配对的另一个非退化性保证了配对 $e$ 对于所有输入并不总是输出 $1 \in \mathbb{G}_T$。事实上，我们总是希望离散对数问题在群 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 上尽量困难，而很多构造还要求其他的一些问题是困难的，比如 CDH 和 DDH 的某些变体。
+\vspace{5pt}
 
-直接结果
+其次，在 $\mathbb{G}_0$ 或 $\mathbb{G}_1$ 上计算离散对数不会比在目标群 $\mathbb{G}_\mathrm{T}$ 上更难。想知道为什么，假设我们得到了一个 $u_0=g_0^\alpha\in\mathbb{G}_0$，并被要求计算其离散对数 $\alpha\in\mathbb{Z}_q$。为此，我们计算 $u:=e(u_0,g_1)$ 并置 $g_\mathrm{T}:=e(g_0,g_1)$。可以观察到 $u\in\mathbb{G}_\mathrm{T}$ 满足 $u=(g_\mathrm{T})^\alpha$，因此我们可以通过计算在 $\mathbb{G}_\mathrm{T}$ 上的以 $g_\mathrm{T}$ 为基底的 $u$ 的离散对数来找到 $\alpha$。因此，如果 $\mathbb{G}_\mathrm{T}$ 上的离散对数问题很容易，那么 $\mathbb{G}_0$ 上的离散对数问题也是很容易的。类似的论证也适用于 $\mathbb{G}_1$。因此，为了使离散对数在 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 上都是困难的，我们必须谨慎选择群，以使得目标群 $\mathbb{G}_\mathrm{T}$ 上的离散对数也是困难的。
+\end{snote}
 
-视 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 的性质，配对 $e:\mathbb{G}_0 \times \mathbb{G}_1 \to \mathbb{G}_T$ 也会有一些后果。首先，当 $\mathbb{G}_0=\mathbb{G}_1$ 时，可以证明 $\mathbb{G}_0$ 上的 DDH 问题是容易的。想要知道为什么，可以考察三元组 $(u,v,w)=(g_0^\alpha,g_0^\beta,g_0^\gamma)\in\mathbb{G}^3$，我们可以通过验证：
+\begin{snote}[从椭圆曲线构建配对。]
+一个配对 $e:\mathbb{G}_0\times\mathbb{G}_1\to\mathbb{G}_\mathrm{T}$ 通常是由椭圆曲线 $E/\mathbb{F}_p$ 构造而来的。来自椭圆曲线的最自然和有效的配对是不对称的，即 $\mathbb{G}_0\neq\mathbb{G}_1$。出于这个原因，我们将使用非对称配对来描述本章中所有基于配对的系统。
 
-$$
-e(u,v)\overset{?}=e(g_0,w)
-$$
+一个由椭圆曲线 $E/\mathbb{F}_p$ 构造的配对 $e:\mathbb{G}_0\times\mathbb{G}_1\to\mathbb{G}_\mathrm{T}$，其中的群 $\mathbb{G}_0$，$\mathbb{G}_1$ 和 $\mathbb{G}_\mathrm{T}$ 具有以下特性：
+\begin{itemize}
+	\item $\mathbb{G}_0$ 是 $E(\mathbb{F}_{p})$ 的一个 $q$ 阶子群，其中 $q$ 为某个素数，
+	\item $\mathbb{G}_1$ 是 $E(\mathbb{F}_{p^d})$ 的一个 $q$ 阶子群，其中 $d>0$ 且 $\mathbb{G}_1\cap\mathbb{G}_0=\{\mathcal{O}\}$，
+	\item $\mathbb{G}_\mathrm{T}$ 是有限域 $\mathbb{F}_{p^d}$ 的一个 $q$ 阶乘法子群。
+\end{itemize}
+整数 $d>0$ 被称为曲线的\textbf{嵌入度 (embedding degree)}。显然 $d$ 需要很小，因为只有这样，$\mathbb{G}_1$ 和 $\mathbb{G}_\mathrm{T}$ 中的元素才能被有效表示。如果 $d$ 很大，我们就无法表示 $\mathbb{G}_1$ 和 $\mathbb{G}_\mathrm{T}$ 中的元素。$d$ 相对小的椭圆曲线，比如 $d\leq16$ 的曲线，被称为\textbf{配对友好的椭圆曲线 (pairing friendly elliptic curve)}。
 
-得到 $\mathbb{Z}_q$ 上的 $\gamma=\alpha\cdot\beta$ 是否成立。根据[式 15.5](https://www.notion.so/aef50a5da9144c7fa4a8ca1c801017e6)，我们知道当且仅当：
+因为 $\mathbb{G}_0$ 定义在基域 $\mathbb{F}_p$ 上，而 $\mathbb{G}_1$ 定义在更大的域 $\mathbb{F}_{p^d}$ 上，所以 $\mathbb{G}_0$ 中的元素通常比 $\mathbb{G}_1$ 中的元素短得多。这在选择每个群所扮演的角色时会起到重要的作用。例如，为了最大限度地减少密文的长度，我们倾向于把密文中出现的群元素放在 $\mathbb{G}_0$ 中。
 
-$$
-e(g_0,g_0)^{\alpha\beta}=e(g_0,g_0)^\gamma
-$$
+椭圆曲线上的配对函数 $e$ 来自于一个称为 \textbf{Weil 配对}的代数配对。这种配对可以用 Victor Miller 的算法来有效评估。在实践中，我们通常使用 Weil 配对的变体，称为 Tate 配对和 Ate 配对，对于这些配对，Victor Miller 算法更加有效。对于这些配对的定义和如何评估它们的更多信息，可以参考 [63]。
 
-时，上述[等式](https://www.notion.so/aef50a5da9144c7fa4a8ca1c801017e6)成立，而该等式当且仅当 $\gamma=\alpha\cdot\beta$ 时成立，此时 $(u,v,w)$ 是一个 DH 三元组。因此 DDH 是容易的。
+实践中最常用的曲线被称为 bn256 和 bls381。这两条曲线的嵌入度都是 $d=12$，群的阶 $q$ 是 $256$ 比特素数。两条曲线都定义在素数域上：bn256 定义在一个 $256$ 比特的素数域上，bls381 定义在一个 $381$ 比特的素数域上。曲线 bls381 被认为能够提供更好的安全性，因为 $\mathbb{G}_\mathrm{T}$ 上的离散对数是更难的，但由于素数更大，bls381 中的算术运算也因而更慢。
+\end{snote}
 
-这意味着乘性 ElGamal 加密方案在对称配对群中会丧失语义安全性，因此不应该被用在这样的群中。同样地，完整 ElGamal 加密方案 $\mathcal{E}_{\rm EG}$ 也不能用基于 DDH 的分析来证明其安全性。然而，$\mathcal{E}_{\rm EG}$ 仍然可以在随机预言机模型中基于 CDH 证明其安全性。
+\begin{snote}[配对的性能。]
+令 $e:\mathbb{G}_0 \times \mathbb{G}_1 \to \mathbb{G}_\mathrm{T}$ 是一个由配对友好的椭圆曲线 $E/\mathbb{F}_p$ 派生而来的配对，所有三个群都有素阶 $q$。计算配对需要进行 $O(\log q)$ 次 $\mathbb{F}_p$ 上的算术运算，类似于 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 上的指数运算。然而，在实践中，计算配对所需的时间往往比指数运算更长（确切的开销取决于具体的实现）。因此，我们希望在设计中尽量减少计算配对的次数。为了了解相对的计算开销，表 \ref{tab:15-1} 展示了在曲线 bn256 上进行指数和配对运算的运行时间\footnote{使用 Miracl 库在 2.4 GHz 的 Intel i5 520M CPU 上进行基准测试。数字来自 Miracl 的文档。}。可以看出，$\mathbb{G}_0$ 上的配对运算比指数运算慢 10 倍左右。
 
-对于非对称配对，即 $\mathbb{G}_0\neq\mathbb{G}_1$ 的情况，DDH 假设在 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 中都仍然有可能成立。事实上，对于大多数基于椭圆曲线的非对称配对，DDH 假设被认为在 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 上仍然成立。
+\begin{table}[]
+\centering
+\begin{tabular}{|ll|c|}
+\hline
+\multicolumn{2}{|l|}{}               & 时间（毫秒） \\ \hline
+指数运算： & 在 $\mathbb{G}_0$ 上      & 0.22      \\
+         & 在 $\mathbb{G}_1$ 上      & 0.44      \\
+         & 在 $\mathbb{G}_\mathrm{T}$ 上      & 0.95      \\ \hline
+配对运算： & $\mathbb{G}_0\times\mathbb{G}_1\to\mathbb{G}_\mathrm{T}$ & 2.32      \\ \hline
+\end{tabular}
+\caption{曲线bn256上配对的基准测试。}
+\label{tab:15-1}
+\end{table}
 
-其次，在 $\mathbb{G}_0$ 或 $\mathbb{G}_1$ 中计算离散对数不会比在目标群 $\mathbb{G}_T$ 中计算离散对数更难。想知道为什么，假设我们有一个 $u_0=g_0^\alpha\in\mathbb{G}_0$，并被要求计算其离散对数 $\alpha\in\mathbb{Z}_q$。为此，我们计算 $u=e(u_0,g_1)$ 并令 $g_T=e(g_0,g_1)$。可以观察到 $u\in\mathbb{G}_T$ 满足 $u=(g_T)^\alpha$，因此我们可以通过计算以 $g_T$ 为基底的 $u$ 的离散对数来找到 $\alpha$。因此，如果 $\mathbb{G}_T$ 中的离散对数问题很容易，那么 $\mathbb{G}_0$ 中的离散对数问题也很容易。类似的论证也适用于 $\mathbb{G}_1$。因此，为了使离散对数在 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 中都是困难的，我们必须谨慎选择群，使得目标群 $\mathbb{G}_T$ 中的离散对数也是困难的。
-
-基于椭圆曲线构建配对
-
-一个配对 $e:\mathbb{G}_0 \times \mathbb{G}_1 \to \mathbb{G}_T$ 通常是由椭圆曲线 $E/\mathbb{F}_p$ 构造出来的。来自椭圆曲线的最自然和有效的配对是不对称的，即 $\mathbb{G}_0\neq\mathbb{G}_1$。出于这个原因，我们将使用非对称配对来描述本章中的所有基于配对的系统。
-
-一个由椭圆曲线 $E/\mathbb{F}_p$ 构造的配对 $e:\mathbb{G}_0 \times \mathbb{G}_1 \to \mathbb{G}_T$ 中的群 $\mathbb{G}_0$，$\mathbb{G}_1$ 和 $\mathbb{G}_T$ 具有以下特性：
-
-- $\mathbb{G}_0$ 是 $E(\mathbb{F}_{p})$ 的一个 $q$ 阶子群，其中 $q$ 为素数；
-- $\mathbb{G}_1$ 是 $E(\mathbb{F}_{p^d})$ 的一个 $q$ 阶子群，其中 $d>0$ 且 $\mathbb{G}_1\cap\mathbb{G}_0=\{\mathcal{O}\}$；
-- $\mathbb{G}_T$ 是有限域 $\mathbb{F}_{p^d}$ 的一个 $q$ 阶乘法子群。
-
-整数 $d>0$ 被称为曲线的**嵌入度 (embedding degree)**。显然 $d$ 需要小一些以便 $\mathbb{G}_1$ 和 $\mathbb{G}_T$ 中的元素能有效表示。如果 $d$ 很大，我们就无法写下 $\mathbb{G}_1$ 和 $\mathbb{G}_T$ 中的元素。$d$ 相对小的椭圆曲线，比如 $d≤16$ 的曲线，被称为**配对友好的椭圆曲线 (pairing friendly elliptic curve)**。
-
-因为 $\mathbb{G}_0$ 定义在基域 $\mathbb{F}_p$ 上，而 $\mathbb{G}_1$ 定义在更大的域 $\mathbb{F}_{p^d}$ 上，所以 $\mathbb{G}_0$ 中的元素通常比 $\mathbb{G}_1$ 中的元素短得多。这在选择每个群所扮演的角色时起到重要的作用。例如为了最大限度地减少密文的长度，我们将倾向于把密文中出现的群元素放在 $\mathbb{G}_0$ 中。
-
-椭圆曲线上的配对函数 $e$ 来自于一个叫做 **Weil 配对**的代数配对。这种配对可以用维克多-米勒算法有效计算。在实践中我们通常使用 Weil 配对的变种，称为 Tate 和 Ate 配对，维克多-米勒算法对于这些配对更加有效。
-
-实践中最常用的曲线被称为 bn256 和 bls381。这两条曲线的嵌入度 $d=12$，群阶 $q$ 是 256 位素数。两条曲线都定义在素数域上：bn256 定义在一个 256 比特的素数域，bls381 定义在一个 381 比特的素数域。曲线 bls381 被认为提供了更好的安全性，因为 $\mathbb{G}_T$ 中的离散对数更难，但 bls381 中的算术由于素数更大而更慢。
-
-配对的性能
-
-令 $e:\mathbb{G}_0 \times \mathbb{G}_1 \to \mathbb{G}_T$ 是一个由配对友好的椭圆曲线 $E/\mathbb{F}_p$ 构造出来的配对，群 $\mathbb{G}_0$，$\mathbb{G}_1$ 和 $\mathbb{G}_T$ 的阶都为素数 $q$。计算配对需要进行 $O(\log q)$ 次 $\mathbb{F}_p$ 上的算术运算，这类似于在 $\mathbb{G}_0$ 和 $\mathbb{G}_1$ 上的指数运算。然而在实践中，计算配对所需的时间往往比指数运算更长，因此我们希望在设计中尽量减少配对的计算复杂度。为了了解相对的计算开支，下面的表格展示了在曲线 bn256 上进行指数和配对运算的时间复杂度。可以看出，$\mathbb{G}_0$ 中的配对运算比指数运算慢 10 倍左右。
-
-![Benchmarks for pairings on the curve bn256](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/3e5dfb04-6ee7-4232-a02c-c60a0fc8fe94/Untitled.png)
-
-Benchmarks for pairings on the curve bn256
-
-在实现配对时，可以进行许多优化：
-
-- 首先，当配对的其中一个输入是固定的时，就有可能通过预处理大大加快配对的计算速度。具体来说，假设人们需要计算许多配对 $e(u,v_i)$，其中 $i=1,2,\dots,n$，$u\in\mathbb{G}_0$ 是固定的。那么就有可能建立一个只取决于 $u$ 的表。一旦构建了这个表，计算每个配对就比没有预处理的情况快得多。
-- 其次，配对乘积 $\prod_{i=1}^ne(u_i,v_i)$ 的计算速度可以比逐个计算 $n$ 个配对还要快。例如，配对计算的最后一步是将计算值进行一个固定级数的幂运算。这个最后的指数化可以在乘积的所有配对中汇总，对整个乘积只做一次。
-
+在实现配对时，我们可以进行许多优化：
+\begin{itemize}
+	\item 首先，当其中一个配对的输入是固定的时候，使用预处理可以大大加快配对的计算速度。具体来说，假设我们需要对 $i=1,2,\dots,n$计算许多配对 $e(u,v_i)$，其中$u\in\mathbb{G}_0$ 是固定的。那么，我们就可能建立一个只取决于 $u$ 的表。一旦构建了这个表，计算每个配对就比没有预计算表的情况要快得多。这种加速类似于附录 \ref{subsec:A-2-4} 小节中讨论的固定基数的指数运算的预计算加速方法。
+	\item 其次，配对的乘积 $\prod_{i=1}^ne(u_i,v_i)\in\mathbb{G}_\mathrm{T}$ 的计算速度可以比逐个计算 $n$ 个配对还要快。例如，配对计算的最后一步是将计算值用一个固定大数进行升幂。这个最后的指数运算可以在乘积的所有配对中汇总，对整个乘积只做一次。
+\end{itemize}
 通常，把这两种优化结合在一起会带来显著的速度提升。
+\end{snote}

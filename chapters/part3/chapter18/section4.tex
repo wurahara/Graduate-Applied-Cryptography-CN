@@ -5,9 +5,9 @@
 \subsection{公共盐}
 
 上一节中，我们展示了攻击者如何对字典 $\mathcal{D}$ 进行预处理以构建一个速查表 $L$，进而可以快速破解一个或多个哈希后的口令。一种叫做\textbf{加盐(salting)}的简单防御措施就可以反制这种预处理攻击。就算允许攻击者拥有无限时间对 $\mathcal{D}$ 进行预处理，加盐也可以将破解一个哈希口令文件 $F$ 的时间复杂度提升到：
-$$
+\[
 \Omega(|\mathcal{D}|\times |F|)
-$$
+\]
 换言之，加盐可以确保没有任何其他方法的效率优于基于穷举搜索的暴力破解。
 
 加盐的具体做法是在注册新口令时生成一个称为\textbf{盐(salt)}的随机字符串。系统中的每个用户都会被分配一个新的盐，我们可以认为盐是从一个集合 $\mathcal{S}$ 中随机选出的。在实践中，往往 $|\mathcal{S}|=2^{128}$ 就足以满足要求。这个盐会与口令一起被哈希，得到验证密钥 $vk$。盐也会被存储在服务器的口令表中，如图 \ref{fig:18-4} 所示。只有服务器需要知道盐值，用户甚至不需要知道有盐的存在。
@@ -35,7 +35,9 @@ $$
 \begin{itemize}
 	\item 第一种策略是使用批量离线字典攻击。问题是，现在预处理阶段需要考虑哈希函数 $H$ 的庞大的输入集合，事实上集合 $\mathcal{D}\times\mathcal{S}$ 中的任何元素都是可能的输入。因此，如果仍然采用式 \ref{eq:18-2} 中的预处理算法，需要准备的预处理表 $L$ 的规模将达到 $|\mathcal{D}|\times|\mathcal{S}|$。这个大小无论如何都是难以生成的，更不要说出村了。因此，式 \ref{eq:18-2} 所介绍的预处理方法不再可行。
 	\item 第二种策略是对 $F$ 中的所有口令进行穷举搜索，就像式 \ref{eq:18-1} 中所做的那样。我们已经说明过，穷举搜索的时间复杂度是
-	$$O(|\mathcal{D}|\times |F|)$$
+	\[
+	O(|\mathcal{D}|\times |F|)
+	\]
 \end{itemize}
 
 为了使得没有任何其他方法的效率优于穷举搜索，即上面的第二种策略，盐值空间 $\mathcal{S}$ 需要尽可能大。即使对手采用时空权衡的方法来对$\mathcal{D}\times\mathcal{S}$进行预处理，也同样应该成立。为了推导对 $\mathcal{S}$ 大小的必要约束，我们首先需要更精确地定义在预处理模型中逆转加盐函数的含义。
@@ -105,17 +107,17 @@ $$
 \begin{equation}\label{eq:18-5}
 	H^{(d)}(x)=H(H(H(\cdots(x)\cdots)))
 \end{equation}
-这样就将 $H$ 迭代了 $d$ 次，可参见第 14.3 节。如果 $d=10000$，那么计算 $H^{(d)}(x)$ 就比计算 $H(x)$ 要多花一万倍的时间。然而这种方法是有问题的，它也不应该被应用到现实的系统中去。原因之一是，函数 $H^{(d)}(x)$ 也比函数 $H(x)$ 容易逆运算 $d$ 倍，参见练习 14.17。我们下面会介绍一个性质更好的函数。首先，我们先对慢哈希函数进行严格的定义。
+这样就将 $H$ 迭代了 $d$ 次，可参见第 14.3 节。如果 $d=10000$，那么计算 $H^{(d)}(x)$ 就比计算 $H(x)$ 要多花一万倍的时间。然而这种方法是有问题的，它也不应该被应用到现实的系统中去。原因之一是，函数 $H^{(d)}(x)$ 也比函数 $H(x)$ 容易逆运算 $d$ 倍，参见练习 \ref{exer:14-17}。我们下面会介绍一个性质更好的函数。首先，我们先对慢哈希函数进行严格的定义。
 
 \begin{definition}
 	一个\textbf{基于口令的密钥推导函数(password-based key derivation function, PBKDF)}是这样的一个函数 $H$，其输入是一个口令 $pw\in\mathcal{P}$，一个空间 $\mathcal{S}$ 中的盐，以及一个难度参数 $d\in\mathbb{Z}^{>0}$；其输出是一个值 $y\in\mathcal{Y}$。我们要求函数 $H$ 能由一个运行时间与 $d$ 成正比的算法有效计算。像往常一样，我们称 PBKDF 定义在 $(\mathcal{P},\mathcal{S},\mathcal{Y})$ 上。
 \end{definition}
 
-我们会在练习 18.3 中讨论 PBKDF 的安全要求。我们的第一个 PBKDF 的例子，不妨称之为 \textbf{PBKDF1}，就基于式 \ref{eq:18-5}，其定义为：
-$$
+我们会在练习 \ref{exer:18-3} 中讨论 PBKDF 的安全要求。我们的第一个 PBKDF 的例子，不妨称之为 \textbf{PBKDF1}，就基于式 \ref{eq:18-5}，其定义为：
+\[
 {\rm PBKDF1}_H(pw,salt,d)=H^{(d)}(pw,salt)
-$$
-对于定义在 $(\mathcal{X},\mathcal{X})$ 上的哈希函数 $H$，PBKDF1 定义在 $(\mathcal{P},\mathcal{S},\mathcal{X})$ 上，其中 $\mathcal{X}=\mathcal{P}\times\mathcal{S}$。由于存在练习 14.17 中所介绍的攻击方式，该构造不会被应用在实际的系统中。
+\]
+对于定义在 $(\mathcal{X},\mathcal{X})$ 上的哈希函数 $H$，PBKDF1 定义在 $(\mathcal{P},\mathcal{S},\mathcal{X})$ 上，其中 $\mathcal{X}=\mathcal{P}\times\mathcal{S}$。由于存在练习 \ref{exer:14-17} 中所介绍的攻击方式，该构造不会被应用在实际的系统中。
 
 \subsubsection{PBKDF2 函数}
 
@@ -126,7 +128,7 @@ $$
 	\begin{aligned}
 		& x_0\leftarrow F(pw, salt)\\
 		& \text{for }i=1,\dots,d-1:\\
-		& ~~~~~~x_i\leftarrow F(pw,x_{i-1})\\
+		& \quad\quad x_i\leftarrow F(pw,x_{i-1})\\
 		& \text{output }y\leftarrow x_0 \oplus x_1 \oplus \cdots \oplus x_{d-1}\in\mathcal{X}
 	\end{aligned}
 	\right\}
@@ -140,11 +142,11 @@ $$
 \right)
 \in\mathcal{X}^b
 \end{equation}
-其中所有的$b$个盐都是由最初给定的盐派生而来的，方法是令$salt_i\leftarrow salt\,||\,{\rm bin}(i)$。这里的${\rm bin}(i)$是$i\in\{1,\dots,b\}$的32位二进制字符串表示。
+其中所有的$b$个盐都是由最初给定的盐派生而来的，方法是令$salt_i\leftarrow salt\,\Vert\,{\rm bin}(i)$。这里的${\rm bin}(i)$是$i\in\{1,\dots,b\}$的32位二进制字符串表示。
 
 在实践中，PBKDF2 通常使用 HMAC-SHA256 作为底层 PRF。难度 $d$ 的设置取决于项目需求和硬件速度。例如，iOS 10 中的备份钥匙包使用 PBKDF2 来保护，其中 $d$ 的值是一千万。在Windows 10 中，数据保护 API 默认使用 $d = 8000$，但使用 HMAC-SHA512 作为 PRF。
 
-我们会在练习18.2和18.3中更详细地讨论PBKDF2的安全性。
+我们会在练习 \ref{exer:18-2} 和 \ref{exer:18-3} 中更详细地讨论PBKDF2的安全性。
 
 \subsection{慢内存困难哈希函数}
 
@@ -204,7 +206,7 @@ PBKDF2 的一个重要问题是它容易受到并行硬件攻击。我们知道�
 
 危险的是，时空权衡可能使攻击者尝试牺牲更多的攻击时间来换取更少的内存消耗。这将是毁灭性的，因为减少的内存将允许攻击者将许多 Scrypt 计算单元打包到一个芯片中，而这正是我们想要极力避免的。
 
-在练习18.6中，我们设计了一种针对Scrypt的简单的时空权衡。它表明对于任意的$1<\alpha<d/2$，只需要存储$\lceil d/\alpha\rceil$ 个$\mathcal{X}$中的元素，就可以在$O(\alpha d)$的时间内完成对 Scrypt 的计算。特别地，使用\emph{恒定}空间的Scrypt可以在$O(d^2)$时间内完成计算。然而这种类型的时空权衡并不能帮助对手。对手需要将$\alpha$倍的Scrypt计算单元装入一个芯片中，但每个计算单元的工作难度也变为原来的$\alpha$倍。因此与图 \ref{fig:18-6} 中的Scrypt实现相比，单个芯片的整体吞吐量并没有变化。尽管如此，我们仍然需要证明没有比Scrypt更好的时空权衡方案。
+在练习 \ref{exer:18-6} 中，我们设计了一种针对Scrypt的简单的时空权衡。它表明对于任意的$1<\alpha<d/2$，只需要存储$\lceil d/\alpha\rceil$ 个$\mathcal{X}$中的元素，就可以在$O(\alpha d)$的时间内完成对 Scrypt 的计算。特别地，使用\emph{恒定}空间的Scrypt可以在$O(d^2)$时间内完成计算。然而这种类型的时空权衡并不能帮助对手。对手需要将$\alpha$倍的Scrypt计算单元装入一个芯片中，但每个计算单元的工作难度也变为原来的$\alpha$倍。因此与图 \ref{fig:18-6} 中的Scrypt实现相比，单个芯片的整体吞吐量并没有变化。尽管如此，我们仍然需要证明没有比Scrypt更好的时空权衡方案。
 
 流水线是对内存难度的另一个威胁。假设存在一个算法，它在计算 Scrypt 时仅仅在算法的其中几个步骤中需要使用 $O(d)$ 的内存。如果算法在其余步骤中仅需要使用常数级的内存空间，那么攻击者就可以通过构建流水线来排列多个 Scrypt 计算单元，这些计算单元之间共享一个 $O(d)$ 大小的存储。这样，每个计算单元仅在它需要 $O(d)$ 存储的几个步骤中调用内存，在其他时间可以把存储释放给其他计算单元使用。这样一来，攻击者仍然可以把许多计算单元打包到一个芯片中，只需要共享一个 $O(d)$ 大小的存储阵列即可。为了防止这种形式的流水线，我们还需要证明每一个 Scrypt 实现都需要\emph{在许多计算步骤中}使用到 $O(d)$ 级别的内存。
 \end{snote}
@@ -215,7 +217,9 @@ PBKDF2 的一个重要问题是它容易受到并行硬件攻击。我们知道�
 一个\textbf{并行随机预言机算法} $\mathcal{A}$ 将一个 $x\in\mathcal{X}$ 作为输入，并进行一系列的状态转换。在每个状态下，算法 $\mathcal{A}$ 都会向随机预言机 $h$ 发出一组查询，算法在收到查询的所有响应后就会转入下一状态。该过程将不断重复，直至算法终止，此时算法到达最终状态，其中包含算法的输出。所有中间状态都需要被记录，以便跟踪中间状态的大小。
 
 形式上说，算法 $\mathcal{A}$ 实现了一个确定性映射：
-$$\mathcal{A}:\mathcal{X}\times\mathcal{S}\times\mathcal{Z}^{\leq p}\to\mathcal{S}\times\mathcal{Y}^{\leq p}$$
+\[
+\mathcal{A}:\mathcal{X}\times\mathcal{S}\times\mathcal{Z}^{\leq p}\to\mathcal{S}\times\mathcal{Y}^{\leq p}
+\]
 其中 $p$ 是正整数，其工作流程如下：
 \begin{itemize}
 	\item $\mathcal{A}$ 被作为 $\mathcal{A}(x,\varepsilon,\varepsilon)$ 调用，它输出一个 $\mathcal{S}\times\mathcal{Y}^{\leq p}$ 中的元组 $(s_1,\overline y_1)$。这里，$s_1$ 是 $\mathcal{A}$ 的当前状态，$\overline y_1=(y_1,\dots,y_r)$ 是它对随机预言机 $h:\mathcal{Y}\to\mathcal{Z}$ 所发出的第一组并行查询。
@@ -234,14 +238,16 @@ $$\mathcal{A}:\mathcal{X}\times\mathcal{S}\times\mathcal{Z}^{\leq p}\to\mathcal{
 
 \begin{definition}
 	令 $\mathcal{A}$ 是一个以 $\mathcal{X}$ 中元素作为输入的并行随机预言机算法。记$\mathcal{A}$ 对于随机预言机 $h:\mathcal{Y}\to\mathcal{Z}$ 和 $x\in\mathcal{X}$ 的累计存储复杂度为 ${\rm mem}[\mathcal{A},h,x]$，其定义是：
-	$${\rm mem}[\mathcal{A},h,x]:=\sum_{i=1}^t|st_i|$$
+	\[
+	{\rm mem}[\mathcal{A},h,x]:=\sum_{i=1}^t|st_i|
+	\]
 \end{definition}
 
 图 \ref{fig:18-6} 中对于预言机$h:\mathcal{X}\to\mathcal{X}$，$\mathcal{X}=\{0,1\}^n$计算$\text{Scrypt}_h(x,d)$的算法的累计存储复杂度是$O(nd^2)$。下面的定理将表示，这种设计是最优的。
 
 \begin{theorem}\label{theo:18-3}
 	令 $\mathcal{X}=\{0,1\}^n$ 是一个满足 $|\mathcal{X}|$ 为超多项式的空间，$d$ 为一个使得 $2^{-d}$ 可以忽略不计的值。对于所有的并行随机预言机算法 $\mathcal{A}$ 和所有的 $x\in\mathcal{X}$，都有：
-	$$
+	\[
 	  {\rm Pr}
 	  \left[
 	    \mathcal{A}(x,d)={\rm Scrypt}_h(x,d)
@@ -251,11 +257,11 @@ $$\mathcal{A}:\mathcal{X}\times\mathcal{S}\times\mathcal{Z}^{\leq p}\to\mathcal{
       \left[
       {\rm mem}[\mathcal{A},h,(x,d)]\geq\Omega(d^2n)
       \right]+\delta
-    $$
+    \]
     其中 $\delta$ 是一个可以忽略的值。上面的两个概率都基于随机预言机 $h:\mathcal{X}\to\mathcal{X}$的选择。
 \end{theorem}
 
-该定理表明，如果 $\mathcal{A}(x,d)$ 以接近 $1$ 的概率输出 ${\rm Scrypt}_h(x,d)$，那么对于几乎所有的 $h$ 的选择，$\mathcal{A}$ 的累计存储复杂度一定是 $\Omega(d^2n)$ 级的。这表明不可能存在一个针对 Scrypt 的时空权衡策略使得其表现比练习18.6更好。如果一个算法以最大 ${dn}/{\alpha}$ 的存储空间计算 Scrypt，其中 $\alpha>1$，那么它的运行时间必然是 $\Omega(d\alpha)$。否则其累计存储复杂度将突破下限。
+该定理表明，如果 $\mathcal{A}(x,d)$ 以接近 $1$ 的概率输出 ${\rm Scrypt}_h(x,d)$，那么对于几乎所有的 $h$ 的选择，$\mathcal{A}$ 的累计存储复杂度一定是 $\Omega(d^2n)$ 级的。这表明不可能存在一个针对 Scrypt 的时空权衡策略使得其表现比练习 \ref{exer:18-6} 更好。如果一个算法以最大 ${dn}/{\alpha}$ 的存储空间计算 Scrypt，其中 $\alpha>1$，那么它的运行时间必然是 $\Omega(d\alpha)$。否则其累计存储复杂度将突破下限。
 
 同样地，不可能存在对 Scrypt 的流水线式攻击。任何在 $O(d)$ 时间内运行的计算 Scrypt 的可行算法必须在整个算法中使用 $\Omega(d\alpha)$ 的内存。否则其累计存储复杂度也将突破下限。
 

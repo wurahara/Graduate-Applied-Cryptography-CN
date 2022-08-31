@@ -51,7 +51,7 @@ Schoof 的一个优雅的算法可以用于计算 $E(\mathbb{F}_{p^e})$ 中点�
 \end{itemize}
 这个加法法则保证 $E(\mathbb{F}_{p^e})$ 必然是一个群，且该群的单位元就是无穷远点。每个点 $\mathcal{O}\neq P=(x_1,y_1)\in E(\mathbb{F}_{p^e})$ 都有一个加法逆元，即 $-P=(x_1,-y_1)$。最后，我们可以证明，这个加法法则具有结合性。群上的操作显然是可交换的，对于所有的 $P,Q \in E(\mathbb{F}_{p^e})$，我们都有 $P\boxplus Q=Q\boxplus P$，所以该群也必然是一个阿贝尔群。
 
-就像其他群中那样，对于一个点 $P\in E(\mathbb{F}_{p^e})$，我们记 $2P:=P\boxplus P$，$3P:=P\boxplus P\boxplus P$，以此类推。更一般地，对于任意正整数 $\alpha$，我们都有 $\alpha P = (\alpha - 1)P \boxplus P$。注意到，使用平方求幂算法（见附录 \ref{chap:apdx-1}），$\alpha P$ 的计算可以用最多 $2\log_2\alpha$ 次群操作完成。
+就像其他群中那样，对于一个点 $P\in E(\mathbb{F}_{p^e})$，我们记 $2P:=P\boxplus P$，$3P:=P\boxplus P\boxplus P$，以此类推。更一般地，对于任意正整数 $\alpha$，我们都有 $\alpha P = (\alpha - 1)P \boxplus P$。注意到，使用平方求幂算法（见附录 \ref{chap:A}），$\alpha P$ 的计算可以用最多 $2\log_2\alpha$ 次群操作完成。
 \end{snote}
 
 \subsection{Montgomery 曲线和 Edwards 曲线}
@@ -63,7 +63,7 @@ Schoof 的一个优雅的算法可以用于计算 $E(\mathbb{F}_{p^e})$ 中点�
 \[
 Bv^2=u^3+Au^2+u
 \]
-其中 $A,B\in\mathbb{F}_p$，且 $B(A^2-4)\neq0$。令 $u=Bx-{A/3}$ 和 $v=By$，我们就可以将该曲线方程改写为 Weierstrass 形式。Montgomery 曲线上的点的数量 $|E(\mathbb{F}_{p^e})|$ 总是能被 $4$ 整除。练习 15.4 探讨了 Montgomery 曲线在计算上的优势。它们也会在下一节中出现。
+其中 $A,B\in\mathbb{F}_p$，且 $B(A^2-4)\neq0$。令 $u=Bx-{A/3}$ 和 $v=By$，我们就可以将该曲线方程改写为 Weierstrass 形式。Montgomery 曲线上的点的数量 $|E(\mathbb{F}_{p^e})|$ 总是能被 $4$ 整除。练习 \ref{exer:15-4} 探讨了 Montgomery 曲线在计算上的优势。它们也会在下一节中出现。
 
 一些定义在 $\mathbb{F}_p$ 上的 Weierstrass 曲线不能通过变量代换被转换成 $\mathbb{F}_p$ 上的 Montgomery 曲线。比如说，如果 Weierstrass 曲线在 $\mathbb{F}_p$ 上有奇数个点，那么它在 $\mathbb{F}_p$ 上就没有 Montgomery 形式。这样的 Weierstrass 曲线就无法受益于 Montgomery 曲线带来的速度提升了。下一节中将要讨论的曲线 P256 就是一个这样的曲线的例子。
 \end{snote}

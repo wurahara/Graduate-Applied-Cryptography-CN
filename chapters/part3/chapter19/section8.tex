@@ -22,10 +22,10 @@
 
 \begin{definition}
 令 $\Pi=(P,V)$ 是 $\mathcal{R}\subseteq\mathcal{X}×\mathcal{Y}$ 上的一个 Sigma 协议。如果对于任意对手 $\mathcal{A}$ 和任意满足 $(x,y)\in\mathcal{R}$ 与 $(x',y)\in\mathcal{R}$ 的 $y\in\mathcal{Y}$ 和 $x,x'\in\mathcal{X}$，以及任意 $\mathcal{A}$ 的输出空间中的 $s$，都有：
-$$
+\[
 \theta_{\mathcal{A},\Pi}(x,y,s)=
 \theta_{\mathcal{A},\Pi}(x',y,s)
-$$
+\]
 我们就称 $(P,V)$ 是\textbf{见证独立}的。
 \end{definition}
 
@@ -83,24 +83,25 @@ $$
 {p(y,t,c,z)}\,/\,{|\mathcal{C}|}
 \end{equation}
 由于式 \ref{eq:19-26} 和式 \ref{eq:19-27} 中的概率必然相等，我们能够得出结论，对于任意的 $(x,y)\in\mathcal{R}$ 和 $(t,c,z)\in\mathcal{T}\times\mathcal{C}\times\mathcal{Z}$，都有：
-$$
+\[
 \Pr[\gamma(x,y,c,\mathsf{Coins})=(t,z)]=p(y,t,c,z)
-$$
+\]
 且该值并不取决于 $x$。虽然细节有点复杂，但这个事实是证明的关键。
 
 现在考虑攻击游戏 \ref{game:19-3} 中的实验 $(x,y)$，假设对手 $\mathcal{A}$ 与证明者 $P$ 的 $Q$ 个拷贝交互。我们用函数 $\gamma^*$ 来描述所有这些证明者实例的逻辑，该函数将 $(x,y,c^*,coins^*)$ 映射到 $(t^*,z^*)$ 上，其中 $t^*$，$c^*$，$z^*$ 和 $coins^*$ 是长度为 $Q$ 的向量。此外，如果用 $\mathsf{Coins}^*$ 表示随机变量 $\mathsf{Coins}$ 的 $Q$ 个独立副本组成的向量，那么对于任意 $(x,y)\in\mathcal{R}$ 和 $(t^*,c^*,z^*)\in\mathcal{T}^Q\times\mathcal{C}^Q\times\mathcal{Z}^Q$，我们都有：
-$$
+\[
 \Pr[\gamma^*(x,y,c^*,\mathsf{Coins}^*)=(t^*,z^*)]=\prod_{i}p(y,t^*[i],c^*[i], z^*[i])
-$$
+\]
 这个概率也是不取决于 $x$ 的。
 
 令 $\mathsf{Coins}'$ 为一个随机变量，它代表对手可能做出的随机选择 $coins'$。用函数 $\gamma'$ 描述对手的运行逻辑，该函数将 $(y,t^*,z^*,coins')$ 映射到 $(c^*,s)$ 上，其中 $(t^*,c^*,z^*)\in\mathcal{T}^Q\times\mathcal{C}^Q\times\mathcal{Z}^Q$，$s\in\mathcal{S}$ 是对手的输出，$coins'$ 表示对手的特定随机选择。
 
 令 $\mathsf{S}_{x,y}$ 为一个随机变量，它代表对手 $\mathcal{A}$ 在攻击游戏中的实验 $(x,y)$ 中的输出。令 $\mathsf{T}_{x,y}$ 为一个随机变量，它代表可能的交互记录 $t=(t^*,c^*,z^*)$。对于 $s\in\mathcal{S}$ 和 $t=(t^*,c^*,z^*)$，定义事件 $\boldsymbol{\Gamma}^*(x,y;t)$ 和 $\boldsymbol{\Gamma}'(y,s;t)$ 如下：
-$$
-\boldsymbol{\Gamma}^*(x,y;t):\gamma^*(x,y,c^*, \mathsf{Coins}^*)=(t^*,z^*),~~~~~~~~
+\[
+\boldsymbol{\Gamma}^*(x,y;t):\gamma^*(x,y,c^*, \mathsf{Coins}^*)=(t^*,z^*),
+\quad
 \boldsymbol{\Gamma}'(y,s;t):\gamma'(y,t^*,z^*, \mathsf{Coins}')=(c^*,s)
-$$
+\]
 注意，$\boldsymbol{\Gamma}^*(x,y;t)$ 和 $\boldsymbol{\Gamma}'(y,s;t)$ 是独立事件。另外，正如我们上面所观察到的，概率 $\Pr[\boldsymbol{\Gamma}^*(x,y;t)]$ 与 $x$ 无关。
 
 对于 $s\in\mathcal{S}$，通过对所有可能的交互记录 $t$ 进行求和，用全概率公式可以计算出 $\Pr[\mathsf{S}_{x,y}=s]$：
@@ -148,9 +149,9 @@ $G'$ 的一个关键属性是，作为随机变量，$Y$ 和 $b$ 是相互独立
 \begin{quote}
 特别地，假设 $\mathcal{A}$ 是一个冒充对手，它使用攻击游戏 18.3 中的主动攻击方式来攻击 $\mathcal{I}'$，其优势为 $\epsilon:={\rm ID3\mathsf{adv}}[\mathcal{A},\mathcal{I}']$。那么必然存在一个有效对手 $\mathcal{B}$，其运行时间大约是 $\mathcal{A}$ 的两倍，使得：
 \end{quote}
-$$
+\[
 {\rm OW\mathsf{adv}}[\mathcal{B},G]\geq\frac{1}{2}\left(\epsilon^2-\frac{\epsilon}{N}\right)
-$$
+\]
 \begin{quote}
 其中 $N:=2^n$。
 \end{quote}
@@ -190,9 +191,9 @@ $$
 因此，剩下的工作就是分析 $\mathcal{B}$ 的成功概率了。现在，如果 $\mathcal{B}$ 从 $\mathcal{A}$ 中提取了一个见证 $\widehat X$，并且 $\widehat X$ 和 $X$ 的类型不同，那么 $\mathcal{B}$ 就成功了。根据回溯引理（引理 \ref{theo:19-2}），我们知道 $\mathcal{B}$ 从 $\mathcal{A}$ 中提取某个见证 $\widehat X$ 的最小概率为 $\epsilon^2-{\epsilon}/{N}$。此外，我们知道 $Y$ 本身没有向 $\mathcal{A}$ 透露任何关于 $X$ 的类型的信息，而见证独立性在本质上说，主动探测阶段没有向 $\mathcal{A}$ 透露更多关于 $X$ 的类型的信息。因此，对于 $\mathcal{B}$ 所提取的任何\emph{特定}见证，其类型与 $X$ 匹配的概率恰好是 ${1}/{2}$，这意味着 $\mathcal{B}$ 的总体成功概率最小是 $1/2\times(\epsilon^2-\epsilon/N)$，恰如要求。
 
 如果我们愿意，我们也可以直接使用见证独立性的定义（以式 \ref{eq:19-25} 的形式），使上述关于 $\mathcal{B}$ 的成功概率的论证更严格一些。为此，我们用 $\mathsf{X}$，$\mathsf{\widehat X}$，$\mathsf{Y}$ 表示随机变量，用 $X$，$\widehat X$，$Y$ 来表示这些随机变量的特定取值。如果 $\mathcal{B}$ 未能提取到一个见证，我们就定义 $\mathsf{\widehat X}:=\;\perp$。记 $\sigma$ 为 $\mathcal{B}$ 的成功概率，那么我们有：
-$$
+\[
 \sigma=\Pr[(\mathsf{\widehat X},\mathsf{Y})\in\mathcal{R}'\;\land\;{\rm type}(\mathsf{X})\neq{\rm type}(\mathsf{\widehat X})] 
-$$
+\]
 使用全概率公式，我们可以对所有 $(\widehat X,Y)\in\mathcal{R}'$ 求和：
 \[
 \begin{aligned}
@@ -220,9 +221,9 @@ $$
 令 $\mathcal{I}_{\rm O}=(G,P,V)$ 是一个 Okamoto 身份识别协议。假设其挑战空间很大，同时假设系统参数 $h$ 是从 $\mathbb{G}$ 中均匀随机选取的。那么，只要$\mathbb{G}$上的离散对数假设成立，$\mathcal{I}_{\rm O}$ 对主动攻击就是安全的。
 \begin{quote}
 特别地，假设 $\mathcal{A}$ 是一个冒充攻击对手，它通过攻击游戏 18.3 中的主动攻击来攻击 $\mathcal{I}_{\rm O}$，其优势为 $\epsilon:={\rm ID3\mathsf{adv}}[\mathcal{A},\mathcal{I}_{\rm O}]$。那么必然存在一个有效对手 $\mathcal{B}$，其运行时间大约是 $\mathcal{A}$ 的两倍，满足：
-$$
+\[
 {\rm DL\mathsf{adv}}[\mathcal{B},\mathbb{G}]\geq\left(1-\frac{1}{q}\right)\left(\epsilon^2-\frac{\epsilon}{N}\right)
-$$
+\]
 其中 $N$ 是挑战空间的大小。
 \end{quote}
 \end{theorem}

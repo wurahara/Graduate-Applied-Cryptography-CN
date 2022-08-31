@@ -143,7 +143,7 @@ D((k_1,k_2,k_3),\cdot)=\phi^{-1}_{k_1}\circ\phi^{-1}_{k_2}\circ\phi^{-1}_{k_3}=\
 
 \vspace{5pt}
 
-如练习 4.26 中将要讨论的，我们可以将三个伪随机函数 $F(k_1,\cdot)$，$F(k_2,\cdot)$ 和 $F(k_3,\cdot)$ 建模为一个单一的 PRF $F'$，称其为 $F$ 的 $3$ 次并行组合：PRF $F'$ 定义在 $(\mathcal{K}^3,\{1,2,3\}\times\mathcal{X},\mathcal{X})$ 上，且 $F'((k_1,k_2,k_3),(s,x)):=F(k_s,x)$。我们很容易构造一个和 $\mathcal{A}_0$ 一样有效的对手 $\mathcal{B}'$，使得：
+如练习 \ref{exer:4-26} 中将要讨论的，我们可以将三个伪随机函数 $F(k_1,\cdot)$，$F(k_2,\cdot)$ 和 $F(k_3,\cdot)$ 建模为一个单一的 PRF $F'$，称其为 $F$ 的 $3$ 次并行组合：PRF $F'$ 定义在 $(\mathcal{K}^3,\{1,2,3\}\times\mathcal{X},\mathcal{X})$ 上，且 $F'((k_1,k_2,k_3),(s,x)):=F(k_s,x)$。我们很容易构造一个和 $\mathcal{A}_0$ 一样有效的对手 $\mathcal{B}'$，使得：
 \begin{equation}\label{eq:4-24}
 |\Pr[W_1]-\Pr[W_0]|={\rm PRF\mathsf{adv}}[\mathcal{B}', F']
 \end{equation}
@@ -160,7 +160,7 @@ D((k_1,k_2,k_3),\cdot)=\phi^{-1}_{k_1}\circ\phi^{-1}_{k_2}\circ\phi^{-1}_{k_3}=\
 \noindent
 来得到要交给 $\mathcal{A}_0$ 的应答 $(x_i,y_i)$。这里，$f'$ 表示 $\mathcal{B}'$ 的挑战者在攻击游戏 \ref{game:4-2} 中就 $F'$ 所选择的函数。很明显，$\mathcal{B}'$ 在该攻击游戏的实验 $0$ 中以概率 $\Pr[W_0]$ 输出 $1$，而在实验 $1$ 中以概率 $\Pr[W_1]$ 输出 $1$，由此可得式 \ref{eq:4-24}。
 
-根据练习 4.26，存在一个和 $\mathcal{B}'$ 一样有效的对手 $\mathcal{B}$，满足：
+根据练习 \ref{exer:4-26}，存在一个和 $\mathcal{B}'$ 一样有效的对手 $\mathcal{B}$，满足：
 \begin{equation}\label{eq:4-25}
 {\rm PRF\mathsf{adv}}[\mathcal{B}', F']= 3\cdot {\rm PRF\mathsf{adv}}[\mathcal{B}, F]
 \end{equation}
@@ -177,10 +177,10 @@ D((k_1,k_2,k_3),\cdot)=\phi^{-1}_{k_1}\circ\phi^{-1}_{k_2}\circ\phi^{-1}_{k_3}=\
 \hspace*{26pt} 当收到第 $i$ 个查询 $(u_i,v_i)\in\mathcal{X}^2\;\;(i=1,\dots,Q)$ 时：\\
 \hspace*{50pt} 计算 $w_i\leftarrow u_i\oplus f_1(v_i)$\\
 \hspace*{50pt} 令 $x_i'\leftarrow X_i$；
-				\framebox[\width]{~如果存在 $j<i$ 使得 $w_i=w_j$，则令 $x_i'\leftarrow x_j'$；}
+				\framebox[\width]{\,如果存在 $j<i$ 使得 $w_i=w_j$，则令 $x_i'\leftarrow x_j'$；}
 				令 $x_i\leftarrow v_i\oplus x_i'$\\
 \hspace*{50pt} 令 $y_i'\leftarrow Y_i$；
-				\framebox[\width]{~如果存在 $j<i$ 使得 $x_i=x_j$，则令 $y_i'\leftarrow y_j'$；}
+				\framebox[\width]{\,如果存在 $j<i$ 使得 $x_i=x_j$，则令 $y_i'\leftarrow y_j'$；}
 				令 $y_i\leftarrow w_i\oplus y_i'$\\
 \hspace*{50pt} 将 $(x_i,y_i)$ 发送给对手。
 

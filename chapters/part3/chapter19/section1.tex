@@ -7,7 +7,11 @@
 下面是它的工作原理。令 $\mathcal{C}\subset\mathbb{Z}_q$，则Schnorr身份识别协议 $\mathcal{I}_{\rm sch}=(G,P,V)$ 的原理如下：
 \begin{itemize}
 	\item 密钥生成算法 $G$ 按如下方式运行：
-		$$\alpha\overset{\rm R}\leftarrow\mathbb{Z}_q, ~~ u\leftarrow g^\alpha$$
+		\[
+		\alpha\overset{\rm R}\leftarrow\mathbb{Z}_q,
+		\quad
+		u\leftarrow g^\alpha
+		\]
 		验证密钥为 $vk:=u$，私钥为 $sk:=\alpha$。
 	\item $P$ 与 $V$ 之间的协议按照下面的方式运行。其中证明者 $P$ 由 $sk=\alpha$ 初始化，验证者 $V$ 由 $vk=u$ 初始化：
 	\begin{enumerate}
@@ -28,7 +32,9 @@
 \end{figure}
 
 $P(\alpha)$ 和 $V(u)$ 之间的一次交互产生一个\textbf{对话 (conversation)} $(u_{\rm t},c,\alpha_{\rm z})\in \mathbb{G}\times \mathcal{C}\times \mathbb{Z}_q$。如果 $V$ 的检查通过，即$g^{\alpha_{\rm z}}=u_{\rm t}\cdot u^c$ 成立，我们就称该对话为 \textbf{$u$ 的接受对话 (accepting conversation for $u$)}。不难看出，$P$ 和 $V$ 之间的交互总是能够产生一个接受对话，因为如果有 $u_{\rm t}=g^{\alpha_{\rm t}}$ 且 $\alpha_{\rm z}=\alpha_{\rm t}+\alpha c$，则有：
-$$g^{\alpha_{\rm z}}=g^{\alpha_{\rm t}+\alpha c}=g^{\alpha_{\rm t}}\cdot (g^\alpha)^c=u_{\rm t}\cdot u^c$$
+\[
+g^{\alpha_{\rm z}}=g^{\alpha_{\rm t}+\alpha c}=g^{\alpha_{\rm t}}\cdot (g^\alpha)^c=u_{\rm t}\cdot u^c
+\]
 因此，Schnorr 协议能够满足身份识别协议所必需的基本正确性要求。
 
 我们称集合 $\mathcal{C}$ 为\textbf{挑战空间 (challenge space)}。为了满足安全需求，我们要求 $|\mathcal{C}|$ 是超多项式的。事实上我们可以简单地取 $\mathcal{C}$ 为 $\mathbb{Z}_q$，但是技术上也可以允许更小的挑战空间。尽管我们最终会证明Schnorr协议在DL假设下对窃听攻击是安全的，但我们现在先从一个更简单的定理开始，它只证明了Schnorr协议对\emph{直接}攻击的安全性（攻击游戏 \ref{game:18-1}）。
@@ -57,14 +63,19 @@ $$g^{\alpha_{\rm z}}=g^{\alpha_{\rm t}+\alpha c}=g^{\alpha_{\rm t}}\cdot (g^\alp
 下面，我们先介绍如何使用 $\mathcal{A}$ 计算随机数 $u\in\mathbb{G}$ 的离散对数。我们使用 $u$ 作为 $\mathcal{I}_{\rm sch}$ 的验证密钥，并让 $\mathcal{A}$ 生成协议的第一条交互 $u_{\rm t}$。然后我们向 $\mathcal{A}$ 提供一个随机挑战 $c$，并希望 $\mathcal{A}$ 产生一个有效应答 $\alpha_{\rm z}$。如果这确实发生了，我们就将 $\mathcal{A}$ 的内部状态``回溯"到它刚刚生成 $u_{\rm t}$ 后的那一刻，然后给 $\mathcal{A}$ 提供另一个随机挑战 $c'$，并希望 $\mathcal{A}$ 产生另一个有效应答 $\alpha_{\rm z}'$。
 
 如果上面这些都发生了，那么对于一个给定的验证密钥 $u$，我们就得到了两个接受对话 $(u_{\rm t},c,\alpha_{\rm z})$ 和 $(u_{\rm t},c',\alpha_{\rm z}')$，且这两个对话的第一条交互 $u_{\rm t}$ 相同。此外，由于 $\mathcal{C}$ 是超多项式的，因此我们可以以压倒性的概率得到 $c'\neq c$ 。基于以上信息，我们可以很容易地计算出 ${\rm \mathsf{Dlog}}_gu$。事实上，由于上面的两个对话都是接受对话，我们有下面两个等式：
-$$g^{\alpha_{\rm z}}=u_{\rm t}\cdot u^c,~~~~
-g^{\alpha_{\rm z}'} =u_{\rm t}\cdot u^{c'}$$
+\[
+g^{\alpha_{\rm z}}=u_{\rm t}\cdot u^c,
+\quad
+g^{\alpha_{\rm z}'} =u_{\rm t}\cdot u^{c'}
+\]
 用第一式除以第二式， $u_{\rm t}$ 就被抵消了，于是我们有：
 \begin{equation}\label{eq:19-3}
 	g^{\Delta\alpha}=u^{\Delta c}
 \end{equation}
 其中$\Delta\alpha:=\alpha_{\rm z}-\alpha_{\rm z}'$，$\Delta c:=c-c'$。由于 $\Delta c\neq 0$，且循环群 $\mathbb{G}$ 的阶 $q$ 是素数，所以倒数 ${1}/{\Delta c}$ 存在于 $\mathbb{Z}_q$ 中。我们可以将式 \ref{eq:19-3} 中等式的左右两边都升阶 ${1}/{\Delta c}$，于是有：
-	$$g^{{\Delta\alpha}/{\Delta c}}=u$$
+\[
+g^{{\Delta\alpha}/{\Delta c}}=u
+\]
 因此，我们可以有效计算离散对数 ${\rm \mathsf{Dlog}}_gu$，其值为 ${\Delta\alpha}/{\Delta c}$。
 
 读者应该注意到，这里提出的从两个接受对话中提取离散对数的技术，与事实 10.3 中使用的想法基本相同。事实上，使用 10.6.1 节中的术语，我们可以看到 $(\alpha_{\rm z},-c)$ 和 $(\alpha_{\rm z}',-c')$ 是 $u_{\rm t}$ 相对于$g$ 和 $u$ 的不同表示。事实 10.3 告诉了我们如何从这两个表示中计算出 ${\rm \mathsf{Dlog}}_gu$。
@@ -75,8 +86,10 @@ g^{\alpha_{\rm z}'} =u_{\rm t}\cdot u^{c'}$$
 因此，为了使上述想法更严谨，我们需要先引入下面的引理：
 
 \begin{lemma}[回溯引理]\label{theo:19-2}
-	令 $S$ 和 $T$ 是两个非空有限集，$f:S\times T\to\{0,1\}$ 是一个函数。令 $\mathsf{X}$、$\mathsf{Y}$ 和 $\mathsf{Y}'$ 是相互独立的随机变量，其中 $\mathsf{X}$ 在集合 $S$ 中取值，$\mathsf{Y}$ 和 $\mathsf{Y}'$ 都在 $T$ 上均匀分布。令 $\epsilon:=\Pr[f(\mathsf{X},\mathsf{Y})=1]$，$N:=|T|$，则有：
-	$$\Pr[f(\mathsf{X},\mathsf{Y})=1\land f(\mathsf{X},\mathsf{Y}')=1\land \mathsf{Y}\neq\mathsf{Y}']\geq\epsilon^2-\frac{\epsilon}{N}$$
+令 $S$ 和 $T$ 是两个非空有限集，$f:S\times T\to\{0,1\}$ 是一个函数。令 $\mathsf{X}$、$\mathsf{Y}$ 和 $\mathsf{Y}'$ 是相互独立的随机变量，其中 $\mathsf{X}$ 在集合 $S$ 中取值，$\mathsf{Y}$ 和 $\mathsf{Y}'$ 都在 $T$ 上均匀分布。令 $\epsilon:=\Pr[f(\mathsf{X},\mathsf{Y})=1]$，$N:=|T|$，则有：
+\[
+\Pr[f(\mathsf{X},\mathsf{Y})=1\land f(\mathsf{X},\mathsf{Y}')=1\land \mathsf{Y}\neq\mathsf{Y}']\geq\epsilon^2-\frac{\epsilon}{N}
+\]
 \end{lemma}
 
 \begin{proof}
@@ -93,13 +106,13 @@ g^{\alpha_{\rm z}'} =u_{\rm t}\cdot u^{c'}$$
 	\end{equation*}
 	
 	其次，考虑一个固定的 $s∈S$，令 $\mathcal{U}_s$ 为 $f(s,\mathsf{Y})=1\land f(s,\mathsf{Y}')=1\land \mathsf{Y}\neq\mathsf{Y}'$ 成立的事件，我们称：
-	$$
+	\[
 	\Pr[\mathcal{U}_s]=g(s)^2-\frac{g(s)}{N}
-	$$
+	\]
 	为了证明这一点，令 $N_s$ 是满足 $f(s, t)=1$ 的 $t\in T$ 的数量，那么有 $N_s$ 种方法可以选择满足 $f(s,\mathsf{Y})=1$ 的 $\mathsf{Y}$。而对于每个 $\mathsf{Y}$ 的选择，有 $N_s-1$ 种方法可以选择满足 $f(s,\mathsf{Y}')=1\land \mathsf{Y}\neq\mathsf{Y}'$ 的 $\mathsf{Y}'$。由于 $g(s)={N_s}/{N}$，因此我们有：
-	$$
+	\[
 	\Pr[\mathcal{U}_s]=\frac{N_s(N_s-1)}{N^2}=\frac{N_s^2}{N^2}-\frac{N_s}{N^2}=g(s)^2-\frac{g(s)}{N}
-	$$
+	\]
 
 	最后，令 $\mathcal{U}$ 为 $f(\mathsf{X},\mathsf{Y})=1\land f(\mathsf{X},\mathsf{Y}')=1\land \mathsf{Y}\neq\mathsf{Y}'$ 成立的事件，我们有：
 	\begin{equation*}
@@ -120,11 +133,19 @@ g^{\alpha_{\rm z}'} =u_{\rm t}\cdot u^{c'}$$
 	利用具有优势 $\epsilon$ 的冒充对手 $\mathcal{A}$ ，我们能够建立一个具有优势 $\epsilon'$ 的 DL 对手 $\mathcal{B}$，如下所示。对手 $\mathcal{B}$ 从其挑战者那里得到一个 DL 问题实例 $u = g^\alpha$，而我们的目标是让 $\mathcal{B}$ 在 $\mathcal{A}$ 的帮助下计算出 $\alpha$。$\mathcal{B}$ 的计算过程可以分为两个阶段。
 
 在第一阶段，$\mathcal{B}$ 扮演 $\mathcal{A}$ 的挑战者的角色，将 $u$ 的值交给 $\mathcal{A}$ 作为验证公钥。在这一步中，$\mathcal{B}$ 的目标是计算出两个具有不同挑战的 $u$ 的接受对话，即：
-$$(u_{\rm t},c,\alpha_{\rm z}),~~(u_{\rm t},c',\alpha_{\rm z}')$$
+\[
+(u_{\rm t},c,\alpha_{\rm z}),
+\quad
+(u_{\rm t},c',\alpha_{\rm z}')
+\]
 其中：
-$$g^{\alpha_{\rm z}}=u_{\rm t}\cdot u^c,~~
-g^{\alpha_{\rm z}'}=u_{\rm t}\cdot u^{c'},~~
-c\neq c'$$
+\[
+g^{\alpha_{\rm z}}=u_{\rm t}\cdot u^c,
+\quad
+g^{\alpha_{\rm z}'}=u_{\rm t}\cdot u^{c'},
+\quad
+c\neq c'
+\]
 
 以下是 $\mathcal{B}$ 做到这一点的方法：
 \begin{enumerate}
@@ -139,13 +160,13 @@ c\neq c'$$
 所以现在假设 $\mathcal{B}$ 已经成功计算出两个这样的接受对话 $(u_{\rm t},c,\alpha_{\rm z})$ 和 $(u_{\rm t},c',\alpha_{\rm z}')$。在第二阶段，$\mathcal{B}$ 用这两个对话来计算 $\alpha$。事实上，正如在上面的证明思路中已经讨论过的，我们可以计算$\alpha={\Delta\alpha}/{\Delta c}$，其中$\Delta\alpha:=\alpha_z-\alpha_z'$，$\Delta c:=c-c'$。
 
 这就得到了式 \ref{eq:19-1}。下面我们论证式 \ref{eq:19-2} 可由式 \ref{eq:19-1} 推出。为此，我们不妨假设 $\epsilon\geq{1}/{N}$，否则式 \ref{eq:19-2} 显然是成立的。因此我们有：
-$$
+\[
 \begin{aligned}
 	(\epsilon-\frac{1}{N})^2
 	&=\epsilon^2-\frac{2\epsilon}{N}+\frac{1}{N^2}\leq\epsilon^2-\frac{2\epsilon}{N}+\frac{\epsilon}{N} \text{\emph{ （因为 }}\epsilon\geq\frac{1}{N}\text{\,）}\\
 	&=\epsilon^2-\frac{\epsilon}{N}\leq \epsilon' \text{ \emph{（式} \ref{eq:19-1}\,\emph{）}}
 \end{aligned}
-$$
+\]
 因此式 \ref{eq:19-2} 得证。
 
 回顾一下，我们展示了如何从恶意验证者 $\mathcal{A}$ 中有效地\emph{提取}私钥 $\alpha$，进而证明了针对直接攻击的安全性。这使我们能够利用恶意验证者来解决$\mathbb{G}$中的离散对数问题。我们的\emph{提取器}通过回溯证明者的状态来获得两个接受对话 $(u_{\rm t},c,\alpha_{\rm z})$ 和 $(u_{\rm t},c',\alpha_{\rm z}')$，其中 $c\neq c'$。在安全性证明中回溯证明者 $\mathcal{A}$ 是可能的，因为我们完全控制了 $\mathcal{A}$ 的执行环境。在现实世界中，由于不能对诚实证明 $P$ 进行回溯，攻击者就不能使用这种策略从 $P$ 那里提取私钥。
@@ -167,8 +188,9 @@ $$
 	如果一个身份识别协议 $\mathcal{I}=(G,P,V)$ 对于直接攻击是安全的，且该协议是 HVZK 的，那么该协议对于窃听攻击也是安全的。
 	\begin{quote}
 		特别地，如果 $\mathcal{I}$ 是带有模拟器 ${Sim}$ 的 HVZK，那么对于每一个通过攻击游戏 18.2 中的窃听攻击来攻击 $\mathcal{I}$ 的冒充对手 $\mathcal{A}$，如果 $\mathcal{A}$ 最多能获得 $Q$ 次交互记录，必然存在一个通过攻击游戏 \ref{game:18-1} 中的直接攻击来攻击 $\mathcal{I}$ 的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，并且 $\mathcal{B}$ 最多运行 $Q$ 次 ${Sim}$，满足：
-		$${\rm ID2\mathsf{adv}}[\mathcal{A},\mathcal{I}]=
-			{\rm ID1\mathsf{adv}}[\mathcal{B},\mathcal{I}]$$
+		\[
+		{\rm ID2\mathsf{adv}}[\mathcal{A},\mathcal{I}]={\rm ID1\mathsf{adv}}[\mathcal{B},\mathcal{I}]
+		\]
 	\end{quote}
 \end{theorem}
 
@@ -191,9 +213,13 @@ $$
 
 \begin{proof}
 	证明的思路是在生成模拟对话 $(u_{\rm t},c,\alpha_{\rm z})$ 时，我们不需要像 $P$ 和 $V$ 之间的真实对话那样，按照给定的顺序生成对话中的消息。事实上，模拟器 ${Sim}$ 是以\emph{倒序}生成信息的。在输入 $vk=u$ 时，模拟器 ${Sim}$ 计算：
-		$$\alpha_{\rm z}\overset{\rm R}\leftarrow\mathbb{Z}_q,~~
-		c\overset{\rm R}\leftarrow\mathcal{C},~~
-		u_{\rm t}\leftarrow\frac{g^{\alpha_{\rm z}}}{u^c}$$
+		\[
+		\alpha_{\rm z}\overset{\rm R}\leftarrow\mathbb{Z}_q,
+		\quad
+		c\overset{\rm R}\leftarrow\mathcal{C},
+		\quad
+		u_{\rm t}\leftarrow\frac{g^{\alpha_{\rm z}}}{u^c}
+		\]
 	并输出对话 $(u_{\rm t},c,\alpha_{\rm z})$。
 	
 	现在我们论证 ${Sim}$ 在输入 $vk=u$ 上的输出具有正确的分布。一个关键性的观察是，在真实交互中，$c$ 和 $\alpha_{\rm z}$ 是相互独立的，$c$ 在 $\mathcal{C}$ 上均匀分布，而 $\alpha_z$ 在 $\mathbb{Z}_q$ 上均匀分布。此外，给定 $c$ 和 $\alpha_{\rm z}$，$u_{\rm t}$ 的值可由等式 $g^{\alpha_{\rm z}}=u_{\rm t}\cdot u^c$ 唯一确定。而这显然与模拟器的输出分布相同。
@@ -206,8 +232,10 @@ $$
 	
 	\begin{quote}
 		特别地，对于每个通过攻击游戏 18.2 中的窃听攻击来攻击 $\mathcal{I}_{\rm sch}$ 的冒充对手 $\mathcal{A}$，都有一个通过攻击游戏 \ref{game:18-1} 中的直接攻击来攻击 $\mathcal{I}_{\rm sch}$ 的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
-		$${\rm ID2\mathsf{adv}}[\mathcal{A},\mathcal{I}_{\rm sch}]=
-		{\rm ID1\mathsf{adv}}[\mathcal{B},\mathcal{I}_{\rm sch}]$$
+		\[
+		{\rm ID2\mathsf{adv}}[\mathcal{A},\mathcal{I}_{\rm sch}]=
+		{\rm ID1\mathsf{adv}}[\mathcal{B},\mathcal{I}_{\rm sch}]
+		\]
 	\end{quote}
 \end{theorem}
 

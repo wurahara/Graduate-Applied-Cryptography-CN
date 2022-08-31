@@ -1,13 +1,13 @@
 \section{流密码：使用 PRG 进行加密}\label{sec:3-2}
 
 令 $G$ 是一个定义在 $(\{0,1\}^\ell,\{0,1\}^L)$ 上的 PRG；也就是说，$G$ 将一个 $\ell$ 比特的种子拉伸为一个 $L$ 比特的输出。由 $G$ 构建的\textbf{流密码} $\mathcal E=(E,D)$ 定义在 $(\{0,1\}^\ell,\{0,1\}^{\leq L},\{0,1\}^{\leq L})$ 上；对于 $s\in\{0,1\}^\ell$ 和 $m,c\in\{0,1\}^{\leq L}$，加密和解密定义如下：如果 $|m|=v$，则：
-$$
+\[
 E(s,m)=G(s)[0\dots v-1]\oplus m
-$$
+\]
 如果 $|c| = v$，则：
-$$
+\[
 D(s,c)=G(s)[0\dots v-1]\oplus c
-$$
+\]
 读者很容易验证，上述加解密方案能够满足我们对密码的定义（特别是满足了正确性属性）。
 
 请注意，为了分析 $\mathcal E$ 的语义安全性，在攻击游戏 \ref{game:2-1} 中与信息 $m$ 相关的长度就是$m$的自然比特长度 $|m|$。此外还需注意，如果 $v$ 比 $L$ 小得多，那么对于许多实际的 PRG 来说，计算 $G(s)$ 的前 $v$ 位有可能比计算出 $G(s)$ 的所有位然后截断要快得多。
@@ -134,9 +134,9 @@ $$
 \end{proof}
 
 在上述定理中，我们将 $\mathcal E$ 的安全性归约到 $G$ 的安全性上，并表明如果 $\mathcal A$ 是一个攻击 $\mathcal E$ 的有效语义安全对手，那么存在一个攻击 $G$ 的有效 PRG 对手 $\mathcal B$，使得：
-$$
+\[
 {\rm SS\mathsf{adv}}[\mathcal{A},\mathcal{E}]\leq 2\cdot{\rm PRG\mathsf{adv}}[\mathcal{B},G]
-$$
+\]
 （实际上，我们还证明了等号是成立的，但这并不重要。）在证明中，我们认为如果 $G$ 是安全的，那么 ${\rm PRG\mathsf{adv}}[\mathcal{B},G]$ 的值可忽略不计。因此，根据上述不等式，我们得出结论，${\rm SS\mathsf{adv}}[\mathcal{A},\mathcal{E}]$ 也是可忽略不计的。由于这对所有的有效对手 $\mathcal A$ 都成立，于是我们可以得出结论，$\mathcal E$ 是语义安全的。
 
 类似于定理 \ref{theo:2-7} 之后的讨论，另一种结构化的证明方法是反证法：事实上，如果我们假设 $\mathcal E$ 是不安全的，那么一定有一个有效对手 $\mathcal A$ 能使得 ${\rm SS\mathsf{adv}}[\mathcal{A},\mathcal{E}]$ 的值不可忽略不计。而安全归约（以及上述不等式）赋予我们一个有效对手 $\mathcal B$，使得 ${\rm PRG\mathsf{adv}}[\mathcal{B},G]$ 的值也不可忽略不计。也就是说，如果我们能破解 $\mathcal E$，我们也就能破解 $G$。虽然这在逻辑上是等价的，但这样的证明有一种不同的``感觉"：我们从破解 $\mathcal E$ 的对手 $\mathcal A$ 开始，并说明如何使用 $\mathcal A$ 来构造一个能破解 $G$ 的新对手 $\mathcal B$。

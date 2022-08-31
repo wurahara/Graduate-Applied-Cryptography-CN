@@ -88,9 +88,9 @@
 现在假设一个对手设法获得了某个用户的验证密钥 $vk=H(pw)$。如果口令 $pw$ 是弱的，并且属于某个常见口令的小字典 $\mathcal{D}$，那么对手就能够发动\textbf{离线字典攻击}，它可以这么做：
 \begin{equation}\label{eq:18-1}
 	\begin{aligned}
-		& \text{对每个~}w\in\mathcal{D}:\\
-		& \text{~~~~~~~~如果~}H(w)=vk:\\
-		& \text{~~~~~~~~~~~~~~~~输出~} w \text{ 并停机}
+		& \text{对每个\;} w\in\mathcal{D}:\\
+		& \text{\quad\quad 如果\;}H(w)=vk:\\
+		& \text{\quad\quad\quad\quad 输出\;} w \text{ 并停机}
 	\end{aligned}
 \end{equation}
 如果 $pw$ 在 $\mathcal{D}$ 中，那么依照上述过程，对手迟早能够获取 $pw$，抑或是另一个 $pw'$ 使得 $H(pw')=H(pw)$。
@@ -115,10 +115,10 @@
 \begin{equation}\label{eq:18-2}
 	\begin{aligned}
 		& \text{预处理阶段}:\\
-		& \text{~~~~~~~~对于每个~}pw\in\mathcal{D}\text{，将~}(pw,H(pw))\text{~加入列表~}L\\
-		& \text{针对输入~}vk\text{~的攻击阶段}:\\
-		& \text{~~~~~~~~如果在表~}L\text{~中存在一项~}(pw,vk)\text{，则输出~}pw\\
-		& \text{~~~~~~~~否则输出~}\mathsf{fail}
+		& \text{\quad\quad 对于每个}\;pw\in\mathcal{D}\text{，将}\;(pw,H(pw))\;\text{加入列表}\;L\\
+		& \text{针对输入}\;vk\;\text{的攻击阶段}:\\
+		& \text{\quad\quad 如果在表}\;L\;\text{中存在一项}\;(pw,vk)\text{，则输出}\;pw\\
+		& \text{\quad\quad 否则输出}\;\mathsf{fail}
 	\end{aligned}
 \end{equation}
 假设我们把对一个口令计算一次$H$的耗时作为时间单位，那么预处理阶段所需要的时间为 $O(|\mathcal{D}|)$级。如果表 $L$ 存储在一个支持常数时间查找的哈希表中，那么攻击阶段将会非常快，耗时仅仅为常数级。

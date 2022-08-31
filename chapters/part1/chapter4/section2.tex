@@ -211,7 +211,7 @@ IP 和 FP 没有任何密码学意义，被包括在算法内的原因至今不�
 
 让我们把 DES 上的结论推广到 AES。虽然这些估计本身是不精确的，但它们在一定程度上说明了针对 AES 的穷举搜索的复杂性。AES 的密钥空间最小是 $2^{128}$。如果扫描一个 $2^{56}$ 的空间需要 22 小时，那么扫描一个 $2^{128}$ 大小的空间将需要：
 \[
-(22~{\rm hours})\times2^{128-56}\approx1.18\times10^{20}~{\rm years}
+(22\;{\rm hours})\times2^{128-56}\approx1.18\times10^{20}\;{\rm years}
 \]
 即使计算速度和计算资源能提升十亿倍，即使 AES 计算比 DES 计算更快，所需的时间也远超人类的认知范围。因此，我们可以得出这样的结论：对 AES 进行暴力穷举式的搜索攻击是不现实的。然而，正如我们将在 \ref{sec:18-7} 节中讨论的，如果利用时空权衡这一经典思路，我们仍然可以对 AES-128 发起更复杂的暴力攻击。
 
@@ -236,7 +236,7 @@ NIST 批准 Triple-DES 在 2030 年前可以供政府使用。严格来说，NIS
 \[
 E_3((k_1,k_2,k_3),\;x)=E(k_3,\;D(k_2,\;E(k_1,x)))
 \]
-其原因是，如果设置 $k_1=k_2=k_3$，NIST 的 Triple-DES 就可以被还原为普通 DES，因此 Triple-DES 的硬件实现也可以直接复用于单一 DES 场景中。这个修改不会影响我们对 Triple-DES 安全性的讨论。练习 4.5 中还讨论了 Triple-DES 的另一个变体。
+其原因是，如果设置 $k_1=k_2=k_3$，NIST 的 Triple-DES 就可以被还原为普通 DES，因此 Triple-DES 的硬件实现也可以直接复用于单一 DES 场景中。这个修改不会影响我们对 Triple-DES 安全性的讨论。练习 \ref{exer:4-5} 中还讨论了 Triple-DES 的另一个变体。
 \end{snote}
 
 \subsubsection{$2\mathcal{E}$ 构造是不安全的}
@@ -476,9 +476,9 @@ AES 算法经受住了针对它的各种复杂的密码分析尝试。截止到�
 \begin{itemize}
 	\item $\tt{AESKEYGENASSIST}$：运行密钥扩展程序，从 AES 密钥中生成 AES 轮密钥。
 	\item $\tt{AESENC}$：运行一轮 AES 轮加密算法。该指令的调用方法是：
-	$$
-    \tt{AESENC~~xmm15,~~xmm1}
-    $$
+	\[
+    \tt{AESENC\;\;xmm15,\;\;xmm1}
+    \]
     其中 $\tt xmm15$ 寄存器保存 $128$ 比特数据分组，$\tt xmm1$ 寄存器保存该轮的 $128$ 比特轮密钥。得到的 $128$ 比特分组会被写入寄存器 $\tt xmm15$。在 AES 的前九轮中，可以事先将轮密钥加载到寄存器 $\tt{xmm1,\dots,xmm9}$ 中，然后调用九次该指令。
     \item $\tt AESENCLAST$：调用与 $\tt AESENC$ 类似的指令来运行 AES 算法的最后一轮。回顾一下，AES 最后一轮的功能与前面几轮稍有不同，它省略了 $\tt MixColumns$ 这一步。
     \item $\tt AESDEC$ 和 $\tt AESDECLAST$：运行 AES 解密算法，与加密指令类似。

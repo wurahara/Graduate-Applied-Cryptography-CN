@@ -1,1 +1,84 @@
-\section{构建对长消息的MAC}
+\section{为长消息构建 MAC}\label{sec:8-2}
+
+为了加深对抗碰撞性定义的理解，我们从前言中介绍的一个简单应用开始——扩展 MAC 的消息空间。假设我们有一个用于短消息的安全 MAC $\mathcal{I}=(S,V)$。我们的目标是为更长的消息构建一个新的安全 MAC $\mathcal{I}'$。我们用一个抗碰撞哈希函数来实现这个目标：$\mathcal{I}'$ 先将 $m$ 哈希为一个短摘要，然后将 $\mathcal{I}$ 应用到这个短的摘要上，如图 \ref{fig:8-1} 所示。
+
+更确切地说，令 $H$ 是一个将 $\mathcal{M}$ 上的长消息哈希为 $\mathcal{T}_H$ 上的短摘要的哈希函数。假设 $\mathcal{I}$ 定义在 $(\mathcal{K},\mathcal{T}_H,\mathcal{T})$ 上。定义用于长消息的 $\mathcal{I}'=(S',V')$ 如下：
+\begin{equation}\label{eq:8-1}
+S'(k,m):=S\big(k,\,H(m)\big)
+\quad\text{and}\quad
+V'(k,m,t):=V(k,\,H(m),\,t)
+\end{equation}
+那么 $\mathcal{I}'$ 就可以验证 $\mathcal{M}$ 上的长消息。下面的简单定理表明，假设 $H$ 是抗碰撞的，那么 $\mathcal{I}'$ 就是安全的。
+
+\begin{theorem}\label{theo:8-1}
+假设 MAC 系统 $\mathcal{I}$ 是一个安全的 MAC，哈希函数 $H$ 是抗碰撞的。那么式 \ref{eq:8-1} 中定义的派生 MAC 系统 $\mathcal{I}'=(S',V')$ 也是一个安全的 MAC。
+\begin{quote}
+特别地，假设 $\mathcal{A}$ 是一个攻击 $\mathcal{I}'$ 的 MAC 对手（如攻击游戏 \ref{game:6-1} 中那样）。那么存在一个 MAC 对手 $\mathcal{B}_\mathcal{I}$ 和一个有效的碰撞发现者 $\mathcal{B}_H$，它们都是围绕 $A$ 的基本包装器，满足：
+\end{quote}
+\[
+\mathrm{MAC}\mathsf{adv}[\mathcal{A},\mathcal{I}']\leq
+\mathrm{MAC}\mathsf{adv}[\mathcal{B}_\mathcal{I},\mathcal{I}]+
+\mathrm{CR}\mathsf{adv}[\mathcal{B}_H,H]
+\]
+\end{theorem}
+
+很明显，$H$ 的抗碰撞性对于 $\mathcal{I}'$ 的安全性来说至关重要。事实上，如果对手能找到 $H$ 上的一个碰撞 $m_0,m_1$，他就能赢得 MAC 攻击游戏，方法如下：它将 $m_0$ 提交给 MAC 挑战者签名，获得一个标签 $t_0:=S\big(k,\,H(m_0)\big)$，然后输出消息-标签对 $(m_1,t_0)$。由于 $H(m_0)=H(m_1)$，标签 $t_0$ 必然也是消息 $m_1$ 的一个有效标签。
+
+\begin{proof}[证明思路]
+我们的目标是证明，对于我们的新 MAC 系统 $\mathcal{I}'$，没有任何有效对手可以赢得 MAC 攻击游戏 \ref{game:6-1}。在该游戏中，对手 $\mathcal{A}$ 要求挑战者计算若干个长消息 $m_1,m_2\dots\in\mathcal{M}$ 的 MAC，然后试图制造一个新的有效消息-MAC对 $(m,t)$。如果 $\mathcal{A}$ 能够产生一个有效的仿造 $(m,t)$，那么以下两种情况中的一个必然会发生：
+\begin{enumerate}
+	\item $m$ 与 $\mathcal{A}$ 的某个查询 $m_i$ 发生碰撞，因此 $H(m)=H(m_i)$，且 $m\neq m_i$；或者，
+	\item $m$ 与 $\mathcal{A}$ 的任何查询 $m_1,m_2,\dots\in\mathcal{M}$ 都不在 $H$ 下相撞。
+\end{enumerate}
+直观上很显然，如果 $\mathcal{A}$ 产生第一种类型的伪造，那么 $\mathcal{A}$ 就可以被用来破解 $H$ 的抗碰撞性，因为 $m$ 和 $m_i$ 是一个 $H$ 的有效碰撞。而另一方面，如果 $\mathcal{A}$ 产生第二种类型的伪造，那么 $\mathcal{A}$ 就可以被用来破解 MAC 系统 $\mathcal{I}$：一个数对 $\big(H(m),\,t\big)$ 对 $\mathcal{I}$ 来说就是一个有效的 MAC 伪造。因此，如果 $\mathcal{A}$ 就 $\mathcal{I}'$ 赢得 MAC 攻击游戏，我们就必然会打破我们两个假设的其中一个。
+\end{proof}
+
+\begin{proof}
+下面，我们严格论证上述思路。令 $m_1,m_2,\dots\in\mathcal{M}$ 是 $\mathcal{A}$ 在 MAC 攻击游戏中的查询，令 $(m,t)\in\mathcal{M}\times\mathcal{T}$ 是对手的输出，我们假设它不在已签名对中。我们定义三个事件：
+\begin{itemize}
+	\item 令 $X$ 表示对手 $\mathcal{A}$ 就 $\mathcal{I}'$ 赢得 MAC 攻击游戏 \ref{game:6-1} 的事件。
+	\item 令 $Y$ 表示某个 $m_i$ 在 $H$ 下与 $m$ 碰撞的事件。也就是说，对于某个 $i$，我们有 $H(m)=H(m_i)$，且有 $m\neq m_i$。
+	\item 令 $Z$ 表示在事件 $Y$ 未发生的情况下，$\mathcal{A}$ 就 $\mathcal{I}'$ 赢得 MAC 攻击游戏 \ref{game:6-1} 的事件。
+\end{itemize}
+利用事件 $Y$ 和 $Z$，我们可以将 $\mathcal{A}$ 赢得攻击游戏 \ref{game:6-1} 的优势重写如下：
+\begin{equation}\label{eq:8-2}
+\mathrm{MAC}\mathsf{adv}[\mathcal{A},\mathcal{I}']
+=\Pr[X]
+\leq\Pr[X\land\lnot Y]+\Pr[Y]
+=\Pr[Z]+\Pr[Y]
+\end{equation}
+为了证明该定理，我们构造一个碰撞发现者 $\mathcal{B}_H$ 和一个 MAC 对手 $\mathcal{B}_\mathcal{I}$，使得：
+\[
+\Pr[Y]=\mathrm{CR}\mathsf{adv}[\mathcal{B}_H,H]
+\quad\text{and}\quad
+\Pr[Z]=\mathrm{MAC}\mathsf{adv}[\mathcal{B}_\mathcal{I},\mathcal{I}]
+\]
+这两个对手的构造都是很直观的。
+
+对手 $\mathcal{B}_H$ 在 MAC 攻击游戏中扮演 $\mathcal{A}$ 的挑战者的角色，具体如下：
+
+\vspace{5pt}
+
+\hspace*{5pt} 初始化：\\
+\hspace*{50pt} 随机选取 $k\overset{\rm R}\leftarrow\mathcal{K}$\\
+\hspace*{26pt} 当从 $\mathcal{A}$ 处收到一个签名查询 $m_i\in\mathcal{M}$ 时：\\
+\hspace*{50pt} 令 $t_i\overset{\rm R}\leftarrow S\big(k,\,H(m_i)\big)$\\
+\hspace*{50pt} 将 $t_i$ 发送给 $\mathcal{A}$\\
+\hspace*{26pt} 当从 $\mathcal{A}$ 处收到最后的消息-标签对 $(m,t)$ 时：\\
+\hspace*{50pt} 如果存在某个 $i$ 使得 $H(m)=H(m_i)$，且 $m\neq m_i$：\\
+\hspace*{75pt} 输出数对 $(m,m_i)$
+
+\vspace{5pt}
+
+\noindent
+算法 $\mathcal{B}_H$ 对 $\mathcal{A}$ 的签名查询的应答与真实的 MAC 攻击游戏中完全一样。因此，在与 $\mathcal{B}_H$ 交互的过程中，事件 $Y$ 发生的概率与真实 MAC 攻击游戏中发生的概率相同。显然，当事件 $Y$ 发生时，$\mathcal{A}_H$ 成功地找到了一个 $H$ 的碰撞。因此有 $\mathrm{CR}\mathsf{adv}[\mathcal{B}_H,H]=\Pr[Y]$，与定理的要求一致。
+
+\begin{figure}
+	\centering
+	\input{figures/chapter8/fig4.tex}
+	\caption{定理 \ref{theo:8-1} 的证明中的对手 $\mathcal{B}_\mathcal{I}$}
+	\label{fig:8-4}
+\end{figure}
+
+MAC 对手 $\mathcal{B}_\mathcal{I}$ 就像图 \ref{fig:8-4} 所展示的那样简单。当 $\mathcal{A}$ 输出最终的消息-标签对 $(m,t)$ 时，对手 $\mathcal{B}_\mathcal{I}$ 输出 $\big(H(m),t\big)$。当事件 $Z$ 发生时，我们知道 $V'(k,m,t)$ 输出 $\mathsf{accept}$，并且数对 $(m,t)$ 不与 $(m_1,t_1),(m_2,t_2),\allowbreak\dots\in\mathcal{M}\times\mathcal{T}$ 中的任何一个相等。此外，由于事件 $Y$ 没有发生，我们就知道 $\big(H(m),t\big)$ 也不与 $\big(H(m_1),t\big),\allowbreak\big(H(m_2),t\big),\allowbreak\dots\in\mathcal{T}_H\times\mathcal{T}$ 中的任何一个相等。这就意味着 $\mathcal{B}_\mathcal{I}$ 成功构造一个存在性伪造的概率与事件 $Z$ 发生的概率相同，即 $\mathrm{MAC}\mathsf{adv}[\mathcal{B}_\mathcal{I},\mathcal{I}]=\Pr[Z]$，与定理所要求的一致。于是，根据式 \ref{eq:8-2}，我们就可以证得该定理。
+\end{proof}
