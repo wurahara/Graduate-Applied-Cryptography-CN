@@ -1,5 +1,222 @@
 \section{案例研究：HMAC}\label{sec:8-7}
 
-\subsection{8-7-1}\label{subsec:8-7-1}
+这一节，我们回过头来探讨之前的问题，即为长消息建立一个安全的 MAC。以 SHA256 为代表的 Merkle-Damg{\aa}rd 哈希函数已经被部署到了各种系统中。大多数密码学库都包含多种 Merkle-Damg{\aa}rd 函数的实现，而且这些实现往往都很快：通常情况下，用 SHA256 对一个很长的消息进行哈希要比用 AES 对相同的消息进行 CBC-MAC 要快得多。
 
-\subsection{8-7-2}\label{subsec:8-7-2}
+当然，我们可以使用 \ref{sec:8-2} 节中所介绍的先哈希后MAC构造。回顾一下，在这个构造中，我们将一个安全的 MAC 系统 $\mathcal{I}=(S,V)$ 和一个抗碰撞哈希函数 $H$ 结合。由此产生的签名算法先使用 $H$ 对消息进行哈希，得到一个短的摘要 $H(m)$，然后使用 $S$ 对 $H(m)$ 进行签名，得到 MAC 标签 $t=S(k,H(m))$。正如我们在定理 \ref{theo:8-1} 中说明的，这样产生的构造是安全的。然而，这种构造并没有得到非常广泛的应用，这是为什么呢？
+
+首先，正如我们在定理 \ref{theo:8-1} 之后所讨论的，如果我们可以找到 $H$ 的碰撞，先哈希后 MAC 构造就完全被破坏了。用于寻找碰撞的攻击，比如生日攻击（见 \ref{sec:8-3} 节），或者其他更复杂的攻击，都可以完全\emph{离线}进行，即不需要与任何系统用户交互。相对地，\emph{在线}攻击则需要对手和诚实的系统用户之间进行许多次交互。一般来说，我们认为离线攻击是特别危险的，因为对手可以在很长一段时间内投入巨大的计算资源：在对先哈希后 MAC 的攻击中，攻击者可以花上几个月的时间在许多机器上悄悄计算以找到 $H$ 上的碰撞，而不会引起任何怀疑。
+
+另一个不直接使用先哈希后 MAC 构造的原因是，我们既需要一个哈希函数 $H$，也需要一个 MAC 系统 $\mathcal{I}$。因此，一个实现可能需要软件和/或硬件来执行哈希算法（比如 SHA256）和 MAC 算法（比如基于 AES 的 CBC-MAC）。在其他条件相同的情况下，如果能简单地只使用一种算法作为 MAC 的基础就更好了。
+
+这就很自然地将我们导向这样一个问题：怎样基于一个\emph{无密钥}的 Merkle-Damg{\aa}rd 哈希函数（如 SHA256），以某种方式实现一个\emph{带密钥}的函数，它可以用作一个安全的 MAC，甚至是一个安全的 PRF？此外，我们希望能够在一个比抗碰撞更弱（至少是定性地）的假设下证明这个构造的安全性；特别地，这个构造应当不易受到针对底层压缩函数的离线碰撞查找攻击。
+
+假设 $H$ 是一个由压缩函数 $h:\{0,1\}^n\times\{0,1\}^\ell\to\{0,1\}^n$ 构建的 Merkle-Damg{\aa}rd 哈希。我们可以想到下面几种简单的方法：
+\begin{description}
+	\item [前缀密钥：] $F_\mathrm{pre}(k,M):=H(k\,\Vert\,M)$。这种思路完全是不安全的，因为存在这样的一种\emph{扩展攻击}：给定 $F\mathrm{pre}(k,M)$，我们很容易为任意的 $M'$ 计算出 $F_\mathrm{pre}(k,M\,\Vert\,\mathrm{PB}\,\Vert\,M')$。这里的 $\mathrm{PB}$ 是消息 $k\,\Vert\,M$ 的 Merkle-Damg{\aa}rd 填充分组。如果排除这种扩展攻击，那么在合理的假设条件下，这个构造是安全的（见练习 \ref{exer:8-18}）。
+	\item [后缀密钥：] $F_\mathrm{post}(k,M):=H(M\,\Vert\,k)$。这种构造有点类似于先哈希后 MAC 构造，并且依赖于 $h$ 的抗碰撞性。事实上，该构造很容易受到离线碰撞查找攻击：假设我们能找到两个不同的 $\ell$ 比特序列 $M_0$ 和 $M_1$ 满足 $h(\mathrm{IV},M_0)=h(\mathrm{IV},M_1)$，我们就有 $F_\mathrm{post}(k,M_0)=F_\mathrm{post}(k,M_1)$。因此，这个构造也无法解决我们的问题。然而，在恰当的假设条件下（当然，也包括对 $h$ 抗碰撞性的假设），我们仍然能够得到该构造的安全证明（见练习 \ref{exer:8-19}）。
+	\item [密钥包裹：] $F_\mathrm{env}(k,M):=H(k\,\Vert\,M\,\Vert\,k)$。在对 $h$ 合理的伪随机性假设以及某种格式假设（$k$是一个 $\ell$ 比特序列，$M$ 被填充为一个长度为 $\ell$ 的整数倍的序列）下，可以证明该构造是一个安全的PRF。见练习 \ref{exer:8-17}。
+	\item [双层密钥嵌套：] $F_\mathrm{nest}((k_1,k_2),M):=H(k_2\,\Vert\,H(k_1\,\Vert\,M))$。在对 $h$ 合理的伪随机性假设和种格式假设（$k_1$ 和 $k2$ 都是 $\ell$ 比特序列）下，该构造也可以被证明是一个安全的 PRF。
+\end{description}
+
+双层密钥嵌套与一个被称为 HMAC 的经典 MAC 构造密切相关。HMAC 是互联网上应用最广泛的 MAC。它被用于 SSL、TLS、IPsec、SSH 和许多其他的安全协议中。TLS 和 IPsec 在会话设置过程中使用 HMAC 来生成会话密钥。下面，我们分析双层密钥嵌套的安全性，然后讨论它与 HMAC 的关系。
+
+\begin{figure}
+	\centering
+	\input{figures/chapter8/fig9.tex}
+	\caption{双层密钥嵌套}
+	\label{fig:8-9}
+\end{figure}
+
+\subsection{双层密钥嵌套的安全性}\label{subsec:8-7-1}
+
+现在我们证明，在对 $h$ 进行适当的伪随机性假设的情况下，双层密钥嵌套确实是一个安全的 PRF。首先，考虑到 $H$ 是由 $h$ 建立的 Merkle-Damg{\aa}rd 哈希，我们试着``拆开" $F_\mathrm{nest}((k_1,k_2),M)$ 的定义，见图 \ref{fig:8-9}。读者应该仔细研究这张图。我们假设密钥 $k_1$ 和 $k_2$ 都是 $\ell$ 比特的序列，所以它们各自占据一个完整的消息分组。$H$ 内圈计算的输入是填充后的序列 $k_1\,\Vert\,M\,\Vert\,\mathrm{PB}_\mathrm{i}$，它会被拆分为一系列长为 $\ell$ 比特的分组。$H$ 内圈计算的输出是一个 $n$ 比特序列 $t$。$H$ 外圈计算的输入是填充后的序列 $k_2\,\Vert\,t\,\Vert\,\mathrm{PB}_\mathrm{o}$。我们假设 $n$ 远小于 $\ell$，所以 $t\,\Vert\,\mathrm{PB}_\mathrm{o}$ 就是一个单独的 $\ell$ 比特分组，如图所示。
+
+下面介绍我们所需的伪随机性假设。我们定义下面两个由 $h$ 派生的 PRF $h_\mathrm{bot}$ 和 $h_\mathrm{top}$：
+\begin{equation}\label{eq:8-6}
+h_\mathrm{bot}(k,m):=h(k,m),
+\qquad
+h_\mathrm{top}(k,m):=h(m,k)
+\end{equation}
+对于 PRF $h_\mathrm{bot}$，PRF 密钥 $k$ 被视作 $h$ 的第一个输入，即 $n$ 比特的链式变量输入，它是图 \ref{fig:8-9} 中 $h$ 盒的\emph{底部}输入。对于 PRF $h_\mathrm{top}$，PRF密钥 $k$ 被视为 $h$ 的第二个输入，即 $\ell$ 比特的消息分组输入，它是图中 $h$ 盒的\emph{顶部}输入。为了使该图更容易理解，我们用一个 $\triangleright$ 符号来标记 $h$ 盒的输入，用于指示被视作 PRF 密钥的那一个输入。事实上，读者很容易注意到，我们将虚线框内的两个 $h$ 计算视作 PRF $h_\mathrm{top}$ 的计算，因此，图中标有 $k_1'$ 和 $k_2'$ 的值由 $k_1'\leftarrow h_\mathrm{top}(k_1,\mathrm{IV})$ 和 $k_1'\leftarrow h_\mathrm{top}(k_2,\mathrm{IV})$ 计算而来。图中所有其他的 $h$ 计算都被视作对 $h_\mathrm{bot}$ 的计算。
+
+我们的假设是，$h_\mathrm{bot}$ 和 $h_\mathrm{top}$ 都是安全的 PRF。稍后，我们将使用理想密码模型对 Davies-Meyer 压缩函数证明这一假设（见 \ref{subsec:8-7-3} 小节）。
+
+现在，我们先对以下结论给出一个简单的证明：
+\begin{quote}
+\emph{如果 $h_\mathrm{bot}$ 和 $h_\mathrm{top}$ 都是安全的 PRF，那么双层密钥嵌套也是安全的。}
+\end{quote}
+
+第一个观察是，密钥 $k_1$ 和 $k_2$ 只被用于派生 $k_1'$ 和 $k_2'$，即 $k_1'=h_\mathrm{top}(k_1,\mathrm{IV})$，$k_2'=h_\mathrm{top}(k_2,\mathrm{IV})$。假设 $h_\mathrm{top}$ 是一个安全的 PRF，就意味着在 PRF 攻击游戏中，我们可以有效地用真随机的 $n$ 比特序列替换 $k_1'$ 和 $k_2'$。图 \ref{fig:8-10} 展示了由此产生的构造。这里，我们所做的就是去掉图 \ref{fig:8-9} 中所有虚线框内的元素。这个新构造中的函数将两个密钥 $k_1'$ 和 $k_2'$ 以及一条消息 $M$ 作为输入。根据以上观察，我们只需证明图 \ref{fig:8-10} 中的构造是一个安全的 PRF 即可。
+
+\begin{figure}
+	\centering
+	\input{figures/chapter8/fig10.tex}
+	\caption{NMAC 的一个按比特版本}
+	\label{fig:8-10}
+\end{figure}
+
+希望即使不看标题，读者也能认出图 \ref{fig:8-10} 中的构造正是将我们在 \ref{subsec:6-5-1} 小节中介绍的 NMAC 应用在 $h_\mathrm{bot}$ 上的结果（特别是，请注意图 \ref{fig:6-5-b}）。实际上，图 \ref{fig:8-10} 中的构造是 NMAC 的一个按比特版本，我们可以借由填充从按分组版本中得到它（如 \ref{sec:6-8} 节所述）。因此，在假设 $h_\mathrm{bot}$ 是一个安全 PRF 的情况下，双层密钥嵌套的安全性可以直接由 NMAC 安全定理（定理 \ref{theo:6-7}）得到。
+
+\subsection{HMAC 标准}\label{subsec:8-7-2}
+
+HMAC 标准与双层密钥嵌套（图 \ref{fig:8-9}）基本相同，但有一个重要的区别：在 HMAC 中，密钥 $k_1$ 和 $k_2$ 并不相互独立，而是以一种有点特别的方式由单一密钥 $k$ 派生而来。
+
+为了更详细地描述这一点，我们首先观察到，HMAC 本身在某种程度上是面向字节的，所以所有序列都是字节序列。底层 Merkle-Damg{\aa}rd 哈希的消息分组被假定为 $B$ 字节（而不是 $\ell$ 比特）。HMAC 的密钥 $k$ 是一个任意长度的序列。为了得到密钥 $k_1$ 和 $k_2$（都是长为 $B$字节的序列），我们首先迫使 $k$ 的长度正好是 $B$ 字节：如果 $k$ 的长度小于或等于 $B$ 字节，我们就用零字节来填充它；否则，我们就用零字节填充的 $H(k)$ 来代替它。然后，我们计算：
+\[
+k_1\leftarrow k\oplus\mathsf{ipad},
+\qquad
+k_2\leftarrow k\oplus\mathsf{opad}
+\]
+其中，$\mathsf{ipad}$ 和 $\mathsf{opad}$（`i' 和 `o' 分别代表``内部" 和 ``外部"）都是 $B$ 字节的常量序列，定义如下：
+\[
+\begin{aligned}
+& \mathsf{ipad}:=\texttt{0x36}\;\text{\emph{重复}}\;B\;\text{\emph{次}}\\
+& \mathsf{opad}:=\texttt{0x5C}\;\text{\emph{重复}}\;B\;\text{\emph{次}}
+\end{aligned}
+\]
+
+使用哈希函数 $H$ 实现的 HMAC 被称作 HMAC-$H$。在实践中最常用的 HMAC 是 HMAC-SHA1 和 HMAC-SHA256。HMAC 标准还允许对 HMAC 的输出进行截短。例如，当把 SHA1 的输出截短到 $80$ 比特时，相应的 HMAC 函数就被称作 HMAC-SHA1-80。举例来说，TLS 1.0 的实现就被要求能够支持 HMAC-SHA1-96。
+
+\begin{snote}[HMAC 的安全性。]
+由于密钥 $k_1'$ 和 $k_2'$ 是相关的（它们的异或就等于 $\mathsf{opad}\oplus\mathsf{ipad}$），我们为双层密钥嵌套所提出的安全证明就不再能够适用：在所述假设下，我们不能证明派生出的密钥 $k_1'$ 与 $k_2'$ 和随机元是不可区分的。一个解决方案是对压缩函数 $h$ 做一个更强的假设——我们需要假设 $h_\mathrm{top}$ 在关联密钥攻击下仍然是一个 PRF（如 Bellare 和 Kohno 的定义）。如果 $h$ 本身是一个 Davies-Meyer 压缩函数，那么在理想密码模型下，这个更强的假设仍能得到证明。
+\end{snote}
+
+\subsection{Davies-Meyer 在理想密码模型下是安全的 PRF}\label{subsec:8-7-3}
+
+剩下的工作就是证明我们的假设，即式 \ref{eq:8-6} 中由 $h$ 派生的 $h_\mathrm{bot}$ 和 $h_\mathrm{top}$ 都是安全的 PRF。假设压缩函数 $h$ 是一个 Davies-Meyer 函数，即 $h(x,y):=E(y,x)\oplus x$，其中，$\mathcal{E}=(E,D)$ 是某个分组密码。那么：
+\begin{itemize}
+	\item $h_\mathrm{bot}(k,m):=h(k,m)=E(m,k)\oplus k$ 是一个定义在 $(\mathcal{X},\mathcal{K},\mathcal{X})$ 上的 PRF，并且
+	\item $h_\mathrm{top}(k,m):=h(m,k)=E(k,m)\oplus m$ 是一个定义在 $(\mathcal{K},\mathcal{X},\mathcal{X})$ 上的 PRF。
+\end{itemize}
+当 $\mathcal{E}$ 是一个安全的分组密码时，$h_\mathrm{top}$ 显然是一个安全的 PRF（见练习 \ref{exer:4-1} 的 (c) 部分）。但 $h_\mathrm{bot}$ 是一个安全 PRF 的事实有点令人惊讶——作为 $h_\mathrm{bot}$ 输入的消息 $m$ 被用作 $E$ 的密钥。因此，即使 $\mathcal{E}$ 是一个安全的分组密码，$h_\mathrm{bot}$ 也无法提供安全性保证。尽管如此，我们仍然可以证明 $h_\mathrm{bot}$ 是一个安全的 PRF，但这需要在理想密码模型下。仅仅假设 $\mathcal{E}$ 是一个安全分组密码是不充分的。
+
+如有必要，读者可以回顾 \ref{sec:4-7} 节中介绍的理想密码模型的基本概念。我们在本章的稍早部分也使用了理想密码模型（见 \ref{subsec:8-5-3} 小节）。
+
+在理想密码模型中，我们启发式地将一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码 $\mathcal{E}=(E,D)$ 建模为一个随机置换族 $\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$。我们改编 PRF 攻击游戏 \ref{game:4-2}，让它适用于理想密码模型。挑战者除了应答标准查询外，还要应答 $\Pi$-查询和 $\Pi^{-1}$-查询：一个$\Pi$-查询是一个数对 $(\mathpzc{k},\mathpzc{a})$，挑战者以 $\mathpzc{b}:=\Pi_\mathpzc{k}(\mathpzc{a})$ 作为应答。$\Pi^{-1}$-查询是一个数对 $(\mathpzc{k},\mathpzc{b})$，挑战者以 $\mathpzc{a}:=\Pi_\mathpzc{k}^{-1}(\mathpzc{b})$ 作为应答。对于一个标准查询 $m$，挑战者以 $v:=f(m)$ 作为应答：在攻击游戏的实验 $0$ 中，$f$ 是 $F(k,\cdot)$，其中的 $F$ 是一个 PRF，$k$ 是一个随机选出的密钥；在实验 $1$ 中，$f$ 是一个真随机函数。此外，在实验 $0$ 中，用于评估 $F$ 的随机置换就是在构建 $F$ 时用作 $E$ 和 $D$ 的置换。对于我们的 PRF，我们有 $h_\mathrm{bot}(k,m)=E(m,k)\oplus k=\Pi_m(k)\oplus k$。
+
+对于对手 $\mathcal{A}$，我们将它在修改后的 PRF 攻击游戏中的优势定义为 $\mathrm{PRF}^\mathrm{ic}\mathsf{adv}[\mathcal{A},F]$，理想密码模型上的安全性意味着，该优势对于所有有效对手来说都可忽略不计。
+
+\begin{theorem}[$h_\mathrm{bot}$ 的安全性]\label{theo:8-5}
+令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码，其中 $|\mathcal{X}|$ 是大的。那么在理想密码模型下，$h_\mathrm{bot}(k,m):=E(m,k)\oplus k$ 是一个安全的 PRF。
+\begin{quote}
+特别地，对于每个攻击 $h_\mathrm{bot}$ 的 PRF 对手 $\mathcal{A}$，如果它最多只能发起 $Q_\mathrm{ic}$ 次理想密码查询，我们就有：
+\end{quote}
+\[
+\mathrm{PRF}^\mathrm{ic}\mathsf{adv}[\mathcal{A},h_\mathrm{bot}]\leq\frac{2Q_\mathrm{ic}}{|\mathcal{X}|}
+\]
+\end{theorem}
+
+该定理中的上界是相当严格的，因为对密钥进行暴力搜索能非常接近该约束。
+
+\begin{proof}
+该证明与对 Evan-Mansour/$\mathcal{E}$X 构造的分析如出一辙（见 \ref{subsec:4-7-4} 小节的定理 \ref{theo:4-14}），特别是，该证明会用到领域分离定理（见第 \ref{subsec:4-7-4} 小节的定理 \ref{theo:4-15}）。
+
+令 $\mathcal{A}$ 是一个定理声明中的对手。记 $p_b$ 为 $\mathcal{A}$ 在攻击游戏 \ref{game:4-2} 的实验 $b$ 中输出 $1$ 的概率，其中 $b=0,1$。所以，根据定义，我们有：
+\begin{equation}\label{eq:8-7}
+\mathrm{PRF}^\mathrm{ic}\mathsf{adv}[\mathcal{A},h_\mathrm{bot}]=|p_0-p_1|
+\end{equation}
+
+下面，我们构造一个有两个游戏组成的游戏序列，并应用领域分离引理来证明该定理。
+
+\vspace{5pt}
+
+\noindent\textbf{游戏 $\mathbf{0}$。}
+该游戏对应于理想密码模型下 PRF 攻击游戏的实验 $0$。我们可以将挑战者的逻辑表述如下：
+
+\vspace{5pt}
+
+\hspace*{5pt} 初始化：\\
+\hspace*{50pt} 对于每个 $\mathpzc{k}\in\mathcal{K}$，随机选取 $\Pi_\mathpzc{k}\overset{\rm R}\leftarrow\mathrm{Perms}[\mathcal{X}]$\\
+\hspace*{50pt} 随机选取 $k\overset{\rm R}\leftarrow\mathcal{X}$
+
+\vspace{5pt}
+
+\hspace*{5pt} 标准 $h_\mathrm{bot}$-查询 $m$：\\
+\hspace*{26pt} 1.\qquad 令 $c\leftarrow\Pi_m(k)$\\
+\hspace*{26pt} 2.\qquad 令 $v\leftarrow c\oplus k$\\
+\hspace*{26pt} 3.\qquad 返回 $v$
+
+\vspace{5pt}
+
+游戏 $0$ 中的挑战者\emph{完全按照定理 \ref{theo:4-14} 的证明中的游戏 $0$} 来处理理想密码查询：
+
+\vspace{5pt}
+
+\hspace*{5pt} 理想密码 $\Pi$-查询 $\mathpzc{k},\mathpzc{a}$：\\
+\hspace*{26pt} 1.\qquad 令 $\mathpzc{b}\leftarrow\Pi_\mathpzc{k}(\mathpzc{a})$\\
+\hspace*{26pt} 2.\qquad 返回 $\mathpzc{b}$
+
+\vspace{5pt}
+
+\hspace*{5pt} 理想密码 $\Pi^{-1}$-查询 $\mathpzc{k},\mathpzc{b}$：\\
+\hspace*{26pt} 1.\qquad 令 $\mathpzc{a}\leftarrow\Pi_\mathpzc{k}^{-1}(\mathpzc{b})$\\
+\hspace*{26pt} 2.\qquad 返回 $\mathpzc{a}$
+
+\vspace{5pt}
+
+令 $W_0$ 为 $\mathcal{A}$ 在游戏 $0$ 结束时输出 $1$ 的事件。从构造上看，显然有：
+\begin{equation}\label{eq:8-8}
+\Pr[W_0]=p_0
+\end{equation}
+
+\noindent\textbf{游戏 $\mathbf{1}$。}
+同定理 \ref{theo:4-14} 的证明一样，我们``凭空"宣布，标准查询和理想密码查询都是使用相互独立的随机置换处理的。下面是具体的逻辑，与游戏 $0$ 不同的部分被高亮强调：
+
+\vspace{5pt}
+
+\hspace*{5pt} 初始化：\\
+\hspace*{50pt} 对于每个 $\mathpzc{k}\in\mathcal{K}$，随机选取 \colorbox{gray!50}{$\Pi_{\mathrm{std},\mathpzc{k}}\overset{\rm R}\leftarrow\mathrm{Perms}[\mathcal{X}]$ 和 $\Pi_{\mathrm{ic},\mathpzc{k}}\overset{\rm R}\leftarrow\mathrm{Perms}[\mathcal{X}]$}\\
+\hspace*{50pt} 随机选取 $k\overset{\rm R}\leftarrow\mathcal{X}$
+
+\vspace{5pt}
+
+\hspace*{5pt} 标准 $h_\mathrm{bot}$-查询 $m$：\\
+\hspace*{26pt} 1.\qquad 令 $c\leftarrow$\colorbox{gray!50}{$\Pi_{\mathrm{std},m}(k)$}
+\quad//\quad\emph{将 $k$ 添加到 $\Pi_{\mathrm{std},m}$ 的采样领域，将 $c$ 添加到 $\Pi_{\mathrm{std},m}$ 的采样范围}\\
+\hspace*{26pt} 2.\qquad 令 $v\leftarrow c\oplus k$\\
+\hspace*{26pt} 3.\qquad 返回 $v$
+
+\vspace{5pt}
+
+游戏 $1$ 中的挑战者\emph{完全按照定理 \ref{theo:4-14} 的证明中的游戏 $1$} 来处理理想密码查询：
+
+\vspace{5pt}
+
+\hspace*{5pt} 理想密码 $\Pi$-查询 $\mathpzc{k},\mathpzc{a}$：\\
+\hspace*{26pt} 1.\qquad 令 $\mathpzc{b}\leftarrow$\colorbox{gray!50}{$\Pi_{\mathrm{ic},\mathpzc{k}}(\mathpzc{a})$}
+\;\;\quad//\quad\emph{将 $\mathpzc{a}$ 添加到 $\Pi_{\mathrm{ic},\mathpzc{k}}$ 的采样领域，将 $\mathpzc{b}$ 添加到 $\Pi_{\mathrm{ic},\mathpzc{k}}$ 的采样范围}\\
+\hspace*{26pt} 2.\qquad 返回 $\mathpzc{b}$
+
+\vspace{5pt}
+
+\hspace*{5pt} 理想密码 $\Pi^{-1}$-查询 $\mathpzc{k},\mathpzc{b}$：\\
+\hspace*{26pt} 1.\qquad 令 $\mathpzc{a}\leftarrow$\colorbox{gray!50}{$\Pi_{\mathrm{ic},\mathpzc{k}}^{-1}(\mathpzc{b})$}
+\;\;\quad//\quad\emph{将 $\mathpzc{a}$ 添加到 $\Pi_{\mathrm{ic},\mathpzc{k}}$ 的采样领域，将 $\mathpzc{b}$ 添加到 $\Pi_{\mathrm{ic},\mathpzc{k}}$ 的采样范围}\\
+\hspace*{26pt} 2.\qquad 返回 $\mathpzc{a}$
+
+\vspace{5pt}
+
+令 $W_1$ 为 $\mathcal{A}$ 在游戏 $1$ 结束时输出 $1$ 的事件。考虑游戏 $1$ 中一次标准查询的一个输入/输出对 $(m,v)$。注意到，$k$ 是唯一一个被添加到 $\Pi_{\mathrm{std},m}(k)$ 的采样领域中的项，而 $c=v\oplus k$ 是唯一一个被添加到 $\Pi_{\mathrm{std},m}(k)$ 的采样范围中的项。特别是，$c$ 是随机生成的，而 $k$ 始终保持完美隐藏（即与对手的观察无关）。
+
+因此，从对手的角度来看，标准查询的行为与随机函数相同，而理想密码查询的行为与一个\emph{独立的}理想密码的理想密码查询相同。特别地，我们有：
+\begin{equation}\label{eq:8-9}
+\Pr[W_1]=p_1
+\end{equation}
+
+最后，我们使用领域分离引理来分析 $|\Pr[W_0]-\Pr[W_1]|$。领域分离失败事件 $Z$ 是指在游戏 $1$ 中，$\Pi_{\mathrm{std},m}$ 的一个采样领域与 $\Pi_{\mathrm{ic},\mathpzc{k}}$ 的一个采样领域重叠，或者 $\Pi_{\mathrm{std},m}$ 的一个采样范围与 $\Pi_{\mathrm{ic},\mathpzc{k}}$ 的一个采样范围重叠的事件。领域分离引理告诉我们，有：
+\begin{equation}\label{eq:8-10}
+|\Pr[W_0]-\Pr[W_1]|\leq\Pr[Z]
+\end{equation}
+
+如果事件 $Z$ 发生，那么对于某个对应于一个理想密码查询的输入/输出三元组 $(\mathpzc{k},\mathpzc{a},\mathpzc{b})$，$\mathpzc{k}=m$ 是一个输出为 $v$ 的标准查询的输入，并且：
+\begin{enumerate}[(i)]
+	\item $\mathpzc{a}=k$，或者
+	\item $\mathpzc{b}=v\oplus k$
+\end{enumerate}
+成立。对于任何固定三元组 $(\mathpzc{k},\mathpzc{a},\mathpzc{b})$，根据 $k$ 的独立性，条件 (i) 和 (ii) 成立的概率都是 $1/|\mathcal{X}|$，因此，根据联合约束，我们有：
+\begin{equation}\label{eq:8-11}
+\Pr[Z]\leq\frac{2Q_\mathrm{ic}}{|\mathcal{X}|}
+\end{equation}
+
+于是，根据式 \ref{eq:8-7}，\ref{eq:8-8}，\ref{eq:8-9}，\ref{eq:8-10} 和 \ref{eq:8-11}，该定理成立。
+\end{proof} 

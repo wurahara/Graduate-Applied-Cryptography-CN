@@ -1,1 +1,127 @@
-\section{Merkle-Damg{\aa}rd范式}\label{sec:8-4}
+\section{Merkle-Damg{\aa}rd 范式}\label{sec:8-4}
+
+现在，我们尝试构建抗碰撞的哈希函数。许多实际的构造都遵循 Merkle-Damg{\aa}rd 范式：从一个对较短的消息的抗碰撞哈希函数开始，建立一个对更长的消息进行哈希的抗碰撞哈希函数。这种范式将构建抗碰撞哈希的问题归约为短消息提供抗碰撞性的问题，我们将在下一节中讨论这个问题。
+
+令 $h:\mathcal{X}\times\mathcal{Y}\to\mathcal{X}$ 是一个哈希函数。我们假设 $\mathcal{Y}$ 形如 $\{0,1\}\ell$，其中 $\ell$ 是某个整数。尽管并非必要，但我们通常也会假设 $\mathcal{X}$ 形如 $\{0,1\}^n$，其中 $n$ 是某个整数。图 \ref{fig:8-5} 展示了由 $h$ 派生的 Merkle-Damg{\aa}rd 函数 $H_\mathrm{MD}$，它是一个定义在 $(\{0,1\}^{\leq L},\mathcal{X})$ 上的函数，工作原理如下（填充 $\mathrm{PB}$ 的定义在后面）：
+
+\vspace{5pt}
+
+\hspace*{5pt} 输入：$M\in\{0,1\}^{\leq L}$\\
+\hspace*{26pt} 输出：$\mathcal{X}$ 上的一个标签
+
+\vspace{5pt}
+
+\hspace*{5pt} 令 $\hat{M}\leftarrow M\,\Vert\,\mathrm{PB}$\\
+\hspace*{26pt} 将 $\hat{M}$ 划分为连续的 $\ell$ 比特分组，满足：\\
+\hspace*{50pt} $\hat{M}=m_1\,\Vert\,m_2\,\Vert\,\cdots\,\Vert\,m_s$，其中 $m_1,\dots,m_s\in\{0,1\}^\ell$\\
+\hspace*{26pt} 令 $t_0\leftarrow\mathrm{IV}\in\mathcal{X}$\\
+\hspace*{26pt} 对于 $i=1$ 到 $s$：\\
+\hspace*{50pt} 令 $t_i\leftarrow h(t_{i-1},m_i)$\\
+\hspace*{26pt} 输出 $t_s$
+
+\vspace{5pt}
+
+\noindent
+函数 SHA256 就是一个 Merkle-Damg{\aa}rd 函数，其中 $\ell=512$，$n=256$。
+
+\begin{figure}
+	\centering
+	\input{figures/chapter8/fig5.tex}
+	\caption{Merkle-Damg{\aa}rd 迭代哈希函数}
+	\label{fig:8-5}
+\end{figure}
+
+在证明 $H_\mathrm{MD}$ 的抗碰撞性之前，让我们首先介绍一下图 \ref{fig:8-5} 中各种元素的术语：
+\begin{itemize}
+	\item 哈希函数 $h$ 被称为 $H$ 的\textbf{压缩函数(compression function)}。
+	\item 常数 $\mathrm{IV}$ 被称为\textbf{初始值(initial value)}，它被设定为某个预定义的值。我们固然可以直接令 $\mathrm{IV}=0^n$，但是 $\mathrm{IV}$ 通常会被设置为一些更复杂的字符串。比如说，SHA256 的 $\mathrm{IV}$ 是一个 $256$ 比特的字符串，它的值用十六进制表示为：
+	\[
+	\mathrm{IV}:=\texttt{6a09e667 bb67ae85 3c6ef372 a54ff53a 510e527f 9b05688c 1f83d9ab 5be0cd19}
+	\]
+	\item 变量 $m_1,\dots,m_s$ 被称为消息分组。
+	\item 变量 $t_0,t_1,\dots,t_s\in\mathcal{X}$ 被称为\textbf{链式变量(chaining variables)}。
+	\item 字符串 $\mathrm{PB}$ 被称为\textbf{填充分组(padding block)}。它被附加到消息中，以确保消息的长度是 $\ell$ 比特的整数倍。
+\end{itemize}
+
+填充分组 $\mathrm{PB}$ 必须包含一个对输入信息长度的编码。我们将在下面的安全证明中使用它。$\mathrm{PB}$ 的标准格式如下：
+\[
+\mathrm{PB}:= \boxed{100\dots 00\;\Vert\,\langle s \rangle}
+\]
+其中 $\langle s \rangle$ 是一个定长的二进制比特序列，用于编码 $M$ 中 $\ell$ 比特分组的数量。这个字段通常有 $64$ 比特，这意味着被哈希的消息要小于 $2^{64}$ 个分组。`$100\dots 00$' 这个序列是一个变长的填充序列，用于确保消息（包括 $\mathrm{PB}$）的总长度是 $\ell$ 的整数倍。变长序列 `$100\dots 00$' 以 `$1$' 为开头，这是为了确定填充结束和消息开始的位置。如果消息的长度恰好使得最后一个分组中没有能够容纳 $\mathrm{PB}$ 的剩余空间（比如说，消息的长度恰好是 $\ell$ 的整数倍），就需要额外增加一个分组，用来为填充分组提供空间。
+
+\begin{snote}[Merkle-Damg{\aa}rd 的安全性。]
+接下来我们证明，当假设压缩函数抗碰撞时，Merkle-Damg{\aa}rd 函数也是抗碰撞的。
+\end{snote}
+
+\begin{theorem}\label{theo:8-3}
+令 $L$ 是一个多项式边界的长度参数，并令 $h$ 是一个定义在 $(\mathcal{X}\times\mathcal{Y},\mathcal{X})$ 上的抗碰撞哈希函数。那么，由 $h$ 派生的，定义在 $\left(\{0,1\}^{\leq L},\mathcal{X}\right)$ 上的 Merkle-Damg{\aa}rd 哈希函数 $H_\mathrm{MD}$ 也是抗碰撞的。
+\begin{quote}
+特别地，对于每个（像攻击游戏 \ref{game:8-1} 中那样）攻击 $H_\mathrm{MD}$ 的碰撞查找器 $\mathcal{A}$，都存在一个攻击 $h$ 的碰撞查找器 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
+\end{quote}
+\[
+\mathrm{CR}\mathsf{adv}[\mathcal{A},H_\mathrm{MD}]=\mathrm{CR}\mathsf{adv}[\mathcal{B},h]
+\]
+\end{theorem}
+
+\begin{proof}
+用于查找 $h$ 的碰撞的碰撞查找器 $\mathcal{B}$ 的工作原理如下：它首先运行 $\mathcal{A}$ 以获得 $\{0,1\}\ell$ 中的两个互不相同的消息 $M$ 和 $M'$，它们满足 $H_\mathrm{MD}(M)=H_\mathrm{MD}(M')$。我们声称，$\mathcal{B}$ 可以使用 $M$ 和 $M'$ 来找到一个 $h$ 的碰撞。为了实现这一目标，$\mathcal{B}$ 从最后一个分组开始，从后往前扫描 $M$ 和 $M'$。为了简化符号，我们假设 $M$ 和 $M'$ 的最后一个分组中已经包含了适当的填充分组 $\mathrm{PB}$。
+
+令 $M=m_1m_2\dots m_u$ 是 $M$ 的 $u$ 个分组，$M'=m_1'm_2'\dots m_v'$是 $M'$ 的 $v$ 个分组。我们令 $t_0,t_1,\dots,t_u\in\mathcal{X}$ 为 $M$ 的链式变量，$t_0',t_1',\dots,t_s'\in\mathcal{X}$ 为 $M'$ 的链式变量。对 $h$ 的最后一次计算会输出最终的摘要，由于 $H_\mathrm{MD}(M)=H_\mathrm{MD}(M')$，我们有：
+\[
+h(t_{u-1},m_u)=h(t_{v-1}',m_v')
+\]
+如果 $t_{u-1}\neq t_{v-1}'$ 或 $m_u\neq m_v'$ 二者中的任意一个成立，则输入数对 $(t_{u-1},m_u)$ 和 $(t_{v-1}',m_v')$ 就是一个 $h$ 的碰撞。$\mathcal{B}$ 输出该碰撞并停机。
+
+否则，即是 $t_{u-1}=t_{v-1}'$ 且 $m_u=m_v'$ 成立。回顾一下，填充分组被包含在 $m_u$ 和 $m_v'$ 中，这些填充分组包含对 $u$ 和 $v$ 的编码。因此，由于 $m_u=m_v'$，我们可以推出 $u=v$，所以 $M$ 和 $M'$ 必须包含相同数量的分组。
+
+这时，我们有 $u=v$，$m_u=m_u'$ 且 $t_{u-1}=t_{u-1}'$。我们现在考虑倒数第二个分组。由于 $t_{u-1}=t_{u-1}'$，我们有：
+\[
+h(t_{u-2},m_{u-1})=h(t_{u-2}',m_{u-1}')
+\]
+与之前一样，如果 $t_{u-2}\neq t_{u-2}'$ 或 $m_{u-1}\neq m_{u-1}'$ 二者中的一个成立，那么 $\mathcal{B}$ 就找到了一个 $h$ 的碰撞。它输出这个碰撞并停机。
+
+否则，我们就有 $t_{u-2}=t_{u-2}'$ 且 $m_{u-1}=m_{u-1}'$ 成立。我们现在考虑倒数第三个分组。和之前一样，我们要么找到一个 $h$ 的碰撞，要么推断出 $m_{u-2}=m_{u-2}'$ 且 $t_{u-3}=t_{u-3}'$ 成立。我们不断重复这个过程，每次向左移动一个分组。对于第 $i$ 个分组，有两种情况可能发生。要么消息对 $(t_{i-1},m_i)$ 和 $(t_{i-1}',m_i')$ 是一个 $h$ 的碰撞，在这种情况下，$\mathcal{B}$ 输出这个碰撞并停机。或者，我们可以推出 $t_{i-1}=t_{i-1}'$ 和 $m_j=m_j'$ 对所有的 $j=i,i+1,\dots,u$ 都成立。
+
+假设这个过程一直持续到第一个分组，并且我们仍然没有找到一个 $h$ 的碰撞。那么此时，我们就有 $m_i=m_i'$ 对所有的 $i=1,\dots,u$ 都成立。但这意味着 $M=M'$，而这与 $M$ 和 $M'$ 是 $H_\mathrm{MD}$ 的碰撞这一事实相矛盾。因此，由于$M\neq M'$，从右到左扫描 $M$ 和 $M'$ 的分组的过程必然会产生一个 $h$ 的碰撞。由此我们可以得出结论，$\mathcal{B}$ 能够打破 $h$ 的抗碰撞性，这与要求一致。
+
+综上所述，我们证明了，只要 $\mathcal{A}$ 输出一个 $H_\mathrm{MD}$ 的碰撞，$\mathcal{B}$ 就必定会输出一个 $h$ 的碰撞。因此，我们有 $\mathrm{CR}\mathsf{adv}[\mathcal{A},H_\mathrm{MD}]=\mathrm{CR}\mathsf{adv}[\mathcal{B},h]$，正如定理所要求的。
+\end{proof}
+
+\begin{snote}[变体。]
+请注意，Merkle-Damg{\aa}rd 构造本身是串行的——在哈希第 $i$ 个分组之前，必须先哈希所有先前的分组。这使得它很难利用并行硬件的优势。在练习 \ref{exer:8-9} 中，我们研究了另一种的哈希构造，它更适合被用在多处理器的设备上。
+
+Merkle-Damg{\aa}rd 定理（定理 \ref{theo:8-3}）表明，压缩函数的抗碰撞性足以保证迭代函数的抗碰撞性。然而，这个条件并不是必须的。Black, Rogaway, 和 Shrimpton [24] 举了几个明显不抗碰撞的压缩函数的例子，然而它们所产生的迭代 Merkle-Damg{\aa}rd 函数却是抗碰撞的。
+\end{snote}
+
+\subsection{Joux 攻击}\label{subsec:8-4-1}
+
+我们简要介绍一种特别适用于 Merkle-Damg{\aa}rd 哈希函数的攻击。令 $H_1$ 和 $H_2$ 是两个 Merkle-Damg{\aa}rd 哈希函数，它们输出的标签都在 $\mathcal{X}:=\{0,1\}^n$ 上。定义 $H_{12}(M):=H_1(M)\,\Vert\,H_2(M)\in\{0,1\}^{2n}$。我们认为，找到 $H_{12}$ 的一个碰撞至少需要 $\Omega(2^n)$ 级别的时间。事实上，如果 $H_1$ 和 $H_2$ 都是独立且随机的函数的话，情况确实就是这样的。
+
+然而我们声称，当 $H_1$ 和 $H_2$ 都是 Merkle-Damg{\aa}rd 函数时，我们其实可以在大约 $n2^{n/2}$ 级别的时间内找到 $H$ 的碰撞，这远远短于 $2^n$。这种攻击说明，在将我们对随机函数的直觉直接应用到 Merkle-Damg{\aa}rd 函数上面时，可能会产生不正确的结论。
+
+我们称满足 $H(M_1)= \dots =H(M_s)$ 的一组消息 $M_1,\dots,M_s\in\mathcal{M}$ 是哈希函数 $H$ 的一个 $s$-碰撞。Joux 提出了一种方法，能在 $O((\log_2s)|\mathcal{X}|^{1/2})$ 级别的时间内找到 Merkle-Damg{\aa}rd 函数的一个 $s$-碰撞。使用 Joux 的方法，我们可以用 $O(n2^{n/2})$ 级别的时间找到 $H_1$ 的一个 $2^{n/2}$-碰撞 $M_1,\dots,M_{2^{n/2}}$。然后，由于生日悖论，很可能存在其中两条消息，比如 $M_i,M_j$，也是 $H_2$ 的一个碰撞。这个数对 $M_i,M_j$ 既是 $H_1$ 的碰撞，也是 $H_2$ 的碰撞，因而也是 $H_{12}$ 的碰撞。正如我们之前所声称的，找到这样的碰撞只花费了 $O(n2^{n/2})$ 级别的时间。
+
+\begin{snote}[寻找$s$-碰撞。]
+为了找到$s$-碰撞，令 $H$ 是一个 $(\mathcal{M},\mathcal{X})$ 上的 Merkle-Damg{\aa}rd 函数，派生自一个压缩函数 $h$。我们寻找一个 $s$-碰撞 $M_1,\dots,M_s\in\mathcal{M}$，其中的每条消息 $M_i$ 都包含 $\log_2s$ 个分组。简单起见，我们假设 $s$ 是 $2$ 的幂，因此 $log_2s$ 就是一个整数。和之前一样，我们记 Merkle-Damg{\aa}rd 构造中所使用的初始值 (IV) 为 $t_0$。
+
+计划是在压缩函数 $h$ 上使用 $\log_2s$ 次生日攻击。我们首先花费 $2^{n/2}$ 的时间找到两个互不相同的分组 $m_0,m_0'$，使得 $(t_0,m_0)$ 和 $(t_0,m_0')$ 在 $h$ 下发生碰撞。令 $t_1:=h(t_0,m_0)$。接下来，我们再花 $2^{n/2}$ 的时间找到两个互不相同的分组 $m_1,m_1'$，使得 $(t_1,m_1)$ 和 $(t_1,m_1')$ 在 $h$ 下发生碰撞。与之前一样，我们令 $t_2:=h(t_1,m_1)$，然后再次重复上述过程。我们迭代该过程 $b:=log_2s$ 次，直到我们有 $b$ 个分组对：
+\[
+(m_i,m_i')
+\quad\text{for}\quad
+i=0,1,\dots,b-1
+\quad\quad\text{that satisfy}\quad\quad
+h(t_i,m_i)=h(t_i,m_i')
+\]
+现在，考虑消息 $M=m_0m_1\dotsm_{b-1}$。关键点在于，用 $m_i'$ 替换这条消息中的任何一个分组 $m_i$ 都不会改变链式变量 $t_{i+1}$，因此 $H(M)$ 的值也不会改变。结果就是，我们可以将 $m_0,\dots,m_{b-1}$ 的任何一个子集替换为 $m_0',\dots,m_{b-1}'$ 中的对应分组，而不会改变 $H(M)$。因此，我们可以得到 $s=2^b$ 条消息：
+\[
+\begin{aligned}
+& m_0m_1\dots m_{b-1}\\
+& m_0'm_1\dots m_{b-1}\\
+& m_0m_1'\dots m_{b-1}\\
+& m_0'm_1'\dots m_{b-1}\\
+& \quad\quad\vdots\\
+& m_0'm_1'\dots m_{b-1}'
+\end{aligned}
+\]
+它们在 $H$ 下的哈希值都是相同的。总之，我们可以在 $O(b2^{n/2})$ 级别的时间内找到一个 $2^b$-碰撞。如上所述，这让我们能在 $O(n2^{n/2})$ 级别的时间内找到 $H(M):=H_1(M)\,\Vert\,H_2(M)$ 的碰撞。
+\end{snote}

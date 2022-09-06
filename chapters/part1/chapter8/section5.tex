@@ -1,1 +1,142 @@
 \section{构建压缩函数}\label{sec:8-5}
+
+Merkle-Damg{\aa}rd 范式表明，想要为长消息构建一个抗碰撞哈希函数，只需构建一个用于短分组的抗碰撞压缩函数 $h$ 即可。在本节中，我们将描述一些候选的压缩函数。这些构造可以被分成两类：
+\begin{itemize}
+	\item 来自分组密码的压缩函数。最经常被使用的方法称为 Davies-Meyer。SHA 系列的密码学哈希函数使用的都是 Davies-Meyer。
+	\item 来自数论原语的压缩函数。这些构造往往都非常优雅，并且有干净整洁的安全证明。但不幸的是，它们的效率通常远低于第一种方法。
+\end{itemize}
+
+\subsection{一种简单但低效的压缩函数}\label{subsec:8-5-1}
+
+我们从一个使用算术模运算构建的压缩函数开始。令 $p$ 是一个大素数，满足 $q:=(p-1)/2$ 也是一个素数。令 $x$ 和 $y$ 是从 $[1,q]$ 区间内适当选出的两个整数。考虑下面的简单压缩函数，它接受 $[1,q]$ 区间上的两个整数作为输入，输出 $[1,q]$ 上的一个整数：
+\begin{equation}\label{eq:8-3}
+H(a,b)=\mathrm{abs}(x^ay^b\bmod p),
+\quad\text{where}\quad
+\mathrm{abs}(z):=\left\{
+\begin{array}{ll}
+z, & \text{if } z\leq q,\\
+p-z, & \text{otherwise}
+\end{array}
+\right.
+\end{equation}
+我们将在练习 \ref{exer:10-20} 中表明，假设某个标准的数论问题是困难的，那么这个函数就是抗碰撞的。对这个函数应用 Merkle-Damg{\aa}rd 范式，我们就可以得到一个用于任意长度输入的抗碰撞哈希函数。尽管这是一个优雅的抗碰撞哈希函数，并且具有干净的安全证明，但它的效率远远低于从 Davies-Meyer 构造中得到的函数，因此，它在实践中几乎从未被使用过。
+
+\subsection{Davies-Meyer 压缩函数}\label{subsec:8-5-2}
+
+我们在第\ref{chap:4}章花了很多精力来构建像 AES 这样的安全分组密码。我们自然会问，我们是否可以利用这些构造来构建更快速的压缩函数呢？Davies-Meyer 方法就能帮助我们做到这一点，但是只有在理想密码模型下，我们才能证明它的安全性。
+
+令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码，其中 $\mathcal{X}=\{0,1\}^n$。\textbf{从 $E$ 派生的 Davies-Meyer 压缩函数(Davies-Meyer compression function derived from $E$)}将 $\mathcal{X}\times\mathcal{K}$ 上的输入映射为 $\mathcal{X}$ 上的输出。该函数的定义如下：
+\[
+h_\mathrm{DM}(x,y):=E(y,x)\oplus x
+\]
+图 \ref{fig:8-6} 展示了该函数的结构。正式地说，$h_\mathrm{DM}$ 定义在 $(\mathcal{X}\times\mathcal{K},\mathcal{X})$ 上。
+
+\begin{figure}
+	\centering
+	\input{figures/chapter8/fig6.tex}
+	\caption{Davies-Meyer 压缩函数}
+	\label{fig:8-6}
+\end{figure}
+
+当把这个压缩函数插入到 Merkle-Damg{\aa}rd 范式中时，它的输入是一个链式变量 $x:=t_{i-1}\in\mathcal{X}$ 和一个消息分组 $y:=m_i\in\mathcal{K}$，输出是下一个链式变量 $t_i:=E(m_i,t_{i-1})\oplus t_{i-1}\in\mathcal{X}$。注意到，消息分组在这里被用作分组密码的密钥，这似乎有点奇怪，因为对手对消息有完全的控制权。不过我们还是能证明 $h_\mathrm{DM}$ 是抗碰撞的，因而所产生的 Merkle-Damg{\aa}rd 函数也是抗碰撞的。
+
+当在 Merkle-Damg{\aa}rd 中使用 $h_\mathrm{DM}$ 时，分组密码的密钥 ($m_i$) 会从一个消息分组变为另一个消息分组，这种使用分组密码的方式是很少见的。在普通的分组密码中，我们通常用一个固定的密钥来加密长消息；而在对分组都改变分组密码的密钥会降低密码的速度。结果就是，使用 Davies-Meyer 和现成的分组密码（如 AES），将必然会产生一个相对较慢的哈希函数。所以，我们要使用一个专门为快速更换密钥而设计的定制分组密码。
+
+在 Davies-Meyer 中不使用现成的分组密码的另一个原因是，在这些密码中，分组长度可能太短了，例如 AES 是 $128$ 比特。一个基于 AES 的压缩函数会生成一个 $128$ 比特的输出，但这对于抗碰撞来说还是太短了：只需对该函数进行至多 $2^{64}$ 次计算，就一定能找到一个碰撞。此外，现成的分组密码所使用的密钥都比较短，例如 $128$ 比特。这会导致 Merkle-Damg{\aa}rd 每轮也只能处理 $128$ 比特的消息。在 Merkle-Damg{\aa}rd 哈希函数中使用的典型密码需要使用更长的密钥（通常为 $512$ 比特甚至 $1024$ 比特），因此每轮能处理的消息比特也就多很多。
+
+\begin{snote}[Davies-Meyer 的变体。]
+Davies-Meyer 构造并不是唯一的。许多其他类似的方法也可以将一个分组密码转换成一个抗碰撞的压缩函数。例如，我们可以使用：
+\[
+\begin{array}{ll}
+\text{Matyas-Meyer-Oseas:}	& h_1(x,y):=E(x,\,y)\oplus y\\
+\text{Miyaguchi-Preneel:}	& h_2(x,y):=E(x,\,y)\oplus y\oplus x\\
+\text{甚至是:}				& h_3(x,y):=E(x\oplus y,\,y)\oplus y
+\end{array}
+\]
+以及许多其他类似的变体。Preneel 等人 [122] 提出了十二种不同的变体，它们都可以被证明是抗碰撞的。
+
+Matyas-Meyer-Oseas 函数 $h_1$ 与 Davies-Meyer 相似，但互换了链式变量和消息分组的角色——在 $h_1$ 中，链式变量被用作分组密码的密钥。函数 $h_1$ 将 $(\mathcal{K}\times\mathcal{X})$ 上的元素映射到 $\mathcal{X}$ 上。因此，为了在 Merkle-Damg{\aa}rd 中使用 $h_1$，我们需要一个辅助的编码函数 $g:\mathcal{X}\to\mathcal{K}$，以将链式变量 $t_{i-1}\in\mathcal{X}$ 映射成 $\mathcal{K}$ 上的一个元素，如图 \ref{fig:8-7} 所示。Miyaguchi-Preneel 函数 $h_2$ 的情况也是如此。Davies-Meyer 函数则不需要这样的编码函数。可以注意到，Miyaguchi-Preneel 函数相比 Davies-Meyer 有一个小的安全优势，我们将在练习 \ref{exer:8-15} 中讨论它。
+
+\begin{figure}
+	\centering
+	\input{figures/chapter8/fig7.tex}
+	\caption{其他分组密码压缩函数}
+	\label{fig:8-7}
+\end{figure}
+
+Davies-Meyer 的许多其他的自然变体完全是不安全的。例如，对于以下函数：
+\[
+\begin{aligned}
+& h_4(x,y):=E(y,\,x)\oplus y\\
+& h_5(x,y):=E(x,\,x\oplus y)\oplus x
+\end{aligned}
+\]
+我们可以在恒定时间内找到碰撞（见练习 \ref{exer:8-11}）。
+\end{snote}
+ 
+\subsection{Davies-Meyer 的抗碰撞性}\label{subsec:8-5-3}
+
+我们无法通过一个关于分组密码的标准复杂性假设来证明 Davies-Meyer 是抗碰撞的。仅仅假设 $\mathcal{E}=(E,D)$ 是一个安全的分组密码，并不足以证明 $h_\mathrm{DM}$ 是抗碰撞的。相对地，我们必须将分组密码建模为一个\emph{理想密码}。
+
+我们曾经在 \ref{sec:4-7} 节介绍过理想密码模型。回顾一下，这是一种启发式的技术，我们把分组密码当作一个随机置换族。如果 $\mathcal{E}=(E,D)$ 是一个具有密钥空间 $\mathcal{K}$ 和数据分组空间 $\mathcal{X}$ 的分组密码，那么随机置换族就是 $\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$，其中每个 $\Pi_\mathpzc{k}$ 都是 $\mathcal{X}$ 上的真随机置换，并且 $\Pi_\mathpzc{k}$ 之间是相互独立的。
+
+攻击游戏 \ref{game:8-1} 可以被改造为适用于理想密码模型的版本，使得对手在输出碰撞之前可以向挑战者进行一系列的 $\Pi$-查询和$\Pi^{-1}$-查询：
+\begin{itemize}
+	\item 对于 $\Pi$-查询，对手提交一个数对 $(\mathpzc{k},\mathpzc{a})\in\mathcal{K}\times\mathcal{X}$，挑战者以 $\mathpzc{b}:=\Pi_\mathpzc{k}(\mathpzc{a})$ 作为应答。
+	\item 对于 $\Pi^{-1}$-查询，对手提交一个数对 $(\mathpzc{k},\mathpzc{b})\in\mathcal{K}\times\mathcal{X}$，挑战者以 $\mathpzc{a}:=\Pi_\mathpzc{k}^{-1}(\mathpzc{b})$ 作为应答。
+\end{itemize}
+在进行这些查询后，对手试图输出一个碰撞，在 Davies-Meyer 的情况下就是满足：
+\[
+\Pi_y(x)\oplus x=\Pi_{y'}(x')\oplus x'
+\]
+的 $(x,y)\neq(x',y')$。我们将对手 $\mathcal{A}$ 在理想密码模型下找到 $h_\mathrm{DM}$ 的碰撞的优势表示为 $\mathrm{CR}^\mathrm{ic}\mathsf{adv}[\mathcal{A},h_\mathrm{DM}]$，而理想密码模型的安全性意味着，对于所有有效对手 $\mathcal{A}$，这个优势都是可忽略不计的。
+
+\begin{theorem}[Davies-Meyer]\label{theo:8-4}
+令 $h_\mathrm{DM}$ 是由定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码 $\mathcal{E}=(E,D)$ 派生的 Davies-Meyer 哈希函数，其中 $|\mathcal{X}|$ 是大的。那么在理想密码模型下，$h_\mathrm{DM}$ 是抗碰撞的。
+\begin{quote}
+特别地，每个最多发起 $q$ 次理想密码查询的碰撞查找对手 $\mathcal{A}$ 都满足：
+\end{quote}
+\[
+\mathrm{CR}^\mathrm{ic}\mathsf{adv}[\mathcal{A},h_\mathrm{DM}]
+\leq
+(q+1)(q+2)/|\mathcal{X}|
+\]
+\end{theorem}
+
+该定理表明，Davies-Meyer 是最好的压缩函数：如果对手想以恒定概率找到 $h_\mathrm{DM}$ 的碰撞，他必须发出 $q=\Omega(|\mathcal{X}|)$ 次查询（因此必须至少运行那么多时间）。考虑到存在生日攻击，任何压缩函数都不可能提供更高的安全性。
+
+\begin{proof}
+假设 $\mathcal{A}$ 是一个 $h_\mathrm{DM}$ 的碰撞查找器，它最多只能发起 $q$ 次理想密码查询。我们假设 $\mathcal{A}$ 是 ``合理的"：在 $\mathcal{A}$ 输出其碰撞尝试 $(x,y),(x',y')$ 之前，它会进行相关的理想密码查询：对于 $(x,y)$，它要么在 $(y,x)$ 上发起一个 $\Pi$-查询，要么在 $(y,\cdot)$ 上发起一个能够产生 $x$ 的 $\Pi^{-1}$-查询；对于 $(x',y')$，情况也是如此。如果 $\mathcal{A}$ 尚不是合理的，我们可以通过将总查询次数增加到至多 $q'=q+2$ 次来让它变成合理的。总而言之，我们假设 $\mathcal{A}$ 是合理的，并且从现在开始，它最多可以发起 $q'$ 次理想密码查询。
+
+对于 $i=1,\dots,q'$，第 $i$ 次理想密码查询定义了一个三元组 $(\mathpzc{k}_i,\mathpzc{a}_i,\mathpzc{b}_i)$：对于一个 $\Pi$-查询 $(\mathpzc{k}_i,\mathpzc{a}_i)$，我们设置 $\mathpzc{b}_i:=\Pi_{\mathpzc{k}_i}(\mathpzc{a}_i)$；而对于一个 $\Pi^{-1}$-查询 $(\mathpzc{k}_i,\mathpzc{b}_i)$，我们设置 $\mathpzc{a}_i:=\Pi_{\mathpzc{k}_i}^{-1}(\mathpzc{b}_i)$。我们假设 $\mathcal{A}$ 不会进行无关的查询，因此不会出现重复的三元组。
+
+如果对手输出一个碰撞，那么根据我们的合理性假设，对于某个由互不相同的索引组成的数对 $i,j=1,\dots,q'$，我们有 $\mathpzc{a}_i\oplus\mathpzc{b}_i=\mathpzc{a}_j\oplus\mathpzc{b}_j$。我们把这个事件称为 $Z$。所以我们有：
+\[
+\mathrm{CR}^\mathrm{ic}\mathsf{adv}[\mathcal{A},h_\mathrm{DM}]\leq\Pr[Z]
+\]
+我们的目标是要证明：
+\begin{equation}\label{eq:8-4}
+\Pr[Z]\leq
+\frac{q'(q'-1)}{2^n}
+\end{equation}
+其中$|\mathcal{X}|=2^n$。
+ 
+考虑任意固定索引 $i < j$。当以对手的硬币与前 $j-1$ 个三元组的任意固定值为条件时，$\mathpzc{a}_i$ 和 $\mathpzc{b}_i$ 中的某一个是完全固定的，而另一个均匀分布在一个大小至少是 $|\mathcal{X}|-j+1$ 的集合上。因此：
+\[
+\Pr[\mathpzc{a}_i\oplus\mathpzc{b}_i=\mathpzc{a}_j\oplus\mathpzc{b}_j]
+\leq
+\frac{1}{2^n-j+1}
+\]
+所以，根据联合约束，我们有：
+\begin{equation}\label{eq:8-5}
+\Pr[Z]
+\leq
+\sum_{j=1}^{q'}\sum_{i=1}^{j-1}\Pr[\mathpzc{a}_i\oplus\mathpzc{b}_i=\mathpzc{a}_j\oplus\mathpzc{b}_j]
+\leq
+\sum_{j=1}^{q'}\frac{j-1}{2^n-j+1}
+\leq
+\sum_{j=1}^{q'}\frac{j-1}{2^n-q'}
+=\frac{q'(q'-1)}{2(2^n-q')}
+\end{equation}
+对于 $q'\leq2^{n-1}$，该约束可以被简化为 $\Pr[Z]\leq q'(q'-1)/2^n$。对于 $q'>2^{n-1}$，该约束显然保持不变。因此，式 \ref{eq:8-4} 对所有的 $q'$ 都成立。
+\end{proof}

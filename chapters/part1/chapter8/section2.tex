@@ -13,7 +13,7 @@ V'(k,m,t):=V(k,\,H(m),\,t)
 \begin{theorem}\label{theo:8-1}
 假设 MAC 系统 $\mathcal{I}$ 是一个安全的 MAC，哈希函数 $H$ 是抗碰撞的。那么式 \ref{eq:8-1} 中定义的派生 MAC 系统 $\mathcal{I}'=(S',V')$ 也是一个安全的 MAC。
 \begin{quote}
-特别地，假设 $\mathcal{A}$ 是一个攻击 $\mathcal{I}'$ 的 MAC 对手（如攻击游戏 \ref{game:6-1} 中那样）。那么存在一个 MAC 对手 $\mathcal{B}_\mathcal{I}$ 和一个有效的碰撞发现者 $\mathcal{B}_H$，它们都是围绕 $A$ 的基本包装器，满足：
+特别地，假设 $\mathcal{A}$ 是一个攻击 $\mathcal{I}'$ 的 MAC 对手（如攻击游戏 \ref{game:6-1} 中那样）。那么存在一个 MAC 对手 $\mathcal{B}_\mathcal{I}$ 和一个有效的碰撞查找器 $\mathcal{B}_H$，它们都是围绕 $A$ 的基本包装器，满足：
 \end{quote}
 \[
 \mathrm{MAC}\mathsf{adv}[\mathcal{A},\mathcal{I}']\leq
@@ -47,7 +47,7 @@ V'(k,m,t):=V(k,\,H(m),\,t)
 \leq\Pr[X\land\lnot Y]+\Pr[Y]
 =\Pr[Z]+\Pr[Y]
 \end{equation}
-为了证明该定理，我们构造一个碰撞发现者 $\mathcal{B}_H$ 和一个 MAC 对手 $\mathcal{B}_\mathcal{I}$，使得：
+为了证明该定理，我们构造一个碰撞查找器 $\mathcal{B}_H$ 和一个 MAC 对手 $\mathcal{B}_\mathcal{I}$，使得：
 \[
 \Pr[Y]=\mathrm{CR}\mathsf{adv}[\mathcal{B}_H,H]
 \quad\text{and}\quad

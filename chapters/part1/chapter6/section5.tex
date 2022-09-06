@@ -52,7 +52,7 @@ PF(k,\;x\,\Vert\,a)=PF(k,\;y\,\Vert\,a)
 虽然不是完全必要，但让我们假设 $\mathcal{Y}=\mathcal{T}$，$F$ 是一个分组密码，并且 $|\mathcal{X}|$ 不是非常小。这些假设将大大简化论证。我们下面展示一种攻击，它能在 $Q\approx\sqrt{|\mathcal{Y}|}$ 次查询之后以恒定概率攻破 $EF$。事实上，我们的攻击将攻破作为一个 MAC 的 $EF$。对手首先挑选 $Q$ 个随机输入 $x_1,\dots,x_Q\in\mathcal{X}^2$，并用这 $Q$ 个输入向其挑战者发起查询，以得到应答 $t_1,\dots,t_Q\in\mathcal{T}$。根据生日悖论（推论 \ref{cor:B-2}），对于任何固定的密钥 $k_1$，存在不同的索引 $i$ 和 $j$ 使得 $x_i\neq x_j$ 且 $PF(k_1,x_i)=PF(k_1,x_j)$ 的概率是恒定的。一方面，如果发生这样的碰撞，我们可以有效发现它，这是因为对于这样的一对索引，必有 $t_i=t_j$。另一方面，如果存在一对索引 $i$ 和 $j$ 使得 $t_i=t_j$，由于我们假设 $F$ 是一个分组密码，那么必然有 $PF(k_1,x_i)=PF(k_1,x_j)$。现在，假设 $x_i\neq x_j$ 且 $PF(k_1,x_i)=PF(k_1,x_j)$，由于 $PF$ 是可扩展的，那么对于任意 $a\in\mathcal{X}$，我们都有 $PF\big(k_1,\,(x_i\,\Vert\,a)\big)=PF\big(k_1,\,(x_j\,\Vert\,a)\big)$。因此，我们的对手可以获得 $x_i\,\Vert\,a$ 的 MAC 标签 $t$，而这个标签 $t$ 同时也是 $x_j\,\Vert\,a$ 的有效标签。推广这一攻击，我们就能很容易地证明式 \ref{eq:6-18} 中 ${Q^2}/{(2|\mathcal{Y}|)}$ 这一项的必要性。
 \end{snote}
 
-\subsection{ECBC 和 NMAC：用于变长输入的安全 PRF}
+\subsection{ECBC 和 NMAC：用于变长输入的安全 PRF}\label{subsec:6-5-1}
 
 图 \ref{fig:6-5-a} 和 \ref{fig:6-5-b} 展示了对 CBC 和级联应用 $EF$ 构造的结果。
 
