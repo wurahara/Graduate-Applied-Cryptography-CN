@@ -1,40 +1,21 @@
-
-
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\tikzset{every picture/.style={line width=0.75pt}}      
 
 \begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-0.9,xscale=0.9]
-%uncomment if require: \path (0,272); %set diagram left start at 0, and has height of 272
 
-%Shape: Rectangle [id:dp8771239397391886] 
 \draw  [line width=1.2]  (0,0) -- (180,0) -- (180,250) -- (0,250) -- cycle ;
-%Shape: Rectangle [id:dp8481958113141042] 
 \draw  [line width=1.2]  (270,0) -- (390,0) -- (390,250) -- (270,250) -- cycle ;
-%Straight Lines [id:da41875775589442465] 
-\draw    (180,125) -- (267,125) ;
-\draw [shift={(270,125)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da7225640261213351] 
-\draw    (270,60) -- (183,60) ;
-\draw [shift={(180,60)}, rotate = 360] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da1821909341398127] 
-\draw    (270,190) -- (183,190) ;
-\draw [shift={(180,190)}, rotate = 360] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
 
-% Text Node
+\draw  [->]  (270,60) -- (180,60) ;
+\draw  [->]  (180,125) -- (270,125) ;
+\draw  [->]  (270,190) -- (180,190) ;
+
 \draw (90,20) node   [align=left] {挑战者};
-% Text Node
-\draw (90,45) node   [align=left] {(实验 $\displaystyle b$)};
-% Text Node
+\draw (90,40) node   [align=left] {(实验 $b$)};
 \draw (42,100) node [anchor=west] [inner sep=0.75pt]    {$k\overset{\mathrm{R}}{\leftarrow }\mathcal{K}$};
-% Text Node
-\draw (42,130) node [anchor=west] [inner sep=0.75pt]    {$c\overset{\mathrm{R}}{\leftarrow } E( k,m_{b})$};
-% Text Node
+\draw (42,130) node [anchor=west] [inner sep=0.75pt]    {$c\overset{\mathrm{R}}{\leftarrow} E( k,m_{b})$};
 \draw (225,115) node    {$c$};
-% Text Node
 \draw (225,175) node    {$\hat{b} \in \{0,1\}$};
-% Text Node
 \draw (225,47) node    {$m_{0} ,m_{1} \in \mathcal{M}$};
-% Text Node
 \draw (330,20) node    {$\mathcal{A}$};
-
 
 \end{tikzpicture}

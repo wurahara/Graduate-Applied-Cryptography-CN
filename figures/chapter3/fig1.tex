@@ -1,56 +1,30 @@
-
-
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\tikzset{every picture/.style={line width=0.75pt}}  
 
 \begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-0.9,xscale=0.9]
-%uncomment if require: \path (0,561); %set diagram left start at 0, and has height of 561
 
-%Shape: Rectangle [id:dp9584963727181126] 
 \draw  [line width=1.2]  (0,0) -- (180,0) -- (180,250) -- (0,250) -- cycle ;
-%Shape: Rectangle [id:dp7975396883149009] 
 \draw  [line width=1.2]  (270,0) -- (390,0) -- (390,250) -- (270,250) -- cycle ;
-%Straight Lines [id:da23162186238918725] 
-\draw    (180,160) -- (267,160) ;
-\draw [shift={(270,160)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da4308032893165852] 
-\draw    (270,190) -- (183,190) ;
-\draw [shift={(180,190)}, rotate = 360] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Shape: Rectangle [id:dp834093932982575] 
 \draw  [line width=1.2]  (0,300) -- (180,300) -- (180,550) -- (0,550) -- cycle ;
-%Shape: Rectangle [id:dp817311654311772] 
 \draw  [line width=1.2]  (270,300) -- (390,300) -- (390,550) -- (270,550) -- cycle ;
-%Straight Lines [id:da25353554094146236] 
-\draw    (180,460) -- (267,460) ;
-\draw [shift={(270,460)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da6047218840781998] 
-\draw    (270,490) -- (183,490) ;
-\draw [shift={(180,490)}, rotate = 360] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
 
-% Text Node
+\draw  [->]  (180,160) -- (270,160) ;
+\draw  [->]  (270,190) -- (180,190) ;
+\draw  [->]  (180,460) -- (270,460) ;
+\draw  [->]  (270,490) -- (180,490) ;
+
 \draw (90,20) node   [align=left] {挑战者};
-% Text Node
-\draw (90,45) node   [align=left] {(实验 $\displaystyle 0$)};
-% Text Node
-\draw (60,110) node [anchor=west] [inner sep=0.75pt]    {$s\overset{\mathrm{R}}{\leftarrow }\mathcal{S}$};
-% Text Node
-\draw (60,140) node [anchor=west] [inner sep=0.75pt]    {$r\overset{\mathrm{R}}{\leftarrow } G( s)$};
-% Text Node
+\draw (90,40) node   [align=left] {(实验 $0$)};
+\draw (67,110) node [anchor=west] [inner sep=0.75pt]    {$s\overset{\mathrm{R}}{\leftarrow }\mathcal{S}$};
+\draw (67,140) node [anchor=west] [inner sep=0.75pt]    {$r\overset{\mathrm{R}}{\leftarrow } G( s)$};
 \draw (225,150) node    {$r$};
-% Text Node
 \draw (225,175) node    {$\hat{b} \in \{0,1\}$};
-% Text Node
 \draw (330,20) node    {$\mathcal{A}$};
-% Text Node
+
 \draw (90,320) node   [align=left] {挑战者};
-% Text Node
-\draw (90,345) node   [align=left] {(实验 $\displaystyle 1$)};
-% Text Node
+\draw (90,340) node   [align=left] {(实验 $1$)};
 \draw (225,450) node    {$r$};
-% Text Node
 \draw (225,475) node    {$\hat{b} \in \{0,1\}$};
-% Text Node
 \draw (330,320) node    {$\mathcal{A}$};
-% Text Node
 \draw (67,440) node [anchor=west] [inner sep=0.75pt]    {$r\overset{\mathrm{R}}{\leftarrow }\mathcal{R}$};
 
 

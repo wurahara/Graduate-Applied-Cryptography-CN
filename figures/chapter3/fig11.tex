@@ -1,42 +1,23 @@
-
-
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\tikzset{every picture/.style={line width=0.75pt}}      
 
 \begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
-%uncomment if require: \path (0,142); %set diagram left start at 0, and has height of 142
 
-%Shape: Rectangle [id:dp009342176738986518] 
 \draw   (60,20) -- (300,20) -- (300,40) -- (60,40) -- cycle ;
-%Shape: Rectangle [id:dp4956215014317249] 
 \draw   (0,100) -- (300,100) -- (300,120) -- (0,120) -- cycle ;
-%Shape: Rectangle [id:dp49233439601826645] 
+
 \draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][general shadow={fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,shadow xshift=1.5pt,shadow yshift=-1.5pt, opacity=1 }] (280,60) -- (480,60) -- (480,80) -- (280,80) -- cycle ;
-%Straight Lines [id:da4167682371696044] 
-\draw    (300,30) -- (380,30) -- (380,57) ;
-\draw [shift={(380,60)}, rotate = 270] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da7204127451376645] 
-\draw    (300,110) -- (380,110) -- (380,83) ;
-\draw [shift={(380,80)}, rotate = 90] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da907508704104077] 
-\draw    (480.33,70) -- (547,70) ;
-\draw [shift={(550,70)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
 
-% Text Node
-\draw (180.2,30) node   [align=left] {$\displaystyle 17$-bit LFSR};
-% Text Node
-\draw (150,110) node   [align=left] {$\displaystyle 25$-bit LFSR};
-% Text Node
+\draw  [->]  (300,30) -- (380,30) -- (380,60) ;
+\draw  [->]  (300,110) -- (380,110) -- (380,82.5) ;
+\draw  [->]  (480,70) -- (550,70) ;
+
+\draw (180.2,30) node   [align=left] {$17$-bit LFSR};
+\draw (150,110) node   [align=left] {$25$-bit LFSR};
 \draw (380,70) node    {$x+y+c\bmod 256$};
-% Text Node
-\draw (340,113) node [anchor=north] [inner sep=0.75pt]   [align=left] {$\displaystyle 8$ bits};
-% Text Node
-\draw (340,27) node [anchor=south] [inner sep=0.75pt]   [align=left] {$\displaystyle 8$ bits};
-% Text Node
+\draw (340,113) node [anchor=north] [inner sep=0.75pt]   [align=left] {$8$ bits};
+\draw (340,27) node [anchor=south] [inner sep=0.75pt]   [align=left] {$8$ bits};
 \draw (382,45) node [anchor=west] [inner sep=0.75pt]    {$x$};
-% Text Node
 \draw (382,95) node [anchor=west] [inner sep=0.75pt]    {$y$};
-% Text Node
 \draw (515.17,73.4) node [anchor=north] [inner sep=0.75pt]    {$8$};
-
 
 \end{tikzpicture}

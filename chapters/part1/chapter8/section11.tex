@@ -1,9 +1,313 @@
 \section{不依赖抗碰撞的安全性}\label{sec:8-11}
 
+定理 \ref{theo:8-1} 说明了如何使用抗碰撞哈希来扩展 MAC 的领域。很自然地，我们想问，在不依赖抗碰撞函数的情况下，我们是否还能够扩展 MAC 的领域？在这一节中，我们将展示一个较弱的属性，称为抗第二原像性，它足以满足要求。
+
 \subsection{抗第二原像性}\label{subsec:8-11-1}
+
+我们从定义无密钥哈希函数的两个经典安全属性开始，它们分别是单向性和抗第二原像性。令 $H$ 是一个定义在 $(\mathcal{M},\mathcal{T})$ 上的哈希函数。
+\begin{itemize}
+	\item 如果给定 $t:=H(m)$ 作为输入，对于一个随机的 $m\in\mathcal{M}$，很难找到一个 $m'\in\mathcal{M}$ 使得 $H(m')=t$，我们就称 $H$ 是\textbf{单向的(one-way)}。我们称这样的 $m'$ 为 $t$ 的逆元。换句话说，如果 $H$ 很容易计算但是很难取逆，它就是单向的。
+	\item 如果给定一个随机的 $m\in\mathcal{M}$ 作为输入，很难找到一个不同的 $m'\in\mathcal{M}$ 使得 $H(m)=H(m')$，我们称 $H$ 是\textbf{抗第二原像的(2nd-preimage resistant)}。换句话说，给定一个 $m$，找到一个它的碰撞 $m'$ 是很难的。
+	\item 完整起见，我们回顾一下，如果很难找到两条互不相同的消息 $m,m'\in\mathcal{M}$ 使得 $H(m)=H(m')$，我们就称哈希函数 $H$ 是\textbf{抗碰撞的(collision resistant)}。
+\end{itemize}
+下面是对以上概念的更精确的定义。
+
+\begin{definition}\label{def:8-6}
+令 $H$ 是一个定义在 $(\mathcal{M},\mathcal{T})$ 上的哈希函数。
+\begin{itemize}
+	\item 我们定义对手 $\mathcal{A}$ 打破 $H$ 的单向性的优势 $\mathrm{OW}\mathsf{adv}[\mathcal{A},H]$ 为它赢得以下游戏的概率：
+	\begin{itemize}
+		\item 挑战者随机选择一个 $m\in\mathcal{M}$，然后将 $t:=H(m)$ 发送给 $\mathcal{A}$；
+		\item 对手 $\mathcal{A}$ 输出一个 $m'\in\mathcal{M}$。如果 $H(m')=t$，则对手获胜。
+	\end{itemize}
+	如果对于每个有效对手 $\mathcal{A}$，$\mathrm{OW}\mathsf{adv}[\mathcal{A},H]$ 都可忽略不计，我们就称 $H$ 就是\textbf{单向的}。
+	\item 我们定义对手 $\mathcal{A}$ 打破 $H$ 的抗第二原像性的优势 $\mathrm{SPR}\mathsf{adv}[\mathcal{A},H]$ 为它赢得以下游戏的概率：
+	\begin{itemize}
+		\item 挑战者随机选择一个 $m\in\mathcal{M}$，然后将 $m$ 发送给 $\mathcal{A}$；
+		\item 对手 $\mathcal{A}$ 输出一个 $m'\in\mathcal{M}$。如果 $H(m')=H(m)$ 并且 $m\neq m'$，则对手获胜。
+	\end{itemize}
+	如果对于每个有效对手 $\mathcal{A}$，$\mathrm{SPR}\mathsf{adv}[\mathcal{A},H]$ 都可忽略不计，我们就称 $H$ 就是\textbf{抗第二原像的}。
+\end{itemize}
+\end{definition}
+
+让我们先看看这些安全概念之间的一些简单的关系。假设 $H$ 是压缩的，也就是说，$H$ 的领域比它的范围更大。具体来说，假设 $|\mathcal{M}|\geq s\cdot|\mathcal{T}|$，其中，$s>1$ 是压缩因子。那么，如果 $s$ 是超多项式的，我们就有以下推论：
+\begin{equation}\label{eq:8-17}
+H \text{ 是抗碰撞的 }
+\quad\Longrightarrow\quad
+H \text{ 是抗第二原像的 } 
+\quad\Longrightarrow\quad
+H \text{ 是单向的 }
+\end{equation}
+练习 \ref{exer:8-23} 会更详细地说明这一结论。事实上，即使不对 $s$ 施加任何限制，式 \ref{eq:8-17} 中左边的结论也是成立的。
+
+式 \ref{exer:8-23} 的逆命题是不正确的。一个哈希函数可以是抗第二原像但不抗碰撞的。例如，SHA1 就被认为是抗第二原像的，尽管它本身不抗碰撞。同样地，一个哈希函数可以是单向但不抗第二原像的。例如，令 $h$ 是一个定义在 $(\mathcal{M},\mathcal{T})$ 上的单向函数。令 $h'$ 是一个 $(\mathcal{M}\times\{0,1\},\mathcal{T})$ 上的函数，其定义为 $h'(m,b):=h(m)$。那么显然，$h'$ 是单向但不抗第二原像的：给定 $(m,b)\in\mathcal{M}\times\{0,1\}$，输入 $(m,1-b)$ 就是一个第二原像，因为 $h'(m,b)=h'(m,1-b)$。
+
+在这一节中，我们的目标是表明，抗第二原像性对于扩展 MAC 领域和提供文件完整性的目标来说是足够的。为了更直观一点，不妨重新考虑一下文件完整性的问题（我们在本章一开始就讨论过）。我们的目标是确保恶意软件不能修改文件而不被发现。回顾一下，我们使用哈希函数 $H$ 对磁盘上的所有关键文件进行哈希，并将所产生的哈希值存储在只读存储器中。对于一个文件 $F$，恶意软件应当很难找到一个 $F'$ 使得 $H(F')=H(F)$。显然，如果 $H$ 是抗碰撞的，找到这样一个 $F'$ 就是很困难的。然而，$H$ 如果只满足抗第二原像性，似乎也足够了。为了解释原因，考虑恶意软件试图修改一个特定的文件 $F$ 而不被发现。恶意软件将 $F$ 作为输入，而且必须想出一个 $F$ 的第二原像，即一个满足 $H(F')=H(F)$ 的 $F′$。如果 $H$ 是抗第二原像的，恶意软件就无法找到这样的 $F'$，因此，抗第二原像性似乎就足以确保文件完整性。不幸的是，上述论证并非完全有效。我们对抗第二原像性的定义是：在 $\mathcal{M}$ 上找到一个\emph{随机的} $F$ 的第二原像是困难的。但磁盘上的文件不可能是随机的比特序列——为一个随机文件找到第二原像固然可能是很困难的，但为磁盘上的一个特定文件找到第二原像可能相当容易。
+
+解决这一问题的方案是在哈希之前先对数据进行随机化处理。为了做到这一点，我们首先将哈希函数转换为\emph{带密钥}哈希函数。我们要求所产生的带密钥函数满足一个被称为\emph{目标抗碰撞性}的属性，我们下面就来定义该属性。
 
 \subsection{随机化哈希函数：目标抗碰撞性}\label{subsec:8-11-2}
 
+在本章的开头，我们提到了抗碰撞性的两个应用：扩展 MAC 的领域和保护文件的完整性。在这一节中，我们将描述针对这些问题的解决方案，它们都依赖于一种比抗碰撞性更弱的安全属性。由此产生的系统，尽管更有可能是安全的，却往往不如基于抗碰撞性的系统有效。
+
+\begin{snote}[目标抗碰撞性。]
+令 $H$ 是一个带密钥哈希函数。我们用下面的攻击游戏来定义 $H$ 的\textbf{目标抗碰撞性(target collision resistance, TCR)}，如图 \ref{fig:8-14} 所示。
+\end{snote}
+
+\begin{figure}
+	\centering
+	\input{figures/chapter8/fig14.tex}
+	\caption{TCR 攻击游戏}
+	\label{fig:8-14}
+\end{figure}
+
+\begin{game}[目标抗碰撞性]\label{game:8-5}
+对于一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数 $H$ 和一个对手 $\mathcal{A}$，攻击游戏运行如下：
+\begin{itemize}
+	\item $\mathcal{A}$ 向挑战者发送一条消息 $m_0\in\mathcal{M}$。
+	\item 挑战者随机选取一个 $k\overset{\rm R}\leftarrow\mathcal{K}$，并将 $k$ 发送给 $\mathcal{A}$。
+\end{itemize}
+如果 $m_0\neq m_1$ 且 $H(k,m_0)=H(k,m_1)$，我们就称对手赢得该游戏。我们将 $\mathcal{A}$ 就 $H$ 的优势表示为 $\mathrm{TCR}\mathsf{adv}[\mathcal{A},H]$，即 $\mathcal{A}$ 赢得该攻击游戏的概率。
+\end{game}
+
+\begin{definition}\label{def:8-7}
+如果 $\mathrm{TCR}\mathsf{adv}[\mathcal{A},H]$ 是可忽略不计的，我们就称 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数 $H$ 是抗目标碰撞的。
+\end{definition}
+
+
+在我们的正式数学框架中定义上述概念的方式与对通用哈希函数（见 \ref{subsec:7-1-2} 小节）的定义完全一样。
+
+注意到，我们可以把 $(\mathcal{M},\mathcal{T})$ 上的抗碰撞哈希 $H$ 看作是一个空密钥的 TCR 函数。更确切地说，令 $\mathcal{K}$ 是一个只包含空字的，大小为 $1$ 的集合。我们可以定义一个 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的带密钥哈希函数 $H'$，即令 $H'(k,m):=H(m)$。不难看出，如果 $H$ 是抗碰撞的，$H'$ 就是 TCR 的。因此，一个抗碰撞函数可以被看作是最极致的 TCR 哈希——它的密钥是最短的。
+
 \subsection{来自抗第二原像性的 TCR}\label{subsec:8-11-3}
 
-\subsection{使用目标抗碰撞性}\label{subsec:8-11-4}
+下面，我们展示如何从一个无密钥的抗第二原像函数（比如 SHA1）建立一个带密钥的 TCR 哈希函数。令定义在 $(\mathcal{M},\mathcal{T})$ 上哈希 $H$ 是一个抗第二原像的函数。我们构建一个定义在 $(\mathcal{M},\mathcal{M},\mathcal{T})$ 上的带密钥 TCR 函数 $H_\mathrm{tcr}$ 如下：
+\begin{equation}\label{eq:8-18}
+H_\mathrm{tcr}(k,m)=H(k\oplus m)
+\end{equation}
+注意，密钥的长度 $k$ 就等于被哈希的消息的长度。对于我们所考虑的应用来说，这是一个问题。因此，我们将只使用这种构造作为短信息的 TCR 哈希。首先，我们证明这个构造是安全的。
+
+\begin{theorem}\label{theo:8-12}
+假设 $H$ 是抗第二原像的，$H_\mathrm{tcr}$ 就是 TCR 的。
+\begin{quote}
+特别地，对于每个如攻击游戏 \ref{game:8-5} 中那样攻击 $H_\mathrm{tcr}$ 的 TCR 对手 $\mathcal{A}$，都存在一个第二原像查找器 $\mathcal{B}$，它是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
+\end{quote}
+\[
+\mathrm{TCR}\mathsf{adv}[\mathcal{A},H_\mathrm{tcr}]
+\leq
+\mathrm{SPR}\mathsf{adv}[\mathcal{B},H]
+\]
+\end{theorem}
+
+\begin{proof}
+该证明就是一个简单直接的归约。对手 $\mathcal{B}$ 模仿攻击游戏 \ref{game:8-5} 中的挑战者，其工作方式如下：
+
+\vspace{5pt}
+
+\hspace*{5pt} 输入：一个随机的 $m\in\mathcal{M}$\\
+\hspace*{26pt} 输出：一个满足 $m\neq m'$ 且 $H(m)=H(m')$ 的 $m'\in\mathcal{M}$
+
+\vspace{5pt}
+
+\hspace*{5pt} 1. \quad 运行 $\mathcal{A}$，并从 $\mathcal{A}$ 处获得一个 $m_0\in\mathcal{M}$\\
+\hspace*{26pt} 2. \quad 令 $k\leftarrow m\oplus m_0$\\
+\hspace*{26pt} 3. \quad 将 $k$ 作为哈希密钥发送给 $\mathcal{A}$\\
+\hspace*{26pt} 4. \quad $\mathcal{A}$ 用一个 $m_1\in\mathcal{M}$ 作为应答\\
+\hspace*{26pt} 5. \quad 输出 $m'=m_1\oplus k$
+
+\vspace{5pt}
+
+\noindent
+我们声称 $\mathrm{SPR}\mathsf{adv}[\mathcal{B},H]=\mathrm{TCR}\mathsf{adv}[\mathcal{A},H_\mathrm{tcr}]$。首先，我们用 $W$ 表示在第 $4$ 步中，$\mathcal{A}$ 输出的消息 $m_1$ 与 $m_0$ 不同，且 $H_\mathrm{tcr}(k,m_0)=H_\mathrm{tcr}(k,m_1)$ 成立的事件。
+
+由于 $\mathcal{B}$ 收到的输入 $m$ 均匀分布在 $\mathcal{M}$ 上，那么在第 $3$ 步中，$\mathcal{A}$ 收到的密钥 $k$ 也均匀分布在 $\mathcal{M}$ 上，并且与当前 $\mathcal{A}$ 的观察无关，正如攻击游戏 \ref{game:8-5} 所要求的。由此可见，$\mathcal{B}$ 完美地模仿了攻击游戏 \ref{game:8-5} 中的挑战者，因此 $\Pr[W]=\mathrm{TCR}\mathsf{adv}[\mathcal{A},H_\mathrm{tcr}]$。
+
+根据 $H_\mathrm{tcr}$ 的定义，我们还有以下结论：
+\begin{equation}\label{eq:8-19}
+\begin{aligned}
+& H_\mathrm{tcr}(k,m_0) = H\big((m\oplus m_0)\oplus m_0\big)=H(m)\\
+& H_\mathrm{tcr}(k,m_1) = H(m_1\oplus k) = H(m')
+\end{aligned}
+\end{equation}
+现在，我们假设事件 $W$ 发生。那么 $H_\mathrm{tcr}(k,m_0)=H_\mathrm{tcr}(k,m_1)$ 成立，因此，根据式 \ref{eq:8-19}，我们有 $H(m)=H(m')$。其次，我们可以推导出 $m\neq m'$，这是因为 $m_0\neq m_1$，且 $m'=m\oplus(m_1\oplus m_0)$。因此，当事件 $W$ 发生时，$\mathcal{B}$ 输出 $m$ 的一个第二原像。于是，我们可以得到：
+\[
+\mathrm{SPR}\mathsf{adv}[\mathcal{B},H]
+\geq
+\Pr[W]
+=
+\mathrm{TCR}\mathsf{adv}[\mathcal{A},H_\mathrm{tcr}]
+\]
+正如定理所要求的。
+\end{proof}
+
+\begin{snote}[用于长输入的目标抗碰撞性。]
+式 \ref{eq:8-18} 中的函数 $H_\mathrm{tcr}$ 表明，一个抗第二原像的函数能够直接给出一个 TCR 函数。如果我们假设 SHA256 的压缩函数 $h$ 是抗第二原像的（这个假设比假设 $h$ 是抗碰撞的要弱），那么，根据定理 \ref{theo:8-12}，我们就能得到一个输入长度为 $512+265=768$ 比特的 TCR 哈希。它所需密钥的长度也是 $768$ 比特。
+
+我们往往需要能用于更长输入的 TCR 函数。当使用 SHA256 压缩函数时，我们已经知道如何用一个短的密钥为短的输入建立 TCR 哈希。因此，假设我们有一个定义在 $(\mathcal{K},\mathcal{T}\times\mathcal{M},\mathcal{T})$ 上的 TCR 函数 $h$，其中 $\mathcal{M}:=\{0,1\}^\ell$，$\ell$ 是某个小整数，比如 $\ell=512$。下面，我们想为更大的输入建立一个新的 TCR 哈希。具体地说，我们建立一个\textbf{派生 TCR 哈希(derived TCR hash)} $H$，它使用 $(\mathcal{K}\times\mathcal{T}^{1+\log_2L})$ 上的密钥对 $\{0,1\}^{\leq\ell L}$ 上的消息进行哈希。请注意，在这里，密钥的长度是消息长度的\emph{对数}，这比式 \ref{eq:8-18} 的情况要好得多。
+
+为了描述函数 $H$，我们需要一个辅助函数 $\nu:\mathbb{Z}^{>0}\to\mathbb{Z}^{>0}$，它的定义为：
+\[
+\nu(x):=\text{能够使得}\;\, 2^n \text{ 整除}\;\, x \text{ 的最大的}\;\, n\in\mathbb{Z}^{>0}
+\]
+$\nu(x)$ 实际上计算的就是 $x$ 的最小有效比特中零的数量。比如说，如果 $x$ 是奇数，则 $\nu(x)=0$；如果 $x=2^n$，则 $\nu(x)=n$。请注意，对于 $99$\% 以上的整数，都有 $\nu(x)\leq 7$。
+
+\begin{figure}
+	\centering
+	\input{figures/chapter8/fig15.tex}
+	\caption{扩展一个 TCR 哈希的领域}
+	\label{fig:8-15}
+\end{figure}
+
+派生 TCR 哈希 $H$ 与 Merkle-Damg{\aa}rd 类似。它使用与 Merkle-Damg{\aa}rd 相同的填充分组 $\mathrm{PB}$，以及一个固定的初始值 $\mathrm{IV}$。派生的 TCR 哈希定义如下（另见图 \ref{fig：8-15}）：
+
+\vspace{5pt}
+
+\hspace*{5pt} 输入：消息 $M\in\{0,1\}^{\leq\ell L}$ 和密钥 $(k_1,k_2)\in\mathcal{K}\times\mathcal{T}^{1+\log_2L}$\\
+\hspace*{26pt} 输出：一个 $t\in\mathcal{T}$
+
+\vspace{5pt}
+
+\hspace*{5pt} 令 $M\leftarrow M\,\Vert\,\mathrm{PB}$\\
+\hspace*{26pt} 将 $M$ 拆分为一连串的 $\ell$ 比特分组，满足：\\
+\hspace*{70pt} $M=m_1\,\Vert\,m_2\,\Vert\,\cdots\,\Vert\,m_s$，其中 $m_1,\dots,m_s\in\{0,1\}^\ell$\\
+\hspace*{26pt} 令 $t_0\leftarrow\mathrm{IV}$\\
+\hspace*{26pt} 对于 $i=1,\dots,s$：\\
+\hspace*{50pt} 令 $u\leftarrow k_2[\nu(i)]\oplus t_{i-1}\in\mathcal{T}$\\
+\hspace*{50pt} 令 $t_i\leftarrow h\big(k_1,\,(u,m_i)\big)\in\mathcal{T}$\\
+\hspace*{26pt} 输出 $t_s$
+
+\vspace{5pt}
+
+\noindent
+我们可以注意到，直接使用 Merkle-Damg{\aa}rd 来扩展 TCR 哈希的领域是不可行的。将 $h(k_1,\cdot)$ 直接接驳到 Merkle-Damg{\aa}rd 上可能无法得到一个 TCR 哈希。
+\end{snote}
+
+\begin{snote}[派生哈希的安全性。]
+下面的定理表明，假设底层哈希 $h$ 是 TCR 的，则派生哈希 $H$ 也是 TCR 的。关于该定理的证明，请参考 [133, 105]。
+\end{snote}
+
+\begin{theorem}\label{theo:8-13}
+假设 $h$ 是一个 TCR 哈希函数，它对 $(\mathcal{T}\times\{0,1\}^\ell)$ 上的消息进行哈希。那么，对于任何有界的 $L$，派生函数 $H$ 对于 $\{0,1\}^{\leq\ell L}$ 上的消息也是一个 TCR 哈希。
+\begin{quote}
+特别地，假设 $\mathcal{A}$ 是一个如攻击游戏 \ref{game:8-5} 中那样攻击 $H$ 的 TCR 对手。那么，存在一个 TCR 对手 $\mathcal{B}$，其运行时间与 $\mathcal{A}$ 基本相同，满足：
+\end{quote}
+\[
+\mathrm{TCR}\mathsf{adv}[\mathcal{A},H]
+\leq
+L\cdot\mathrm{TCR}\mathsf{adv}[\mathcal{B},h]
+\]
+\end{theorem}
+
+与 Merkle-Damg{\aa}rd 一样，这种构造本身也是串行的。与练习 \ref{exer:8-9} 类似的一种基于树的构造提供了一种使用对数长度密钥的 TCR 哈希，它更适合用于并行设备上。详情请参考 [13]。
+
+\subsection{利用目标抗碰撞性}\label{subsec:8-11-4}
+
+我们现在已经知道如何基于一个小的抗第二原像函数建立一个用于大输入的 TCR 函数。下面，我们将展示如何使用这样的 TCR 函数来扩展 MAC 的领域，以及确保文件的完整性。我们先从文件完整性的问题开始。
+
+\subsubsection{文件完整性}\label{subsubsec:8-11-4-1}
+
+令 $H$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{T})$ 上的 TCR 哈希。我们想在只使用少量只读存储器的前提下，利用 $H$ 来保护文件 $F_1,F_2,\dots\in\mathcal{M}$ 的完整性。我们的想法是，为每个文件 $F_i$ 挑选一个 $\mathcal{K}$ 上的随机密钥 $r_i$，然后将数对 $(r_i,\,H(r_i,F_i))$ 存储在只读存储器中。请注意，我们使用的只读存储器比基于抗碰撞性的系统要稍微多一点。为了验证文件 $F_i$ 的完整性，我们只需重新计算 $H(r_i,F_i)$，并将其与存储在只读存储器中的哈希值进行比较。
+
+为什么这种机制是安全的？考虑一个针对特定文件 $F$ 的恶意软件。对于该文件，我们在只读存储器中存储了密钥 $r$ 和 $t:=H(r,F)$。为了修改 $F$ 而不被发现，恶意软件必须拿出一个新的文件 $F'$，并且使得 $t=H(r,F')$。换句话说，恶意软件的输入是文件 $F$ 和随机密钥 $r\in\mathcal{K}$，它必须生成一个新的 $F'$，使得 $H(r,F)=H(r,F')$。对手（在这种情况下，对手就是恶意软件的作者）选择攻击哪个文件 $F$。但上述攻击恰好就是 TCR 攻击游戏 \ref{game:8-5}——对手选择一个 $F$，获取一个随机密钥 $r$，且必须输出一个新的 $F'$，它在 $r$ 下与 $F$ 碰撞。因此，如果 $H$ 是 TCR 	的，恶意软件就无法修改 $F$ 而不被发现。
+
+综上所述，我们可以使用少量的只读存储器，并仅依靠抗第二原像性来确保文件完整性。与基于抗碰撞性的系统相比，代价是，我们需要更多的只读存储器来存储密钥 $r$。特别地，使用上一节介绍的 TCR 构造，额外所需的只读存储器的数量是被保护文件数量的对数。使用递归构造（见练习 \ref{exer:8-25}），我们可以进一步地将额外的只读存储器使用量降低到一个小的常数，但它仍然是非零的。
+
+\subsubsection{扩展 MAC 的领域}\label{subsubsec:8-11-4-2}
+
+令 $H$ 是一个定义在 $(\mathcal{K}_H,\mathcal{M},\mathcal{T})$ 上的 TCR 哈希。令 $\mathcal{I}=(S,V)$ 是一个 MAC，它使用 $\mathcal{K}$ 上的密钥对 $\mathcal{K}_H\times\mathcal{T}$ 上的短消息进行认证。我们假设 $\mathcal{M}$ 远大于 $\mathcal{T}$。我们想要建立一个新的 MAC $\mathcal{I}'=(S',V')$，它使用 $\mathcal{K}$ 上的密钥对 $\mathcal{M}$ 上的消息进行认证，原理如下：
+\begin{equation}\label{eq:8-20}
+\begin{array}{ll}
+S'(k,\,m):= \qquad\qquad\qquad\qquad\qquad\qquad & V'(k,\,m,\,(t,r)):=\\
+\qquad\qquad r\overset{\rm R}\leftarrow\mathcal{K}_H & \qquad\qquad h\leftarrow H(r,m)\\
+\qquad\qquad h\leftarrow H(r,m) & \qquad\qquad \text{输出}\;\, V(k,\,(r,h),\,t)\\
+\qquad\qquad t\leftarrow S(k,\,(r,h)) & \\
+\qquad\qquad \text{输出}\;\, (t,r) & 
+\end{array}
+\end{equation}
+请注意，MAC 签名是随机的——我们随机挑选一个 TCR 密钥 $r$，将 $r$ 包含在签名算法 $S$ 的输入中，并且输出 $r$ 作为最终标签的一部分。因此，这个 MAC 所产生的标签比由抗碰撞哈希扩展而来的 MAC 所产生的标签要长（如 \ref{sec:8-2} 节）。使用上一节所介绍的构造，$r$ 的长度是被认证消息长度的对数。这个额外的对数长度的密钥被包含在每个标签中。从好的方面看，这种构造只依赖于 $H$ 是 TCR 这一事实，而 TCR 是一个比抗碰撞性弱得多的属性，因此对 $H$ 来说，它更有可能成立。
+
+下面的定理证明了上面的式 \ref{eq:8-20} 中构造的安全性。该定理与定理 \ref{theo:8-1} 类似，对它的证明也与定理 \ref{theo:8-1} 类似。但是请注意，它的误差界限并不像定理 \ref{theo:8-1} 中的界限那样严格。
+
+\begin{theorem}\label{theo:8-14}
+假设 MAC 系统 $\mathcal{I}$ 是一个安全的 MAC，哈希函数 $H$ 是 TCR 的。那么式 \ref{eq:8-20} 中定义的派生 MAC 系统 $\mathcal{I}'=(S',V')$ 也是一个安全的 MAC。
+\begin{quote}
+特别地，对于每个如攻击游戏 \ref{game:6-1} 中那样攻击 $\mathcal{I}'$ 的 MAC 对手 $\mathcal{A}$，如果它最多能够发起 $Q$ 次签名查询，则存在一个有效 MAC 对手 $\mathcal{B}_\mathcal{I}$ 和一个有效 TCR 对手 $\mathcal{B}_H$，它们都是围绕 $\mathcal{A}$ 的基本包装器，满足：
+\end{quote}
+\[
+\mathrm{MAC}\mathsf{adv}[\mathcal{A},\mathcal{I}']
+\leq
+\mathrm{MAC}\mathsf{adv}[\mathcal{B}_\mathcal{I},\mathcal{I}]+
+Q\cdot\mathrm{TCR}\mathsf{adv}[\mathcal{B}_H,H]
+\]
+\end{theorem}
+
+\begin{proof}[证明思路]
+我们的目标是证明，不存在能够成功地攻击 $\mathcal{I}'$ 的有效 MAC 对手。这样的对手 $\mathcal{A}$ 要求挑战者签署一些长信息 $m_1,m_2,\dots\in\mathcal{M}$，并得到 $i=1,2,\dots$ 的标签 $(t_i,r_i)$。然后，它试图制造一个新的有效消息-MAC对 $(m,(t,r))$。如果 $\mathcal{A}$ 能够产生一个有效的伪造 $(m,(t,r))$，那么以下两件事情中的一件将会发生：
+\begin{enumerate}
+	\item 要么存在某个 $i$ 使得 $(r,H(r,m))$ 与 $(r_i,H(r_i,m_i))$ 相等；
+	\item 要么不存在这样的 $i$。
+\end{enumerate}
+不难看出，第二种类型的伪造可以用来攻击底层的 MAC $\mathcal{I}$。我们声称，第一种类型的伪造可以用来打破 $H$ 的目标抗碰撞性。事实上，如果 $(r,H(r,m))=(r_i,H(r_i,m_i))$，就有 $r=r_i$，因此，我们有 $H(r,m)=H(r,m_i)$。那么 $m_i$ 和 $m$ 在随机密钥 $r$ 下发生碰撞。我们将表明，这让我们能够建立一个对手 $\mathcal{B}_H$，它能在攻击 $H$ 时赢得 TCR 攻击游戏。不幸的是，$\mathcal{B}_H$ 必须提前猜测 $\mathcal{A}$ 的查询中哪一个被用作了 $m_i$。由于有 $Q$ 个查询可供选择，$\mathcal{B}_H$ 也就会以 $1/Q$ 的概率猜中。这也就是误差项中多出一个 $Q$ 因子的原因。
+\end{proof}
+
+\begin{proof}
+令 $X$ 是对手 $\mathcal{A}$ 就 $\mathcal{I}'$ 赢得 MAC 攻击游戏 \ref{game:6-1} 的事件。令 $m_1,m_2,\dots\in\mathcal{M}$ 是 $\mathcal{A}$ 在游戏中的查询，并令 $(t_1,r_1),(t_2,r_2),\dots$ 为挑战者的应答。此外，令 $(m,(t,r))$ 为对手的最终输出。我们定义两个额外的事件：
+\begin{itemize}
+	\item 令 $Y$ 表示如下事件：对于某个 $i=1,2,\dots$，我们有 $(r,H(r,m))=(r_i,H(r_i,m_i))$，且 $m\neq m_i$。
+	\item 让 $Z$ 表示如下事件：$\mathcal{A}$ 就 $\mathcal{I}'$ 赢得攻击游戏 \ref{game:6-1}，且事件 $Y$ 没有发生。
+\end{itemize}
+那么：
+\begin{equation}\label{eq:8-21}
+\mathrm{MAC}\mathsf{adv}[\mathcal{A},\mathcal{I}']=
+\Pr[X]\leq
+\Pr[X\land\lnot Y]+\Pr[Y]=
+\Pr[Z]+\Pr[Y]
+\end{equation}
+为了证明该定理，我们构造一个 TCR 对手 $\mathcal{B}_H$ 和一个 MAC 对手 $\mathcal{B}_\mathcal{I}$，使得：
+\[
+\Pr[Y]\leq
+Q\cdot\mathrm{TCR}\mathsf{adv}[\mathcal{B}_H,H]
+\quad\text{and}\quad
+\Pr[Z]=\mathrm{MAC}\mathsf{adv}[\mathcal{B}_\mathcal{I},\mathcal{I}]
+\]
+对手 $\mathcal{B}_\mathcal{I}$ 在本质上与定理 \ref{theo:8-1} 的证明中的 $\mathcal{B}_\mathcal{I}$ 是相同的。这里，我们只描述 TCR 对手 $\mathcal{B}_H$，它模拟 $\mathcal{A}$ 的一个 MAC 挑战者，如下所示：
+
+\vspace{5pt}
+
+\hspace*{5pt} 随机选取 $k\overset{\rm R}\leftarrow\mathcal{K}$\\
+\hspace*{26pt} 随机选取 $u\overset{\rm R}\leftarrow\{1,2,\dots,Q\}$\\
+\hspace*{26pt} 运行算法 $\mathcal{A}$
+
+\vspace{5pt}
+
+\hspace*{5pt} 当从 $\mathcal{A}$ 处收到第 $i$ 个签名查询 $m_i\in\mathcal{M}$ 时：\\
+\hspace*{50pt} 如果 $i\neq u$：\\
+\hspace*{75pt} 随机选取 $r_i\overset{\rm R}\leftarrow\mathcal{K}_H$\\
+\hspace*{50pt} 否则：\quad //\quad\emph{$i=u$：对于 $u$ 号查询，从 TCR 挑战者那里得到 $r_i$} \\
+\hspace*{75pt} $\mathcal{B}_H$ 将 $\hat{m}_0:=m_i$ 发送给它自己的 TCR 挑战者\\
+\hspace*{75pt} $\mathcal{B}_H$ 从它的挑战者那里收到一个随机密钥 $\hat{r}\in\mathcal{K}$\\
+\hspace*{75pt} 令 $r_i\leftarrow\hat{r}$\\
+\hspace*{50pt} 令 $h\leftarrow H(r_i,m_i)$\\
+\hspace*{50pt} 令 $t\leftarrow S(k,\,(r_i,h))$\\
+\hspace*{50pt} 将 $(t,r)$ 发送给 $\mathcal{A}$
+
+\vspace{5pt}
+
+\hspace*{5pt} 当从 $\mathcal{A}$ 处收到最终的消息-标签对 $(m,(t,r))$ 时：\\
+\hspace*{50pt} $\mathcal{B}_H$ 将 $\hat{m}_1:=m$ 发送给它的挑战者
+
+\vspace{5pt}
+
+算法 $\mathcal{B}_H$ 对 $\mathcal{A}$ 的签名查询的应答与真实的 MAC 攻击游戏中完全一样。因此，在与 $\mathcal{B}_H$ 的交互中，事件 $Y$ 发生的概率与真实的 MAC 攻击游戏中发生的概率相同。现在，当事件 $Y$ 发生时，存在一个 $j\in\{1,2,\dots\}$ 使得 $(r,H(r,m))=(r_j,H(r_j,m_j))$，且 $m\neq m_j$。进一步地，假设 $j=u$。那么$r=r_j=\hat{r}$，因此 $H(\hat{r},m)=H(\hat{r},m_u)$。因此，如果事件 $Y$ 发生，且 $j=u$，那么 $\mathcal{B}_H$ 就赢得了 TCR 攻击游戏。用符号表示，即：
+\[
+\mathrm{TCR}\mathsf{adv}[\mathcal{B}_H,H]=\Pr[Y\land(j=u)]
+\]
+注意，$u$ 与 $\mathcal{A}$ 的观察无关——它只被用于选择 $\mathcal{B}_H$ 的挑战者的随机密钥 $r_i$，但无论 $u$ 是多少，给 $\mathcal{A}$ 的密钥 $r_i$ 总是均匀且随机的。因此，事件 $Y$ 与事件 $j=u$ 无关。出于同样的原因，如果对手总共进行了 $w$ 次查询，就有 $\Pr[j=u]=1/w\geq 1/Q$。综上所述，我们有：
+\[
+\mathrm{TCR}\mathsf{adv}[\mathcal{B}_H,H]=
+\Pr[Y\land(j=u)]
+=\Pr[Y]\cdot\Pr[j=u]
+\geq\Pr[Y]/Q
+\]
+这与定理所要求的一致。
+\end{proof}

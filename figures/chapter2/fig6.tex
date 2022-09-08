@@ -1,55 +1,27 @@
-
-
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\tikzset{every picture/.style={line width=0.75pt}}
 
 \begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-0.9,xscale=0.9]
-%uncomment if require: \path (0,375); %set diagram left start at 0, and has height of 375
 
-%Shape: Rectangle [id:dp5548922081000456] 
-\draw  [line width=1.2]  (0,80) -- (180,80) -- (180,330) -- (0,330) -- cycle ;
-%Shape: Rectangle [id:dp19285364524907167] 
-\draw  [line width=1.2]  (290,80) -- (410,80) -- (410,330) -- (290,330) -- cycle ;
-%Straight Lines [id:da571672102922014] 
-\draw    (180,260) -- (287,260) ;
-\draw [shift={(290,260)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da07899877021341561] 
-\draw    (290,220) -- (183,220) ;
-\draw [shift={(180,220)}, rotate = 360] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da11078007250773103] 
-\draw    (290,300) -- (183,300) ;
-\draw [shift={(180,300)}, rotate = 360] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da17843260190085597] 
-\draw    (180,180) -- (287,180) ;
-\draw [shift={(290,180)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da13914618224206587] 
-\draw    (220,0) -- (220,40) -- (90,40) -- (90,77) ;
-\draw [shift={(90,80)}, rotate = 270] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da19585893451875314] 
-\draw    (220,0) -- (220,40) -- (350,40) -- (350,77) ;
-\draw [shift={(350,80)}, rotate = 270] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
+\draw  [line width=1.2] (0,80) -- (180,80) -- (180,330) -- (0,330) -- cycle ;
+\draw  [line width=1.2] (290,80) -- (410,80) -- (410,330) -- (290,330) -- cycle ;
 
-% Text Node
+\draw  [->]  (180,260) -- (290,260) ;
+\draw  [->]  (290,220) -- (180,220) ;
+\draw  [->]  (290,300) -- (180,300) ;
+\draw  [->]  (180,180) -- (290,180) ;
+\draw  [->]  (220,0) -- (220,40) -- (90,40) -- (90,80) ;
+\draw  [->]  (220,0) -- (220,40) -- (350,40) -- (350,80) ;
+
 \draw (90,100) node   [align=left] {挑战者};
-% Text Node
-\draw (90,125) node   [align=left] {(实验 $\displaystyle b$)};
-% Text Node
+\draw (90,125) node   [align=left] {(实验 $b$)};
 \draw (32,220) node [anchor=west] [inner sep=0.75pt]    {$k\overset{\mathrm{R}}{\leftarrow }\mathcal{K}_{\lambda ,\Lambda }$};
-% Text Node
 \draw (32,250) node [anchor=west] [inner sep=0.75pt]    {$c\overset{\mathrm{R}}{\leftarrow } E( \lambda ,\Lambda ;k,m_{b})$};
-% Text Node
-\draw (235,256.6) node [anchor=south] [inner sep=0.75pt]    {$c$};
-% Text Node
-\draw (235,296.6) node [anchor=south] [inner sep=0.75pt]    {$\hat{b} \in \{0,1\}$};
-% Text Node
-\draw (235,216.6) node [anchor=south] [inner sep=0.75pt]    {$m_{0} ,m_{1} \in \mathcal{M}_{\lambda ,\Lambda }$};
-% Text Node
+\draw (235,256.6) node [anchor=south] [inner sep=0.75pt]   {$c$};
+\draw (235,296.6) node [anchor=south] [inner sep=0.75pt]   {$\hat{b} \in \{0,1\}$};
+\draw (235,216.6) node [anchor=south] [inner sep=0.75pt]   {$m_{0} ,m_{1} \in \mathcal{M}_{\lambda ,\Lambda }$};
 \draw (350,100) node    {$\mathcal{A}$};
-% Text Node
 \draw (90,155) node    {$\Lambda \overset{\mathrm{R}}{\leftarrow } P( \lambda )$};
-% Text Node
-\draw (235,176.6) node [anchor=south] [inner sep=0.75pt]    {$\Lambda $};
-% Text Node
-\draw (222,20) node [anchor=west] [inner sep=0.75pt]    {$\lambda $};
-
+\draw (235,176.6) node [anchor=south] [inner sep=0.75pt]   {$\Lambda $};
+\draw (222,20) node [anchor=west][inner sep=0.75pt]    {$\lambda $};
 
 \end{tikzpicture}
