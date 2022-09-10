@@ -1,41 +1,23 @@
-
-
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\tikzset{every picture/.style={line width=0.75pt}}
 
 \begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
-%uncomment if require: \path (0,131); %set diagram left start at 0, and has height of 131
 
-%Shape: Rectangle [id:dp6213501369790264] 
+
 \draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (80,50) -- (120,50) -- (120,90) -- (80,90) -- cycle ;
-%Flowchart: Extract [id:dp45395708678858604] 
-\draw   (85,60) -- (80,63.5) -- (80,56.5) -- cycle ;
-%Straight Lines [id:da3909590911131742] 
-\draw    (60,20) -- (60,60) -- (77,60) ;
-\draw [shift={(80,60)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da7881352421405503] 
-\draw    (0,80) -- (77,80) ;
-\draw [shift={(80,80)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da8532940758222685] 
-\draw    (120,70) -- (180,70) ;
-\draw [shift={(183,70)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da7749634704321691] 
-\draw    (197,70) -- (257,70) ;
-\draw [shift={(260,70)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da7444681012671952] 
-\draw    (60,80.01) -- (60,110) -- (190,110.01) -- (190,80) ;
-\draw [shift={(190,77)}, rotate = 90] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Shape: Circle [id:dp5202075010118248] 
 \draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (58.5,80.01) .. controls (58.5,79.18) and (59.17,78.51) .. (60,78.51) .. controls (60.83,78.51) and (61.5,79.18) .. (61.5,80.01) .. controls (61.5,80.84) and (60.83,81.51) .. (60,81.51) .. controls (59.17,81.51) and (58.5,80.84) .. (58.5,80.01) -- cycle ;
 
-% Text Node
+\draw   (85,60) -- (80,63.5) -- (80,56.5) -- cycle ;
+
+\draw  [->]  (60,20) -- (60,60) -- (79,60) ;
+\draw  [->]  (0,80) -- (79,80) ;
+\draw  [->]  (120,70) -- (184,70) ;
+\draw  [->]  (196,70) -- (260,70) ;
+\draw  [->]  (60,80) -- (60,110) -- (190,110) -- (190,77) ;
+
 \draw (60,16.6) node [anchor=south] [inner sep=0.75pt]    {$y:=m_{i} \in \mathcal{K}$};
-% Text Node
 \draw (100,70) node    {$E$};
-% Text Node
 \draw (2,76.6) node [anchor=south west] [inner sep=0.75pt]    {$x:=t_{i-1}$};
-% Text Node
 \draw (190,70) node  [font=\large]  {$\oplus $};
-% Text Node
 \draw (300,66.6) node [anchor=south] [inner sep=0.75pt]    {$t_{i} :=E( m_{i},\,t_{i-1}) \oplus t_{i-1} \in \mathcal{X}$};
 
 

@@ -303,8 +303,6 @@ p-1/|\mathcal{M}|
 
 在本节中，我们将在一个具体的例子，即电子赌博的背景下研究语义安全的后果。这个例子的具体细节并不那么重要，但是这个例子说明了我们通常是如何在应用中使用语义安全假设的。
 
-% TODO: here
-
 考虑下面这个极其简化的轮盘赌版本，它是一种在\emph{庄荷(house)}与一个\emph{玩家(player)}之间进行的游戏。玩家给庄荷 $1$ 美元，然后它可以选择下面两种赌注中的一种：
 \begin{itemize}
 	\item ``高或低"，或者
@@ -319,7 +317,7 @@ p-1/|\mathcal{M}|
 \end{itemize}
 时，玩家获胜。如果玩家赢了，庄荷将付给它 $2$ 美元（即玩家净赚 $1$ 美元）；如果玩家输了，庄荷将不会付给它钱（即玩家净输 $1$ 美元）。显然，在这个游戏中，庄荷有一个虽然小但仍然显著的优势：玩家获胜的概率只有 $18/37\approx48.65\%$。
 
-现在，假设这个游戏是在互联网上进行的。此外，假设由于某些技术原因，在玩家下注\emph{之前}，赌场需要公布 $r$ 的加密（也许由某个与赌场共享密钥的监管机构来解密）。玩家可以在下注前自由地分析这条加密消息，以此试图来增加它赢钱的机会。然而，如果这个密码是好的，玩家获胜的机会应该不能增加太多。让我们来证明这一点，假设 $r$ 是用一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的密码 $\mathcal{E}=(E,D)$ 加密的，其中 $\mathcal{M}=\{0,1,\dots,36\}$（在这个例子中，$\mathcal{M}$ 中的所有消息都被视为具有相同的长度）。另外，从现在开始，让我们称玩家为 $\mathcal{A}$，以强调玩家的对抗性，并假设 $\mathcal{A}$ 的策略可以被建模为一种有效算法。图 \ref{fig:2-2} 展示了这个游戏。这里，\emph{赌注(bet)}表示``高"、``低"、``偶"、``奇"中的一个。玩家 $\mathcal{A}$ 将 $\mathit{bet}$ 发送给庄荷，庄荷会评估函数 $W(r,\mathit{bet})$。如果 $\mathit{bet}$ 就 $r$ 而言是获胜的，该函数的值就为 $1$，否则就为 $0$。我们定义：
+现在，假设这个游戏是在互联网上进行的。此外，假设由于某些技术原因，在玩家下注\emph{之前}，赌场需要公布 $r$ 的加密（也许由某个与赌场共享密钥的监管机构来解密）。玩家可以在下注前自由地分析这条加密消息，以此试图来增加它赢钱的机会。然而，如果这个密码是好的，玩家获胜的机会应该不能增加太多。让我们来证明这一点，假设 $r$ 是用一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的密码 $\mathcal{E}=(E,D)$ 加密的，其中 $\mathcal{M}=\{0,1,\dots,36\}$（在这个例子中，$\mathcal{M}$ 中的所有消息都被视为具有相同的长度）。另外，从现在开始，让我们称玩家为 $\mathcal{A}$，以强调它的对抗性，并假设 $\mathcal{A}$ 的策略可以被建模为一个有效算法。图 \ref{fig:2-2} 展示了这个游戏。这里，\emph{赌注(bet)}表示``高"、``低"、``偶"、``奇"中的一个。玩家 $\mathcal{A}$ 将 $\mathit{bet}$ 发送给庄荷，庄荷会评估函数 $W(r,\mathit{bet})$。如果 $\mathit{bet}$ 就 $r$ 而言是获胜的，该函数的值就为 $1$，否则就为 $0$。我们定义：
 \[
 \mathrm{IR}\mathsf{adv}[\mathcal{A}]
 :=
@@ -341,15 +339,18 @@ p-1/|\mathcal{M}|
 如果 $\mathcal{E}$ 是语义安全的，那么对于每个有效玩家 $\mathcal{A}$，${\rm IR\mathsf{adv}}[\mathcal{A}]$ 的值都可忽略不计。
 \end{theorem}
 
-\begin{proof}
-如我们在 \ref{subsec:2-2-3} 节所做的那样，我们仍然通过安全归约来证明这一点。更具体地说，我们将证明，对于每个玩家 $\mathcal{A}$，都存在一个语义安全对手 $\mathcal{B}$，使得 $\mathcal{B}$ 是 $\mathcal{A}$ 的一个基本包装器，并且：
+\vspace{5pt}
+
+如我们在 \ref{subsec:2-2-3} 节所做的那样，我们通过归约来证明这一点。更具体地说，我们将证明，对于每个玩家 $\mathcal{A}$，都存在一个语义安全对手 $\mathcal{B}$，使得 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
 \begin{equation}\label{eq:2-7}
-{\rm IR\mathsf{adv}}[A]={\rm SS\mathsf{adv}}[\mathcal{B},\mathcal{E}]
+\mathrm{IR}\mathsf{adv}[\mathcal{A}]
+=
+\mathrm{SS}\mathsf{adv}[\mathcal{B},\mathcal{E}]
 \end{equation}
 
-因此，如果存在一个优势不可忽略不计的有效玩家 $\mathcal{A}$，我们就能够得到一个有效的语义安全对手 $\mathcal{B}$，它可以打破 $\mathcal{E}$ 的语义安全性，而我们已经假设这是不可能的。因此，不存在这样的 $\mathcal{A}$。
+因此，如果存在一个优势不可忽略不计的有效玩家 $\mathcal{A}$，我们就能够得到一个有效的语义安全对手 $\mathcal{B}$，它可以打破 $\mathcal{E}$ 的语义安全性，而我们已经假设这是不可能的。因此，这样的 $\mathcal{A}$ 也是不存在的。
 
-为了分析我们的新对手 $\mathcal{B}$，我们先考虑一个``理想化"的互联网轮盘赌版本。在这个版本中，庄荷不公布实际的 $r$ 的加密，而是公布一个``假"值的加密，例如 $0$。图 \ref{fig:2-3} 展示了这个理想化的网络轮盘赌的逻辑。然而，请注意，在理想化版本的互联网轮盘赌中，庄荷仍然使用 $r$ 的实际值来决定游戏的结果。令 $p_0$ 为 $\mathcal{A}$ 在互联网轮盘赌中获胜的概率，$p_1$ 为 $\mathcal{A}$ 在理想化互联网轮盘赌中获胜的概率。
+为了分析我们的新对手 $\mathcal{B}$，我们先考虑一个``理想化"的网络轮盘赌版本。在这个版本中，庄荷不公布实际的 $r$ 的加密，而是公布一个``假"值——例如 $0$——的加密。图 \ref{fig:2-3} 展示了这个理想化的网络轮盘赌的逻辑。但是请注意，在理想化版本的网络轮盘赌中，庄荷仍然使用\emph{实际的} $r$ 值来决定游戏的结果。令 $p_0$ 为 $\mathcal{A}$ 在网络轮盘赌中获胜的概率，$p_1$ 为 $\mathcal{A}$ 在理想化版本的网络轮盘赌中获胜的概率。
 
 \begin{figure}
 	\centering
@@ -365,41 +366,45 @@ p-1/|\mathcal{M}|
 	\label{fig:2-4}
 \end{figure}
 
-我们的对手 $\mathcal{B}$ 被设计为在攻击游戏 \ref{game:2-1} 中进行游戏。因此，如果令 $\hat b$ 表示 $\mathcal{B}$ 在该游戏中的输出，我们有：
+我们的对手 $\mathcal{B}$ 被设计成在攻击游戏 \ref{game:2-1} 中进行游戏。因此，如果令 $\hat b$ 表示 $\mathcal{B}$ 在该游戏中的输出，我们就有：
 \begin{itemize}
-	\item 如果 $\mathcal{B}$ 被置于实验 $0$ 中，那么有 $\Pr[\hat b=1]=p_0$；
-	\item 如果 $\mathcal{B}$ 被置于实验 $1$ 中，那么有 $\Pr[\hat b=1]=p_1$。
+	\item 如果 $\mathcal{B}$ 被置于实验 $0$ 中，则有 $\Pr[\hat b=1]=p_0$；
+	\item 如果 $\mathcal{B}$ 被置于实验 $1$ 中，则有 $\Pr[\hat b=1]=p_1$。
 \end{itemize}
-图 \ref{fig:2-4} 展示了对手 $\mathcal{B}$ 的运行逻辑。通过构造可以看出，$\mathcal{B}$ 满足上面所声称的属性，特别是：
+图 \ref{fig:2-4} 展示了对手 $\mathcal{B}$ 的运行逻辑。通过构造，我们可以看出，$\mathcal{B}$ 显然满足上面所声称的属性，特别是：
 \begin{equation}\label{eq:2-8}
-{\rm SS\mathsf{adv}}[\mathcal{B},\mathcal{E}]=|p_1-p_0|
+\mathrm{SS}\mathsf{adv}[\mathcal{B},\mathcal{E}]
+=
+|p_1-p_0|
 \end{equation}
 
-现在，考虑 $\mathcal{A}$ 在理想化互联网轮盘赌中获胜的概率 $p_1$。不管 $\mathcal{A}$ 的策略有多高明，它获胜的概率始终是 $18/37$，因为在这个理想化互联网轮盘赌中，\emph{赌注}的值是由 $c$ 计算出来的，而 $c$ 在统计上与 $r$ 的值毫无关系。因此：
+现在，考虑 $\mathcal{A}$ 在理想化网络轮盘赌中获胜的概率 $p_1$。不管 $\mathcal{A}$ 的策略有多高明，它获胜的概率始终是 $18/37$。这是因为，在这个理想化网络轮盘赌中，$\mathit{bet}$ 的值是基于 $c$ 计算出来的，而后者在统计上与 $r$ 值毫完全无关。因此：
 \begin{equation}\label{eq:2-9}
-{\rm IR\mathsf{adv}}[A]=|p_1-p_0|
+\mathrm{IR}\mathsf{adv}[\mathcal{A}]
+=
+|p_1-p_0|
 \end{equation}
 
 结合式 \ref{eq:2-8} 和式 \ref{eq:2-9}，我们就能得到式 \ref{eq:2-7}。
-\end{proof}
 
-我们之后会反复使用这里用来分析互联网轮盘赌的方法。其基本思想是用一个理想化的系统组件替换原来的组件，然后分析这个新的、理想化版本的系统行为。
+\vspace{5pt}
 
-从上述例子中得到的另一个教训是，在推理一个系统的安全性时，我们将什么视为``对手"，取决于我们想要做什么。在上面的分析中，我们用几个组件拼凑了一个新的对手 $\mathcal{B}$：其中一个组件是原来的对手 $\mathcal{A}$，而其他组件则是从系统的其他部分（在这个例子中是``庄荷"的算法）搜刮来的。这在我们全书的安全分析中会非常典型。直观地说，如果我们想象一个系统图，在安全分析的不同点上，我们将在系统的不同组件周围画一个圆圈，以确定我们在分析那个点时的``对手"。
+我们用来分析网络轮盘赌的方法将会在后文中一遍又一遍地出现。其基本思想是讲一个系统组件用它的一个理想化版本替换，然后分析这个新的理想化版本系统的行为。
 
-\subsection{比特猜测：语义安全性的另一种表征}\label{subsec:2-2-5}
+从上述例子中得到的另一个教训是，在推理一个系统的安全性时，我们将什么视为``对手"，取决于我们想要做什么。在上面的分析中，我们用几个组件拼凑了一个新的对手 $\mathcal{B}$：其中一个组件是原来的对手 $\mathcal{A}$，而其他组件则是从系统的其他部分（在这个例子中，是``庄荷"的算法）搜刮来的。这是本书将会反复使用的一种典型的安全分析方法。直观地说，如果我们想象系统的一幅结构图，在安全证明的各个阶段，我们会在系统的不同组件周围画一个圆圈，以指明在该分析阶段中，我们认为谁是``对手"。
 
-\ref{subsec:2-2-4} 小节中的例子很典型，它说明人们可以使用语义安全的定义来分析使用语义安全密码的较大系统的安全属性。然而，语义安全还有另一种更便于使用的表征，当我们试图证明一个给定的密码满足该定义时，它往往更方便使用。在这个替代性的表述中，我们定义一个新的攻击游戏。对手所扮演的角色与之前完全相同。然而，我们现在不再进行两个不同的实验，而是只有一个单一的实验。在这个\textbf{比特猜测版本(bit-guessing version)}的攻击游戏中，挑战者随机选择一个比特 $b\in\{0,1\}$并运行攻击游戏 \ref{game:2-1} 中的实验 $b$；对手的目标是以明显优于 ${1}/{2}$ 的概率猜中比特 $b$。下面是该攻击游戏的详细情况。
+\subsection{比特猜测：语义安全性的另一种表示}\label{subsec:2-2-5}
+
+\ref{subsec:2-2-4} 小节中的例子非常典型，它说明，我们可以使用语义安全性的定义来分析那些使用语义安全密码的较大系统的安全属性。然而，语义安全性还有另一种表示，当我们试图证明一个给定密码满足语义安全性的定义时，这种表示往往更便于使用。在这个替代性的表示中，我们定义了一个新的攻击游戏。其中，对手所扮演的角色与之前完全相同。然而，我们现在不再进行两个不同的实验，而是只进行一次实验。在这个\textbf{比特猜测版本(bit-guessing version)}的攻击游戏中，挑战者随机选择一个比特 $b\in\{0,1\}$ 并运行攻击游戏 \ref{game:2-1} 中的实验 $b$；对手的目标是以明显优于 $1/2$ 的概率猜中比特 $b$。下面是这个攻击游戏的详细情况：
 
 \begin{game}[语义安全性：比特猜测版本]\label{game:2-4}
-给定一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的密码 $\mathcal{E}=(E,D)$，对于一个给定对手 $\mathcal{A}$，攻击游戏按如下方式运行：
+对于一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的给定密码 $\mathcal{E}=(E,D)$ 和一个给定对手 $\mathcal{A}$，攻击游戏按如下方式运行：
 \begin{itemize}
-	\item 对手 $\mathcal{A}$ 计算相同长度的 $m_0, m_1\in\mathcal{M}$，并将它们发送给挑战者。
-	\item 挑战者计算 $b\overset{\rm R}\leftarrow\{0,1\}$，$k\overset{\rm R}\leftarrow\mathcal{K}$，$c\overset{\rm R}\leftarrow E(k,m_b)$，并将 $c$ 发送给对手。
+	\item 对手 $\mathcal{A}$ 计算 $m_0,m_1\in\mathcal{M}$（其中 $m_0$ 和 $m_1$ 的长度相同），并将它们发送给挑战者。
+	\item 挑战者计算 $b\overset{\rm R}\leftarrow\{0,1\}$，$k\overset{\rm R}\leftarrow\mathcal{K}$ 和 $c\overset{\rm R}\leftarrow E(k,m_b)$，并将 $c$ 发送给对手。
 	\item 对手输出一个比特 $\hat b\in\{0,1\}$。
 \end{itemize}
-
-如果 $\hat b=b$，我们就称 $\mathcal{A}$ \textbf{赢得}这个游戏。
+如果 $\hat b=b$，我们就称 $\mathcal{A}$ \textbf{赢得}了这个游戏。
 \end{game}
 
 \begin{figure}
@@ -409,21 +414,23 @@ p-1/|\mathcal{M}|
 	\label{fig:2-5}
 \end{figure}
 
-图 \ref{fig:2-5} 展示了攻击游戏 \ref{game:2-4}。请注意，在这个游戏中，$\mathcal{A}$ 赢得游戏的事件是由 $b$ 与 $k$ 的随机选择、加密算法的随机选择（如果有的话）和对手的随机选择（如果有的话）共同构成的概率空间所定义的。
+图 \ref{fig:2-5} 展示了攻击游戏 \ref{game:2-4}。请注意，在这个游戏中，$\mathcal{A}$ 赢得游戏的事件是就 $b$ 与 $k$ 的随机选择、加密算法的随机选择（如果有的话）和对手的随机选择（如果有的话）所决定的概率空间而言的。
 
-当然，任何对手都能以 ${1}/{2}$ 的概率赢得游戏，只需要完全忽略 $c$ 并随机选择 $\hat b$（或者说总是选择$\hat b=0$或总是选择$\hat b =1$）。我们感兴趣的是，对手能比随机猜测好多少。如果用 $W$ 表示对手赢得上述攻击游戏的比特猜测版本的事件，那么我们感兴趣的是 $|\Pr[W]-{1}/{2}|$ 的值，我们用 ${\rm SS\mathsf{adv}}^∗[\mathcal{A},\mathcal{E}]$ 表示该值。于是，我们有：
+当然，任何对手都能以 $1/2$ 的概率赢得游戏，为此，它只需完全忽略 $c$，并随机选择 $\hat b$（或者说，总是将 $\hat{b}$ 选定为 $0$ 或者 $1$）即可。我们感兴趣的是，对手能\emph{比}随机猜测\emph{好}多少。如果用 $W$ 表示对手赢得上述攻击游戏的比特猜测版本的事件，那么我们感兴趣的就是 $|\Pr[W]-1/2|$ 的值，我们将它记为 ${\rm SS\mathsf{adv}}^∗[\mathcal{A},\mathcal{E}]$。那么，我们有：
 
 \begin{theorem}\label{theo:2-10}
 对于每个密码 $\mathcal{E}$ 和每个对手 $\mathcal{A}$，我们都有：
 \begin{equation}\label{eq:2-10}
-{\rm SS\mathsf{adv}}[\mathcal{B},\mathcal{E}]= 2\cdot{\rm SS\mathsf{adv}}^∗[\mathcal{A},\mathcal{E}]
+\mathrm{SS}\mathsf{adv}[\mathcal{B},\mathcal{E}]
+=
+2\cdot{\rm SS\mathsf{adv}}^∗[\mathcal{A},\mathcal{E}]
 \end{equation}
 \end{theorem}
 
 \begin{proof}
 这只是一个简单的计算。令 $p_0$ 是对手在攻击游戏 \ref{game:2-1} 的实验 $0$ 中输出 $1$ 的概率，$p_1$ 是对手在攻击游戏 \ref{game:2-1} 的实验 $1$ 中输出 $1$ 的概率。
 
-现在考虑攻击游戏 \ref{game:2-4}。从现在开始，所有的事件和概率都是关于这个游戏的。如果我们以 $b=0$ 这一事件为条件，那么在这个条件概率空间中，挑战者和对手的所有其他随机选择的分布方式与攻击游戏 \ref{game:2-1} 的实验 $0$ 中的相应数值应该完全相同。因此，如果 $\hat b$ 是攻击游戏 \ref{game:2-4} 中对手的输出，则有：
+现在，考虑攻击游戏 \ref{game:2-4}。从现在开始，所有的事件和概率都是就这个游戏而言的。如果我们以 $b=0$ 这一事件为条件，那么在这个条件概率空间中，所有挑战者和对手所做的其他的随机选择的分布方式都应当与攻击游戏 \ref{game:2-1} 的实验 $0$ 中的相应数值完全相同。因此，如果 $\hat b$ 是攻击游戏 \ref{game:2-4} 中对手的输出，则有：
 \[
 \Pr[\hat b=1\,|\,b=0]=p_0
 \]
@@ -437,32 +444,38 @@ p-1/|\mathcal{M}|
 \Pr[\hat b=b]
 &=\Pr[\hat b=b\,|\,b=0]\cdot\Pr[b=0]+\Pr[\hat b=b\,|\,b=1]\cdot\Pr[b=1]\\
 &=\Pr[\hat b=0\,|\,b=0]\cdot \frac{1}{2}+\Pr[\hat b=b\,|\,b=1]\cdot\frac{1}{2}\\
-& =\frac{1}{2}(1-\Pr[\hat b=1\,|\,b=0]+\Pr[\hat b=1\,|\,b=1])\\
-& =\frac{1}{2}(1-p_0+p_1)
+& =\frac{1}{2}\left(1-\Pr[\hat b=1\,|\,b=0]+\Pr[\hat b=1\,|\,b=1]\right)\\
+& =\frac{1}{2}\left(1-p_0+p_1\right)
 \end{aligned}
 \]
 因此：
 \[
-{\rm SS\mathsf{adv}}^∗[\mathcal{A},\mathcal{E}]=|\Pr[\hat b=b]-\frac{1}{2}|=\frac{1}{2}|p_1-p_0|=\frac{1}{2}\cdot{\rm SS\mathsf{adv}}[\mathcal{B},\mathcal{E}]
+\mathrm{SS}\mathsf{adv}^∗[\mathcal{A},\mathcal{E}]
+=\bigg\lvert\Pr[\hat b=b]-\frac{1}{2}\bigg\rvert
+=\frac{1}{2}|p_1-p_0|
+=\frac{1}{2}\cdot\mathrm{SS}\mathsf{adv}[\mathcal{B},\mathcal{E}]
 \]
 这就证明了该定理。
 \end{proof}
 
-就像把 ${\rm SS\mathsf{adv}}[\mathcal{A},\mathcal{E}]$ 称为 $\mathcal{A}$ 的``语义安全优势"一样，我们将把 ${\rm SS\mathsf{adv}}^∗[\mathcal{A},\mathcal{E}]$ 称为 $\mathcal{A}$ 的``比特猜测语义安全优势"。
+就像把 ${\rm SS\mathsf{adv}}[\mathcal{A},\mathcal{E}]$ 称为 $\mathcal{A}$ 的``语义安全优势"一样，我们把 ${\rm SS\mathsf{adv}}^∗[\mathcal{A},\mathcal{E}]$ 称为 $\mathcal{A}$ 的``比特猜测语义安全优势"。
 
 \subsubsection{一种推广}
 
-事实证明，上面的情况是相当普遍的。虽然我们在本章中不需要它，但为了将来参考，我们在此指出如何推广上述情况到更一般的场景。我们可能会遇到一些情况，对于一些密码学系统（称为``$\mathcal{S}$"），其中的一些特定的安全属性（称为``$X$"）可以用涉及两个实验（实验$0$和实验$1$）的攻击游戏来定义，其中对手 $\mathcal{A}$ 的协议在两个实验中是相同的，而挑战者的协议则是不同的。对于 $b=0,1$，我们定义 $W_b$ 为 $\mathcal{A}$ 在实验 $b$ 中输出为 $1$ 的事件，我们还定义：
+事实证明，上面的情况是相当普遍的。虽然我们在本章中还不需要它，但为了将来的参考，我们在此指出如何把上述情况推广到更一般的场景。我们可能会遇到一些情况，对于某个密码学系统（称为``$\mathcal{S}$"），其中的某个特定的安全属性（称为``$X$"）可以用涉及两个实验（实验 $0$ 和实验 $1$）的攻击游戏来定义，其中，对手 $\mathcal{A}$ 的协议在这两个实验中都是相同的，而挑战者的则不同。对于 $b=0,1$，我们定义 $W_b$ 为 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件，我们还定义：
 \[
-{\rm X\mathsf{adv}}[\mathcal{A},\mathcal{S}]:=|\Pr[W_0] -\Pr[W_1]|
+\mathrm{X}\mathsf{adv}[\mathcal{A},\mathcal{S}]
+:=\big\lvert\Pr[W_0] -\Pr[W_1]\big\rvert
 \]
-是 $\mathcal{A}$ 的 ``$X$ 优势"。就像上面一样，我们总是可以定义该攻击游戏的比特猜测版本，此时，挑战者随机选择一个 $b\in\{0,1\}$，然后运行实验 $b$ 作为它的协议。如果令 $W$ 是对手 $\mathcal{A}$ 的输出为 $b$ 的事件，那么我们定义：
+是 $\mathcal{A}$ 的 ``$X$ 优势"。就像上面一样，我们总是可以为这个攻击游戏定义一个比特猜测版本，其中，挑战者的协议要求它随机选择一个 $b\in\{0,1\}$，然后运行实验 $b$。如果记 $W$ 为对手 $\mathcal{A}$ 的输出等于 $b$ 的事件，那么我们定义：
 \[
-{\rm X\mathsf{adv}}^*[\mathcal{A},\mathcal{S}]:=|\Pr[W]-{1}/{2}|
+\mathrm{X}\mathsf{adv}^*[\mathcal{A},\mathcal{S}]
+:=\big\lvert\Pr[W]-{1}/{2}\big\rvert
 \]
-是 $\mathcal{A}$ 的``比特猜测$X$优势"。
+是 $\mathcal{A}$ 的``比特猜测 $X$ 优势"。
 
 使用与定理 \ref{theo:2-10} 的证明完全相同的计算方法，我们有：
 \begin{equation}\label{eq:2-11}
-{\rm X\mathsf{adv}}[\mathcal{A},\mathcal{S}]=2\cdot{\rm X\mathsf{adv}}^*[\mathcal{A},\mathcal{S}]
+\mathrm{X}\mathsf{adv}[\mathcal{A},\mathcal{S}]
+=2\cdot\mathrm{X}\mathsf{adv}^*[\mathcal{A},\mathcal{S}]
 \end{equation}

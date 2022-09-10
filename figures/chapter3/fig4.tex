@@ -6,24 +6,29 @@
 \draw  [line width=1.2]  (440,40) -- (580,40) -- (580,260) -- (440,260) -- cycle ;
 \draw  [dash pattern={on 5.63pt off 4.5pt}][line width=1.2]  (270,0) -- (600,0) -- (600,330) -- (270,330) -- cycle ;
 
-\draw  [->]  (270,120) -- (180,120) ;
-\draw  [->]  (440,240) -- (350,240) -- (350,275) ;
-\draw  [->]  (440,90) -- (350,90) -- (350,130) ;
-\draw  [->]  (440,200) -- (350,200) -- (350,170) ;
-\draw  [->]  (380,300) -- (180,300) ;
+\draw  [->]  (440,90) -- (350,90) -- (350,125) ;
+\draw  [<-]  (268,150) -- (180,150) ;
+\draw  [<-]  (439,200) -- (350,200) -- (350,172) ;
+\draw  [->]  (440,240) -- (350,240) -- (350,270) ;
+\draw  [->]  (380,300) -- (181,300) ;
 
 \draw [shift={(380,300)}, rotate = 360]  (0,4.47) -- (0,-4.47) ;
 
-\draw (490,60) node    {$\mathcal{A}$};
 \draw (90,105) node   [align=left] {$\displaystyle G$ 的 PRG 挑战者};
-\draw (225,116.6) node [anchor=south] [inner sep=0.75pt]    {$r\in \{0,1\}^{L}$};
-\draw (277,135) node [anchor=west] [inner sep=0.75pt]    {$b\overset{\mathrm{R}}{\leftarrow }\{0,1\}$};
+\draw (510,60) node    {$\mathcal{A}$};
 \draw (300,30) node    {$\mathcal{B}$};
-\draw (277,160) node [anchor=west] [inner sep=0.75pt]    {$c\leftarrow r[ 0\dotsc v-1] \oplus m_{b}$};
-\draw (395,196.6) node [anchor=south] [inner sep=0.75pt]    {$c$};
-\draw (355,78) node    {$( |m_{0} |=|m_{1} |=v)$};
-\draw (355,55) node    {$m_{0} ,m_{1} \in \{0,1\}^{\leq L}$};
-\draw (395,236.6) node [anchor=south] [inner sep=0.75pt]    {$\hat{b} \in \{0,1\}$};
-\draw (350,276) node [anchor=north] [inner sep=0.75pt]    {$\delta (\hat{b} ,b)$};
+
+
+\draw (225,146) node [anchor=south] [inner sep=0.75pt][font=\small]    {$r\in \{0,1\}^{L}$};
+
+
+\draw (350,55) node [font=\small]   {$m_{0} ,m_{1} \in \{0,1\}^{\leq L}$};
+\draw (350,75) node [font=\small]   {$( |m_{0} |=|m_{1} |=v)$};
+\draw (290,135) node [anchor=west] [inner sep=0.75pt][font=\small]    {$b\overset{\mathrm{R}}{\leftarrow }\{0,1\}$};
+\draw (290,160) node [anchor=west] [inner sep=0.75pt][font=\small]    {$c\leftarrow r[ 0\dotsc v-1] \oplus m_{b}$};
+\draw (395,198) node [anchor=south] [inner sep=0.75pt][font=\small]    {$c$};
+\draw (395,238) node [anchor=south] [inner sep=0.75pt] [font=\small]   {$\hat{b} \in \{0,1\}$};
+\draw (350,275) node [anchor=north] [inner sep=0.75pt]  [font=\small]  {$\delta (\hat{b} ,b)$};
+
 
 \end{tikzpicture}

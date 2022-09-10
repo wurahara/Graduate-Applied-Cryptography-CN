@@ -3,25 +3,25 @@
 \begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-0.9,xscale=0.9]
 
 \draw [line width=1.2]  (0,40) -- (180,40) -- (180,290) -- (0,290) -- cycle ;
-\draw  [line width=1.2] (400,40) -- (520,40) -- (520,290) -- (400,290) -- cycle ;
+\draw  [line width=1.2] (420,40) -- (540,40) -- (540,290) -- (420,290) -- cycle ;
 \draw  [line width=1.2, dash pattern={on 4.5pt off 4.5pt}] (270,0) -- (560,0) -- (560,330) -- (270,330) -- cycle ;
 
-\draw  [->]  (180,165) -- (400,165) ;
-\draw  [->]  (270,230) -- (180,230) ;
-\draw  [->]  (270,100) -- (180,100) ;
-\draw  [->]  (400,200) -- (330,200) -- (330,240) ;
+\draw  [->]  (270,115) -- (181,115) ;
+\draw  [->]  (180,165) -- (419,165) ;
+\draw  [->]  (270,255) -- (181,255) ;
+\draw  [->]  (420,200) -- (330,200) -- (330,240) ;
 
-\draw (22,140) node [anchor=west] [inner sep=0.75pt]    {$k\overset{\mathrm{R}}{\leftarrow }\mathcal{K}$};
-\draw (225,155) node    {$c$};
+\draw (22,120) node [anchor=west] [inner sep=0.75pt]    {$k\overset{\mathrm{R}}{\leftarrow }\mathcal{K}$};
+\draw (225,158) node    {$c$};
 \draw (460,60) node    {$\mathcal{A}$};
-\draw (330.02,250) node    {$\hat{b}\leftarrow W( r,bet)$};
+\draw (340,250) node    {$\hat{b}\leftarrow W(r,\mathit{bet})$};
 \draw (90,60) node   [align=left] {挑战者};
-\draw (90,80) node   [align=left] {(实验 $\displaystyle b$)};
-\draw (22,170) node [anchor=west] [inner sep=0.75pt]    {$c\overset{\mathrm{R}}{\leftarrow } E( k,m_{b})$};
-\draw (225,215) node    {$\hat{b}$};
-\draw (225,87) node    {$m_{0} ,m_{1}$};
+\draw (90,85) node   [align=left] {(实验 $b$)};
+\draw (22,150) node [anchor=west] [inner sep=0.75pt]    {$c\overset{\mathrm{R}}{\leftarrow } E( k,m_{b})$};
+\draw (225,243) node    {$\hat{b}$};
+\draw (225,105) node    {$m_{0} ,m_{1}$};
 \draw (282,65) node [anchor=west] [inner sep=0.75pt]    {$r\overset{\mathrm{R}}{\leftarrow }\{0,1,\dotsc ,36\}$};
-\draw (368.1,185.95) node    {$bet$};
+\draw (375,188) node    {$\mathit{bet}$};
 \draw (282,90) node [anchor=west] [inner sep=0.75pt]    {$m_{0}\leftarrow r$};
 \draw (282,110) node [anchor=west] [inner sep=0.75pt]    {$m_{1}\leftarrow 0$};
 \draw (300,30) node    {$\mathcal{B}$};

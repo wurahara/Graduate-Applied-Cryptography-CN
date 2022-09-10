@@ -7,12 +7,14 @@
 \draw  [line width=1.2]  (0,300) -- (180,300) -- (180,550) -- (0,550) -- cycle ;
 \draw  [line width=1.2]  (290,300) -- (410,300) -- (410,550) -- (290,550) -- cycle ;
 
-\draw  [->]  (180,180) -- (290,180) ;
-\draw  [->]  (290,220) -- (180,220) ;
-\draw  [->]  (290,140) -- (180,140) ;
-\draw  [->]  (180,480) -- (290,480) ;
-\draw  [->]  (290,520) -- (180,520) ;
-\draw  [->]  (290,440) -- (180,440) ;
+\draw  [->]  (290,140) -- (181,140) ;
+\draw  [->]  (180,180) -- (289,180) ;
+\draw  [->]  (290,220) -- (181,220) ;
+
+\draw  [->]  (290,440) -- (181,440) ;
+\draw  [->]  (180,480) -- (289,480) ;
+\draw  [->]  (290,520) -- (181,520) ;
+
 
 \draw [dash pattern={on 4.5pt off 4.5pt}] [<-]  (243.7,172.35) .. controls (241.98,179.91) and (238.73,185) .. (235,185) .. controls (229.48,185) and (225,173.81) .. (225,160) .. controls (225,146.19) and (229.48,135) .. (235,135) .. controls (239.21,135) and (242.81,141.5) .. (244.29,150.71) ;
 
@@ -20,20 +22,21 @@
 
 \draw (90,20) node   [align=left] {挑战者};
 \draw (90,40) node   [align=left] {(实验 $ 0$)};
-\draw (45,110) node [anchor=west] [inner sep=0.75pt]    {$k\overset{\mathrm{R}}{\leftarrow }\mathcal{K}$};
-\draw (45,140) node [anchor=west] [inner sep=0.75pt]    {$y_{i}\leftarrow E( k,x_{i})$};
-\draw (200,176.6) node [anchor=south] [inner sep=0.75pt]    {$y_{i}$};
-\draw (235,216.6) node [anchor=south] [inner sep=0.75pt]    {$\hat{b} \in \{0,1\}$};
+\draw (45,90) node [anchor=west] [inner sep=0.75pt]    {$k\overset{\mathrm{R}}{\leftarrow }\mathcal{K}$};
+\draw (45,155) node [anchor=west] [inner sep=0.75pt]    {$y_{i}\leftarrow E( k,x_{i})$};
+\draw (265,136.6) node [anchor=south] [inner sep=0.75pt][font=\small]    {$x_{i} \in \mathcal{X}$};
+\draw (200,176.6) node [anchor=south] [inner sep=0.75pt][font=\small]    {$y_{i}$};
+\draw (235,216.6) node [anchor=south] [inner sep=0.75pt][font=\small]    {$\hat{b} \in \{0,1\}$};
+
 \draw (350,20) node    {$\mathcal{A}$};
 \draw (90,320) node   [align=left] {挑战者};
 \draw (90,340) node   [align=left] {(实验 $ 1$)};
 \draw (350,320) node    {$\mathcal{A}$};
-\draw (45,410) node [anchor=west] [inner sep=0.75pt]    {$f\overset{\mathrm{R}}{\leftarrow }\mathrm{Perm}[\mathcal{X}]$};
-\draw (45,440) node [anchor=west] [inner sep=0.75pt]    {$y_{i}\leftarrow f( x_{i})$};
-\draw (265,136.6) node [anchor=south] [inner sep=0.75pt]    {$x_{i} \in \mathcal{X}$};
-\draw (200,476.6) node [anchor=south] [inner sep=0.75pt]    {$y_{i}$};
-\draw (235,516.6) node [anchor=south] [inner sep=0.75pt]    {$\hat{b} \in \{0,1\}$};
-\draw (265,436.6) node [anchor=south] [inner sep=0.75pt]    {$x_{i} \in \mathcal{X}$};
+\draw (45,390) node [anchor=west] [inner sep=0.75pt]    {$f\overset{\mathrm{R}}{\leftarrow }\mathrm{Perm}[\mathcal{X}]$};
+\draw (45,455) node [anchor=west] [inner sep=0.75pt]    {$y_{i}\leftarrow f( x_{i})$};
+\draw (265,436.6) node [anchor=south] [inner sep=0.75pt][font=\small]    {$x_{i} \in \mathcal{X}$};
+\draw (200,476.6) node [anchor=south] [inner sep=0.75pt][font=\small]    {$y_{i}$};
+\draw (235,516.6) node [anchor=south] [inner sep=0.75pt][font=\small]    {$\hat{b} \in \{0,1\}$};
 
 
 \end{tikzpicture}

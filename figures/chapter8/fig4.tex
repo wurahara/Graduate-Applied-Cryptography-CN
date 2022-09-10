@@ -1,56 +1,31 @@
-
-
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\tikzset{every picture/.style={line width=0.75pt}}
 
 \begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-0.9,xscale=0.9]
-%uncomment if require: \path (0,343); %set diagram left start at 0, and has height of 343
 
-%Shape: Rectangle [id:dp8098095381265016] 
+
 \draw  [line width=1.2]  (0,80) -- (180,80) -- (180,330) -- (0,330) -- cycle ;
-%Shape: Rectangle [id:dp47377557896614086] 
 \draw  [line width=1.2]  (460,40) -- (560,40) -- (560,260) -- (460,260) -- cycle ;
-%Shape: Rectangle [id:dp07165761495442435] 
 \draw  [dash pattern={on 5.63pt off 4.5pt}][line width=1.2]  (250,0) -- (579.88,0) -- (579.88,330) -- (250,330) -- cycle ;
-%Straight Lines [id:da18489757378889804] 
-\draw    (357,140) -- (180,140) ;
-\draw [shift={(360,140)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da8215947073646004] 
-\draw    (341.5,240) -- (183,240) ;
-\draw [shift={(180,240)}, rotate = 360] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da7807963168658003] 
-\draw    (460,90) -- (360,90) -- (360,107) ;
-\draw [shift={(360,110)}, rotate = 270] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da27034107619576186] 
-\draw    (457,160) -- (360,160) -- (360,140) ;
-\draw [shift={(460,160)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da5183454781751893] 
-\draw    (360,110) -- (183,110) ;
-\draw [shift={(180,110)}, rotate = 360] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Shape: Arc [id:dp5325262890339448] 
-\draw  [draw opacity=0] (450.96,160.03) .. controls (448.45,163.2) and (445.57,165) .. (442.5,165) .. controls (432.84,165) and (425,147.09) .. (425,125) .. controls (425,102.91) and (432.84,85) .. (442.5,85) .. controls (445.39,85) and (448.12,86.6) .. (450.53,89.45) -- (442.5,125) -- cycle ; \draw    (450.96,160.03) .. controls (448.45,163.2) and (445.57,165) .. (442.5,165) .. controls (432.84,165) and (425,147.09) .. (425,125) .. controls (425,102.91) and (432.84,85) .. (442.5,85) .. controls (444.58,85) and (446.58,85.83) .. (448.43,87.36) ; \draw [shift={(450.53,89.45)}, rotate = 211.34] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ; 
-%Straight Lines [id:da9644391318169321] 
-\draw    (460,240) -- (343,240) ;
-\draw [shift={(340,240)}, rotate = 360] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
 
-% Text Node
+\draw  [->]  (460,90) -- (360,90) -- (360,110) ;
+\draw  [->]  (360,110) -- (181,110) ;
+\draw  [<-]  (360,140) -- (180,140) ;
+\draw  [<-]  (459,160) -- (360,160) -- (360,140) ;
+\draw  [->]  (340,240) -- (181,240) ;
+\draw  [->]  (460,240) -- (340,240) ;
+
+\draw  [->]  (450.96,160.03) .. controls (448.45,163.2) and (445.57,165) .. (442.5,165) .. controls (432.84,165) and (425,147.09) .. (425,125) .. controls (425,102.91) and (432.84,85) .. (442.5,85) .. controls (444.58,85) and (446.58,85.83) .. (448.43,87.36) ;
+
+
 \draw (510,60) node    {$\mathcal{A}$};
-% Text Node
 \draw (90,100) node   [align=left] {MAC 挑战者};
-% Text Node
 \draw (395,86.6) node [anchor=south] [inner sep=0.75pt]    {$m_{i}\in\mathcal{M}$};
-% Text Node
 \draw (215,106.6) node [anchor=south] [inner sep=0.75pt]    {$h_{i}$};
-% Text Node
 \draw (215,136.6) node [anchor=south] [inner sep=0.75pt]    {$t_{i}\in\mathcal{T}$};
-% Text Node
 \draw (262,13) node [anchor=north west][inner sep=0.75pt]   [align=left] {攻击 $\mathcal{I}$ 的 MAC 对手 $\mathcal{B}_\mathcal{I}$};
-% Text Node
 \draw (395,156.6) node [anchor=south] [inner sep=0.75pt]    {$t_{i}\in\mathcal{T}$};
-% Text Node
 \draw (305,106.6) node [anchor=south] [inner sep=0.75pt]    {$h_{i}\leftarrow H(m_{i})$};
-% Text Node
 \draw (262.75,236.6) node [anchor=south west] [inner sep=0.75pt]    {$\big(H(m),\,t\big)$};
-% Text Node
 \draw (400,236.6) node [anchor=south] [inner sep=0.75pt]    {$(m,t)$};
 
 

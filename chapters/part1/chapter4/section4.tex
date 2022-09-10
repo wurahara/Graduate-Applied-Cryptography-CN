@@ -4,7 +4,7 @@
 
 \subsection{定义}
 
-\textbf{伪随机函数 (Pseudo-random function, PRF)} $F$ 是一种确定性算法，它有两个输入：一个密钥 $k\in\mathcal{K}$ 和一个\textbf{输入数据分组} $x\in\mathcal{X}$；它的输出 $y:=F(k,x)\in\mathcal{Y}$ 被称为\textbf{输出数据分组}。我们称 $F$ \textbf{定义在} $(\mathcal{K},\mathcal{X},\mathcal{Y})$ \textbf{上}。
+\textbf{伪随机函数 (pseudo-random function, PRF)} $F$ 是一种确定性算法，它有两个输入：一个密钥 $k\in\mathcal{K}$ 和一个\textbf{输入数据分组} $x\in\mathcal{X}$；它的输出 $y:=F(k,x)\in\mathcal{Y}$ 被称为\textbf{输出数据分组}。我们称 $F$ \textbf{定义在} $(\mathcal{K},\mathcal{X},\mathcal{Y})$ \textbf{上}。
 
 直观地讲，我们对伪随机函数的安全概念表明，对于一个随机选择的密钥 $k$，函数 $F(k,\cdot)$ 对于所有实际目的都应该是一个``看起来像"随机分布的一个从 $\mathcal{X}$ 到 $\mathcal{Y}$ 的映射。为了使这一概念更加精确，我们首先引入一些符号：
 \[

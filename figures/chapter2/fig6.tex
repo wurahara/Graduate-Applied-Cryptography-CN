@@ -5,23 +5,25 @@
 \draw  [line width=1.2] (0,80) -- (180,80) -- (180,330) -- (0,330) -- cycle ;
 \draw  [line width=1.2] (290,80) -- (410,80) -- (410,330) -- (290,330) -- cycle ;
 
-\draw  [->]  (180,260) -- (290,260) ;
-\draw  [->]  (290,220) -- (180,220) ;
-\draw  [->]  (290,300) -- (180,300) ;
-\draw  [->]  (180,180) -- (290,180) ;
-\draw  [->]  (220,0) -- (220,40) -- (90,40) -- (90,80) ;
-\draw  [->]  (220,0) -- (220,40) -- (350,40) -- (350,80) ;
+\draw  [->]  (180,170) -- (289,170) ;
+\draw  [->]  (290,210) -- (181,210) ;
+\draw  [->]  (180,265) -- (289,265) ;
+\draw  [->]  (290,300) -- (181,300) ;
 
+\draw  [->]  (220,0) -- (220,40) -- (90,40) -- (90,79) ;
+\draw  [->]  (220,0) -- (220,40) -- (350,40) -- (350,79) ;
+
+\draw (222,20) node [anchor=west][inner sep=0.75pt]    {$\lambda $};
 \draw (90,100) node   [align=left] {挑战者};
 \draw (90,125) node   [align=left] {(实验 $b$)};
+\draw (90,155) node    {$\Lambda \overset{\mathrm{R}}{\leftarrow } P( \lambda )$};
 \draw (32,220) node [anchor=west] [inner sep=0.75pt]    {$k\overset{\mathrm{R}}{\leftarrow }\mathcal{K}_{\lambda ,\Lambda }$};
 \draw (32,250) node [anchor=west] [inner sep=0.75pt]    {$c\overset{\mathrm{R}}{\leftarrow } E( \lambda ,\Lambda ;k,m_{b})$};
-\draw (235,256.6) node [anchor=south] [inner sep=0.75pt]   {$c$};
-\draw (235,296.6) node [anchor=south] [inner sep=0.75pt]   {$\hat{b} \in \{0,1\}$};
-\draw (235,216.6) node [anchor=south] [inner sep=0.75pt]   {$m_{0} ,m_{1} \in \mathcal{M}_{\lambda ,\Lambda }$};
+
+\draw (235,168) node [anchor=south] [inner sep=0.75pt] [font=\small]  {$\Lambda $};
+\draw (235,208) node [anchor=south] [inner sep=0.75pt] [font=\small]  {$m_{0} ,m_{1} \in \mathcal{M}_{\lambda ,\Lambda }$};
+\draw (235,263) node [anchor=south] [inner sep=0.75pt] [font=\small]  {$c$};
+\draw (235,298) node [anchor=south] [inner sep=0.75pt] [font=\small]  {$\hat{b} \in \{0,1\}$};
 \draw (350,100) node    {$\mathcal{A}$};
-\draw (90,155) node    {$\Lambda \overset{\mathrm{R}}{\leftarrow } P( \lambda )$};
-\draw (235,176.6) node [anchor=south] [inner sep=0.75pt]   {$\Lambda $};
-\draw (222,20) node [anchor=west][inner sep=0.75pt]    {$\lambda $};
 
 \end{tikzpicture}

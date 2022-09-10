@@ -10,26 +10,27 @@
 \draw  [line width=1.2]  (60,120) .. controls (60,111.72) and (66.72,105) .. (75,105) .. controls (83.28,105) and (90,111.72) .. (90,120) .. controls (90,128.28) and (83.28,135) .. (75,135) .. controls (66.72,135) and (60,128.28) .. (60,120) -- cycle ;
 \draw  [line width=1.2]  (350,120) .. controls (350,111.72) and (356.72,105) .. (365,105) .. controls (373.28,105) and (380,111.72) .. (380,120) .. controls (380,128.28) and (373.28,135) .. (365,135) .. controls (356.72,135) and (350,128.28) .. (350,120) -- cycle ;
 
-\draw  [->]  (25,120) -- (60,120) ;
-\draw  [->]  (90,120) -- (125,120) ;
-\draw  [->]  (315,120) -- (350,120) ;
-\draw  [->]  (380,120) -- (415,120) ;
-\draw  [->]  (190,20) -- (150,50) -- (150,80) ;
-\draw  [->]  (205,20) -- (180,50) -- (180,80) ;
-\draw  [->]  (220,20) -- (220,80) ;
-\draw  [->]  (250,20) -- (290,50) -- (290,80) ;
+\draw  [->]  (25,120) -- (59,120) ;
+\draw  [->]  (90,120) -- (124,120) ;
+\draw  [->]  (315,120) -- (349,120) ;
+\draw  [->]  (380,120) -- (414,120) ;
 
-\draw (12.5,120) node  [rotate=-270] [align=left] {$64$ bits};
-\draw (427.5,120) node  [rotate=-270] [align=left] {$64$ bits};
-\draw (220,120) node   [align=left] {$16$ round Feistel network};
-\draw (220,10) node   [align=left] {$56$-bit key};
+\draw  [->]  (190,20) -- (150,50) -- (150,79) ;
+\draw  [->]  (205,20) -- (180,50) -- (180,79) ;
+\draw  [->]  (220,20) -- (220,79) ;
+\draw  [->]  (250,20) -- (290,50) -- (290,79) ;
+
+\draw (12.5,120) node  [rotate=-270] [align=left] [font=\small]{$64$ 比特};
+\draw (427.5,120) node  [rotate=-270] [align=left][font=\small] {$64$ 比特};
+\draw (220,120) node   [align=left] {$16$ 轮 Feistel 网络};
+\draw (220,10) node   [align=left][font=\small] {$56$比特密钥};
 \draw (75,120) node   [align=left] {IP};
 \draw (365,120) node   [align=left] {FP};
-\draw (152,53.4) node [anchor=north west][inner sep=0.75pt]    {$k_{1}$};
-\draw (182,53.4) node [anchor=north west][inner sep=0.75pt]    {$k_{2}$};
-\draw (222,53.4) node [anchor=north west][inner sep=0.75pt]    {$k_{2}$};
-\draw (292,53.4) node [anchor=north west][inner sep=0.75pt]    {$k_{16}$};
-\draw (247,53.4) node [anchor=north west][inner sep=0.75pt]    {$\cdots $};
+\draw (152,53.4) node [anchor=north west][inner sep=0.75pt] [font=\small] {$k_{1}$};
+\draw (182,53.4) node [anchor=north west][inner sep=0.75pt] [font=\small] {$k_{2}$};
+\draw (222,53.4) node [anchor=north west][inner sep=0.75pt] [font=\small] {$k_{2}$};
+\draw (292,53.4) node [anchor=north west][inner sep=0.75pt] [font=\small] {$k_{16}$};
+\draw (252,55) node [anchor=north west][inner sep=0.75pt] [font=\small] {$\cdots $};
 
 
 \end{tikzpicture}

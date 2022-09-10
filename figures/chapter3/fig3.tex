@@ -5,17 +5,21 @@
 \draw  [line width=1.2]  (0,0) -- (180,0) -- (180,250) -- (0,250) -- cycle ;
 \draw  [line width=1.2]  (310,0) -- (430,0) -- (430,250) -- (310,250) -- cycle ;
 
-\draw  [->]  (180,160) -- (310,160) ;
-\draw  [->]  (310,210) -- (180,210) ;
-\draw  [->]  (310,60) -- (180,60) ;
+\draw  [->]  (310,50) -- (181,50) ;
+\draw  [->]  (180,170) -- (309,170) ;
+\draw  [->]  (310,210) -- (181,210) ;
 
 \draw (90,20) node   [align=left] {挑战者};
-\draw (15,65) node [anchor=west] [inner sep=0.75pt]    {$b\overset{\mathrm{R}}{\leftarrow }\{0,1\}$};
-\draw (15,90) node [anchor=west] [inner sep=0.75pt]    {$r\overset{\mathrm{R}}{\leftarrow }\{0,1\}^{L}$};
-\draw (15,115) node [anchor=west] [inner sep=0.75pt]    {$c\leftarrow r[ 0\dotsc v-1] \oplus m_{b}$};
-\draw (245,156.6) node [anchor=south] [inner sep=0.75pt]    {$c$};
-\draw (245,206.6) node [anchor=south] [inner sep=0.75pt]    {$\hat{b} \in \{0,1\}$};
+\draw (15,70) node [anchor=west] [inner sep=0.75pt]    {$b\overset{\mathrm{R}}{\leftarrow }\{0,1\}$};
+\draw (15,100) node [anchor=west] [inner sep=0.75pt]    {$r\overset{\mathrm{R}}{\leftarrow }\{0,1\}^{L}$};
+\draw (15,130) node [anchor=west] [inner sep=0.75pt]    {$c\leftarrow r[ 0\dotsc v-1] \oplus m_{b}$};
+
+
 \draw (370,20) node    {$\mathcal{A}$};
-\draw (245,56.6) node [anchor=south] [inner sep=0.75pt]    {$m_{0} ,m_{1} \in \{0,1\}^{\leq L}$};
-\draw (245,63.4) node [anchor=north] [inner sep=0.75pt]    {$( |m_{0} |=|m_{1} |=v)$};
+
+\draw (245,47) node [anchor=south] [inner sep=0.75pt] [font=\small]   {$m_{0} ,m_{1} \in \{0,1\}^{\leq L}$};
+\draw (245,55) node [anchor=north] [inner sep=0.75pt] [font=\small]   {$( |m_{0} |=|m_{1} |=v)$};
+\draw (245,165) node [anchor=south] [inner sep=0.75pt] [font=\small]  {$c$};
+\draw (245,208) node [anchor=south] [inner sep=0.75pt] [font=\small]  {$\hat{b} \in \{0,1\}$};
+
 \end{tikzpicture}

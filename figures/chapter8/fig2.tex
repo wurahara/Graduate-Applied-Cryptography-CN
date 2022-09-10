@@ -1,55 +1,31 @@
-
-
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\tikzset{every picture/.style={line width=0.75pt}}
 
 \begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
-%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
 
-%Shape: Rectangle [id:dp6923156178145917] 
+
 \draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (0,50) -- (60,50) -- (60,80) -- (0,80) -- cycle ;
-%Shape: Rectangle [id:dp9851386793906534] 
 \draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (0,100) -- (60,100) -- (60,130) -- (0,130) -- cycle ;
-%Shape: Rectangle [id:dp9568990894277873] 
 \draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (0,150) -- (60,150) -- (60,180) -- (0,180) -- cycle ;
-%Shape: Rectangle [id:dp41626996656494497] 
 \draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (120,65) -- (180,65) -- (180,165) -- (120,165) -- cycle ;
-%Straight Lines [id:da9089048035714531] 
-\draw    (60,65) -- (80,65) -- (80,85) -- (117,85) ;
-\draw [shift={(120,85)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da09311466998896534] 
-\draw    (60,165) -- (80,165) -- (80,145) -- (117,145) ;
-\draw [shift={(120,145)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da4890752386624051] 
-\draw    (60,115) -- (117,115) ;
-\draw [shift={(120,115)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Shape: Rectangle [id:dp20515890815744808] 
 \draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (260,100) -- (320,100) -- (320,130) -- (260,130) -- cycle ;
-%Straight Lines [id:da9566695203205391] 
+
 \draw [line width=2.25]    (220,0) -- (220,190) ;
-%Straight Lines [id:da7058218602957043] 
-\draw    (180,115) -- (257,115) ;
-\draw [shift={(260,115)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
 
-% Text Node
+\draw  [->]  (60,65) -- (80,65) -- (80,85) -- (119,85) ;
+\draw  [->]  (60,165) -- (80,165) -- (80,145) -- (119,145) ;
+\draw  [->]  (60,115) -- (119,115) ;
+\draw  [->]  (180,115) -- (259,115) ;
+
+
 \draw (30,65) node   [align=left] {文件 $\displaystyle F_{1}$};
-% Text Node
 \draw (30,115) node   [align=left] {文件 $\displaystyle F_{2}$};
-% Text Node
 \draw (30,165) node   [align=left] {文件 $\displaystyle F_{3}$};
-% Text Node
 \draw (150,85) node    {$H( F_{1})$};
-% Text Node
 \draw (150,115) node    {$H( F_{2})$};
-% Text Node
 \draw (150,145) node    {$H( F_{3})$};
-% Text Node
 \draw (290,115) node    {$H( F_{H})$};
-% Text Node
 \draw (150,50) node   [align=left] {哈希文件 $\displaystyle F_{H}$};
-% Text Node
 \draw (115,3) node [anchor=north] [inner sep=0.75pt]   [align=left] {\underline{磁盘}};
-% Text Node
 \draw (290,3) node [anchor=north] [inner sep=0.75pt]   [align=left] {\underline{只读存储器}};
-
 
 \end{tikzpicture}

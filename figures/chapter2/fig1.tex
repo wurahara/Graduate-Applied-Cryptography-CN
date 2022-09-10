@@ -5,17 +5,19 @@
 \draw  [line width=1.2]  (0,0) -- (180,0) -- (180,250) -- (0,250) -- cycle ;
 \draw  [line width=1.2]  (270,0) -- (390,0) -- (390,250) -- (270,250) -- cycle ;
 
-\draw  [->]  (270,60) -- (180,60) ;
-\draw  [->]  (180,125) -- (270,125) ;
-\draw  [->]  (270,190) -- (180,190) ;
+\draw  [->]  (270,60) -- (181,60) ;
+\draw  [->]  (180,125) -- (269,125) ;
+\draw  [->]  (270,190) -- (181,190) ;
 
 \draw (90,20) node   [align=left] {挑战者};
 \draw (90,40) node   [align=left] {(实验 $b$)};
-\draw (42,100) node [anchor=west] [inner sep=0.75pt]    {$k\overset{\mathrm{R}}{\leftarrow }\mathcal{K}$};
-\draw (42,130) node [anchor=west] [inner sep=0.75pt]    {$c\overset{\mathrm{R}}{\leftarrow} E( k,m_{b})$};
-\draw (225,115) node    {$c$};
-\draw (225,175) node    {$\hat{b} \in \{0,1\}$};
-\draw (225,47) node    {$m_{0} ,m_{1} \in \mathcal{M}$};
+\draw (42,75) node [anchor=west] [inner sep=0.75pt] {$k\overset{\mathrm{R}}{\leftarrow }\mathcal{K}$};
+\draw (42,105) node [anchor=west] [inner sep=0.75pt]  {$c\overset{\mathrm{R}}{\leftarrow} E( k,m_{b})$};
+
+\draw (225,48) node   [font=\small]   {$m_{0} ,m_{1} \in \mathcal{M}$};
+\draw (225,118) node  [font=\small]   {$c$};
+\draw (225,178) node  [font=\small]   {$\hat{b} \in \{0,1\}$};
+
 \draw (330,20) node    {$\mathcal{A}$};
 
 \end{tikzpicture}
