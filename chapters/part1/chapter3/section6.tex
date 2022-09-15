@@ -1,8 +1,8 @@
 \section{案例研究：Salsa 和 ChaCha PRG}\label{sec:3-6}
 
-在实践中，有许多建立PRG和流密码的方法。一种方法是使用 \ref{subsec:3-4-2} 小节中介绍的Blum-Micali 范式来构建 PRG。另一种方法，我们将在第\ref{chap:5}章中介绍，它用一种更加通用的，称作伪随机函数的原语在计数器模式下构建 PRG 和流密码。我们下面介绍一种使用后者的实际构造。
+在实践中，有许多建立 PRG 和流密码的方法。一种方法是使用 \ref{subsec:3-4-2} 小节中介绍的 Blum-Micali 范式来构建 PRG。我们还将会在第\ref{chap:5}章中讨论另一种方法，它将使用一种更加通用的密码学原语（即计数器模式下的\emph{伪随机函数}）来构建它们。我们从一个基于后者的构造开始。
 
-Salsa20/12 和 Salsa20/20 是由丹尼尔·伯恩斯坦于 2005 年设计的快速流密码。Salsa20/12 是被选入 eStream 流密码组合的四种Profile 1 流密码之一。eStream 是一个选定适合实际使用场景的快速安全的流密码的项目。伯恩斯坦又于 2008 年提出了Salsa20/12 和 Salsa20/20 的变体，分别被称作 ChaCha12 和 ChaCha20。这些流密码已被纳入一些广泛部署的协议，如 TLS 和 SSH。
+Salsa20/12 和 Salsa20/20 是 Dan Bernstein 于 2005 年设计的快速流密码。Salsa20/12 是被选入 eStream 流密码组合的四种Profile 1 流密码之一。eStream 是一个旨在选择适用于实际场景中的快速且安全的流密码的项目。Bernstein 又于 2008 年提出了 Salsa20/12 和 Salsa20/20 的变体，分别被称作 ChaCha12 和 ChaCha20。这些流密码已经被用在了一些广泛部署的协议——比如 TLS 和 SSH——之中了。
 
 \begin{figure}
 	\centering
@@ -11,31 +11,36 @@ Salsa20/12 和 Salsa20/20 是由丹尼尔·伯恩斯坦于 2005 年设计的快�
 	\label{fig:3-8}
 \end{figure}
 
-让我们先简单介绍一下 Salsa 和 ChaCha 流密码家族的底层 PRG。这些 PRG 将一个 $256$ 比特种子和一个 $64$ 比特的 nonce 作为输入。现在我们忽略 nonce，先简单地将其设置为 $0$，我们会在本节末尾讨论 nonce 的作用。Salsa 和ChaCha PRG 都遵循图 \ref{fig:3-8} 所示的顶层设计结构。它们都包含两个组件：
+让我们先简单介绍一下 Salsa 和 ChaCha 流密码家族的底层 PRG。这些 PRG 将一个 $256$ 比特的种子和一个 $64$ 比特的 nonce 作为输入。我们暂时先忽略 nonce，简单地将其置为 $0$，我们将在本节末尾讨论 nonce 的作用。Salsa 和 ChaCha PRG 都遵循图 \ref{fig:3-8} 所示的上层结构。它们都包含两个组件：
 \begin{itemize}
-	\item 一个填充函数 $\mathrm{pad}(s,j,0)$，将$256$比特的种子$s$和$64$比特的计数器$j$结合，形成一个$512$比特的分组。第三个输入是一个$64$比特的 nonce，我们目前先把它置为$0$。
-	\item 一个固定、公开的置换 $\pi:\{0,1\}^{512}\to\{0,1\}^{512}$。
+	\item 一个填充函数 $\mathrm{pad}(s,j,0)$，它将一个 $256$ 比特的种子 $s$ 和一个 $64$ 比特的计数器 $j$ 结合，以生成一个 $512$ 比特的分组。第三个输入是一个 $64$ 比特的 nonce，我们目前先把它置为 $0$。
+	\item 一个固定且公开的置换 $\pi:\{0,1\}^{512}\to\{0,1\}^{512}$。
 \end{itemize}
-这两个组件使用以下算法（见图 \ref{fig:3-8}）输出 $L<2^{64}$ 个伪随机分组，每个分组$512$比特长：
+这两个组件使用以下算法（见图 \ref{fig:3-8}）输出 $L<2^{64}$ 个伪随机分组，每个 $512$ 比特长：
+
+\vspace*{10pt}
+
+\hspace*{5pt} 输入：种子$s\in\{0,1\}^{256}$
 
 \vspace*{5pt}
 
-\hspace*{5pt} 输入：种子$s\in\{0,1\}^{256}$\\
-\hspace*{26pt} 1. 对于 $j\leftarrow0$ 到 $L-1$：\\
-\hspace*{26pt} 2. \quad\quad\quad$h_j\leftarrow\mathrm{pad}(s,j,0)\in\{0,1\}^{512}$\\
-\hspace*{26pt} 3. \quad\quad\quad$r_j\leftarrow\pi(h_j)\oplus h_j$\\
-\hspace*{26pt} 4. 输出 $(r_0,\dots,r_{L-1})$。
+\hspace*{5pt} 1. \quad 对于 $j\leftarrow0$ 到 $L-1$：\\
+\hspace*{26pt} 2. \quad\quad\quad\quad$h_j\leftarrow\mathrm{pad}(s,j,0)\in\{0,1\}^{512}$\\
+\hspace*{26pt} 3. \quad\quad\quad\quad$r_j\leftarrow\pi(h_j)\oplus h_j$\\
+\hspace*{26pt} 4. \quad 输出 $(r_0,\dots,r_{L-1})$。
 
-\vspace*{5pt}
+\vspace*{10pt}
 
 \noindent
-最终的 PRG 输出是 $512\cdot L$比特长的序列。我们注意到，在 Salsa 和 ChaCha 中，第 3 行中的异或运算是一个稍微复杂的操作：512比特的操作数$h_j$和$\pi(h_j)$被分成$16$个字，每个字长$32$比特，然后逐字计算模$2^{32}$加法。
+PRG 的最终输出有 $512\cdot L$ 比特长。我们注意到，在 Salsa 和 ChaCha 中，第 $3$ 行中的异或运算实际上是一个更加复杂的操作：将 $512$ 比特的操作数 $h_j$ 和 $\pi(h_j)$ 拆分成 $16$ 个字，每个字长 $32$ 比特，然后逐字计算模 $2^{32}$ 加法。
 
-Salsa 和 ChaCha 的设计是高度可并行的，并且可以利用多处理器核心来加快加密速度。此外，它还能实现对输出分组的随机访问：想要输出分组的编号$j$，并不需要先把所有前序分组都计算出来。基于 Blum-Micali 范式的生成器则不具备这些特性。
+Salsa 和 ChaCha 的设计是高度并行的，并且可以同时利用多个处理器核心来加快加密速度。此外，它还可以实现对输出分组的随机访问：不必计算出所有的前序分组，就可以单独计算输出中编号为 $j$ 的分组。基于 Blum-Micali 范式的生成器就不具备这些特性。
 
-我们将在下一章的练习 \ref{exer:4-23} 中分析 Salsa 和 ChaCha 的安全性，为此我们还需要一些其他的工具。
+我们将在下一章的练习 \ref{exer:4-23} 中分析 Salsa 和 ChaCha 的安全性，但在那之前，我们还需要其他的一些密码学工具。
 
-\begin{snote}[一些细节。]
+% TODO: here
+
+\begin{snote}[实现细节。]
 我们下面简单介绍填充函数 $\mathrm{pad}(s,j,n)$ 和 ChaCha20 中使用的置换 $\pi$。填充函数的输入是一个$256$比特的种子$s_0,\dots,s_7\in\{0,1\}^{32}$，一个$64$比特的计数器$j_0,j_1\in\{0,1\}^{32}$和一个$64$比特的 nonce $n_0,n_1\in\{0,1\}^{32}$。它输出一个$512$比特的分组，表示为$x_0,\dots,x_{15}\in\{0,1\}^{32}$。输出被组织为一个由$32$比特长的字所构成的$4\times4$矩阵，如下所示：
 \begin{equation}
 \begin{pmatrix}

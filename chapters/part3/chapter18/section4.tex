@@ -10,7 +10,7 @@
 \]
 换言之，加盐可以确保没有任何其他方法的效率优于基于穷举搜索的暴力破解。
 
-加盐的具体做法是在注册新口令时生成一个称为\textbf{盐(salt)}的随机字符串。系统中的每个用户都会被分配一个新的盐，我们可以认为盐是从一个集合 $\mathcal{S}$ 中随机选出的。在实践中，往往 $|\mathcal{S}|=2^{128}$ 就足以满足要求。这个盐会与口令一起被哈希，得到验证密钥 $vk$。盐也会被存储在服务器的口令表中，如图 \ref{fig:18-4} 所示。只有服务器需要知道盐值，用户甚至不需要知道有盐的存在。
+加盐的具体做法是在注册新口令时生成一个称为\textbf{盐(salt)}的随机序列。系统中的每个用户都会被分配一个新的盐，我们可以认为盐是从一个集合 $\mathcal{S}$ 中随机选出的。在实践中，往往 $|\mathcal{S}|=2^{128}$ 就足以满足要求。这个盐会与口令一起被哈希，得到验证密钥 $vk$。盐也会被存储在服务器的口令表中，如图 \ref{fig:18-4} 所示。只有服务器需要知道盐值，用户甚至不需要知道有盐的存在。
 
 \begin{figure}
   \centering
@@ -43,13 +43,13 @@
 为了使得没有任何其他方法的效率优于穷举搜索，即上面的第二种策略，盐值空间 $\mathcal{S}$ 需要尽可能大。即使对手采用时空权衡的方法来对$\mathcal{D}\times\mathcal{S}$进行预处理，也同样应该成立。为了推导对 $\mathcal{S}$ 大小的必要约束，我们首先需要更精确地定义在预处理模型中逆转加盐函数的含义。
 
 \begin{snote}[带有预处理的加盐单向函数.]
-为了便于定义，我们将对手 $\mathcal{A}$ 拆分成两个独立的对手 $\mathcal{A}_0$ 和 $\mathcal{A}_1$，其中对手 $\mathcal{A}_0$ 拥有无限运行时间，执行预处理阶段。对手 $\mathcal{A}_1$ 能够高效地进行反转攻击。两个对手之间唯一允许的通信是交换一个 $\ell$ 比特的字符串 $L$，其中 $L$ 是预处理阶段的结果。这些概念在下面的定义中得到了体现，该定义将$H$建模为一个随机预言机。
+为了便于定义，我们将对手 $\mathcal{A}$ 拆分成两个独立的对手 $\mathcal{A}_0$ 和 $\mathcal{A}_1$，其中对手 $\mathcal{A}_0$ 拥有无限运行时间，执行预处理阶段。对手 $\mathcal{A}_1$ 能够高效地进行反转攻击。两个对手之间唯一允许的通信是交换一个 $\ell$ 比特的序列 $L$，其中 $L$ 是预处理阶段的结果。这些概念在下面的定义中得到了体现，该定义将$H$建模为一个随机预言机。
 \end{snote}
 
 \begin{definition}\label{def:18-3}
 	假设 $H$ 是一个定义在 $(\mathcal{D}\times\mathcal{S},\mathcal{Y})$ 上的哈希函数。我们定义对手 $\mathcal{A}=(\mathcal{A}_0,\mathcal{A}_1)$ 在预处理模型中攻破哈希函数 $H$ 的单向性的优势为 ${\rm OWsp^{ro}\mathsf{adv}}[\mathcal{A},H]$，其大小为对手 $\mathcal{A}$ 赢得下面游戏的概率：
 	\begin{itemize}
-		\item $\mathcal{A}_0$ 向 $H$ 发起查询并输出一个建议字符串 $L$；
+		\item $\mathcal{A}_0$ 向 $H$ 发起查询并输出一个建议序列 $L$；
 		\item 挑战者随机选择 $(pw,s)\overset{\rm R}\leftarrow\mathcal{D}\times\mathcal{S}$，令 $y=H(pw,s)$，并将 $(L,y,s)$ 发送给 $\mathcal{A}_1$；
 		\item $\mathcal{A}_1$ 向 $H$ 发起查询并输出 $pw'\in\mathcal{D}$。当 $H(pw',s)=y$ 时，$\mathcal{A}$ 获胜。
 	\end{itemize}
@@ -58,7 +58,7 @@
 需要注意的是，对手 $\mathcal{A}_1$ 同时获得了 $L$ 和盐 $s$，而它的目的是找到带有盐 $s$ 的哈希 $y$ 的原象。下面的定理给出了在预处理模型中反转加盐单向函数 $H$ 的时间界限，其中 $H$ 符合随机预言机模型。
 
 \begin{theorem}\label{theo:18-2}
-	假设 $H$ 是一个定义在 $(\mathcal{D}\times\mathcal{S},\mathcal{Y})$ 上的哈希函数，$H$ 符合随机预言机模型，且 $|\mathcal{D}|\leq|\mathcal{Y}|$。令 $\mathcal{A}=(\mathcal{A}_0,\mathcal{A}_1)$ 是一个定义 \ref{def:18-3} 中的对手，其中 $\mathcal{A}_0$ 输出一个 $\ell$ 比特的建议字符串 $L$，$\mathcal{A}_1$ 最多能向 $H$ 发起 $Q_{\rm ro}$ 次查询，则有：
+	假设 $H$ 是一个定义在 $(\mathcal{D}\times\mathcal{S},\mathcal{Y})$ 上的哈希函数，$H$ 符合随机预言机模型，且 $|\mathcal{D}|\leq|\mathcal{Y}|$。令 $\mathcal{A}=(\mathcal{A}_0,\mathcal{A}_1)$ 是一个定义 \ref{def:18-3} 中的对手，其中 $\mathcal{A}_0$ 输出一个 $\ell$ 比特的建议序列 $L$，$\mathcal{A}_1$ 最多能向 $H$ 发起 $Q_{\rm ro}$ 次查询，则有：
 	\begin{equation}
 	{\rm OWsp^{ro}\mathsf{adv}}[\mathcal{A},H]
 	\leq
@@ -66,7 +66,7 @@
 	\end{equation}
 \end{theorem}
 
-该定理表明，如果 $\mathcal{A}$ 在反转 $vk:=y\in\mathcal{Y}$ 时有恒定成功概率，比如 $0.5$，那么它在攻击阶段必须至少花费 $Q_{\rm ro}\geq\Omega({|\mathcal{D}|\cdot|\mathcal{S}|}/{\ell})$ 的时长。因此，为了防止预处理带来的破解性能提升，我们应该令 $|\mathcal{S}|\geq\Omega(\ell)$，这会确保不会有其他方法效率优于穷举搜索。比如说，如果我们假设建议字符串 $L$ 的最大存储空间为 $2^{80}$，那么盐空间应当至少是 $\{0,1\}^{80}$。在实践中，人们通常取 $|\mathcal{S}|:=\{0,1\}^{128}$。
+该定理表明，如果 $\mathcal{A}$ 在反转 $vk:=y\in\mathcal{Y}$ 时有恒定成功概率，比如 $0.5$，那么它在攻击阶段必须至少花费 $Q_{\rm ro}\geq\Omega({|\mathcal{D}|\cdot|\mathcal{S}|}/{\ell})$ 的时长。因此，为了防止预处理带来的破解性能提升，我们应该令 $|\mathcal{S}|\geq\Omega(\ell)$，这会确保不会有其他方法效率优于穷举搜索。比如说，如果我们假设建议序列 $L$ 的最大存储空间为 $2^{80}$，那么盐空间应当至少是 $\{0,1\}^{80}$。在实践中，人们通常取 $|\mathcal{S}|:=\{0,1\}^{128}$。
 
 从技术上讲，定理 \ref{theo:18-2} 限定了破解\emph{单个}口令的时间，但并没有限定\emph{批量}离线字典攻击的时间。在这种情况下，攻击者可以尝试一次性破解 $t$ 个口令，其中$t>1$。然而，我们希望该定理可以被推广到批量攻击中，使得约束 $|\mathcal{S}|\geq\Omega(\ell)$ 即使面对批处理场景仍能够有效防止破解。
 
@@ -76,7 +76,7 @@
 
 \subsection{秘密盐}
 
-通过向人类口令中添加人工熵，我们可以使对手的破解变得更难。想法是从一个小空间 $\mathcal{S}_{\rm p}$ 中再随机挑选一个短字符串，称为\textbf{秘密盐 (secret salt)}或者\textbf{胡椒 (pepper)}，并将其也纳入到哈希计算中。但是秘密盐\emph{不会}被记录在口令文件中，因此产生的口令文件如图 \ref{fig:18-5} 所示。
+通过向人类口令中添加人工熵，我们可以使对手的破解变得更难。想法是从一个小空间 $\mathcal{S}_{\rm p}$ 中再随机挑选一个短序列，称为\textbf{秘密盐 (secret salt)}或者\textbf{胡椒 (pepper)}，并将其也纳入到哈希计算中。但是秘密盐\emph{不会}被记录在口令文件中，因此产生的口令文件如图 \ref{fig:18-5} 所示。
 
 \begin{figure}
   \centering
@@ -142,7 +142,7 @@
 \right)
 \in\mathcal{X}^b
 \end{equation}
-其中所有的$b$个盐都是由最初给定的盐派生而来的，方法是令$salt_i\leftarrow salt\,\Vert\,{\rm bin}(i)$。这里的${\rm bin}(i)$是$i\in\{1,\dots,b\}$的32位二进制字符串表示。
+其中所有的$b$个盐都是由最初给定的盐派生而来的，方法是令$salt_i\leftarrow salt\,\Vert\,{\rm bin}(i)$。这里的${\rm bin}(i)$是$i\in\{1,\dots,b\}$的32位二进制序列表示。
 
 在实践中，PBKDF2 通常使用 HMAC-SHA256 作为底层 PRF。难度 $d$ 的设置取决于项目需求和硬件速度。例如，iOS 10 中的备份钥匙包使用 PBKDF2 来保护，其中 $d$ 的值是一千万。在Windows 10 中，数据保护 API 默认使用 $d = 8000$，但使用 HMAC-SHA512 作为 PRF。
 

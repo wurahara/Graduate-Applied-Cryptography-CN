@@ -36,7 +36,7 @@
 为了强化对上述术语的理解，我们再看一下第\ref{chap:1}章中讨论的一些密码实例。
 
 \begin{example}\label{exmp:2-1}
-一个\textbf{一次性密码本(one-time pad)}是一个香农密码 $\mathcal{E}=(E,D)$，其密钥、消息和密文是相同长度的比特序列；也就是说，$\mathcal{E}$ 定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上：
+\textbf{一次性密码本(one-time pad)}是一种香农密码 $\mathcal{E}=(E,D)$，其密钥、消息和密文是相同长度的比特序列；也就是说，$\mathcal{E}$ 定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上：
 \[
 \mathcal{K}:=\mathcal{M}:=\mathcal{C}:=\{0,1\}^L
 \]
@@ -48,7 +48,7 @@ E(k,m):=k\oplus m
 \[
 D(k,c):=k\oplus c
 \]
-其中，``$\oplus$"表示按位异或，也即按位模 $2$ 加法。对于任意比特序列 $x,y,z\in\{0,1\}^L$，都有：
+其中，``$\oplus$"表示按比特异或，也即按比特的模 $2$ 加法。对于任意比特序列 $x,y,z\in\{0,1\}^L$，我们都有：
 \[
 x\oplus y=y\oplus x,
 \quad
@@ -66,7 +66,7 @@ D(k,E(k,m))=D(k,k\oplus m)=k\oplus (k\oplus m)=(k\oplus k)\oplus m=0^L\oplus m=m
 \end{example}
 
 \begin{example}\label{exmp:2-2}
-一个\textbf{变长一次性密码本(variable length one-time pad)}是一个香农密码 $\mathcal{E}=(E,D)$，其中，密钥是某些固定长度 $L$ 的比特序列，而消息和密文是变长的比特序列，它们的长度最大为 $L$。因此，$\mathcal{E}$ 定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上，且：
+\textbf{变长一次性密码本(variable length one-time pad)}是一种香农密码 $\mathcal{E}=(E,D)$，其中，密钥是某些固定长度 $L$ 的比特序列，而消息和密文是变长的比特序列，它们的长度最大为 $L$。因此，$\mathcal{E}$ 定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上，且：
 \[
 \mathcal{K}:=\{0,1\}^L,
 \quad
@@ -84,13 +84,13 @@ D(k,m):=k[0\dots\ell-1]\oplus c
 \end{example}
 
 \begin{example}\label{exmp:2-3}
-一个\textbf{置换密码(substitution cipher)}是一个具有如下形式的香农密码 $\mathcal{E}=(E,D)$。令 $\Sigma$ 是一个有限符号表（例如字母\texttt{A-Z}，加上一个空格符\texttt{␣}）。消息空间 $\mathcal{M}$ 和密文空间 $\mathcal{C}$ 都是来自 $\Sigma$ 的某个固定长度 $L$ 的符号序列，即：
+\textbf{置换密码(substitution cipher)}是一种具有如下形式的香农密码 $\mathcal{E}=(E,D)$。令 $\Sigma$ 是一个有限符号表（例如字母\texttt{A-Z}，加上一个空格符\texttt{␣}\,）。消息空间 $\mathcal{M}$ 和密文空间 $\mathcal{C}$ 都是来自 $\Sigma$ 的某个固定长度 $L$ 的符号序列，即：
 \[
 \mathcal{M}:=\mathcal{C}:=\Sigma^L
 \]
-密钥空间 $\mathcal{K}$ 包含 $\Sigma$ 上的所有全排列；也就是说，每个 $k\in\mathcal{K}$ 都是 $\Sigma$ 上的一个双射。注意，$\mathcal{K}$ 是一个非常大的集合；事实上$|\mathcal{K}|=|\Sigma|!$（对于 $|\Sigma|=27$，$|\mathcal{K}|\approx 1.09\times10^{28}$）。
+密钥空间 $\mathcal{K}$ 包含 $\Sigma$ 上的所有置换；也就是说，每个 $k\in\mathcal{K}$ 都是 $\Sigma$ 上的一个双射。注意，$\mathcal{K}$ 是一个非常大的集合；事实上$|\mathcal{K}|=|\Sigma|!$（对于 $|\Sigma|=27$，$|\mathcal{K}|\approx 1.09\times10^{28}$）。
 
-用密钥 $k\in\mathcal{K}$（$\Sigma$的一个全排列）加密一条消息 $m\in\Sigma^L$ 的加密函数定义如下：
+用密钥 $k\in\mathcal{K}$（$\Sigma$ 的一个置换）加密一条消息 $m\in\Sigma^L$ 的加密函数定义如下：
 \[
 E(k,m):=\big(k(m[0]),\,k(m[1]),\,\dots,\,k(m[L-1])\big)
 \]
@@ -101,16 +101,16 @@ D(k,c):=\big(k^{-1}(c[0]),\,k^{-1}(c[1]),\,\dots,\,k^{-1}(c[L-1])\big)
 这里，$k^{-1}$ 是 $k$ 的逆置换。为了用 $k$ 解密 $c$，我们只需将 $k^{-1}$ 分别按顺序应用于序列 $c$ 中的每一项。置换密码的正确性属性很容易验证：对于一条消息 $m\in\Sigma^L$ 和密钥 $k\in\mathcal{K}$，我们有：
 \[
 \begin{aligned}
-D(k,E(k,m))
-&=D(k,(k(m[0]),\,k(m[1]),\,\dots,\,k(m[L−1]))\\
-&=(k^{−1}(k(m[0])),\,k^{−1}(k(m[1])),\,\dots,\,k^{−1}(k(m[L−1])))\\
+D\big(k,E(k,m)\big)
+&=D\big(k,(k(m[0]),\,k(m[1]),\,\dots,\,k(m[L−1])\big)\\
+&=\big(k^{−1}(k(m[0])),\,k^{−1}(k(m[1])),\,\dots,\,k^{−1}(k(m[L−1]))\big)\\
 & =(m[0],\,m[1],\,\dots,\,m[L−1])=m
 \end{aligned}
 \]
 \end{example}
 
 \begin{example}[加性一次性密码本]\label{exmp:2-4}
-我们还可以定义一个``加法模$n$"的一次性密码本的变体。它是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的密码 $\mathcal{E}=(E,D)$，其中 $\mathcal{K}:=\mathcal{M}:=\mathcal{C}:=\{0,\dots,n-1\}$，$n$ 是一个正整数。加密和解密的定义如下：
+我们还可以定义一个``加法模$n$" 版本的一次性密码本。它是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的密码 $\mathcal{E}=(E,D)$，其中 $\mathcal{K}:=\mathcal{M}:=\mathcal{C}:=\{0,\dots,n-1\}$，$n$ 是一个正整数。加密和解密的定义如下：
 \[
 E(k,m)=m+k \bmod n,
 \quad
@@ -123,11 +123,11 @@ D(k,c)=c-k \bmod n
 
 到目前为止，我们只是定义了香农密码的基本语法和正确性要求。接下来我们将讨论一个问题：什么才是``安全"的密码？直观地说，答案是，一个安全的密码是即使能够看到加密过程，也能在加密后保持对消息的``良好隐藏"的密码。然而，把这个直观的答案变成一个既具有数学意义又具有实际意义的答案是一个真正的挑战。事实上，尽管密码已经被使用了几个世纪，但数学上可接受的安全性定义在最近的几十年才刚刚被归纳出来。
 
-在本节，我们将阐述\textbf{完美安全性(perfect security)}的数学概念，这是安全学的一个黄金标准（至少在我们只关心加密单一消息并且不关心其完整性时）。我们还将看到，实现这种安全水平是可能的；事实上，我们将表明，一次性密码本就满足这个定义。然而一次性密码本不是很实用，因为它的密钥必须和消息一样长：如果 Alice 想发送一个 1 GB 的文件给 Bob，他们必须已经共享了一个长达 1 GB 的密钥！这是不现实的。不幸的是，这一点无法避免：我们还将证明，任何具备完美安全性的密码都必须有一个至少与它的消息空间一样大的密钥空间。这个事实为我们构造一个更弱的安全性定义提供了动力，它应当允许我们使用更短的密钥来加密长的消息。
+在本节，我们将阐述\textbf{完美安全性(perfect security)}的数学概念——这是安全学的一个``黄金标准"（至少在我们只关心加密单一消息并且不关心其完整性时）。我们还将看到，实现这种安全水平是可能的；事实上，我们将表明，一次性密码本就能满足这个定义。然而一次性密码本不是很实用，因为它的密钥必须和消息一样长：如果 Alice 想发送一个 1 GB 的文件给 Bob，他们必须已经共享了一个长达 1 GB 的密钥！这是不现实的。不幸的是，这一点无法避免：我们还将证明，任何具备完美安全性的密码都必须有一个至少与它的消息空间一样大的密钥空间。这个事实为我们构造一个更弱的安全性定义提供了动力，它应当允许我们使用更短的密钥来加密长的消息。
 
-如果 Alice 使用一个密钥 $k$ 加密一条消息 $m$，而一个窃听的对手获得了密文 $c$，Alice 只有在密钥 $k$ 难以猜测的情况下才有希望保持 $m$ 的秘密，而这至少意味着密钥 $k$ 应该从一个大的密钥空间中随机选出。说 $m$ ``隐藏得很好"，至少得意味着在不知道 $k$ 的情况下，很难从 $c$ 中完全确定 $m$；然而，这其实是不够的。即使对手可能不知道 $k$，我们假设它知道加密算法和 $k$ 的分布。事实上，我们假设当一个信息被加密时，密钥 $k$ 总是从密钥空间的所有密钥中随机均匀选出。对手也可能对被加密的消息有一些了解，考虑到具体情况，它可能可以将消息的取值空间缩小到一个较小的范围，而且它可能对每个可能的消息被选出的可能性有一定的了解。比方说，假设它知道消息 $m$ 可能是 $m_0=\,$\texttt{"ATTACK␣AT␣DAWN"}或者 $m_1=\,$\texttt{"ATTACK␣AT␣DUSK"}。根据对手现有的情报，Alice 同样可能选择这两个消息中的任何一个。在没有看到密文 $c$ 的情况下，对手只有 $50\%$ 的机会猜到 Alice 发送的是哪条信息。但我们假设对手确实知道 $c$。即使有这样的知识，两个信息仍然都有可能；也就是说，可能存在密钥 $k_0$ 和 $k_1$ 使得 $E(k_0,m_0)=c$ 和$E(k_1,m_1)=c$都成立，所以它还是不能\emph{确定} $m=m_0$ 还是 $m=m_1$。但是，它还是可以猜测的。假如说密码有这样一个属性，有800个密钥 $k_0$ 使得 $E(k_0,m_0)=c$成立，有 600 个密钥 $k_1$ 使得 $E(k_1,m_1)=c$成立。那么，这样的猜测正确的概率就等于 $800/(800+600)\approx57\%$，这比它在不知道密文时只有 $50\%$ 的可能性要高。我们对完美安全性的正式定义明确地排除了这样的一种可能性，即对密文的了解能够增加猜测原始消息的概率，或者确定消息明文的\emph{任何}属性。
+如果 Alice 使用一个密钥 $k$ 来加密一条消息 $m$，而一个窃听对手获得了密文 $c$，Alice 只有在密钥 $k$ 难以猜测的情况下才有希望保持 $m$ 的机密性，而这至少意味着密钥 $k$ 应该是从一个大的密钥空间中随机选出的。说 $m$ ``隐藏得很好"，至少得意味着在不知道 $k$ 的情况下，很难从 $c$ 中完全确定 $m$；然而，这其实是不够的。即使对手可能并不知道 $k$，我们假设它知道加密算法和 $k$ 的分布。事实上，我们将假设，当加密一条消息时，我们总是从密钥空间中的所有密钥中随机均匀地选出密钥 $k$。对手也可能对被加密的消息有一些了解——视具体情况，它也许知道消息的可能取值集合其实是相当小的，而且它可能对消息的每个可能取值被选出的概率有一定的了解。比方说，假设它知道消息 $m$ 可能是 $m_0=\,$\texttt{"ATTACK␣AT␣DAWN"}或者 $m_1=\,$\texttt{"ATTACK␣AT␣DUSK"}。根据对手现有的情报，Alice 选择这两条消息中任何一条的概率都是均等的。在没有看到密文 $c$ 的情况下，对手只有 $50\%$ 的机会猜到 Alice 发送的是哪条信息。但我们假设对手确实知道 $c$。即使有这样的知识，两条消息仍然都有可能；也就是说，可能存在密钥 $k_0$ 和 $k_1$ 使得 $E(k_0,m_0)=c$ 和 $E(k_1,m_1)=c$ 都成立，所以对手还是不能\emph{确定}是 $m=m_0$ 还是 $m=m_1$。但是，它还是可以猜测的。假如说密码有这样一个属性，有 $800$ 个密钥 $k_0$ 使得 $E(k_0,m_0)=c$ 成立，有 $600$ 个密钥 $k_1$ 使得 $E(k_1,m_1)=c$ 成立。那么，猜测正确的概率就等于 $800/(800+600)\approx57\%$，这高于它在不知道密文时的 $50\%$ 的猜中概率。我们对完美安全性的正式定义明确地排除了这样的一种可能性，即对密文的了解能够增加猜中原始消息的概率，或者确定消息明文的\emph{任何}属性。
 
-闲话少说，我们下面正式定义完美安全性。在这个定义中，我们将考虑一个概率实验，其中密钥是从密钥空间中随机均匀选取的。我们记 $\mathsf{k}$ 为代表这个随机密钥的随机变量。对于一个消息 $m$，$E(\mathsf{k},m)$ 是另一个随机变量，它代表将加密函数应用于随机密钥 $\mathsf{k}$ 和消息 $m$。因此，每个消息 $m$ 都会产生一个不同的随机变量 $E(\mathsf{k},m)$。
+闲话少说，我们下面正式定义完美安全性。在这个定义中，我们将考虑一个概率实验，其中密钥是从密钥空间中随机均匀选出的。我们记 $\mathsf{k}$ 为代表这个随机密钥的随机变量。对于一条消息 $m$，$E(\mathsf{k},m)$ 是另一个随机变量，它代表将加密函数应用于随机密钥 $\mathsf{k}$ 和消息 $m$ 的结果。这样，每条消息 $m$ 都会产生一个不同的随机变量 $E(\mathsf{k},m)$。
 
 \begin{definition}[完美安全性]
 令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。考虑一个概率实验，其中随机变量 $\mathsf{k}$ 均匀分布在 $\mathcal{K}$ 上。如果对于所有的 $m_0,m_1\in\mathcal{M}$ 和所有的 $c\in\mathcal{C}$，都有：
@@ -143,31 +143,29 @@ D(k,c)=c-k \bmod n
 令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。以下表述是等价的：
 \begin{enumerate}[(i)]
 	\item $\mathcal{E}$ 是完美安全的。
-	\item 对于任意 $c\in\mathcal{C}$，存在 $N_c$（可能取决于$c$）使得对于所有 $m\in\mathcal{M}$，都有：
+	\item 对于每个 $c\in\mathcal{C}$，都存在一个（可能取决于 $c$ 的）$N_c$，使得对于所有 $m\in\mathcal{M}$，我们都有：
 	\[
     \big\lvert\{k\in\mathcal{K}:E(k,m)=c\}\big\rvert = N_c
     \]
-    \item 如果随机变量 $\mathsf{k}$ 均匀分布在 $\mathcal{K}$ 上，那么对于 $m\in\mathcal{M}$，每个随机变量 $E(\mathsf{k},m)$ 的分布都相同。
+    \item 如果随机变量 $\mathsf{k}$ 均匀分布在 $\mathcal{K}$ 上，那么对于 $m\in\mathcal{M}$，每个随机变量 $E(\mathsf{k},m)$ 都有相同的分布。
 \end{enumerate}
 \end{theorem}
 
 \begin{proof}
-首先，让我们把(ii)重述如下：对于每个 $c\in\mathcal{C}$，都存在一个$P_c$（取决于 $c$） 使得对于所有 $m\in\mathcal{M}$，都有 $\Pr[E(\mathsf{k},m)=c]=P_c$。这里，$\mathsf{k}$ 是一个均匀分布在 $\mathcal{K}$ 上的随机变量。注意到$P_c={N_c}/{|\mathcal{K}|}$，其中 $N_c$ 与(ii)的原始表述一致。
+首先，让我们把(ii)重述如下：对于每个 $c\in\mathcal{C}$，都存在一个（取决于 $c$ 的）$P_c$，使得对于所有的 $m\in\mathcal{M}$，我们都有 $\Pr[E(\mathsf{k},m)=c]=P_c$。这里，$\mathsf{k}$ 是一个均匀分布在 $\mathcal{K}$ 上的随机变量。注意到 $P_c=N_c/|\mathcal{K}|$，$N_c$ 与 (ii) 中的原始表述一致。
 
-这个版本的(ii)显然与(iii)相同。
-
-\vspace{5pt}
-
-\emph{(i)} $\Longrightarrow$ \emph{(ii)}。假设(i)成立，我们证明(ii)。
-为了证明(ii)，令 $c\in\mathcal{C}$ 是某个固定密文。挑选某个任意消息 $m_0\in\mathcal{M}$，并令 $P_c:=\Pr[E(\mathsf{k},m_0)=c]$。根据(i)，我们知道对于所有的 $m\in\mathcal{M}$，我们都有 $\Pr[E(\mathsf{k},m)=c]=Pr[E(\mathsf{k},m_0)=c]=P_c$，这就证明了(ii)。
+这个版本的 (ii) 显然与 (iii) 等价。
 
 \vspace{5pt}
 
-\emph{(ii)} $\Longrightarrow$ \emph{(i)}。假设(ii)成立，我们证明(i)。
-考虑任意固定的 $m_0,m_1\in\mathcal{M}$ 和 $c\in\mathcal{C}$，(ii)表明$\Pr[E(\mathsf{k},m_0)=c]=P_c=\Pr[E(\mathsf{k}，m_1)=c]$，这就证明了(i)。
+\emph{(i)} $\Longrightarrow$ \emph{(ii)}。假设 (i) 成立，我们证明 (ii)。
+为了证明(ii)，令 $c\in\mathcal{C}$ 是某个固定密文。挑选某条任意的消息 $m_0\in\mathcal{M}$，并令 $P_c:=\Pr[E(\mathsf{k},m_0)=c]$。根据 (i)，我们知道，对于所有的 $m\in\mathcal{M}$，我们都有 $\Pr[E(\mathsf{k},m)=c]=Pr[E(\mathsf{k},m_0)=c]=P_c$ 成立，这就证明了 (ii)。
+
+\emph{(ii)} $\Longrightarrow$ \emph{(i)}。假设 (ii) 成立，我们证明 (i)。
+考虑任意固定的 $m_0,m_1\in\mathcal{M}$ 和 $c\in\mathcal{C}$，(ii) 表明 $\Pr[E(\mathsf{k},m_0)=c]=P_c=\Pr[E(\mathsf{k}，m_1)=c]$ 成立，这就证明了 (i)。
 \end{proof}
 
-正如我们所承诺的，我们下面给出一个证明，证明一次性密码本（见例 \ref{exmp:2-1}）是完美安全的。
+正如我们所承诺的，我们下面证明一次性密码本（见例 \ref{exmp:2-1}）是完美安全的。
 
 \begin{theorem}
 一次性密码本是一种完美安全的香农密码。
@@ -178,11 +176,11 @@ D(k,c)=c-k \bmod n
 \[
 k\oplus m =c
 \]
-即 $k:=m\oplus c$。因此 $\mathcal{E}$ 满足定理 \ref{theo:2-1} 中的(ii)（对每个$c$都有$N_c=1$）。
+即 $k:=m\oplus c$。因此，$\mathcal{E}$ 满足定理 \ref{theo:2-1} 中的表述 (ii)（对每个 $c$ 都有 $N_c=1$）。
 \end{proof}
 
 \begin{example}\label{exmp:2-5}
-再考虑一下例 \ref{exmp:2-2} 中定义的变长一次性密码本。这种密码并不符合我们对完美安全的定义，因为一个密文的长度与相应的明文相同。事实上，如果我们选择一个长度为 $1$ 的任意字符串 $m_0$ 以及一个长度为 $2$ 的任意字符串 $m_1$。此外，假设 $c$ 是一个长度为 $1$ 的任意字符串，而 $\mathsf{k}$ 是一个在密钥空间均匀分布的随机变量。那么我们有：
+重新考察例 \ref{exmp:2-2} 中定义的变长一次性密码本。这种密码并不符合我们对完美安全性的定义，因为一条密文的长度与相应的明文相同。事实上，让我们选择一条长度为 $1$ 的任意序列 $m_0$，以及一条长度为 $2$ 的任意序列 $m_1$。此外，假设 $c$ 是一个长度为 $1$ 的任意序列，而 $\mathsf{k}$ 是一个均匀分布在密钥空间上的随机变量。那么我们有：
 \[
 \Pr[E(\mathsf{k},m_0)=c]={1}/{2},
 \quad\quad
@@ -190,37 +188,36 @@ k\oplus m =c
 \]
 这恰好是定理 \ref{theo:2-1} 的一个直接的反例。
 
-直观地说，变长一次性密码本不能满足我们对完美安全的定义，因为任何密文都会泄露相应的明文的\emph{长度}。然而，在某种意义上（我们现在尚不明确），这确实是\emph{唯一}泄露的信息，因此，不清楚这应该被看作是密码的问题，还是我们对完美安全的定义的问题。一方面，我们可以想象消息长度可能会有很大变化的场景，虽然我们总是可以通过``填充"的手段来把较短的消息补充到同样的长度，但从实际的角度来看，这可能是不可接受的，因为这会造成带宽上的浪费。另一方面，我们必须意识到，在某些应用中，仅仅泄露信息的长度也可能是危险的：如果你正在加密一个问题的``yes"或``no"的答案，那么仅仅是这些字符串的 ASCII 编码长度就会泄露\emph{一切}，所以你最好把``no"填充到三个字符长。
+直观地说，变长一次性密码本不能满足我们对完美安全性的定义，因为任何密文都会泄露相应的明文的\emph{长度}。然而，在某种（我们现在尚不明确的）意义上，这确实是\emph{唯一}泄露的信息，因此，不清楚这应该被看作是密码的问题，还是我们对完美安全性的定义的问题。一方面，我们可以想象消息长度可能会有很大变化的场景，虽然我们总是可以通过``填充"的手段来把较短的消息补充到同样的长度，但从实际的角度来看，这可能是不可接受的，因为这会造成带宽上的浪费。另一方面，我们必须意识到，在某些应用中，仅仅泄露信息的长度也可能是危险的：如果你正在加密一个问题的``yes"或``no"的答案，那么仅仅是这些序列的 ASCII 编码长度就会泄露\emph{一切}，所以你最好把``no"填充到三个字符长。
 
 \end{example}
 
 \begin{example}\label{exmp:2-6}
-再考虑一下例 \ref{exmp:2-3} 中定义的置换密码的情况。有几种不同的方法可以看出这个密码也不是完美安全的。
+再考虑一下例 \ref{exmp:2-3} 中定义的置换密码的情况。有几种不同的方法可以看出，这个密码也不是完美安全的。
 
 比方说，选择一对消息 $m_0,m_1\in\Sigma^L$，其中 $m_0$ 的前两项是相等的，而 $m_1$ 的前两项不想等，即：
 \[
-m_0[0]=m0[1],
+m_0[0]=m_0[1],
 \quad
 m_1[0]\neq m_1[1]
 \]
 那么对于每个密钥 $k$，也就是 $\Sigma$ 上的一种置换，如果 $c = E(k,m_0)$，那么必然有 $c[0] = c[1]$；而如果 $c = E(k,m_1)$，那么也必然有 $c[0]\neq c[1]$。由此可见，如果 $\mathsf{k}$ 均匀分布在密钥空间上，$E(\mathsf{k},m_0)$ 和 $E(\mathsf{k},m_1)$ 的分布就不会相同。
 
-有的人可能会认为上面描述的弱点显得有些刻意，但还有一种更加现实的对替换密码的攻击方式。假设置换密码被用来加密电子邮件信息。众所周知，电子邮件以一个``标准首部"开始，如 \texttt{"FROM"}。假设密文 $c\in\Sigma^L$ 被对手截获。因为密钥 $k$ 其实就是 $\Sigma$ 的一个排列组合。对手知道：
+有的人可能会认为上面描述的弱点显得有些刻意，但还有一种更加现实的针对置换密码的攻击方式。假设置换密码被用于加密电子邮件信息。众所周知，电子邮件以一个``标准首部"开始，如 \texttt{"FROM"}。假设密文 $c\in\Sigma^L$ 被对手截获。因为密钥 $k$ 其实就是 $\Sigma$ 的一个置换。对手知道：
 \[
 c[0\dots3]=(k(\mathtt F),k(\mathtt R),k(\mathtt O),k(\mathtt M))
 \]
-因此，如果原始消息 $m\in\Sigma^L$，对手现在可以找到 $m$ 中所有出现 $\mathtt F$、$\mathtt R$、$\mathtt O$ 和 $\mathtt M$ 的位置。仅仅根据这些信息，再加上关于消息的具体上下文信息和关于字母频率的一般信息，对手就可能能够推断出关于原始消息的相当多的信息。
+因此，如果原始消息是 $m\in\Sigma^L$，对手就可以找到 $m$ 中所有出现 $\mathtt F$、$\mathtt R$、$\mathtt O$ 和 $\mathtt M$ 的位置。仅仅根据这些信息，加上关于消息的具体上下文信息，以及关于字母出现频率的通用信息，对手就可能推断出关于原始消息的相当多的信息。
 \end{example}
 
 \begin{example}
-考虑例 \ref{exmp:2-4} 中定义的加性一次性密码本的情况。很容易验证加性一次性密码本是完美安全的。事实上，它满足定理 \ref{theo:2-1} 中的条件(ii)（对每个密文 $c$ 都有 $N_c=1$）。
+考虑例 \ref{exmp:2-4} 中定义的加性一次性密码本的情况。很容易验证加性一次性密码本是完美安全的。事实上，它满足定理 \ref{theo:2-1} 中的表述 (ii)（对每个密文 $c$ 都有 $N_c=1$）。
 \end{example}
 
-
-下面要介绍的两个定理进一步阐述了完美安全性的另外两个特征。对于前一个定理，假设一个窃听对手将某个谓词 $\phi$ 应用于它所获得的密文。谓词 $\phi$（密文空间上的一个布尔函数）的逻辑可能非常简单，比如奇偶判断函数（判断密文中比特 1 的数量是偶数还是奇数），也可能是类型更加复杂的统计测试。但无论谓词 $\phi$ 是简单还是复杂，完美安全性都会保证谓词在密文上的变换也不会透露出任何关于明文消息的信息。
+下面要介绍的两个定理进一步阐述了完美安全性的另外两个特征。对于前者，假设一个窃听对手将某个谓词 $\phi$ 应用于它所获得的密文。谓词 $\phi$（是一个密文空间上的一个布尔函数）的逻辑可能非常简单，比如奇偶判断函数（判断密文中比特 $1$ 有偶数个还是奇数个），也可能是类型更加复杂的统计测试。但无论谓词 $\phi$ 是简单还是复杂，完美安全性都会保证谓词在密文上的评估结果也不会透露任何关于明文的信息。
 
 \begin{theorem}\label{theo:2-3}
-令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。考虑一个概率实验，其中 $\mathsf{k}$ 是一个在 $\mathcal{K}$ 上均匀分布的随机变量。那么，当且仅当对于 $\mathcal{C}$ 上的每个谓词 $\phi$ 和所有的 $m_0,m_1\in\mathcal{M}$，我们都有：
+令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。考虑一个概率实验，其中 $\mathsf{k}$ 是一个均匀分布在 $\mathcal{K}$ 上的随机变量。那么，当且仅当对于 $\mathcal{C}$ 上的每个谓词 $\phi$ 和所有的 $m_0,m_1\in\mathcal{M}$，我们都有：
 \[
 \Pr[\phi(E(\mathsf{k},m_0))]=
 \Pr[\phi(E(\mathsf{k}, m_1))]
@@ -229,11 +226,11 @@ c[0\dots3]=(k(\mathtt F),k(\mathtt R),k(\mathtt O),k(\mathtt M))
 \end{theorem}
 
 \begin{proof}
-这实际上只是一个简单的计算。一方面，假设 $\mathcal{E}$ 是完美安全的，并给定 $\phi$，$m_0$ 和 $m_1$，令 $S:=\{c\in\mathcal{C}:\phi(c)\}$，那么我们有：
+这实际上只是一个简单的计算。一方面，假设 $\mathcal{E}$ 是完美安全的，而且 $\phi$，$m_0$ 和 $m_1$ 已被给定。令 $S:=\{c\in\mathcal{C}:\phi(c)\}$，那么我们有：
 \[
 \Pr[\phi(E(\mathsf{k}, m_0))]=\sum_{c\in S}\Pr[E(\mathsf{k}, m_0) = c]=\sum_{c\in S}\Pr[E(\mathsf{k}, m_1) = c]=\Pr[\phi(E(\mathsf{k}, m_1) )]
 \]
-这里，我们在建立第二个等号时使用了 $\mathcal{E}$ 是完美安全的假设。另一方面，假设 $\mathcal{E}$ 不是完全安全的，那么必然存在 $m_0$，$m_1$ 和 $c$ 使得：
+这里，在建立第二个等号时，我们使用了 $\mathcal{E}$ 是完美安全的假设。另一方面，假设 $\mathcal{E}$ 不是完全安全的，则必然存在 $m_0$，$m_1$ 和 $c$ 使得：
 \[
 \Pr[E(\mathsf{k},m_0)=c]\neq
 \Pr[E(\mathsf{k},m_1)=c]
@@ -248,78 +245,82 @@ c[0\dots3]=(k(\mathtt F),k(\mathtt R),k(\mathtt O),k(\mathtt M))
 \]
 \end{proof}
 
-下一个定理以另一种方式说明，完美安全性保证了密文不会泄露任何关于明文消息的信息。假设 $\mathsf{m}$ 是分布在消息空间 $\mathcal{M}$ 上的一个随机变量，我们并没有假设 $\mathsf{m}$ 是均匀分布在 $\mathcal{M}$ 上的。现在假设 $\mathsf{k}$ 是均匀分布在密钥空间 $\mathcal{K}$ 上的一个随机变量，与 $\mathsf{m}$ 无关，并定义 $\mathsf{c}:=E(\mathsf{k},\mathsf{m})$ 是分布在密文空间 $\mathcal{C}$ 上的一个随机变量。那么下面的定理将表明，完美安全性会保证随机变量 $\mathsf{c}$ 和 $\mathsf{m}$ 相互独立。
+下一个定理以另一种方式说明，完美安全性能够确保密文不会泄露任何关于明文的信息。假设 $\mathsf{m}$ 是一个分布在消息空间 $\mathcal{M}$ 上的随机变量。注意，我们并没有假设 $\mathsf{m}$ 是均匀分布在 $\mathcal{M}$ 上的。现在，假设 $\mathsf{k}$ 是一个均匀分布在密钥空间 $\mathcal{K}$ 上的随机变量，它与 $\mathsf{m}$ 无关，并定义 $\mathsf{c}:=E(\mathsf{k},\mathsf{m})$ 是一个分布在密文空间 $\mathcal{C}$ 上的随机变量。下面的定理将表明，完美安全性能够保证随机变量 $\mathsf{c}$ 和 $\mathsf{m}$ 相互独立。
 
-描述这种独立性的一种方法是，对于每个以非零概率出现的密文 $\mathsf{c}\in\mathcal{C}$和每个消息 $\mathsf{m}\in\mathcal{M}$，我们都有：
+描述这种独立性的一种方法是，对于每个以非零概率出现的密文 $\mathsf{c}\in\mathcal{C}$，以及每条消息 $\mathsf{m}\in\mathcal{M}$，我们都有：
 \[
 \Pr[\mathsf{m}=m\;|\;\mathsf{c}=c]=
 \Pr[\mathsf{m}=m]
 \]
-
 直观上说，这意味着在看到一个密文后，我们对消息的了解不会比在看到密文之前更多。
 
-另一种描述这种独立性的方法是，对于每个以非零概率出现的消息 $\mathsf{m}\in\mathcal{M}$和每个密文 $\mathsf{c}\in\mathcal{C}$，我们都有：
+另一种描述这种独立性的方法是，对于每条以非零概率出现的消息 $\mathsf{m}\in\mathcal{M}$，以及每个密文 $\mathsf{c}\in\mathcal{C}$，我们都有：
 \[
 \Pr[\mathsf{c}=c\;|\;\mathsf{m}=m]=
 \Pr[\mathsf{c}=c]
 \]
-直观上说，这意味着明文消息的选择对密文的分布没有任何影响。
+直观上说，这意味着明文消息的选择对密文的分布不会产生任何影响。
 
-限制 $\mathsf{m}$ 和 $\mathsf{k}$ 是相互独立的随机变量是明智的：在使用任何密码时，根据消息选择密钥是一个非常糟糕的主意，反之亦然（参见练习 \ref{exer:2-16}）。
+限制 $\mathsf{m}$ 和 $\mathsf{k}$ 是相互独立的随机变量这一点是合理的：不管你使用的是哪一种密码，根据消息选择密钥都是一个非常糟糕的主意，根据密钥选择消息也是一样（参见练习 \ref{exer:2-16}）。
 
 \begin{theorem}\label{theo:2-4}
 令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。考虑一个随机实验，其中 $\mathsf{k}$ 和 $\mathsf{m}$ 是随机变量，满足：
 \begin{itemize}
-	\item $\mathsf{k}$ 在 $\mathcal{K}$ 上均匀分布，
-	\item $\mathsf{m}$ 在 $\mathcal{M}$ 上分布，且
+	\item $\mathsf{k}$ 均匀分布在 $\mathcal{K}$ 上，
+	\item $\mathsf{m}$ 分布在 $\mathcal{M}$ 上，且
 	\item $\mathsf{k}$ 和 $\mathsf{m}$ 相互独立。
 \end{itemize}
 定义随机变量 $\mathsf{c}:=E(\mathsf{k},\mathsf{m})$。那么我们有：
 \begin{itemize}
-	\item 如果 $\mathcal{E}$ 是完美安全的，那么 $\mathsf{c}$ 和 $\mathsf{m}$ 相互独立。
-	\item 反过来说，如果 $\mathsf{c}$ 和 $\mathsf{m}$ 相互独立，并且 $\mathcal{M}$ 中的每个消息都以非零概率出现，那么 $\mathcal{E}$ 是完美安全的。
+	\item 如果 $\mathcal{E}$ 是完美安全的，则 $\mathsf{c}$ 和 $\mathsf{m}$ 相互独立。
+	\item 反过来说，如果 $\mathsf{c}$ 和 $\mathsf{m}$ 相互独立，并且 $\mathcal{M}$ 中的每条消息都以非零概率出现，则 $\mathcal{E}$ 是完美安全的。
 \end{itemize}
 \end{theorem}
 
 \begin{proof}
-对于第一个结论，假设 $\mathcal{E}$ 是完美安全的。考虑任意给定的 $\mathsf{m}\in\mathcal{M}$ 和 $\mathsf{c}\in\mathcal{C}$，我们想要证明：
+对于第一个结论，假设 $\mathcal{E}$ 是完美安全的。考虑任意固定的 $\mathsf{m}\in\mathcal{M}$ 和 $\mathsf{c}\in\mathcal{C}$，我们想要证明：
 \[
 \Pr[\mathsf{c}=c\land\mathsf{m}=m]=
-\Pr[\mathsf{c}=c]
+\Pr[\mathsf{c}=c]\cdot
 \Pr[\mathsf{m}=m]
 \]
-我们有：
+而我们有：
 \[
 \begin{aligned}
 \Pr[\mathsf{c}=c\land\mathsf{m}=m]
 &=\Pr[E(\mathsf{k},\mathsf{m})
 =c\land\mathsf{m}=m]\\
 &=\Pr[E(\mathsf{k},m)=c\land\mathsf{m}=m]\\
-&=\Pr[E(\mathsf{k},m)=c]\Pr[\mathsf{m}=m]\quad\text{\emph{（}\,} \mathsf{k} \text{\emph{\,和\,}} \mathsf{m} \text{\,\emph{相互独立）}}
+&=\Pr[E(\mathsf{k},m)=c]\cdot\Pr[\mathsf{m}=m]
+\quad\text{\emph{（}\,} \mathsf{k} \text{\emph{\;和\;}} \mathsf{m} \text{\;\emph{相互独立）}}
 \end{aligned}
 \]
-因此下面只需要证明 $\Pr[E(\mathsf{k},m)=c]=\Pr[\mathsf{c}=c]$ 就够了。我们有：
+因此，我们只需证明 $\Pr[E(\mathsf{k},m)=c]=\Pr[\mathsf{c}=c]$ 就足够了。我们有：
 \[
 \begin{aligned}
 \Pr[\mathsf{c}=c]&=
 \Pr[E(\mathsf{k},\mathsf{m})=c]\\
-&=\sum_{m'\in\mathcal{M}}\Pr[E(\mathsf{k},\mathsf{m})=c \land \mathsf{m}=m']\quad\text{\emph{（全概率）}}\\
+&=\sum_{m'\in\mathcal{M}}\Pr[E(\mathsf{k},\mathsf{m})=c \land \mathsf{m}=m']
+\quad\text{\emph{（全概率）}}\\
 &=\sum_{m'\in\mathcal{M}}\Pr[E(\mathsf{k},m')=c \land \mathsf{m}=m']\\
-&=\sum_{m'\in\mathcal{M}}\Pr[E(\mathsf{k},m')=c]\cdot\Pr[\mathsf{m}=m']\quad\text{\emph{（}\,} \mathsf{k} \text{\emph{\,和\,}} \mathsf{m} \text{\,\emph{相互独立）}}\\
-&=\sum_{m'\in\mathcal{M}}\Pr[E(\mathsf{k},m)=c]\cdot\Pr[\mathsf{m}=m']\quad\text{\emph{（完美安全性的定义）}}\\
+&=\sum_{m'\in\mathcal{M}}\Pr[E(\mathsf{k},m')=c]\cdot\Pr[\mathsf{m}=m']\quad\text{\emph{（}\,} \mathsf{k} \text{\emph{\;和\;}} \mathsf{m} \text{\;\emph{相互独立）}}\\
+&=\sum_{m'\in\mathcal{M}}\Pr[E(\mathsf{k},m)=c]\cdot\Pr[\mathsf{m}=m']
+\quad\text{\emph{（完美安全性的定义）}}\\
 &=\Pr[E(\mathsf{k},m)=c]\sum_{m'\in\mathcal{M}}\Pr[\mathsf{m}=m']\\
 &=\Pr[E(\mathsf{k},m)=c]\quad\text{\emph{（全概率）}}
 \end{aligned}
 \]
 
-对于第二个结论，假设 $\mathsf{c}$ 和 $\mathsf{m}$ 相互独立，并且 $\mathcal{M}$ 中的每个消息都以非零概率出现。令 $m\in\mathcal{M}$，$c\in\mathcal{C}$。我们将要证明$\Pr[E(\mathsf{k},m)=c]=\Pr[\mathsf{c}=c]$，这样自然就能证明 $\mathcal{E}$ 是完美安全的。由于 $\Pr[\mathsf{m}=m]\neq0$，我们可以看出：
+对于第二个结论，假设 $\mathsf{c}$ 和 $\mathsf{m}$ 相互独立，并且 $\mathcal{M}$ 中的每条消息都以非零概率出现。令 $m\in\mathcal{M}$，$c\in\mathcal{C}$。我们想要证明 $\Pr[E(\mathsf{k},m)=c]=\Pr[\mathsf{c}=c]$，这样自然就能证明 $\mathcal{E}$ 是完美安全的。由于 $\Pr[\mathsf{m}=m]\neq0$，我们可以看出：
 \[
 \begin{aligned}
-Pr[E(\mathsf{k},m)=c]\Pr[\mathsf{m}=m]
-&=\Pr[E(\mathsf{k},m)=c\land \mathsf{m}=m]\quad\text{\emph{（}\,} \mathsf{k} \text{\emph{\,和\,}} \mathsf{m} \text{\,\emph{相互独立）}}\\
+\Pr[E(\mathsf{k},m)=c]\cdot\Pr[\mathsf{m}=m]
+&=\Pr[E(\mathsf{k},m)=c\land \mathsf{m}=m]
+\quad\text{\emph{（}\,} \mathsf{k} \text{\emph{\;和\;}} \mathsf{m} \text{\;\emph{相互独立）}}\\
 &=\Pr[E(\mathsf{k},\mathsf{m})=c\land \mathsf{m}=m]\\
 &=\Pr[\mathsf{c}=c \land\mathsf{m}=m]\\
-&=\Pr[\mathsf{c}=c]\Pr[\mathsf{m}=m]\quad\text{\emph{（}\,} \mathsf{c} \text{\emph{\,和\,}} \mathsf{m} \text{\,\emph{相互独立）}}
+&=\Pr[\mathsf{c}=c]\cdot\Pr[\mathsf{m}=m]
+\quad\text{\emph{（}\,} \mathsf{c} \text{\emph{\;和\;}} \mathsf{m} \text{\;\emph{相互独立）}}
 \qedhere
 \end{aligned}
 \]
@@ -327,20 +328,18 @@ Pr[E(\mathsf{k},m)=c]\Pr[\mathsf{m}=m]
 
 \subsection{坏消息}
 
-我们把坏消息留到最后。下一个定理表明，完美安全是一个如此强大的概念，以至于没有任何其他方法能够超越一次性密码本：想要实现完美安全性，密钥长度至少要与消息相等。因此，在实践中几乎不可能使用完美安全的密码：如果 Alice 想给 Bob 发送一个 1 GB 的视频文件，那么 Alice 和 Bob 就必须事先商定一个 1 GB 的密钥。
+我们把坏消息留到最后。下一个定理表明，完美安全是一个如此强大的概念，以至于没有任何其他方法能够超越一次性密码本：想要实现完美安全性，密钥至少要与消息等长。因此，在实践中几乎不可能使用完美安全的密码：如果 Alice 想给 Bob 发送一个 1 GB 的视频文件，那么 Alice 和 Bob 就必须事先商定一个 1 GB 的密钥。
 
 \begin{theorem}[香农定理]\label{theo:2-5}
 令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。如果 $\mathcal{E}$ 是完美安全的，则 $|\mathcal{K}|\geq|\mathcal{M}|$。
 \end{theorem}
 
 \begin{proof}
-假设 $|\mathcal{K}|<|\mathcal{M}|$，我们现在想要证明在这种情况下 $\mathcal{E}$ 不是完美安全的。为此，我们说明存在消息 $m_0$ 和 $m_1$，以及一条密文 $c$ 使得：
-\begin{equation}\label{eq:2-1}
-\Pr[E(\mathsf{k},m_0)=c]>0
-\end{equation}
-\begin{equation}\label{eq:2-2}
-\Pr[E(\mathsf{k},m_1)=c]=0
-\end{equation}
+假设 $|\mathcal{K}|<|\mathcal{M}|$，我们想要证明 $\mathcal{E}$ 不是完美安全的。为此，我们说明存在消息 $m_0$ 和 $m_1$，以及一条密文 $c$ 使得：
+\begin{align}
+& \Pr[E(\mathsf{k},m_0)=c]>0,\quad\text{且} \label{eq:2-1}\\
+& \Pr[E(\mathsf{k},m_1)=c]=0 \label{eq:2-2}
+\end{align}
 成立。这里，$\mathsf{k}$ 是一个均匀分布在 $\mathcal{K}$ 上的随机变量。
 
 为了做到这一点，我们选择某个消息 $m_0\in\mathcal{M}$ 和某个密钥 $k_0\in\mathcal{K}$。令 $c:=E(k_0,m_0)$。很明显，此时式 \ref{eq:2-1} 成立。
@@ -353,11 +352,11 @@ S:=\{D(k_1,c):k_1\in\mathcal{K}\}
 \[
 |S|\leq|\mathcal{K}|<|\mathcal{M}|
 \]
-这样，我们就可以选取一个消息 $m_1\in \mathcal{M}\setminus S$。
+这样，我们就可以选取一条消息 $m_1\in \mathcal{M}\setminus S$。
 
-为了证明式 \ref{eq:2-2} 也成立，我们需要说明不存在密钥 $k_1$ 能使 $E(k_1,m_1) = c$。相反地，我们假设存在一个密钥 $k_1$ 使得 $E(k_1,m_1) = c$成立，那么对于这个密钥 $k_1$，根据密码的正确性属性，我们有：
+为了证明式 \ref{eq:2-2} 也成立，我们需要说明不存在密钥 $k_1$ 能使 $E(k_1,m_1) = c$。相反，我们假设存在一个密钥 $k_1$ 使得 $E(k_1,m_1) = c$成立，那么对于这个密钥 $k_1$，根据密码的正确性属性，我们有：
 \[
-D(k_1,c)=D(k_1,E(k_1,m_1))=m_1
+D(k_1,c)=D\big(k_1,\,E(k_1,m_1)\big)=m_1
 \]
 这就意味着 $m_1$ 属于 $S$，而事实并非如此。因此式 \ref{eq:2-2} 成立，定理得证。
 \end{proof}

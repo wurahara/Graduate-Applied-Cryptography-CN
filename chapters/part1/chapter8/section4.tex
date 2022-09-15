@@ -34,13 +34,13 @@
 在证明 $H_\mathrm{MD}$ 的抗碰撞性之前，让我们首先介绍一下图 \ref{fig:8-5} 中各种元素的术语：
 \begin{itemize}
 	\item 哈希函数 $h$ 被称为 $H$ 的\textbf{压缩函数(compression function)}。
-	\item 常数 $\mathrm{IV}$ 被称为\textbf{初始值(initial value)}，它被设定为某个预定义的值。我们固然可以直接令 $\mathrm{IV}=0^n$，但是 $\mathrm{IV}$ 通常会被设置为一些更复杂的字符串。比如说，SHA256 的 $\mathrm{IV}$ 是一个 $256$ 比特的字符串，它的值用十六进制表示为：
+	\item 常数 $\mathrm{IV}$ 被称为\textbf{初始值(initial value)}，它被设定为某个预定义的值。我们固然可以直接令 $\mathrm{IV}=0^n$，但是 $\mathrm{IV}$ 通常会被设置为一些更复杂的序列。比如说，SHA256 的 $\mathrm{IV}$ 是一个 $256$ 比特的序列，它的值用十六进制表示为：
 	\[
 	\mathrm{IV}:=\texttt{6a09e667 bb67ae85 3c6ef372 a54ff53a 510e527f 9b05688c 1f83d9ab 5be0cd19}
 	\]
 	\item 变量 $m_1,\dots,m_s$ 被称为消息分组。
 	\item 变量 $t_0,t_1,\dots,t_s\in\mathcal{X}$ 被称为\textbf{链式变量(chaining variables)}。
-	\item 字符串 $\mathrm{PB}$ 被称为\textbf{填充分组(padding block)}。它被附加到消息中，以确保消息的长度是 $\ell$ 比特的整数倍。
+	\item 序列 $\mathrm{PB}$ 被称为\textbf{填充分组(padding block)}。它被附加到消息中，以确保消息的长度是 $\ell$ 比特的整数倍。
 \end{itemize}
 
 填充分组 $\mathrm{PB}$ 必须包含一个对输入信息长度的编码。我们将在下面的安全证明中使用它。$\mathrm{PB}$ 的标准格式如下：

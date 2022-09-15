@@ -1,14 +1,14 @@
 \section{下一比特测试}
 
-令 $G$ 是一个定义在 $(\{0,1\}^\ell,\{0,1\}^L)$ 上的 PRG，它能将 $\ell$ 比特字符串拉伸到 $L$ 比特长。有许多方法可以让对手区分 $G$ 的伪随机输出和真正的随机比特序列。事实上，假设一个有效对手能在给定 $G$ 输出的前 $L-1$ 比特的情况下预测出其输出的最后一比特，则 $G$ 从直观上来说就是不安全的，因为给定一个真随机 $L$ 位比特序列的前 $L-1$ 位，任何人最多只有一半的机会猜中最后一比特。事实上，该结论一个有趣的逆命题也是真命题。
+令 $G$ 是一个定义在 $(\{0,1\}^\ell,\{0,1\}^L)$ 上的 PRG，它能将 $\ell$ 比特序列拉伸到 $L$ 比特长。有许多方法可以让对手区分 $G$ 的伪随机输出和真正的随机比特序列。事实上，当给定 $G$ 的输出的前 $L-1$ 比特时，假设一个有效对手能够计算出其输出的最后一笔特。直观上看，这样一个对手的存在就预示着 $G$ 是不安全的，因为给定一个 $L$ 比特的真随机序列的前 $L-1$ 比特，任何人都最多只有一半的机会猜中最后一个比特。事实上，该结论的一个逆命题也是真的。
 
-我们下面会正式定义 PRG 的\textbf{不可预测性 (unpredictability)} 的概念。它本质上指，给定 $G$ 输出的前 $i$ 比特（这里的$i$是一个对手选择的索引），能够以显著高于$1/2$的概率预测出下一个比特（即第 $i+1$ 比特）是困难的。之后，我们将证明不可预测性和安全性是等价的。安全性能够导出不可预测性这一事实是很直观的：如果能够有效预测伪随机序列中的下一比特，那么我们就能直接给出一个有效的统计测试来打破安全性。相反，由不可预测性能够导出安全性，这是相当有趣的（需要花一些精力来证明），这实际上是指，如果存在任何有效的统计测试能够打破 PRG 的安全性，那么必然存在一个方法能够有效预测伪随机序列将要输出的下一比特。
+我们下面会正式定义 PRG 的\textbf{不可预测性 (unpredictability)}。它在本质上就是说，给定 $G$ 的输出的前 $i$ 个比特（这里，$i$ 是一个对手选择的索引），以显著高于 $1/2$ 的概率预测出下一个比特（即第 $i+1$ 比特）是困难的。之后，我们将证明，不可预测性与安全性是等价的。安全性能够导出不可预测性这一事实是很直观的：如果能够有效地预测伪随机序列的下一比特，我们就能立即提供一个有效的统计检验。相反，由不可预测性能够导出安全性这一结论是相当有趣的（需要花一些精力来证明），这实际上是指，如果存在某个有效的统计检验能够打破 PRG 的安全性，就必然存在一个能够有效地预测伪随机序列的下一比特的方法。
 
 \begin{game}[不可预测的 PRG]\label{game:3-2}
 对于一个定义在 $(\mathcal{S},\{0,1\}^L)$ 上的给定 PRG $G$ 和一个给定对手 $\mathcal{A}$，攻击游戏的过程如下：
 \begin{itemize}
 	\item 对手向挑战者发送一个索引 $i$，其中 $0\leq i\leq L-1$。
-	\item 挑战者计算
+	\item 挑战者计算：
 	\[
 	s\overset{\rm R}\leftarrow\mathcal{S},
 	\quad
@@ -17,87 +17,100 @@
 	并将 $r[0\dots i-1]$ 发送给对手。
 	\item 对手输出 $g\in\{0,1\}$。
 \end{itemize}
-如果 $r[i]=g$，我们就说 $\mathcal{A}$ \textbf{获胜}。我们定义 $\mathcal{A}$ 相对于 $G$ 的\textbf{优势}为 ${\rm Pred\mathsf{adv}}[\mathcal{A},G]$，其值为$|\Pr[\mathcal{A}\text{ wins}]-{1}/{2}|$。
+如果 $r[i]=g$，我们就称 $\mathcal{A}$ \textbf{获胜}。我们将 $\mathcal{A}$ 的\textbf{优势} $\mathrm{Pred}\mathsf{adv}[\mathcal{A},G]$ 定义为 $|\Pr[\mathcal{A}\text{ wins}]-1/2|$。
 \end{game}
 
 \begin{definition}[不可预测的 PRG]
-如果 ${\rm Pred\mathsf{adv}}[\mathcal{A},G]$ 对所有有效对手 $\mathcal{A}$ 来说都是可忽略不计的，那么 PRG $G$ 就是\textbf{不可预测的 (unpredictable)}。
+如果对于所有有效对手 $\mathcal{A}$，$\mathrm{Pred}\mathsf{adv}[\mathcal{A},G]$ 的值都可忽略不计，我们就称 PRG $G$ 是\textbf{不可预测的 (unpredictable)}。
 \end{definition}
 
-我们下面先证明安全性能够推出不可预测性。
+我们下面首先证明，安全性能够导出不可预测性。
 
 \begin{theorem}
-令 $G$ 是一个定义在 $(\mathcal{S},\{0,1\}^L)$ 上的 PRG。如果 $G$ 是安全的，那么 $G$ 就是不可预测的。
+令 $G$ 是一个定义在 $(\mathcal{S},\{0,1\}^L)$ 上的 PRG。如果 $G$ 是安全的，$G$ 就是不可预测的。
 \begin{quote}
-特别地，对于每个如攻击游戏 \ref{game:3-2} 那样打破 $G$ 的不可预测性的对手 $\mathcal{A}$，必然存在一个如攻击游戏 \ref{game:3-1} 那样打破 $G$ 的安全性的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
+特别地，对于每个如攻击游戏 \ref{game:3-2} 中那样攻破 $G$ 的不可预测性的对手 $\mathcal{A}$，都存在一个如攻击游戏 \ref{game:3-1} 中那样攻破 $G$ 的安全性的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
 \end{quote}
 \[
-{\rm Pred\mathsf{adv}}[\mathcal{A},G]={\rm PRG\mathsf{adv}}[\mathcal{B},G]
+\mathrm{Pred}\mathsf{adv}[\mathcal{A},G]
+=
+\mathrm{PRG}\mathsf{adv}[\mathcal{B},G]
 \]
 \end{theorem}
 
 \begin{proof}
-令 $\mathcal{A}$ 是一个攻击 $G$ 的不可预测性的对手，令 $i$ 表示 $\mathcal{A}$ 所选择的索引。同时，假设 $\mathcal{A}$ 能以 ${1}/{2}+\epsilon$ 的概率赢得攻击游戏 \ref{game:3-2}，则有${\rm Pred\mathsf{adv}}[\mathcal{A},G]=|\epsilon|$。
+令 $\mathcal{A}$ 是一个攻破 $G$ 的不可预测性的对手，令 $i$ 表示 $\mathcal{A}$ 所选择的索引。此外，假设 $\mathcal{A}$ 能以 $1/2+\epsilon$ 的概率赢得攻击游戏 \ref{game:3-2}，则有 $\mathrm{Pred}\mathsf{adv}[\mathcal{A},G]=|\epsilon|$。
 
 我们下面以 $\mathcal{A}$ 为子程序，建立一个攻击 $G$ 的安全性的对手 $\mathcal{B}$，其运行方式如下：
 
-\vspace*{5pt}
+\vspace*{10pt}
 
-\hspace*{5pt} 当收到来自挑战者的 $r\in\{0,1\}^L$ 时，$\mathcal B$ 进行以下操作：\\
-\hspace*{50pt} $\mathcal{B}$ 将 $r[0\dots i-1]$ 发送 $\mathcal{A}$，获得 $\mathcal{A}$ 的输出 $g\in\{0,1\}$；\\
-\hspace*{50pt} 如果 $r[i]=g$，$\mathcal{B}$ 输出 $1$，否则输出 $0$。
+\hspace*{5pt} 当从它的挑战者处收到 $r\in\{0,1\}^L$ 时，$\mathcal B$ 进行以下操作：
 
 \vspace*{5pt}
 
-对于 $b=0,1$，令 $W_b$ 为$\mathcal{B}$在攻击游戏 \ref{game:3-1} 的实验 $b$ 中输出 $1$ 的事件。在实验 $0$ 中，$r$ 是 $G$ 的一个伪随机输出，当且仅当 $r[i]=g$ 时 $W_0$ 才会发生，因此根据定义，有：
+\hspace*{28.5pt} $\mathcal{B}$ 将 $r[0\dots i-1]$ 发送 $\mathcal{A}$，获得 $\mathcal{A}$ 的输出 $g\in\{0,1\}$；\\
+\hspace*{50pt} 如果 $r[i]=g$，$\mathcal{B}$ 输出 $1$，否则就输出 $0$。
+
+\vspace*{10pt}
+
+对于 $b=0,1$，令 $W_b$ 为$\mathcal{B}$在攻击游戏 \ref{game:3-1} 的实验 $b$ 中输出 $1$ 的事件。在实验 $0$ 中，$r$ 是 $G$ 的一个伪随机输出，并且当且仅当 $r[i]=g$ 成立时，$W_0$ 才会发生，因此根据定义，我们有：
 \[
-\Pr[W_0]={1}/{2}+\epsilon
+\Pr[W_0]=1/2+\epsilon
 \]
-在实验 $1$ 中，$r$ 是一个真随机比特序列。同样地，当且仅当 $r[i]=g$ 时 $W_1$ 才会发生；然而，在这种情况下，随机变量 $r[i]$ 和 $g$ 的值相互独立，因此有：
+在实验 $1$ 中，$r$ 是一个真随机的比特序列。但同样地，当且仅当 $r[i]=g$ 成立时，$W_1$ 才会发生；然而，在这种情况下，随机变量 $r[i]$ 和 $g$ 的值相互独立，因此我们有：
 \[
-\Pr[W_1]={1}/{2}
+\Pr[W_1]=1/2
 \]
-因此可以得到：
+于是有：
 \[
-{\rm Pred\mathsf{adv}}[\mathcal{B},G]=|\Pr[W_1]-\Pr[W_0]|=|\epsilon|={\rm PRG\mathsf{adv}}[\mathcal{A},G]\qedhere
+\mathrm{PRG}\mathsf{adv}[\mathcal{B},G]
+=\big\lvert\Pr[W_1]-\Pr[W_0]\big\rvert
+=|\epsilon|
+=\mathrm{Pred}\mathsf{adv}[\mathcal{A},G]
+\qedhere
 \]
 \end{proof}
 
-更有趣也更有挑战性的任务是证明不可预测性能够推出着安全性。在详细介绍具体的证明之前，我们先勾勒出高层次的想法。
+相比之下，证明不可预测性能够导出安全性，是一个更有趣，也更有挑战性的任务。在详细介绍具体的证明之前，我们先勾勒出整体思路。
 
-首先，我们会采用一个混合论证，目的是论证如果 $\mathcal{A}$ 是一个能够有效区分伪随机 $L$ 比特序列和真随机 $L$ 比特序列的有效对手，那么我们必然可以构造一个有效对手 $\mathcal{B}$，它能够有效地区分：
+首先，我们将采用一个混合论证，这将使我们能够论证，如果 $\mathcal{A}$ 是一个能够有效区分 $L$ 比特的伪随机序列和真随机序列的有效对手，我们就必然可以构造一个有效对手 $\mathcal{B}$，它能够有效地区分：
 \[
-x_1\cdots x_j\;\;r
+x_1\cdots x_j\;r
 \]
 和：
 \[
-x_1\cdots x_j\;\;x_{j+1}
+x_1\cdots x_j\;x_{j+1}
 \]
 其中 $j$ 是一个随机选出的索引，$x_1,\dots,x_L$ 是伪随机输出，而 $r$ 是一个随机比特。因此，对手 $\mathcal{B}$ 可以在给定 $x_1,\dots,x_j$ 这个``侧信息"的情况下有效区分伪随机比特 $x_{j+1}$ 和真随机比特 $r$。
 
-我们想把 $\mathcal{B}$ 的区分优势变成预测优势，大致的想法是这样的：给定 $x_1,\dots,x_j$，我们给 $\mathcal{B}$ 提供一个序列 $x_1\cdots x_j\;\;r$，其中的 $r$ 是一个随机选出的比特；如果 $\mathcal{B}$ 输出 $1$，我们对 $x_{j+1}$ 的预测值就是 $r$；否则我们对 $x_{j+1}$ 的预测值就是 $\overline r$（$r$ 的补码）。
+我们想把 $\mathcal{B}$ 的区分优势变成一种预测优势。大致的想法是这样的：给定 $x_1,\dots,x_j$，我们向 $\mathcal{B}$ 提供一个序列 $x_1\cdots x_j\;r$，其中的 $r$ 是一个随机选出的比特；如果 $\mathcal{B}$ 输出 $1$，我们对 $x_{j+1}$ 的预测值就是 $r$；否则，我们对 $x_{j+1}$ 的预测值就是 $\bar{r}$（$r$ 的补码）。
 
-这一预测策略的有效性由以下的一般结论给出，我们称之为\emph{区分者/预测者引理}。我们有一半设置如下：
+下面的一般结论能够证明上述预测策略的有效性，我们称之为\emph{区分者/预测者引理}。基本设置是这样的：
 \begin{itemize}
-	\item 一个随机变量 $\mathsf{X}$，它对应于上面的``侧信息" $x_1,\dots,x_j$ 以及对手 $\mathcal{B}$ 所使用的任何随机硬币；
+	\item 一个随机变量 $\mathsf{X}$，它对应于上面的``侧信息" $x_1,\dots,x_j$，以及对手 $\mathcal{B}$ 所使用的任何随机硬币；
 	\item 一个取值为 $0$ 或 $1$ 的随机变量 $\mathsf{B}$，它对应于上面的 $x_{j+1}$，并可能与 $\mathsf{X}$ 相关；
-	\item 一个取值为 $0$ 或 $1$ 的随机变量 $\mathsf{R}$，它对应于上面的 $r$，并且与 $(\mathsf{X},\mathsf{B})$ 无关。
-	\item 一个函数 $d$，它对应于使得$\mathcal{B}$的区分优势为$|\epsilon|$的策略，其中$\epsilon=\Pr[d(\mathsf{X},\mathsf{B})=1]-\Pr[d(\mathsf{X},\mathsf{R})=1]$。
+	\item 一个取值为 $0$ 或 $1$ 的随机变量 $\mathsf{R}$，它对应于上面的 $r$，并且与 $(\mathsf{X},\mathsf{B})$ 无关；
+	\item 一个函数 $d$，它对应于使得 $\mathcal{B}$ 的区分优势等于 $|\epsilon|$ 的 $\mathcal{B}$ 的策略，其中 $\epsilon=\Pr[d(\mathsf{X},\mathsf{B})=1]-\Pr[d(\mathsf{X},\mathsf{R})=1]$。
 \end{itemize}
-该引理表明，如果我们用上述预测策略定义 $\mathsf{B}'$，即如果 $d(\mathsf{X},\mathsf{R})=1$，就有 $\mathsf{B}'=\mathsf{R}$，否则有 $\mathsf{B}'=\mathsf{\overline R}$，那么预测 $\mathsf{B}'$ 等于实际值 $\mathsf{B}$ 的概率正好是 ${1}/{2}+\epsilon$。下面是该引理的精确陈述：
+该引理表明，如果我们使用上面介绍的预测策略来定义 $\mathsf{B}'$，即当 $d(\mathsf{X},\mathsf{R})=1$ 时，令 $\mathsf{B}'=\mathsf{R}$，否则令 $\mathsf{B}'=\mathsf{\overline R}$，那么预测值 $\mathsf{B}'$ 等于实际值 $\mathsf{B}$ 的概率正好就是 $1/2+\epsilon$。下面是该引理的精确陈述：
 
 \begin{lemma}[区分者/预测者引理]\label{lemma:3-5}
-令 $\mathsf{X}$ 是一个在某个集合 $S$ 中取值的随机变量，令 $\mathsf{B}$ 和 $\mathsf{R}$ 是取值为 $0$ 或 $1$ 的随机变量，其中 $\mathsf{R}$ 在 $\{0,1\}$ 上均匀分布，且与 $(\mathsf{X},\mathsf{B})$ 无关。令 $d:S\times\{0,1\}\to\{0,1\}$ 是一个任意的函数，并令：
+令 $\mathsf{X}$ 是一个在某个集合 $S$ 中取值的随机变量，令 $\mathsf{B}$ 和 $\mathsf{R}$ 是取值为 $0$ 或 $1$ 的随机变量，其中 $\mathsf{R}$ 均匀分布在 $\{0,1\}$ 上，且与 $(\mathsf{X},\mathsf{B})$ 无关。令 $d:S\times\{0,1\}\to\{0,1\}$ 是一个任意的函数，并令：
 \[
-\epsilon:=\Pr[d(\mathsf{X},\mathsf{B})=1]-\Pr[d(\mathsf{X},\mathsf{R})=1]
+\epsilon
+:=
+\Pr[d(\mathsf{X},\mathsf{B})=1]
+-
+\Pr[d(\mathsf{X},\mathsf{R})=1]
 \]
-随机变量 $\mathsf{B}'$的定义如下：
+按如下方式定义随机变量 $\mathsf{B}'$：
 \[
 \mathsf{B}':=
 \left\{
 \begin{array}{ll}
 \mathsf{R}, & d(\mathsf{X},\mathsf{R})=1\\
-\mathsf{\overline R}, & d(\mathsf{X},\mathsf{R})\neq 1
+\mathsf{\overline R}, & \text{otherwise}
 \end{array}
 \right.
 \]
@@ -108,8 +121,7 @@ x_1\cdots x_j\;\;x_{j+1}
 \end{lemma}
 
 \begin{proof}
-我们首先以事件 $\mathsf{B}=\mathsf{R}$ 和 $\mathsf{B}=\mathsf{\overline R}$ 为条件计算 $\Pr[\mathsf{B}'=\mathsf{B}]$：
-
+以事件 $\mathsf{B}=\mathsf{R}$ 和 $\mathsf{B}=\mathsf{\overline R}$ 为条件，我们计算 $\Pr[\mathsf{B}'=\mathsf{B}]$：
 \[
 \begin{aligned}
 \Pr[\mathsf{B}'=\mathsf{B}]
@@ -126,7 +138,8 @@ x_1\cdots x_j\;\;x_{j+1}
 \]
 其中：
 \[
-\alpha:=\Pr[d(\mathsf{X},\mathsf{R})=1\,|\,\mathsf{B}=\mathsf{R}],\quad
+\alpha:=\Pr[d(\mathsf{X},\mathsf{R})=1\,|\,\mathsf{B}=\mathsf{R}],
+\quad
 \beta:=\Pr[d(\mathsf{X},\mathsf{R})=1\,|\,\mathsf{B}=\mathsf{\overline R}]
 \]
 根据独立性，我们有：
@@ -151,39 +164,39 @@ x_1\cdots x_j\;\;x_{j+1}
 \end{proof}
 
 \begin{theorem}
-令 $G$ 是一个定义在 $(\mathcal{S},\{0,1\}^L)$ 上的 PRG。如果 $G$ 是不可预测的，那么 $G$ 就是安全的。
+令 $G$ 是一个定义在 $(\mathcal{S},\{0,1\}^L)$ 上的 PRG。如果 $G$ 是不可预测的，$G$ 就是安全的。
 \begin{quote}
-特别地，对于每个像攻击游戏 \ref{game:3-1} 那样打破 $G$ 的安全性的对手 $\mathcal{A}$，必然存在一个像攻击游戏 \ref{game:3-2} 那样打破 $G$ 的不可预测性的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
+特别地，对于每个如攻击游戏 \ref{game:3-1} 中那样攻破 $G$ 的安全性的对手 $\mathcal{A}$，都存在一个如攻击游戏 \ref{game:3-2} 中那样攻破 $G$ 的不可预测性的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
 \end{quote}
 \[
-{\rm PRG\mathsf{adv}}[\mathcal{A},G]=L\cdot{\rm Pred\mathsf{adv}}[\mathcal{B},G]
+\mathrm{PRG}\mathsf{adv}[\mathcal{A},G]
+=L\cdot
+\mathrm{Pred}\mathsf{adv}[\mathcal{B},G]
 \]
 \end{theorem}
 
 \begin{proof}
-令 $\mathcal{A}$ 像攻击游戏 \ref{game:3-1} 中那样攻击 $G$。利用 $\mathcal{A}$，我们建立一个预测器 $\mathcal{B}$，它像攻击游戏 \ref{game:3-2} 那样攻击 $G$。$\mathcal{B}$ 的工作方式如下：
+令 $\mathcal{A}$ 像攻击游戏 \ref{game:3-1} 中那样攻击 $G$。利用 $\mathcal{A}$，我们建立一个预测器 $\mathcal{B}$，它像攻击游戏 \ref{game:3-2} 中那样攻击 $G$，工作方式如下：
 \begin{itemize}
 	\item 随机选出 $\omega\in\{1,\dots,L\}$。
-	\item 向挑战者发送 $L-\omega$，得到一个字符串 $x\in\{0,1\}^{L-\omega}$。
+	\item 向挑战者发送 $L-\omega$，得到一个序列 $x\in\{0,1\}^{L-\omega}$。
 	\item 随机生成 $\omega$ 个比特 $r_1,\dots,r_\omega$，并将 $L$ 比特序列 $x\,\Vert\,r_1\cdots r_\omega$ 发送给 $\mathcal{A}$。
-	\item 如果 $\mathcal{A}$ 输出 $1$，则 $\mathcal{B}$ 输出 $r_1$，否则 $\mathcal{B}$ 输出 $\overline r_1$。
+	\item 如果 $\mathcal{A}$ 输出 $1$，$\mathcal{B}$ 就输出 $r_1$；否则，$\mathcal{B}$ 输出 $\overline r_1$。
 \end{itemize}
 
-为了分析 $\mathcal{B}$，我们考虑 $L+1$ 个混合游戏，称为混合$0$，混合$1$，$\dots$，混合$L$。对于 $j=0,\dots,L$，我们定义混合 $j$ 为 $\mathcal{A}$ 和挑战者之间的游戏，挑战者生成一个由 $L-j$ 个伪随机比特和 $j$ 个真随机比特组成的序列 $r$；也就是说，挑战者随机选择 $s\in\mathcal{S}$ 和 $t\in\{0,1\}^j$，并向 $\mathcal{A}$ 发送比特序列：
+为了分析 $\mathcal{B}$，我们考虑 $L+1$ 个混合游戏，称为混合 $0$，混合 $1$，$\dots$，混合 $L$。对于 $j=0,\dots,L$，我们将混合 $j$ 定义为 $\mathcal{A}$ 和挑战者之间进行的游戏，挑战者生成一个由 $L-j$ 个伪随机比特后缀 $j$ 个真随机比特组成的序列 $r$；也就是说，挑战者随机选择 $s\in\mathcal{S}$ 和 $t\in\{0,1\}^j$，并向 $\mathcal{A}$ 发送比特序列：
 \[
 r=G(s)[0\dots L-j-1]\,\Vert\,t
 \]
-和之前一样，$\mathcal{A}$ 在游戏结束时输出 $0$ 或 $1$，我们定义 $p_j$ 为 $\mathcal{A}$ 在混合 $j$ 中输出 $1$ 的概率。注意 $p_0$ 是 $\mathcal{A}$ 在攻击游戏 \ref{game:3-1} 的实验 $0$ 中输出 $1$ 的概率，而 $p_L$ 是 $\mathcal{A}$ 在攻击游戏 \ref{game:3-1} 的实验 $1$ 中输出 $1$ 的概率。
+同之前一样，$\mathcal{A}$ 在游戏结束时输出 $0$ 或 $1$，我们记 $p_j$ 为 $\mathcal{A}$ 在混合 $j$ 中输出 $1$ 的概率。请注意，$p_0$ 就等于 $\mathcal{A}$ 在攻击游戏 \ref{game:3-1} 的实验 $0$ 中输出 $1$ 的概率，而 $p_L$ 就等于 $\mathcal{A}$ 在攻击游戏 \ref{game:3-1} 的实验 $1$ 中输出 $1$ 的概率。
 
-令 $W$ 为 $\mathcal{B}$ 在攻击游戏 \ref{game:3-2} 中获胜的事件（即它正确预测了下一个比特），那么我们有：
+令 $W$ 为 $\mathcal{B}$ 在攻击游戏 \ref{game:3-2} 中获胜的事件（即它正确地预测了下一个比特），那么我们有：
 \[
 \begin{aligned}
 \Pr[W]
-&=\sum_{j=1}^L\Pr[W|\omega=j]\cdot\Pr[\omega=j]\\
+&=\sum_{j=1}^L\Pr[W\,|\,\omega=j]\cdot\Pr[\omega=j]\\
 &=\frac{1}{L}\sum_{j=1}^L\Pr[W\,|\,\omega=j]\\
-&=\frac{1}{L}\sum_{j=1}^L
-\Big(\frac{1}{2}+p_{j-1}-p_j
-\Big)
+&=\frac{1}{L}\sum_{j=1}^L\Big(\frac{1}{2}+p_{j-1}-p_j\Big)
 \quad\text{\emph{（根据引理} \ref{lemma:3-5}\emph{\,）}}\\
 &=\frac{1}{2}+\frac{1}{L}(p_0-p_L)
 \end{aligned}

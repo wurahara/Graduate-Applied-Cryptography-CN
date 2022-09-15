@@ -22,7 +22,7 @@ E(k,m):=\Big(k[0](m[0]),\;k[1](m[1]),\;\dots,\;k[L-1](m[L-1])\Big)
 \end{exercise}
 
 \begin{exercise}[被破坏的一次性密码本]\label{exer:2-4}
-考虑一个消息空间为$\{0,1\}^L$的一次性密码本变体，其密钥空间$\mathcal{K}$被限制为所有包含偶数个$1$的$L$比特字符串所构成的集合。给出一个语义安全优势为$1$的有效对手。
+考虑一个消息空间为$\{0,1\}^L$的一次性密码本变体，其密钥空间$\mathcal{K}$被限制为所有包含偶数个$1$的$L$比特序列所构成的集合。给出一个语义安全优势为$1$的有效对手。
 \end{exercise}
 
 \begin{exercise}[更强的不可能结果]\label{exer:2-5}
@@ -30,7 +30,7 @@ E(k,m):=\Big(k[0](m[0]),\;k[1](m[1]),\;\dots,\;k[L-1](m[L-1])\Big)
 \end{exercise}
 
 \begin{exercise}[匹配的边界]\label{exer:2-6}
-这个练习是对上一个练习的一种逆推。对于$j=0,\dots,L-1$，令$\epsilon=1/2^j$。考虑定义在$(\mathcal{K},\mathcal{M},\mathcal{C})$上的$L$比特一次性密码本变体$\mathcal{E}$，其中$\mathcal{M}=\mathcal{C}=\{0,1\}^L$。密钥空间$\mathcal{K}$被限制为所有前$j$位不全为零的$L$比特字符串所构成的集合，因此 $|\mathcal{K}|=(1-\epsilon)|\mathcal{M}|$。证明：
+这个练习是对上一个练习的一种逆推。对于$j=0,\dots,L-1$，令$\epsilon=1/2^j$。考虑定义在$(\mathcal{K},\mathcal{M},\mathcal{C})$上的$L$比特一次性密码本变体$\mathcal{E}$，其中$\mathcal{M}=\mathcal{C}=\{0,1\}^L$。密钥空间$\mathcal{K}$被限制为所有前$j$位不全为零的$L$比特序列所构成的集合，因此 $|\mathcal{K}|=(1-\epsilon)|\mathcal{M}|$。证明：
 \begin{enumerate}[\indent(a)]
 	\item 存在一个有效对手$\mathcal{A}$，使得$\mathrm{SS}\mathsf{adv}[\mathcal{A},\mathcal{E}]=\epsilon/(1-\epsilon)$；
 	\item 对于\emph{所有的}对手$\mathcal{A}$，甚至包括\emph{计算上无界的}对手，都有$\mathrm{SS}\mathsf{adv}[\mathcal{A},\mathcal{E}]\leq\epsilon/(1-\epsilon)$。
@@ -63,7 +63,7 @@ E(k,m):=\Big(k[0](m[0]),\;k[1](m[1]),\;\dots,\;k[L-1](m[L-1])\Big)
 	\item $E_3(k,m):=\mathrm{reverse}(E(k,m))$
 	\item $E_4(k,m):=E(k,\mathrm{reverse}(m))$
 \end{enumerate}
-这里，对于一个比特串$s$，如果$s$中有奇数个比特$1$，则$\mathrm{parity}(s)$为$1$，否则为$0$；另外，$\mathrm{reverse}(s)$是通过颠倒$s$中比特的顺序得到的字符串，例如，$\mathrm{reverse}(1011)=1101$。
+这里，对于一个比特串$s$，如果$s$中有奇数个比特$1$，则$\mathrm{parity}(s)$为$1$，否则为$0$；另外，$\mathrm{reverse}(s)$是通过颠倒$s$中比特的顺序得到的序列，例如，$\mathrm{reverse}(1011)=1101$。
 \end{exercise}
 
 \begin{exercise}[密钥恢复攻击]\label{exer:2-11}
