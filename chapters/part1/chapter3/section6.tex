@@ -38,10 +38,8 @@ Salsa 和 ChaCha 的设计是高度并行的，并且可以同时利用多个处
 
 我们将在下一章的练习 \ref{exer:4-23} 中分析 Salsa 和 ChaCha 的安全性，但在那之前，我们还需要其他的一些密码学工具。
 
-% TODO: here
-
 \begin{snote}[实现细节。]
-我们下面简单介绍填充函数 $\mathrm{pad}(s,j,n)$ 和 ChaCha20 中使用的置换 $\pi$。填充函数的输入是一个$256$比特的种子$s_0,\dots,s_7\in\{0,1\}^{32}$，一个$64$比特的计数器$j_0,j_1\in\{0,1\}^{32}$和一个$64$比特的 nonce $n_0,n_1\in\{0,1\}^{32}$。它输出一个$512$比特的分组，表示为$x_0,\dots,x_{15}\in\{0,1\}^{32}$。输出被组织为一个由$32$比特长的字所构成的$4\times4$矩阵，如下所示：
+我们下面简单介绍 ChaCha20 中使用的填充函数 $\mathrm{pad}(s,j,n)$ 和置换 $\pi$。填充函数的输入是一个 $256$ 比特的种子$s_0,\dots,s_7\in\{0,1\}^{32}$，一个 $64$ 比特的计数器 $j_0,j_1\in\{0,1\}^{32}$，以及一个 $64$ 比特的 nonce $n_0,n_1\in\{0,1\}^{32}$。它输出一个 $512$ 比特的分组，记为 $x_0,\dots,x_{15}\in\{0,1\}^{32}$。输出会被组织为一个由 $32$ 比特字构成的 $4\times4$ 矩阵，如下所示：
 \begin{equation}
 \begin{pmatrix}
 x_0 & x_1 & x_2 & x_3 \\
@@ -57,9 +55,9 @@ s_4 & s_5 & s_6 & s_7 \\
 j_0 & j_1 & n_0 & n_1
 \end{pmatrix}
 \end{equation}
-其中$c_0,c_1,c_2,c_3$是固定的$32$比特常数。
+其中 $c_0,c_1,c_2,c_3$ 都是固定的 $32$ 比特常数。
 
-置换 $\pi:\{0,1\}^{512}\to\{0,1\}^{512}$ 是通过对一个简单的置换进行固定次数的迭代来实现的。$\pi$的$512$比特输入被当作一个由$32$比特的字构成的$4\times4$数组，记作$x_0,\dots,x_{15}$。在 ChaCha20 中，函数$\pi$是通过重复10次以下步骤来实现的：
+通过对一个简单的置换进行固定次数的迭代，我们就能够得到置换 $\pi:\{0,1\}^{512}\to\{0,1\}^{512}$。$\pi$ 的 $512$ 比特输入会被当作一个由 $16$ 个 $32$ 比特字 $x_0,\dots,x_{15}$ 构成的 $4\times4$ 数组。在 ChaCha20 中，函数 $\pi$ 是通过重复 $10$ 次下列步骤实现的：
 \begin{center}
 \begin{tabular}{ll}
  (1) $\mathrm{QuarterRound}(x_0,x_4,x_8,x_{12})$, & (2) $\mathrm{QuarterRound}(x_1,x_5,x_9,x_{13})$,\\ 
@@ -68,7 +66,7 @@ j_0 & j_1 & n_0 & n_1
  (7) $\mathrm{QuarterRound}(x_2,x_7,x_8,x_{13})$, & (8) $\mathrm{QuarterRound}(x_3,x_4,x_9,x_{14})$\\
 \end{tabular}
 \end{center}
-这里，$\mathrm{QuarterRound}(\texttt{a},\texttt{b},\texttt{c},\texttt{d})$的定义可参见下面的C程序所表示的步骤：
+这里，$\mathrm{QuarterRound}(\texttt{a},\texttt{b},\texttt{c},\texttt{d})$ 的定义可参见下面用 C 程序表示的步骤：
 \begin{center}
 \begin{tabular}{lll}
 \texttt{a += b;} & \texttt{d \^{}=  a;} & \texttt{d <<<= 16;}\\
@@ -77,9 +75,9 @@ j_0 & j_1 & n_0 & n_1
 \texttt{c += d;} & \texttt{b \^{}=  c;} & \texttt{b <<<= 7;}
 \end{tabular}
 \end{center}
-注意到QuarterRound的前四个调用，即步骤(1-4)，从左到右分别应用于$4\times4$矩阵的四列上。接下来的四次调用，即步骤(5-8)，分别应用于矩阵的四条对角线。这就完成了我们对 ChaCha20 的描述，只是我们还需要讨论一下 nonce 的使用。
+注意到 QuarterRound 的前四个调用，即步骤 (1-4)，从左到右分别被应用到 $4\times4$ 矩阵的四列上。接下来的四次调用，即步骤(5-8)，分别被应用到了矩阵的四条对角线上。这样，我们就完成了对 ChaCha20 的描述，只是，我们还需要讨论一下 nonce 的使用。
 \end{snote}
 
 \begin{snote}[使用nonce。]
-虽然我们到目前为止讨论的 PRG 只把种子作为输入，但在实践中使用的许多 PRG 还需要一个额外的输入，称为\emph{nonce}。也就是说，PRG 是一个函数 $G:\mathcal{S}\times\mathcal{N}\to\mathcal{R}$，其中$\mathcal{S}$和$\mathcal{R}$和之前一样，而$\mathcal{N}$被称为\emph{nonce 空间}。nonce 能让我们由一个种子 $s$ 产生多个伪随机输出。也就是说，$G(s,n_0)$ 是一个伪随机输出，而当$n_1\neq n_0$时，$G(s,n_1)$ 就是另一个伪随机输出。nonce 将 PRG 变成了一个更强大的原语，称为\emph{伪随机函数(pseudo-random function)}，我们将在下一章更详细地讨论它。正如我们将看到的，安全的伪随机函数能让我们使用同一个种子安全地加密多条消息。
+虽然我们到目前为止讨论的 PRG 只把种子作为输入，但在实践中使用的许多 PRG 还需要一个额外的输入，称为\emph{nonce}。也就是说，PRG 是一个函数 $G:\mathcal{S}\times\mathcal{N}\to\mathcal{R}$，其中的 $\mathcal{S}$ 和 $\mathcal{R}$ 和之前一样，而 $\mathcal{N}$ 被称为\emph{nonce 空间}。nonce 能让我们使用单个种子 $s$ 产生多个伪随机输出。也就是说，$G(s,n_0)$ 是一个伪随机输出，而当 $n_1\neq n_0$ 时，$G(s,n_1)$ 就是另一个伪随机输出。nonce 将 PRG 变成了一个更强大的密码学原语，称为\emph{伪随机函数(pseudo-random function)}，我们将在下一章更详细地讨论它。正如我们将要看到的，安全的伪随机函数能让我们使用同一个种子来安全地加密多条消息。
 \end{snote}

@@ -1,23 +1,23 @@
 \tikzset{every picture/.style={line width=0.75pt}}      
 
-\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-0.9,xscale=0.9]
 
 \draw   (60,20) -- (300,20) -- (300,40) -- (60,40) -- cycle ;
 \draw   (0,100) -- (300,100) -- (300,120) -- (0,120) -- cycle ;
 
-\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][general shadow={fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,shadow xshift=1.5pt,shadow yshift=-1.5pt, opacity=1 }] (280,60) -- (480,60) -- (480,80) -- (280,80) -- cycle ;
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][general shadow={fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,shadow xshift=2pt,shadow yshift=-2pt, opacity=1 }] (280,60) -- (480,60) -- (480,80) -- (280,80) -- cycle ;
 
 \draw  [->]  (300,30) -- (380,30) -- (380,59) ;
 \draw  [->]  (300,110) -- (380,110) -- (380,83) ;
 \draw  [->]  (480,70) -- (550,70) ;
 
-\draw (180.2,30) node   [align=left] {$17$-bit LFSR};
-\draw (150,110) node   [align=left] {$25$-bit LFSR};
-\draw (380,70) node    {$x+y+c\bmod 256$};
-\draw (340,113) node [anchor=north] [inner sep=0.75pt]   [align=left] {$8$ bits};
-\draw (340,27) node [anchor=south] [inner sep=0.75pt]   [align=left] {$8$ bits};
-\draw (382,45) node [anchor=west] [inner sep=0.75pt]    {$x$};
-\draw (382,95) node [anchor=west] [inner sep=0.75pt]    {$y$};
-\draw (515.17,73.4) node [anchor=north] [inner sep=0.75pt]    {$8$};
+\draw (180.2,30) node   [align=left][font=\small] {$17$-bit LFSR};
+\draw (150,110) node   [align=left][font=\small] {$25$-bit LFSR};
+\draw (380,70) node  [font=\small]  {$x+y+c\bmod 256$};
+\draw (340,113) node [anchor=north] [inner sep=0.75pt][align=left][font=\footnotesize] {$8$ bits};
+\draw (340,27) node [anchor=south] [inner sep=0.75pt][align=left][font=\footnotesize] {$8$ bits};
+\draw (382,45) node [anchor=west] [inner sep=0.75pt][font=\footnotesize]    {$x$};
+\draw (382,95) node [anchor=west] [inner sep=0.75pt][font=\footnotesize]    {$y$};
+\draw (515.17,73.4) node [anchor=north] [inner sep=0.75pt][font=\footnotesize]    {$8$};
 
 \end{tikzpicture}

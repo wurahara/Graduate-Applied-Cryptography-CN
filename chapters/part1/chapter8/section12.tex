@@ -55,7 +55,7 @@ Alice 通过计算 $(c,o)\overset{\rm R}\leftarrow C(m)$ 来承诺一条消息 $
 \end{snote}
 
 \begin{snote}[一种来自抗碰撞性的承诺方案。]
-在 \ref{sec:3-12} 节中，我们使用伪随机发生器构建了一种优雅的承诺方案。然而，这个承诺方案其实很难使用。现在，我们可以用抗碰撞哈希函数更优雅地实现承诺。
+在 \ref{sec:3-12} 节中，我们使用伪随机生成器构建了一种优雅的承诺方案。然而，这个承诺方案其实很难使用。现在，我们可以用抗碰撞哈希函数更优雅地实现承诺。
 
 令 $H$ 是一个定义在 $(\mathcal{X},\mathcal{Y})$ 上的哈希函数，其中 $\mathcal{X}=\mathcal{M}\times\mathcal{R}$。这里，$\mathcal{M}$ 是承诺方案的消息空间，$\mathcal{R}$ 是一个有限的 nonce 空间，将被用于提供隐藏属性。对于 $m\in\mathcal{M}$，由哈希函数 $H$ 派生的承诺方案 $\mathcal{C}_H=(C,V)$ 定义如下：
 \[

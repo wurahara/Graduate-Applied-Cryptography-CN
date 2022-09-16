@@ -78,7 +78,7 @@ k_2\leftarrow k\oplus\mathsf{opad}
 使用哈希函数 $H$ 实现的 HMAC 被称作 HMAC-$H$。在实践中最常用的 HMAC 是 HMAC-SHA1 和 HMAC-SHA256。HMAC 标准还允许对 HMAC 的输出进行截短。例如，当把 SHA1 的输出截短到 $80$ 比特时，相应的 HMAC 函数就被称作 HMAC-SHA1-80。举例来说，TLS 1.0 的实现就被要求能够支持 HMAC-SHA1-96。
 
 \begin{snote}[HMAC 的安全性。]
-由于密钥 $k_1'$ 和 $k_2'$ 是相关的（它们的异或就等于 $\mathsf{opad}\oplus\mathsf{ipad}$），我们为双层密钥嵌套所提出的安全证明就不再能够适用：在所述假设下，我们不能证明派生出的密钥 $k_1'$ 与 $k_2'$ 和随机元是不可区分的。一个解决方案是对压缩函数 $h$ 做一个更强的假设——我们需要假设 $h_\mathrm{top}$ 在关联密钥攻击下仍然是一个 PRF（如 Bellare 和 Kohno 的定义）。如果 $h$ 本身是一个 Davies-Meyer 压缩函数，那么在理想密码模型下，这个更强的假设仍能得到证明。
+由于密钥 $k_1'$ 和 $k_2'$ 是相关的（它们的异或就等于 $\mathsf{opad}\oplus\mathsf{ipad}$），我们为双层密钥嵌套所提出的安全证明就不再能够适用：在所述假设下，我们不能证明派生出的密钥 $k_1'$ 与 $k_2'$ 和随机元是不可区分的。一个解决方案是对压缩函数 $h$ 做一个更强的假设——我们需要假设 $h_\mathrm{top}$ 在相关密钥攻击下仍然是一个 PRF（如 Bellare 和 Kohno 的定义）。如果 $h$ 本身是一个 Davies-Meyer 压缩函数，那么在理想密码模型下，这个更强的假设仍能得到证明。
 \end{snote}
 
 \subsection{Davies-Meyer 在理想密码模型下是安全的 PRF}\label{subsec:8-7-3}
