@@ -11,19 +11,23 @@
 \draw  [->]  (270,255) -- (181,255) ;
 \draw  [->]  (420,200) -- (330,200) -- (330,240) ;
 
-\draw (22,120) node [anchor=west] [inner sep=0.75pt]    {$k\overset{\mathrm{R}}{\leftarrow }\mathcal{K}$};
-\draw (225,158) node    {$c$};
-\draw (460,60) node    {$\mathcal{A}$};
-\draw (340,250) node    {$\hat{b}\leftarrow W(r,\mathit{bet})$};
 \draw (90,60) node   [align=left] {挑战者};
 \draw (90,85) node   [align=left] {(实验 $b$)};
-\draw (22,150) node [anchor=west] [inner sep=0.75pt]    {$c\overset{\mathrm{R}}{\leftarrow } E( k,m_{b})$};
-\draw (225,243) node    {$\hat{b}$};
+
+\draw (35,122) node [anchor=west] [inner sep=0.75pt]    {$k\overset{\mathrm{R}}{\leftarrow }\mathcal{K}$};
+\draw (35,147) node [anchor=west] [inner sep=0.75pt]    {$c\overset{\mathrm{R}}{\leftarrow } E( k,m_{b})$};
+
 \draw (225,105) node    {$m_{0} ,m_{1}$};
+\draw (225,158) node    {$c$};
+\draw (225,243) node    {$\hat{b}$};
+
+\draw (300,30) node    {$\mathcal{B}$};
 \draw (282,65) node [anchor=west] [inner sep=0.75pt]    {$r\overset{\mathrm{R}}{\leftarrow }\{0,1,\dotsc ,36\}$};
-\draw (375,188) node    {$\mathit{bet}$};
 \draw (282,90) node [anchor=west] [inner sep=0.75pt]    {$m_{0}\leftarrow r$};
 \draw (282,110) node [anchor=west] [inner sep=0.75pt]    {$m_{1}\leftarrow 0$};
-\draw (300,30) node    {$\mathcal{B}$};
+\draw (375,188) node    {$\mathit{bet}$};
+\draw (340,250) node    {$\hat{b}\leftarrow W(r,\mathit{bet})$};
+
+\draw (480,60) node    {$\mathcal{A}$};
 
 \end{tikzpicture}

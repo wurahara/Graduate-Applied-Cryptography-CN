@@ -1,6 +1,6 @@
-\section{香农密码与完美安全性}
+\section{香农密码与完美安全性}\label{sec:2-1}
 
-\subsection{香农密码的定义}
+\subsection{香农密码的定义}\label{subsec:2-1-1}
 
 使用共享密钥对信息进行加密的基本机制被称为\emph{密码 (cipher)}或\emph{加密方案 (encryption scheme)}。在本节中，我们将介绍一个略微简化的密码概念，称为\textbf{香农密码 (Shannon cipher)}。
 
@@ -119,7 +119,7 @@ D(k,c)=c-k \bmod n
 读者很容易验证正确性属性对 $\mathcal{E}$ 成立。
 \end{example}
 
-\subsection{完美安全性}
+\subsection{完美安全性}\label{subsec:2-1-2}
 
 到目前为止，我们只是定义了香农密码的基本语法和正确性要求。接下来我们将讨论一个问题：什么才是``安全"的密码？直观地说，答案是，一个安全的密码是即使能够看到加密过程，也能在加密后保持对消息的``良好隐藏"的密码。然而，把这个直观的答案变成一个既具有数学意义又具有实际意义的答案是一个真正的挑战。事实上，尽管密码已经被使用了几个世纪，但数学上可接受的安全性定义在最近的几十年才刚刚被归纳出来。
 
@@ -129,7 +129,7 @@ D(k,c)=c-k \bmod n
 
 闲话少说，我们下面正式定义完美安全性。在这个定义中，我们将考虑一个概率实验，其中密钥是从密钥空间中随机均匀选出的。我们记 $\mathsf{k}$ 为代表这个随机密钥的随机变量。对于一条消息 $m$，$E(\mathsf{k},m)$ 是另一个随机变量，它代表将加密函数应用于随机密钥 $\mathsf{k}$ 和消息 $m$ 的结果。这样，每条消息 $m$ 都会产生一个不同的随机变量 $E(\mathsf{k},m)$。
 
-\begin{definition}[完美安全性]
+\begin{definition}[完美安全性]\label{def:2-1}
 令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。考虑一个概率实验，其中随机变量 $\mathsf{k}$ 均匀分布在 $\mathcal{K}$ 上。如果对于所有的 $m_0,m_1\in\mathcal{M}$ 和所有的 $c\in\mathcal{C}$，都有：
 \[
 \Pr[E(\mathsf{k},m_0)=c]=\Pr[E(\mathsf{k},m_1)=c]
@@ -167,7 +167,7 @@ D(k,c)=c-k \bmod n
 
 正如我们所承诺的，我们下面证明一次性密码本（见例 \ref{exmp:2-1}）是完美安全的。
 
-\begin{theorem}
+\begin{theorem}\label{theo:2-2}
 一次性密码本是一种完美安全的香农密码。
 \end{theorem}
 
@@ -210,7 +210,7 @@ c[0\dots3]=(k(\mathtt F),k(\mathtt R),k(\mathtt O),k(\mathtt M))
 因此，如果原始消息是 $m\in\Sigma^L$，对手就可以找到 $m$ 中所有出现 $\mathtt F$、$\mathtt R$、$\mathtt O$ 和 $\mathtt M$ 的位置。仅仅根据这些信息，加上关于消息的具体上下文信息，以及关于字母出现频率的通用信息，对手就可能推断出关于原始消息的相当多的信息。
 \end{example}
 
-\begin{example}
+\begin{example}\label{exmp:2-7}
 考虑例 \ref{exmp:2-4} 中定义的加性一次性密码本的情况。很容易验证加性一次性密码本是完美安全的。事实上，它满足定理 \ref{theo:2-1} 中的表述 (ii)（对每个密文 $c$ 都有 $N_c=1$）。
 \end{example}
 
@@ -326,7 +326,7 @@ c[0\dots3]=(k(\mathtt F),k(\mathtt R),k(\mathtt O),k(\mathtt M))
 \]
 \end{proof}
 
-\subsection{坏消息}
+\subsection{坏消息}\label{subsec:2-1-3}
 
 我们把坏消息留到最后。下一个定理表明，完美安全是一个如此强大的概念，以至于没有任何其他方法能够超越一次性密码本：想要实现完美安全性，密钥至少要与消息等长。因此，在实践中几乎不可能使用完美安全的密码：如果 Alice 想给 Bob 发送一个 1 GB 的视频文件，那么 Alice 和 Bob 就必须事先商定一个 1 GB 的密钥。
 

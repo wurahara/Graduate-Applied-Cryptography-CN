@@ -2,7 +2,7 @@
 
 分组密码被用于各种密码学构造中。有时，在标准安全假设下，我们不可能或很难证明其中一些构造的安全性。在这些情况下，有时我们会采用一种启发式的技术，称为\textbf{理想密码模型 (ideal cipher model)}。粗略地说，在这种模型中，我们将分组密码\emph{当作}一个随机置换族，以对其进行安全分析。如果 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码，那么我们可以将随机置换族记为 $\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$，其中的每个 $\Pi_\mathpzc{k}$ 都是 $\mathcal{X}$ 上真正的随机置换，并且 $\Pi_\mathpzc{k}$ 的集合是相互独立的。这些随机置换太大，以至于我们无法将其完整记录下来，也不能将它们用于真正的密码构造。事实上，我们通常用它们来构造一个基于真实分组密码的构造模型，来获得对于特定构造的启发式安全论证。我们需要强调理想密码模型的启发式性质：尽管这个模型的安全证明聊胜于无，但它并不排除对手利用特定分组密码的设计进行攻击，即使该密码在定义 \ref{def:4-1} 的意义上是安全的。
 
-\subsection{正式定义}
+\subsection{正式定义}\label{subsec:4-7-1}
 
 假设我们有某种类型的密码学方案 $\mathcal{S}$，它的实现利用了定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码 $\mathcal{E}=(E,D)$。此外，假设方案 $\mathcal{S}$ 在不同的输入 $(\mathpzc{k},\mathpzc{a})\in\mathcal{K}\times\mathcal{X}$ 上评估 $E$，在不同的输入 $(\mathpzc{k},\mathpzc{b})\in\mathcal{K}\times\mathcal{X}$ 上评估 $D$，但不深究 $\mathcal{E}$ 的内部实现。在这种情况下，我们称 $\mathcal{S}$ 将 $\mathcal{E}$ 作为一个预言机(oracle)。
 
@@ -124,7 +124,7 @@ i=1,\dots,Q
 
 总结我们对 Triple-DES 的讨论，我们可以注意到，$3\mathcal{E}$ 构造并不总是可以加强密码。比如说，如果 $\mathcal{E}=(E,D)$ 满足 $|\mathcal{K}|$ 置换排列 $\{E(\mathpzc{k},\cdot):\mathpzc{k}\in\mathcal{K}\}$ 集合是一个群，那么 $3\mathcal{E}$ 构造并不比 $\mathcal{E}$ 更安全。事实上，在这种情况下，$\pi=E_3((k_1,k_2,k_3),\cdot)$ 与 $E(k,\cdot)$ 对于某些 $k\in\mathcal{K}$ 是相同的。因此，区分 $3\mathcal{E}$ 和随机置换排列并不比区分 $\mathcal{E}$ 与随机置换排列更难。
 
-\subsection{艾文-曼苏尔分组密码和 $\mathcal{E}X$ 构造}
+\subsection{艾文-曼苏尔分组密码和 $\mathcal{E}X$ 构造}\label{subsec:4-7-3}
 
 令 $\mathcal{X}=\{0,1\}^n$。令 $\pi:\mathcal{X}\to\mathcal{X}$ 是一个置换，并令 $\pi^{-1}$ 是其反函数。西蒙·艾文(Shimon Even)和伊沙伊·曼苏尔(Yishay Mansour)定义了下面这种简单的分组密码 $\mathcal{E}_{EM}=(E,D)$，它定义在 $(\mathcal{X}^2,\mathcal{X})$ 上：
 \begin{equation}\label{eq:4-35}

@@ -56,7 +56,7 @@ D(k,\;E(k,m,{\scriptstyle\mathpzc{N}}),\;{\scriptstyle\mathpzc{N}})=m
 \end{equation}
 其中${\rm nCPA}\mathsf{adv}^*[\mathcal{A},\mathcal{E}]:=|\Pr[\hat{b}=b]-{1}/{2}|$处于攻击游戏 \ref{game:5-3} 的一个挑战者只是随机选择 $b$ 的版本中。
 
-\subsection{基于 nonce 的通用混合加密}
+\subsection{基于 nonce 的通用混合加密}\label{subsec:5-5-1}
 
 让我们把 \ref{subsec:5-4-1} 小节介绍的通用混合构造重构为一个基于 nonce 的加密方案。与之前一样，我们假设 $\mathcal{E}$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的密码，并且坚持它是确定性的，且 $F$ 是一个定义在 $(\mathcal{K}',\mathcal{X},\mathcal{K})$ 上的 PRF。我们下面定义一个基于 nonce 的密码 $\mathcal{E}'$，它定义在 $(\mathcal{K}',\mathcal{M},\mathcal{C},\mathcal{X})$ 上：
 \begin{itemize}
@@ -80,7 +80,7 @@ D(k,\;E(k,m,{\scriptstyle\mathpzc{N}}),\;{\scriptstyle\mathpzc{N}})=m
 
 我们把这个定理的证明留给读者作为练习。请注意，式 \ref{eq:5-5} 中的 ${Q^2}/{N}$ 项表示的是 $F$ 的输入发生碰撞的概率，这一项在式 \ref{eq:5-30} 中被删去了，这是因为根据定义，碰撞是不可能发生的。
 
-\subsection{基于 nonce 的计数器模式}
+\subsection{基于 nonce 的计数器模式}\label{subsec:5-5-2}
 
 接下来，我们将 \ref{subsec:5-4-2} 小节中介绍的计数器模式密码重构为一个基于 nonce 的加密方案。作为一个初步的尝试，我们先简单地将该构造中的 $x\in\mathcal{X}$ 作为一个 nonce。
 
@@ -102,7 +102,7 @@ D(k,\;E(k,m,{\scriptstyle\mathpzc{N}}),\;{\scriptstyle\mathpzc{N}})=m
 
 我们再次将该定理的证明留给读者作为练习。
 
-\subsection{基于 nonce 的 CBC 模式}
+\subsection{基于 nonce 的 CBC 模式}\label{subsec:5-5-3}
 
 最后，我们考虑如何将 \ref{subsec:5-4-3} 小节中介绍的 CBC 模式加密方案重构为一个基于 nonce 的加密方案。作为一个初步的尝试，我们可以先简单地将 IV $c[0]$ 看作是一个 nonce。不幸的是，这并不能产生一个 CPA 安全的加密方案。在 nCPA 攻击游戏中，对手可以进行两次查询：
 

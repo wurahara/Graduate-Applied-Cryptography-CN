@@ -35,7 +35,7 @@
   \caption{两种无前缀安全的 PRF}
 \end{figure}
 
-\subsection{CBC无前缀安全PRF}
+\subsection{CBC 无前缀安全 PRF}\label{subsec:6-4-1}
 
 令 $F$ 是一个 PRF，它将 $n$ 比特的输入映射为 $n$ 比特的输出。$F$ 定义在 $(\mathcal{K},\mathcal{X},\mathcal{X})$ 上，其中 $\mathcal{X}=\{0,1\}^n$。对于任意多项式边界的值 $\ell$，我们构造一个新的 PRF $F_\mathrm{CBC}$，它能够将 $\mathcal{X}^{\leq\ell}$ 上的消息映射为 $\mathcal{X}$ 上的输出。图 \ref{fig:6-3-a} 中描述的函数 $F_\mathrm{CBC}$ 的工作原理如下：
 
@@ -216,7 +216,7 @@ root\overset{a_1}\longrightarrow p_1\overset{a_2}\longrightarrow p2 \overset{a_3
 级联构造的一个优点是，式 \ref{eq:6-15} 中的上界中没有误差项。因此，即使底层 PRF 所依赖的领域 $\mathcal{X}$ 相对较小，级联构造仍然是安全的。相对地，CBC 只有在 $\mathcal{X}$ 大的时候才是安全的。因此，级联构造可以用来将 PRG 转换成大输入的 PRF，而 CBC 不能。
 \end{snote}
 
-\subsection{CBC 和级联 PRF 都是不安全的 MAC}
+\subsection{CBC 和级联 PRF 都是不安全的 MAC}\label{subsec:6-4-3}
 
 我们表明，从 CBC 和级联构造派生出来的 MAC 都是不安全的。这意味着 CBC 和级联构造都不是安全的 PRF。而我们在之前的章节中所展示的只是，CBC 和级联构造是\emph{无前缀}安全的 PRF。
 

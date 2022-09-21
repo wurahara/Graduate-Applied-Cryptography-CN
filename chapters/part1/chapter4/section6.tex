@@ -151,7 +151,7 @@ F(s,x):=G^*(s,x)
 现在，结合式 \ref{eq:4-30}，\ref{eq:4-31} 和 \ref{eq:4-33}，可以得到该定理。
 \end{proof}
 
-\subsection{变长树构造}
+\subsection{变长树构造}\label{subsec:4-6-1}
 
 很自然地，我们下面考虑树构造如何在可变长度的输入上工作。和之前一样，令 $G$ 是一个定义在 $(\mathcal{S},\mathcal{S}^2)$ 上的 PRG，$G^*$ 的定义与之前也一样。对于任何多项式边界值 $\ell$，我们定义 PRF $\tilde F$，其密钥空间为 $\mathcal{S}$，输入空间为 $\{0,1\}^{\leq l}$，输出空间为 $\mathcal{S}$，对于 $s\in\mathcal{S}$ 和 $x\in\{0,1\}^{\leq\ell}$，我们定义：
 \[

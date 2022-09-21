@@ -1,4 +1,4 @@
-\section{下一比特测试}
+\section{下一比特测试}\label{sec:3-5}
 
 令 $G$ 是一个定义在 $(\{0,1\}^\ell,\{0,1\}^L)$ 上的 PRG，它能将 $\ell$ 比特序列拉伸到 $L$ 比特长。有许多方法可以让对手区分 $G$ 的伪随机输出和真正的随机比特序列。事实上，当给定 $G$ 的输出的前 $L-1$ 比特时，假设一个有效对手能够计算出其输出的最后一笔特。直观上看，这样一个对手的存在就预示着 $G$ 是不安全的，因为给定一个 $L$ 比特的真随机序列的前 $L-1$ 比特，任何人都最多只有一半的机会猜中最后一个比特。事实上，该结论的一个逆命题也是真的。
 
@@ -20,13 +20,13 @@
 如果 $r[i]=g$，我们就称 $\mathcal{A}$ \textbf{获胜}。我们将 $\mathcal{A}$ 的\textbf{优势} $\mathrm{Pred}\mathsf{adv}[\mathcal{A},G]$ 定义为 $|\Pr[\mathcal{A}\text{ wins}]-1/2|$。
 \end{game}
 
-\begin{definition}[不可预测的 PRG]
+\begin{definition}[不可预测的 PRG]\label{def:3-3}
 如果对于所有有效对手 $\mathcal{A}$，$\mathrm{Pred}\mathsf{adv}[\mathcal{A},G]$ 的值都可忽略不计，我们就称 PRG $G$ 是\textbf{不可预测的 (unpredictable)}。
 \end{definition}
 
 我们下面首先证明，安全性能够导出不可预测性。
 
-\begin{theorem}
+\begin{theorem}\label{theo:3-4}
 令 $G$ 是一个定义在 $(\mathcal{S},\{0,1\}^L)$ 上的 PRG。如果 $G$ 是安全的，$G$ 就是不可预测的。
 \begin{quote}
 特别地，对于每个如攻击游戏 \ref{game:3-2} 中那样攻破 $G$ 的不可预测性的对手 $\mathcal{A}$，都存在一个如攻击游戏 \ref{game:3-1} 中那样攻破 $G$ 的安全性的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
@@ -163,7 +163,7 @@ x_1\cdots x_j\;x_{j+1}
 这就证明了该引理。
 \end{proof}
 
-\begin{theorem}
+\begin{theorem}\label{theo:3-6}
 令 $G$ 是一个定义在 $(\mathcal{S},\{0,1\}^L)$ 上的 PRG。如果 $G$ 是不可预测的，$G$ 就是安全的。
 \begin{quote}
 特别地，对于每个如攻击游戏 \ref{game:3-1} 中那样攻破 $G$ 的安全性的对手 $\mathcal{A}$，都存在一个如攻击游戏 \ref{game:3-2} 中那样攻破 $G$ 的不可预测性的对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：

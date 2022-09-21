@@ -1,12 +1,12 @@
-\section{伪随机函数：基本定义与性质}
+\section{伪随机函数：基本定义与性质}\label{sec:4-4}
 
-虽然安全的分组密码是许多密码系统的组成部分，但一个与之密切相关的概念，即伪随机函数(PRF)，被证明是许多应用中的正确工具。PRF在概念上比分组密码更加简单，正如我们将看到的，它们有着广泛的应用。PRF和分组密码密切相关，在某些假设下，我们可以用安全的分组密码作为安全伪随机函数的替身。这种性质非常有益，因为正如我们在上一节所看到的，我们已经有了许多非常实用的、貌似安全的分组密码。
+虽然安全的分组密码是许多密码系统的组成部分，但一个与之密切相关的概念，即伪随机函数 (PRF)，被证明是许多应用中的正确工具。PRF 在概念上比分组密码更加简单，正如我们将看到的，它们有着广泛的应用。PRF 和分组密码密切相关，在某些假设下，我们可以用安全的分组密码作为安全伪随机函数的替身。这种性质非常有益，因为正如我们在上一节所看到的，我们已经有了许多非常实用的、貌似安全的分组密码。
 
-\subsection{定义}
+\subsection{定义}\label{subsec:4-4-1}
 
 \textbf{伪随机函数 (pseudo-random function, PRF)} $F$ 是一种确定性算法，它有两个输入：一个密钥 $k\in\mathcal{K}$ 和一个\textbf{输入数据分组} $x\in\mathcal{X}$；它的输出 $y:=F(k,x)\in\mathcal{Y}$ 被称为\textbf{输出数据分组}。我们称 $F$ \textbf{定义在} $(\mathcal{K},\mathcal{X},\mathcal{Y})$ \textbf{上}。
 
-直观地讲，我们对伪随机函数的安全概念表明，对于一个随机选择的密钥 $k$，函数 $F(k,\cdot)$ 对于所有实际目的都应该是一个``看起来像"随机分布的一个从 $\mathcal{X}$ 到 $\mathcal{Y}$ 的映射。为了使这一概念更加精确，我们首先引入一些符号：
+直观地讲，我们对伪随机函数的安全概念表明，对于一个随机选择的密钥 $k$，函数 $F(k,\cdot)$——对于所有实际目的而言——都应该``看起来像"是一个从 $\mathcal{X}$ 到 $\mathcal{Y}$ 的随机函数。为了使这一概念更加精确，我们首先引入一些符号：
 \[
 {\rm Funs}[\mathcal{X},\mathcal{Y}]
 \]
@@ -18,8 +18,8 @@
 我们可以定义如下的攻击游戏：
 
 \begin{game}[伪随机函数]\label{game:4-2}
-对于一个给定的定义在 $(\mathcal{K},\mathcal{X},\mathcal{Y})$ 上的 PRF $F$，对于一个给定对手 $\mathcal{A}$，我们定义两个实验：实验$0$和实验$1$。对于$b=0,1$，我们定义：\\
-\noindent\textbf{实验$b$：}
+对于一个定义在 $(\mathcal{K},\mathcal{X},\mathcal{Y})$ 上的给定 PRF $F$ 和一个给定对手 $\mathcal{A}$，我们定义两个实验：实验 $0$ 和实验 $1$。对于 $b=0,1$，我们定义：\\
+\noindent\textbf{实验 $b$：}
 \begin{itemize}
 	\item 挑战者按照如下方式选定 $f\in{\rm Funs}[\mathcal{X},\mathcal{Y}]$：
 	\vspace{1pt}
@@ -33,12 +33,13 @@
 \end{itemize}
 对于 $b=0,1$，令 $W_b$ 为 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件。我们将 $\mathcal{A}$ 相对于 $F$ 的\textbf{优势}定义为：
 \begin{equation}\label{eq:4-21}
-{\rm PRF\mathsf{adv}}[\mathcal{A}, F]:=
+\mathrm{PRF}\mathsf{adv}[\mathcal{A}, F]
+:=
 \Big\lvert
 {\rm Pr}[W_0]-{\rm Pr}[W_1]
 \Big\rvert
 \end{equation}
-如果对手 $\mathcal{A}$ 最多发出 $Q$ 次查询，我们就称 $\mathcal{A}$ 是一个 \textbf{$Q$ 次查询伪随机函数对手($Q$-query PRF adversary)}。
+如果对手 $\mathcal{A}$ 最多发起 $Q$ 次查询，我们就称 $\mathcal{A}$ 是一个 \textbf{$Q$ 次查询伪随机函数对手($Q$-query PRF adversary)}。
 \end{game}
 
 \begin{definition}[安全的 PRF]\label{def:4-2}
@@ -53,9 +54,9 @@
 \end{equation}
 
 \begin{snote}[弱安全的伪随机函数。]
-对于某些使用 PRF 的构造来说，PRF 满足比定义 \ref{def:4-2} 更弱的安全属性也就足够了。我们说，如果对手的查询受到严格限制，但仍没有有效对手能够将 PRF 与随机函数区分开来时，我们就说该 PRF 是\emph{弱安全的}。所谓的查询的严格限制，指的是对手只能在域中的\emph{随机}点上查询函数。将对手的查询限制在随机输入上，就有可能更容易建立弱安全的 PRF。在练习 \ref{exer:4-2} 中，我们会研究弱安全但不完全安全的自然 PRF 构造。
+对于某些使用 PRF 的构造来说，PRF 满足比定义 \ref{def:4-2} 更弱的安全属性也就足够了。我们说，如果对手的查询受到严格限制，但仍没有有效对手能够将 PRF 与随机函数区分开来时，我们就说该 PRF 是\emph{弱安全的}。所谓的查询的严格限制，指的是对手只能在领域中的\emph{随机}点上查询函数。将对手的查询限制在随机输入上，就有可能更容易建立弱安全的 PRF。在练习 \ref{exer:4-2} 中，我们会研究弱安全但不完全安全的自然 PRF 构造。
 
-我们通过稍微修改攻击游戏 \ref{game:4-2} 来定义弱安全的 PRF。假设 $F$ 是一个定义在 $(\mathcal{K},\mathcal{X},\mathcal{Y})$ 上的 PRF。现在，我们修改对手 $\mathcal{A}$ 与挑战者的交互方式：每当对手 $\mathcal{A}$ 查询函数时，挑战者都选择一个随机数 $x\in\mathcal{X}$，并将 $x$ 与 $f(x)$ 都发送给对手。换句话说，对手 $\mathcal{A}$ 看到的是函数 $f$ 在 $\mathcal{X}$ 上的一个\emph{随机}点上的评估结果，并且需要判断该函数是真正的随机函数还是一个伪随机函数。我们将对手 $\mathcal{A}$ 在该游戏中的优势定义为 ${\rm wPRF\mathsf{adv}}[\mathcal{A}, F]$，如式 \ref{eq:4-21} 所示。
+我们通过稍微修改攻击游戏 \ref{game:4-2} 来定义弱安全的 PRF。假设 $F$ 是一个定义在 $(\mathcal{K},\mathcal{X},\mathcal{Y})$ 上的 PRF。现在，我们修改对手 $\mathcal{A}$ 与挑战者的交互方式：每当对手 $\mathcal{A}$ 查询函数时，挑战者都选择一个随机数 $x\in\mathcal{X}$，并将 $x$ 与 $f(x)$ 都发送给对手。换句话说，对手 $\mathcal{A}$ 看到的是函数 $f$ 在 $\mathcal{X}$ 上的一个\emph{随机}点上的评估结果，并且需要判断该函数是真正的随机函数还是一个伪随机函数。我们将对手 $\mathcal{A}$ 在该游戏中的优势定义为 ${\rm wPRF\mathsf{adv}}[\mathcal{A}, F]$，与式 \ref{eq:4-21} 中一样。
 \end{snote}
 
 \begin{definition}[弱安全的 PRF]\label{def:4-3}
@@ -64,9 +65,9 @@
 
 \subsection{随机函数的有效实现}\label{subsec:4-4-2}
 
-同 \ref{subsec:4-1-2} 小节一样，我们可以通过一个\textbf{忠实的侏儒}来实现攻击游戏 \ref{game:4-2} 的实验 $1$ 中挑战者使用的从 ${\rm Funs}[\mathcal{X},\mathcal{Y}]$ 中选出的随机函数。同分组密码的情况一样，挑战者会跟踪输入/输出对 $(x_i,y_i)$。当挑战者收到第 $i$ 次查询 $x_i$ 时，它需要验证是否存在某个 $j < i$ 使得 $x_i=x_j$ 成立。如果存在，它就令 $y_i\leftarrow y_j$（这确保挑战者确实实现了一个函数），否则就从集合 $\mathcal{Y}$ 中随机选择一个 $y_i$；最后，挑战者将 $y_i$ 发送给对手。我们可以把挑战者的这种实现逻辑表述如下：
+同 \ref{subsec:4-1-2} 小节一样，我们可以通过一个\textbf{忠实的侏儒}来实现攻击游戏 \ref{game:4-2} 的实验 $1$ 中挑战者所使用的，从 ${\rm Funs}[\mathcal{X},\mathcal{Y}]$ 中选出的随机函数。同分组密码的情况一样，挑战者会跟踪输入/输出对 $(x_i,y_i)$。当挑战者收到第 $i$ 次查询 $x_i$ 时，它需要验证是否存在某个 $j < i$ 使得 $x_i=x_j$ 成立。如果存在，它就令 $y_i\leftarrow y_j$（这确保挑战者确实实现了一个函数），否则就从集合 $\mathcal{Y}$ 中随机选择一个 $y_i$；最后，挑战者将 $y_i$ 发送给对手。我们可以把挑战者的这种实现逻辑表述如下：
 
-\vspace{5pt}
+\vspace{10pt}
 
 \hspace*{5pt} 当从对手 $\mathcal{A}$ 处收到第 $i$ 个查询 $x_i\in\mathcal{X}$ 时：\\
 \hspace*{50pt} 如果存在某个 $j<i$ 使得 $x_i=x_j$ 成立：\\
@@ -74,17 +75,17 @@
 \hspace*{75pt} 否则，选取 $y_i\overset{\rm R}\leftarrow\mathcal{Y}$\\
 \hspace*{50pt} 将 $y_i$ 发送给 $\mathcal{A}$。\\
 
-\subsection{什么时候一个安全的分组密码是安全的PRF？}
+\subsection{什么时候一个安全的分组密码也是安全的 PRF？}\label{subsec:4-4-3}
 
 在本小节的开始，我们提出一个问题：什么时候一个安全分组密码才是一个安全的 PRF？在回答这个问题时，我们要介绍一种在整个密码学中被大量使用的证明技术。
 
-令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码，并令 $N:=|\mathcal{X}|$。我们可以自然地把 $\mathcal{E}$ 看作是一个定义在 $(\mathcal{K},\mathcal{X},\mathcal{X})$ 上的 PRF。现在假设 $\mathcal{E}$ 是一个安全分组密码，也就是说，不存在有效对手能够有效地将 $\mathcal{E}$ 与随机置换区分开来。这是否意味着 $\mathcal{E}$ 也是一个安全的 PRF 呢？也即，这是否意味着不存在有效对手可以有效地将 $\mathcal{E}$ 与随机函数区分开来？
+令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码，并令 $N:=|\mathcal{X}|$。我们可以自然地把 $\mathcal{E}$ 看作是一个定义在 $(\mathcal{K},\mathcal{X},\mathcal{X})$ 上的 PRF。现在假设 $\mathcal{E}$ 是一个安全分组密码，也就是说，不存在有效对手能够有效地将 $\mathcal{E}$ 与随机置换区分开来。这是否意味着 $\mathcal{E}$ 也是一个安全的 PRF 呢？也即，这是否意味着，不存在有效对手可以有效地将 $\mathcal{E}$ 与随机函数区分开来？
 
 这个问题的答案是``是"，前提是 $N$ 是超多项式的。在论证这个问题之前，我们需要先论证，当 $N$ 很小的时候，上述问题的答案``否"。
 
-考虑一个 PRF 对手，它对 $\mathcal{E}$ 进行攻击游戏 \ref{game:4-2} 中所描述的攻击，令 $f$ 是挑战者选择的函数：在实验 $0$ 中，$f=E(k,\cdot)$，其中 $k\in\mathcal{K}$ 为一随机值；而在实验 $1$ 中，$f$ 是从 ${\rm Funs}[\mathcal{X},\mathcal{Y}]$ 中随机选出的。假设 $N$ 是如此之小，以至于一个有效对手可以对所有的 $x\in\mathcal{X}$ 计算 $f(x)$ 的值。此外，如果对手 $\mathcal{A}$ 看到了两个不同的 $x,x'\in\mathcal{X}$ 使得 $f(x)=f(x')$，它就输出 $1$，否则就输出 $0$。显然，在实验 $0$ 中，$\mathcal{A}$ 输出 $1$ 的概率为 $0$，因为此时 $f=E(k,\cdot)$ 是一个置换。然而，在实验 $1$ 中，$\mathcal{A}$ 能以 $1-{N!}/{N^N}\geq{1}/{2}$ 的概率输出 $1$。因此我们有 ${\rm PRF\mathsf{adv}}[\mathcal{A}, F]\geq{1/2}$，所以 $\mathcal{E}$ 不是一个安全的 PRF。
+考虑一个 PRF 对手，它就 $\mathcal{E}$ 进行攻击游戏 \ref{game:4-2}，令 $f$ 是挑战者选择的函数：在实验 $0$ 中，$f=E(k,\cdot)$，其中 $k\in\mathcal{K}$ 为一随机值；而在实验 $1$ 中，$f$ 是从 ${\rm Funs}[\mathcal{X},\mathcal{Y}]$ 中随机选出的。假设 $N$ 是如此之小，以至于一个有效对手可以对所有的 $x\in\mathcal{X}$ 计算 $f(x)$ 的值。此外，如果对手 $\mathcal{A}$ 看到了两个不同的 $x,x'\in\mathcal{X}$ 使得 $f(x)=f(x')$，它就输出 $1$，否则就输出 $0$。显然，在实验 $0$ 中，$\mathcal{A}$ 输出 $1$ 的概率为 $0$，因为此时 $f=E(k,\cdot)$ 是一个置换。然而，在实验 $1$ 中，$\mathcal{A}$ 能以 $1-{N!}/{N^N}\geq{1}/{2}$ 的概率输出 $1$。因此我们有 ${\rm PRF\mathsf{adv}}[\mathcal{A}, F]\geq{1/2}$，所以 $\mathcal{E}$ 不是一个安全的 PRF。
 
-上述论证可以用生日悖论来完善（见附录 \ref{sec:B-1} 节）。对于任何多项式边界的 $Q$，我们可以定义一个有效 PRF 对手 $\mathcal{A}$，它对 $\mathcal{E}$ 进行攻击游戏 \ref{game:4-2} 中的攻击，流程如下所述。对手 $\mathcal{A}$ 只需向挑战者发出 $Q$ 个不同的查询，当且仅当它能得到两个不同的值 $x,x'\in\mathcal{X}$ （从给挑战者的$Q$个值中选出）使得 $f(x)=f(x')$时，输出 $1$。同样，在实验 $0$ 中，$\mathcal{A}$ 输出 $1$ 的概率为 $0$。然而，根据定理 \ref{theo:B-1}，在实验 $1$ 中，$\mathcal{A}$ 输出 $1$ 的概率至少为 $\min\{{Q(Q-1)}/{4N},0.63\}$。因此，只需进行 $O(N^{1/2})$ 次查询，对手就可以很容易地看到，置换的行为并不像是一个随机函数。
+上述论证可以用生日悖论来完善（见附录 \ref{sec:B-1} 节）。对于任何多项式边界的 $Q$，我们可以定义一个有效 PRF 对手 $\mathcal{A}$，它就 $\mathcal{E}$ 进行攻击游戏 \ref{game:4-2}，如下所述。对手 $\mathcal{A}$ 只需向挑战者发出 $Q$ 个不同的查询，当且仅当它能得到两个不同的值 $x,x'\in\mathcal{X}$（从给挑战者的 $Q$ 个值中选出）使得 $f(x)=f(x')$ 时，它输出 $1$。同样，在实验 $0$ 中，$\mathcal{A}$ 输出 $1$ 的概率为 $0$。然而，根据定理 \ref{theo:B-1}，在实验 $1$ 中，$\mathcal{A}$ 输出 $1$ 的概率至少为 $\min\{{Q(Q-1)}/{4N},0.63\}$。因此，只需进行 $O(N^{1/2})$ 次查询，对手就可以很容易地看到，置换的行为并不像是一个随机函数。
 
 事实证明，``生日攻击"是所有对手所能达到的最好情况。当 $N$ 是超多项式的时候，这种攻击就变得不再可行了。
 
@@ -101,7 +102,7 @@
 在证明这个定理之前，我们先导出下面的一个简单的推论。
 
 \begin{corollary}\label{cor:4-5}
-令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码，并假设 $N:=|\mathcal{X}|$ 是超多项式的。那么，当且仅当 $\mathcal{E}$ 是一个安全的 PRF 时，$\mathcal{E}$ 是一个安全的分组密码。
+令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码，并假设 $N:=|\mathcal{X}|$ 是超多项式的。那么，当且仅当 $\mathcal{E}$ 是一个安全的 PRF 时，$\mathcal{E}$ 才是一个安全的分组密码。
 \end{corollary}
 
 \begin{proof}
@@ -112,7 +113,7 @@
 \Big\rvert
 \leq{Q^2}/{2N}
 \]
-由于 $N$ 是超多项式的，$Q$ 是多项式边界的，所以 $\frac{Q^2}{2N}$ 是可以忽略不计的（见事实 \ref{fact:2-6}）。由此可见，当且仅当 ${\rm PRF\mathsf{adv}}[\mathcal{A},\mathcal{E}]$ 可忽略不计时，${\rm BC\mathsf{adv}}[\mathcal{A},\mathcal{E}]$ 才是可以忽略不计的。
+由于 $N$ 是超多项式的，$Q$ 是多项式边界的，所以 ${Q^2}/{2N}$ 是可以忽略不计的（见事实 \ref{fact:2-6}）。由此可见，当且仅当 ${\rm PRF\mathsf{adv}}[\mathcal{A},\mathcal{E}]$ 可忽略不计时，${\rm BC\mathsf{adv}}[\mathcal{A},\mathcal{E}]$ 才是可忽略不计的。
 \end{proof}
 
 实际上，定理 \ref{theo:4-4} 的证明与分组密码和 PRF 无关，它实际上是一个关于随机置换和随机函数的论证。让我们定义一个新的攻击游戏，用以测试对手区分随机置换与随机函数的能力。
@@ -131,6 +132,7 @@
 	挑战者计算 $y_i\leftarrow f(x_i)\in\mathcal{Y}$，并将 $y_i$ 交给对手。
 	\item 对手计算并输出一个比特 $\hat{b}\in\{0,1\}$。
 \end{itemize}
+
 对于 $b=0,1$，令 $W_b$ 为 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件。我们将 $\mathcal{A}$ 相对于 $\mathcal{X}$ 的\textbf{优势}定义为：
 \[
 {\rm PF\mathsf{adv}}[\mathcal{A}, \mathcal{X}]:=
@@ -152,12 +154,11 @@
 
 \begin{proof}[定理 \ref{theo:4-4} 的证明]
 令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码。令 $\mathcal{A}$ 是一个对手，它最多向挑战者发起 $Q$ 次查询。我们定义游戏 $0$、游戏 $1$ 和游戏 $2$，它们都在 $\mathcal{A}$ 和挑战者之间进行。对于 $j=0,1,2$，我们定义 $p_j$ 为 $\mathcal{A}$ 在游戏 $j$ 中输出 $1$ 的概率。在每个游戏中，挑战者根据特定的分布选择一个函数 $f:\mathcal{X}\to\mathcal{X}$，并以 $f(x)$ 来应答 $\mathcal{A}$ 的每个查询 $x\in\mathcal{X}$。
-
-\noindent\textbf{游戏 $\mathbf{0}$}：该游戏中的挑战者令 $f:=E(k,\cdot)$，其中 $k\in\mathcal{K}$ 是随机选出的。
-
-\noindent\textbf{游戏 $\mathbf{1}$}：该游戏中的挑战者随机选择 $f\in{\rm Perms}[\mathcal{X}]$。
-
-\noindent\textbf{游戏 $\mathbf{2}$}：该游戏中的挑战者随机选择 $f\in{\rm Funs}[\mathcal{X},\mathcal{X}]$。
+\begin{description}
+	\item [游戏 $\mathbf{0}$：]该游戏中的挑战者令 $f:=E(k,\cdot)$，其中 $k\in\mathcal{K}$ 是随机选出的。
+	\item [游戏 $\mathbf{1}$：]该游戏中的挑战者随机选择 $f\in{\rm Perms}[\mathcal{X}]$。
+	\item [游戏 $\mathbf{2}$：]该游戏中的挑战者随机选择 $f\in{\rm Funs}[\mathcal{X},\mathcal{X}]$。
+\end{description}
 
 注意到，根据定义，有：
 \[
@@ -181,16 +182,18 @@
 \big\rvert
 \leq|p_2-p_1|\leq{Q^2}/{2N}
 \]
-
 这就证明了该定理。
 \end{proof}
 
 所以，剩下工作的就是证明定理 \ref{theo:4-6}。在此之前，我们要说明一个非常简单但非常有用的结论：
 
 \begin{theorem}[差分引理]\label{theo:4-7}
-令 $Z$，$W_0$，$W_1$ 是定义在某个概率空间上的事件。假设当且仅当 $W_1\land\bar Z$ 发生时，$W_0\land\bar Z$ 才发生，则我们有：
+令 $Z$，$W_0$，$W_1$ 是定义在某个概率空间上的事件。假设当且仅当 $W_1\land\bar Z$ 发生时，$W_0\land\bar Z$ 才发生，那么，我们有：
 \[
-|\Pr[W_0]-\Pr[W_1]|\leq\Pr[Z]
+\big\lvert
+\Pr[W_0]-\Pr[W_1]
+\big\rvert
+\leq\Pr[Z]
 \]
 \end{theorem}
 
@@ -198,10 +201,10 @@
 这就是一个简单的计算。我们有：
 \[
 \begin{aligned}
-|\Pr[W_0]-\Pr[W_1]|
-&=|\Pr[W_0\land Z]+\Pr[W_0\land\bar Z]-\Pr[W_1\land Z]-\Pr[W_1\land\bar Z]|\\
-&=|\Pr[W_0\land Z]-\Pr[W_1\land Z]|\\
-&\leq \Pr[Z]
+\big\lvert\Pr[W_0]-\Pr[W_1]\big\rvert
+&=\big\lvert\Pr[W_0\land Z]+\Pr[W_0\land\bar Z]-\Pr[W_1\land Z]-\Pr[W_1\land\bar Z]\big\rvert\\
+&=\big\lvert\Pr[W_0\land Z]-\Pr[W_1\land Z]\big\rvert\\
+&\leq\Pr[Z]
 \end{aligned}
 \]
 其中第二个等式来自 $W_0\land\bar{Z} \Longleftrightarrow W_1\land\bar{Z}$ 的假设，所以，一个特殊结论就是 $\Pr[W_0\land\bar{Z}]=\Pr[W_1\land\bar{Z}]$。最后的不等式来自于这样一个事实，即 $\Pr[W_0\land Z]$ 和 $\Pr[W_1\land Z]$ 都是介于 $0$ 和 $\Pr[Z]$ 之间的值。
@@ -212,7 +215,7 @@
 \begin{proof}[定理 \ref{theo:4-6} 的证明]
 考虑一个对手 $\mathcal{A}$，它对 $\mathcal{X}$ 进行攻击游戏 \ref{game:4-3} 中的攻击，其中 $N:=|\mathcal{X}|$，并假设 $\mathcal{A}$ 最多向挑战者发起 $Q$ 次查询。考虑这个攻击游戏的实验 $0$。利用 \ref{subsec:4-4-2} 小节讨论的``忠实的侏儒"的思想，我们可以通过跟踪输入/输出对 $(x_i,y_i)$ 来实现实验 $0$；此外，为 $y_i$ 选择初始的``默认"值 $z_i$ 是很方便的，$z_1,\dots,z_Q$ 可以从 $\mathcal{X}$ 中均匀独立随机选出；这些``默认"值在必要时可以被覆写，以确保挑战者定义的是一个随机置换。下面是详细的过程：
 
-\vspace{5pt}
+\vspace{10pt}
 
 \hspace*{5pt} 选取 $z_1,\dots,z_Q\overset{\rm R}\leftarrow\mathcal{X}$\\
 \hspace*{26pt} 当收到 $\mathcal{A}$ 的第 $i$ 个查询 $x_i$ 时：\\
@@ -221,10 +224,10 @@
 \hspace*{50pt} 否则：\\
 \hspace*{75pt} 令 $y_i\leftarrow z_i$\\
 \hspace*{1pt} ($*$)
-\hspace*{53pt} 如果 $y_i\in\{y_1,\dots,y_{i-1}\}$，则选取 $y_i\overset{\rm R}\leftarrow\mathcal{X}\setminus\{y_1,\dots,y_{i-1}\}$；\\
+\hspace*{53pt} 如果 $y_i\in\{y_1,\dots,y_{i-1}\}$，则选取 $y_i\overset{\rm R}\leftarrow\mathcal{X}\setminus\{y_1,\dots,y_{i-1}\}$\\
 \hspace*{50pt} 将 $y_i$ 发送给 $\mathcal{A}$。
 
-\vspace{5pt}
+\vspace{10pt}
 
 标有 ($*$) 的那行用于测试是否需要覆盖默认值 $z_i$，确保没有任何输出值被用于两个不同的输入值。
 
@@ -232,7 +235,7 @@
 
 我们现在修改上述挑战者的实现，得到另一个新的游戏：
 
-\vspace{5pt}
+\vspace{10pt}
 
 \hspace*{5pt} 选取 $z_1,\dots,z_Q\overset{\rm R}\leftarrow\mathcal{X}$\\
 \hspace*{26pt} 当收到 $\mathcal{A}$ 的第 $i$ 个查询 $x_i$ 时：\\
@@ -242,18 +245,22 @@
 \hspace*{75pt} 令 $y_i\leftarrow z_i$\\
 \hspace*{50pt} 将 $y_i$ 发送给 $\mathcal{A}$。
 
-\vspace{5pt}
+\vspace{10pt}
 
-我们所做的只是在原来的挑战者逻辑中删除了标有 ($*$) 的那行，这使得我们``忠实的侏儒"变成了一个``健忘的侏儒"，它忘记了检查输出值是否存在重复。
+我们所做的只是在原来的挑战者逻辑中删除了标有 ($*$) 的那行，这就让我们``忠实的侏儒"变成了一个``健忘的侏儒"，它忘记了检查输出值是否存在重复。
 
-令 $W_1$ 为 $\mathcal{A}$ 在与这个修改后的挑战者进行的游戏中输出 $1$ 的事件，我们称之为游戏 $1$。
+令 $W_1$ 为 $\mathcal{A}$ 在与这个修改后的挑战者进行的游戏中输出 $1$ 的事件，我们称这个游戏为游戏 $1$。
 
 请注意，游戏 $1$ 等同于攻击游戏 \ref{game:4-3} 的实验 $1$；特别地，$\Pr[W_1]$ 等于 $\mathcal{A}$ 在攻击游戏 \ref{game:4-3} 的实验 $1$ 中输出 $1$ 的概率。因此，我们有：
 \[
-{\rm PF\mathsf{adv}}[\mathcal{A},\mathcal{X}]=|\Pr[W_0]-\Pr[W_1]|
+\mathrm{PF}\mathsf{adv}[\mathcal{A},\mathcal{X}]
+=
+\big\lvert
+\Pr[W_0]-\Pr[W_1]
+\big\rvert
 \]
 
-我们现在应用差分引理。为此，上述两个游戏都被假设运行在相同的基础概率空间上。在这两个游戏中，对手和挑战者所做的所有随机选择都是一样的，唯一不同的是挑战者用来给出应答的规则。特别地，这意味着 $\mathcal{A}$ 的随机选择和挑战者选择的值 $z_1,\dots,z_Q$ 不仅具有相同的分布，而且在两个游戏中都是\emph{确确实实的相同值}。
+我们现在应用差分引理。为此，上述两个游戏都被假设运行在\emph{相同的}基础概率空间上。在这两个游戏中，对手和挑战者所做的所有随机选择都是一样的，唯一不同的是挑战者用来给出应答的规则。特别地，这意味着 $\mathcal{A}$ 的随机选择和挑战者选择的值 $z_1,\dots,z_Q$ 不仅具有相同的分布，而且在两个游戏中都是\emph{确确实实的相同值}。
 
 定义 $Z$ 为存在某个 $i\neq j$ 使得 $z_i=z_j$ 成立的事件。现在，假设我们运行游戏 $0$ 和游戏 $1$，而事件 $Z$ 没有发生。这意味着 $z_i$ 的值都是不同的。现在，由于对手的随机选择在两个游戏中都是相同的，它在两个游戏中的第一次查询也是相同的，因此挑战者的应答在两个游戏中也是相同的。对手的第二次查询（是其随机选择和挑战者第一次应答的函数）在两个游戏中也都是一样的。由于我们假设 $Z$ 没有发生，挑战者的应答在两个游戏中是相同的。继续这个论证，我们可以看到，对手的每次查询和挑战者的每个应答在两个游戏中都是一样的，因此对手的输出在两个游戏中都是一样的。因此，如果 $Z$ 没有发生，对手在游戏 $0$ 中输出 $1$，那么它在游戏 $1$ 中也会输出 $1$。同样地，如果 $Z$ 没有发生，而对手在游戏 $1$ 中输出 $1$，那么它在游戏 $0$ 中也会输出 $1$。更简洁地说，当且仅当 $W_1\land\bar{Z}$ 发生时，我们有 $W_0\land\bar{Z}$ 发生。因此，差分引理适用于该场景，我们得到：
 \[
@@ -271,11 +278,11 @@
 
 \subsection{使用 PRF 构建 PRG}\label{subsec:4-4-4}
 
-由一个 PRF 构造一个 PRG 是很容易的。令 $F$ 是一个定义在 $(\mathcal{K},\mathcal{X},\mathcal{Y})$ 上的 PRF，$l\geq1$ 是一个多项式边界的值，令 $x_1,\dots,x_l$ 是 $\mathcal{X}$ 中任意固定且互不相同的元素（这要求$|\mathcal{X}|\geq l$）。我们定义一个具有种子空间 $\mathcal{K}$ 和输出空间 $\mathcal{Y}^l$ 的 PRG 如下：对于 $k\in\mathcal{K}$：
+由一个 PRF 构造一个 PRG 是很容易的。令 $F$ 是一个定义在 $(\mathcal{K},\mathcal{X},\mathcal{Y})$ 上的 PRF，$\ell\geq1$ 是一个多项式边界的值，令 $x_1,\dots,x_\ell$ 是 $\mathcal{X}$ 中任意固定且互不相同的元素（这要求$|\mathcal{X}|\geq\ell$）。我们定义一个具有种子空间 $\mathcal{K}$ 和输出空间 $\mathcal{Y}^\ell$ 的 PRG 如下：对于 $k\in\mathcal{K}$：
 \[
 G(k):=
 \big(
-F(k,x_1),\dots,F(k,x_l)
+F(k,x_1),\dots,F(k,x_\ell)
 \big)
 \]
 
@@ -315,9 +322,12 @@ $\mathcal{B}$ 向它的挑战者发起查询 $x_1,\dots,x_\ell$ 并获得应答 
 	\]
 \end{itemize}
 
-分组密码的这种操作模式被称为\textbf{确定性计数器模式 (deterministic couter mode)}，如图 \ref{fig:4-13} 所示。与 ECB 模式不同，该模式中，解密算法 $D$ 从未被使用。将定理 \ref{theo:4-4}，定理 \ref{theo:4-8} 和定理 \ref{theo:3-1} 结合起来，我们可以看到，密码 $\mathcal{E}'$ 是语义安全的；特别地，对于任何有效的语义安全对手 $\mathcal{A}$，都存在一个有效分组密码对手 $\mathcal{B}$，满足：
+分组密码的这种操作模式被称为\textbf{确定性计数器模式 (deterministic couter mode)}，如图 \ref{fig:4-13} 所示。与 ECB 模式不同，在该模式中，解密算法 $D$ 自始至终都没有被使用。将定理 \ref{theo:4-4}，定理 \ref{theo:4-8} 和定理 \ref{theo:3-1} 结合起来，我们可以看到，密码 $\mathcal{E}'$ 是语义安全的；特别地，对于任何有效的语义安全对手 $\mathcal{A}$，都存在一个有效的分组密码对手 $\mathcal{B}$，满足：
 \begin{equation}\label{eq:4-23}
-{\rm SS\mathsf{adv}}[\mathcal{A},\mathcal{E}']\leq2\cdot{\rm BC\mathsf{adv}}[\mathcal{B},\mathcal{E}]+{\ell^2}/{N}
+\mathrm{SS}\mathsf{adv}[\mathcal{A},\mathcal{E}']
+\leq2\cdot
+\mathrm{BC}\mathsf{adv}[\mathcal{B},\mathcal{E}]
++{\ell^2}/{N}
 \end{equation}
 
 显然，确定性计数器模式相比 ECB 模式的优势在于它在是语义安全的，而且不需要对消息空间做出任何限制。唯一的缺点是，由于式 \ref{eq:4-23} 中存在 ${\ell^2}/{N}$ 项，对于非常长的消息，它的安全性可能会大大降低。因此，限制 ${\ell^2}/{2N}$ 的大小是非常重要的。考虑以下对 $\mathcal{E}'$ 的攻击。设 $m_0$ 为由 $\ell$ 个零分组组成的消息，$m_1$ 为由 $\ell$ 个随机分组组成的消息。如果攻击游戏 \ref{game:2-1} 中的挑战者使用 $\mathcal{E}'$ 对 $m_0$ 进行加密，那么密文将不包含任何重复分组。然而，根据生日悖论（见定理 \ref{theo:B-1}），如果挑战者加密 $m_1$，那么密文包含重复分组的概率至少为 $\min\{{\ell(\ell-1)}/{4N},0.63\}$。因此，以这种方式构造 $m_0$ 和 $m_1$，并在且仅在密文包含重复分组时输出 $1$ 的对手 $\mathcal{A}$，其优势随 $\ell$ 二次增长，且在 $\ell\approx N^{1/2}$ 时不可忽略不计。
@@ -335,7 +345,7 @@ $\mathcal{B}$ 向它的挑战者发起查询 $x_1,\dots,x_\ell$ 并获得应答 
   \label{fig:4-13}
 \end{figure}
 
-\subsection{数学细节}
+\subsection{数学细节}\label{subsec:4-4-5}
 
 同之前一样，我们使用 \ref{sec:2-3} 中定义的术语对 PRF 给出一个更精确的数学定义。
 

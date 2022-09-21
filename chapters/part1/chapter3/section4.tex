@@ -1,4 +1,4 @@
-\section{组合 PRG}
+\section{组合 PRG}\label{sec:3-4}
 
 在本节中，我们将讨论两种构造，它们能让我们基于旧的 PRG 建立新的 PRG。这些构造允许我们扩展原始 PRG 的输出空间的大小，同时保证其安全性。更重要的是，在本节中，我们将介绍一种非常重要的论证技术，称为\textbf{混合论证 (hybrid argument)}。该技术在现代密码学中的应用非常广泛。
 
@@ -381,7 +381,7 @@ $p_1$ 显然就等于 $\mathcal B_2$ 在攻击游戏 \ref{game:3-1} 的实验 $0
 
 评价 PRG 的一个标准是它的\textbf{扩展率 (expansion rate)}：一个将 $n$ 比特种子拉伸为 $m$ 比特输出的 PRG 的扩展率就是 $m/n$。更一般地说，如果种子空间是 $\mathcal{S}$，输出空间是 $\mathcal{R}$，我们就可以将扩展率定义为 $\log|\mathcal{R}|/\log|\mathcal{S}|$。串行组合能够比并行组合提供更高的扩展率，但是它有一个缺点，那就是它不能被并行化。事实上，存在一种构造可以兼顾这两种优点：高的扩展率和高度可并行的结构，见 \ref{subsec:4-4-4} 小节。
 
-\subsection{数学细节}
+\subsection{数学细节}\label{subsec:3-4-3}
 
 在定理 \ref{theo:3-2} 和 \ref{theo:3-3} 的证明中，有一些具体的细节值得讨论。
 

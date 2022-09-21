@@ -1,8 +1,8 @@
-\section{流密码的局限性：对一次性密码本的攻击}
+\section{流密码的局限性：对一次性密码本的攻击}\label{sec:3-3}
 
 尽管流密码是语义安全的，但它们非常脆弱。如果使用不当，它们就会完全丧失安全性。
 
-\subsection{两次密码本是不安全的}
+\subsection{两次密码本是不安全的}\label{subsec:3-3-1}
 
 一个流密码可以很好地加密从 Alice 到 Bob 的\emph{单一}消息。然而，Alice 可能希望向 Bob 发送多条消息。简单起见，假设 Alice 希望对两条消息 $m_1$ 和 $m_2$ 进行加密。一个简陋的方案是是使用相同的密钥 $s$ 来加密这两条消息：
 \begin{equation}\label{eq:3-8}
@@ -28,7 +28,7 @@ c_2\leftarrow m_2\oplus G(s)
 \end{quote}
 解密工作的代号为 Venona 计划。Venona 计划因揭发了 Julius Rosenberg 和 Ethel Rosenberg 夫妇而声名鹊起，他们参与苏联间谍集团的证据被 Venona 计划完整地揭露出来。从 1995 年开始，所有 3,000 多份由 Venona 计划解密的消息都被公开了。
 
-\subsection{一次性密码本是易被控制的}
+\subsection{一次性密码本是易被控制的}\label{subsec:3-3-2}
 
 语义安全性尽管能够确保对手无法读取明文，却无法提供完整性的保证。在使用流密码时，对手可以改变密文，而这种修改永远不会被解密者发现。更糟糕的是，我们将表明，通过改变密文，攻击者甚至可以控制解密后的明文。
 

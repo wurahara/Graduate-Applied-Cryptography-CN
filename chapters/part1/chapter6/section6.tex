@@ -1,4 +1,4 @@
-\section{从无前缀安全PRF到完全安全PRF（方法2）：无前缀编码}\label{sec:6-6}
+\section{从无前缀安全 PRF 到完全安全 PRF（方法 2）：无前缀编码}\label{sec:6-6}
 
 将无前缀安全的 PRF 转换为安全 PRF 的另一种方法是对 PRF 的输入进行编码，使得没有任何一条编码后的输入是另一条的前缀。我们定义以下术语：
 \begin{itemize}
@@ -16,7 +16,7 @@ F(k,m):=PF(k,pf(m))
 如果 $PF$ 是一个无前缀安全的 PRF，$pf$ 是一个无前缀编码，那么 $F$ 是一个安全的 PRF。
 \end{theorem}
 
-\subsection{无前缀编码}
+\subsection{无前缀编码}\label{subsec:6-6-1}
 
 为了使用定理 \ref{theo:6-8} 构造 PRF，我们介绍两种无前缀编码 $pf:\mathcal{M}\to\mathcal{X}^{\leq\ell}$。我们假设 $\mathcal{X}=\{0,1\}^n$，其中 $n$ 是某个整数。
 

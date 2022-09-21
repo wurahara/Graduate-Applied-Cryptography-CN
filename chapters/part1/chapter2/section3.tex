@@ -19,7 +19,7 @@
 
 尽管我们对\emph{有效}一词的直观理解取决于上下文，但我们的正式定义不会做任何这种类型的区分。事实上，我们将采用计算复杂性理论的习惯，把\emph{有效}算法的概念等同于\emph{（概率性）多项式时间}算法的概念。无论好坏，这都为我们提供了一个独立于任何特定计算模型具体细节的形式化框架。
 
-\subsection{可忽略不计、超多项式与多项式边界函数}
+\subsection{可忽略不计、超多项式与多项式边界函数}\label{subsec:2-3-1}
 
 我们首先从对\emph{可忽略不计(negligible)}、\emph{超多项式(super-poly)}和\emph{多项式边界(poly-bounded)}函数这三个概念的定义开始。
 
@@ -31,7 +31,7 @@
 
 可忽略不计函数还有一种更加便于理解和使用的表示，如下所示：
 
-\begin{theorem}
+\begin{theorem}\label{theo:2-11}
 当且仅当对于所有的 $c>0$，都有：
 \[
 \lim_{n\to\infty}f(n)n^c=0
@@ -43,7 +43,7 @@
 留作练习。
 \end{proof}
 
-\begin{example}
+\begin{example}\label{exmp:2-10}
 一些不可忽略不计函数实例：
 \[
 2^{-n},
@@ -62,23 +62,23 @@ n^{-\log n}
 
 当我们正式定义了``可忽略不计"这个术语后，定义``超多项式"就很容易了：
 
-\begin{definition}
+\begin{definition}\label{def:2-6}
 如果 $1/f$ 可忽略不计，我们就称函数 $f:\mathbb{Z}_{\geq1}\to\mathbb{R}$ 是\textbf{超多项式的(super-poly)}。
 \end{definition}
 
 本质上，一个多项式边界函数 $f:\mathbb{Z}_{\geq1}\to\mathbb{R}$ 是一个被某个多项式（的绝对值）约束的函数。严格地说：
 
-\begin{definition}
+\begin{definition}\label{def:2-7}
 如果存在 $c,d\in\mathbb{R}_{>0}$ 使得对于所有的整数 $n\geq0$，都有 $|f(n)|\leq n^c+d$，我们就称函数 $f:\mathbb{Z}_{\geq1}\to\mathbb{R}$ 是\textbf{多项式边界的(poly-bounded)}。
 \end{definition}
 
 请注意，如果 $f$ 是一个多项式边界函数，$1/f$ 就必然\emph{不是}一个可忽略不计函数。然而，正如下面的例子所说明的那样，请务必注意不要得出错误的推论。
 
-\begin{example}
+\begin{example}\label{exmp:2-11}
 定义 $f:\mathbb{Z}_{\geq1}\to\mathbb{R}$，使得对于所有偶数 $n$，都有 $f(n)={1}/{n}$；对于所有奇数 $n$，都有 $f(n)=2^{-n}$。那么 $f$ 不可忽略不计，但 $1/f$ 既不是多项式边界的，也不是超多项式的。
 \end{example}
 
-\subsection{计算性密码：正式定义}
+\subsection{计算性密码：正式定义}\label{subsec:2-3-2}
 
 现在，我们讨论形式化的定义。首先，我们承认，我们之前说了个谎：当我们说一个计算性密码 $\mathcal{E}=(E,D)$ 定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上，其中 $\mathcal{K}$ 是密钥空间，$\mathcal{M}$ 是消息空间，$\mathcal{C}$ 是密文空间，而且上述每个空间都是有限集时，我们并没有完全说出事实。在数学模型中（尽管在现实世界的系统中并不总是如此），我们将一个密码\emph{族} $\mathcal{E}$ 的密钥、消息和密文空间相关联，其索引为：
 \begin{itemize}
@@ -112,7 +112,7 @@ n^{-\log n}
 
 在进一步讨论之前，我们需要先定义有效算法的概念。在这个定义中，我们将只考虑以安全参数 $\lambda$ 和总长度由 $\lambda$ 的某个固定多项式约束的其他参数作为输入的算法 $A$。基本上，我们想称 $A$ 的运行时间以 $\lambda$ 的一个多项式为界，但如果 $A$ 是概率性的，情况将更加复杂：
 
-\begin{definition}[有效算法]
+\begin{definition}[有效算法]\label{def:2-8}
 令 $A$ 是一个算法（可能是概率性的），它以一个安全参数 $\lambda\in\mathbb{Z}_{\geq1}$，以及其他被编码成的一个比特序列 $x\in\{0,1\}^{\leq p(\lambda)}$ 的若干参数作为输入，其中 $p$ 是某个固定的多项式。如果存在一个多项式边界函数 $t$ 和一个可忽略不计函数 $\epsilon$，使得对于所有的 $\lambda\in\mathbb{Z}_{\geq1}$ 和所有的 $x\in\{0,1\}^{\leq p(\lambda)}$，算法 $A$ 在输入 $(\lambda,x)$ 上的运行时间超过 $t(\lambda)$ 的概率最多为 $\epsilon(\lambda)$，我们就称 $A$ 为一个\textbf{有效算法(efficient algorithm)}。
 \end{definition}
 
@@ -160,7 +160,7 @@ n^{-\log n}
 
 注意，在上述定义中，加密和解密算法都接受 $\lambda$ 和 $\Lambda$ 作为辅助输入。为了与 \ref{subsec:2-2-1} 小节中所介绍的符号保持某种程度的一致性，我们将它们写成 $E(\lambda,\Lambda;\cdots)$ 和 $D(\lambda,\Lambda;\cdots)$。
 
-\begin{example}
+\begin{example}\label{exmp:2-13}
 考虑加性一次性密码本（见例 \ref{exmp:2-12}）。在我们的正式框架中，安全参数 $\lambda$ 决定了模数 $n$ 的比特长度 $L(\lambda)$，也就是系统参数。系统参数生成算法将 $\lambda$ 作为输入，生成一个长度为 $L(\lambda)$ 的模数 $n$。函数 $L(\cdot)$ 应当是一个多项式边界函数。有了这个假设，很明显，系统参数生成算法满足我们对它的要求。对密钥、消息和密文空间的要求也得到了满足：
 \begin{enumerate}
 	\item 这些空间中的元素具有多项式边界长度：这是因为我们假设 $L(\cdot)$ 是一个多项式边界函数。
@@ -178,7 +178,7 @@ n^{-\log n}
 }
 希望读者能够理解，虽然这些形式化的东西可以让我们在数学上给出精确并且有意义的陈述，但它们并不是很有启发性，而且在更多情况下甚至掩盖了真正发生的事情。因此，在正文中，我们将继续使用 \ref{subsec:2-2-1} 小节给出的简化术语与符号来讨论密码。但是读者需要理解，在本节讨论的所有形式化框架中，所有的陈述都有适当而自然的解释。这会是一个在接下来的章节中反复出现的模式：我们主要使用简化的术语来讨论各种类型的密码学方案，而不会考虑安全参数与系统参数。这些数学细节会在单独的小节中讨论，一般会遵循与这里所建立的通用模式相同的讨论方式。
 
-\subsection{有效对手和攻击游戏}
+\subsection{有效对手和攻击游戏}\label{subsec:2-3-3}
 
 在定义语义安全性的概念时，我们必须定义所谓的\emph{有效对手 (efficient adversary)}是什么意思。由于这个概念将在本书中被广泛使用，我们要在这里提出一个更通用的框架。
 
@@ -193,7 +193,7 @@ n^{-\log n}
 与脚注 \ref{foot:2-1} 的讨论类似，我们对有效交互式机器的定义并不要求它在所有环境下都以 $1$ 的概率停机。这也是一个单独的问题，但它将是对我们考察的所有机器的一个隐式要求。
 }
 
-\begin{definition}[有效交互式机器]
+\begin{definition}[有效交互式机器]\label{def:2-11}
 如果存在一个多项式边界函数 $t$ 和一个可忽略不计函数 $\epsilon$，使得对于所有环境（甚至不是计算上有界的环境），$M$ 的总运行时间超过 $t(\lambda)$ 的概率最多为 $\epsilon(\lambda)$，我们就称 $M$ 是一个\textbf{有效交互式机器 (efficient interactive machine)}。
 \end{definition}
 
@@ -234,7 +234,7 @@ n^{-\log n}
 \end{snote}
 
 
-\subsection{语义安全性：正式定义}
+\subsection{语义安全性：正式定义}\label{subsec:2-3-4}
 
 在定义任何类型的安全性时，我们都把对手在攻击游戏中的优势定义为一个函数 ${\rm Adv}(\lambda)$。它的值由攻击游戏中特定事件发生的概率来决定：对于 $\lambda$ 的每个值，我们都能得到一个不同的概率空间，它由挑战者的随机选择和对手的随机选择共同决定。安全性意味着，对于每个有效对手，函数 ${\rm Adv}(\cdot)$ 都是可忽略不计的。
 

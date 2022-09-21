@@ -1,4 +1,4 @@
-\section{案例研究：对RC4流密码的密码学分析}
+\section{案例研究：对 RC4 流密码的密码学分析}\label{sec:3-9}
 
 RC4 流密码由 Ron Rivest 在 1987 年设计，历史上曾用于（在 SSL/TLS 协议中）保护网络流量和（在 802.11b WEP 协议中）保护无线流量的安全。它被设计成可在内存很小的 $8$ 位处理器上运行。虽然 RC4 仍在使用，但它已被证明容易遭受一些显著的攻击，因而不应该被应用在新的项目中。我们对 RC4 的讨论可以作为流密码分析的一个优雅的例子。
 
@@ -67,7 +67,7 @@ RC4 很适合用软件实现。其他流密码，如 Grain 和 Trivium，是为�
   \label{tab:3-1}
 \end{table}
 
-\subsection{RC4的安全性}
+\subsection{RC4 的安全性}\label{subsec:3-9-1}
 
 \footnotetext[1]{性能数字是使用 Crypto++ 5.6.0 benchmark 在 1.83 Ghz Intel Core 2 处理器上运行获得的。}
 
@@ -113,7 +113,7 @@ Mantin-Shamir 区分器表明，RC4 输出的第二字节是有偏差的。AlFar
 令 $\mathrm{ST}_\mathrm{RC4}$ 为 RC4 所有可能的内部状态的集合。由于数组 $S$ 有 $n!$ 种可能的设置，而 $i$ 和 $j$ 各有 $n$ 种可能的设置，所以 $\mathrm{ST}_\mathrm{RC4}$ 的大小为 $n!\cdot n^2$。由于在 RC4 中 $n=256$，所以 $\mathrm{ST}_\mathrm{RC4}$ 的规模是非常巨大的，大约为 $10^{511}$。
 \end{snote}
 
-\begin{lemma}[Fluhrer-McGrew 定理]
+\begin{lemma}[Fluhrer-McGrew 定理]\label{lemma:3-9}
 假设 RC4 由 $\mathrm{ST}_\mathrm{RC4}$ 中的一个随机状态 $T$ 初始化。令 $(z_1,z_2)$ 是 RC4 在状态 $T$ 下启动时输出的前两个字节。则有：
 \[
 \begin{aligned}\label{lemma:3-9}
