@@ -1,8 +1,8 @@
-\section{下一比特测试}\label{sec:3-5}
+\section{下一比特检验}\label{sec:3-5}
 
-令 $G$ 是一个定义在 $(\{0,1\}^\ell,\{0,1\}^L)$ 上的 PRG，它能将 $\ell$ 比特序列拉伸到 $L$ 比特长。有许多方法可以让对手区分 $G$ 的伪随机输出和真正的随机比特序列。事实上，当给定 $G$ 的输出的前 $L-1$ 比特时，假设一个有效对手能够计算出其输出的最后一笔特。直观上看，这样一个对手的存在就预示着 $G$ 是不安全的，因为给定一个 $L$ 比特的真随机序列的前 $L-1$ 比特，任何人都最多只有一半的机会猜中最后一个比特。事实上，该结论的一个逆命题也是真的。
+令 $G$ 是一个定义在 $(\{0,1\}^\ell,\{0,1\}^L)$ 上的 PRG，它能将 $\ell$ 比特序列拉伸到 $L$ 比特长。有许多方法可以让对手区分 $G$ 的伪随机输出和真正的随机比特序列。事实上，当给定 $G$ 输出的前 $L-1$ 比特时，假设一个有效对手能够计算出其输出的最后一笔特。直观上看，这样一个对手的存在就预示着 $G$ 是不安全的，因为给定一个 $L$ 比特的真随机序列的前 $L-1$ 比特，任何人最多都只有一半的机会猜中最后一个比特。事实上，该结论的一个逆命题也是真的。
 
-我们下面会正式定义 PRG 的\textbf{不可预测性 (unpredictability)}。它在本质上就是说，给定 $G$ 的输出的前 $i$ 个比特（这里，$i$ 是一个对手选择的索引），以显著高于 $1/2$ 的概率预测出下一个比特（即第 $i+1$ 比特）是困难的。之后，我们将证明，不可预测性与安全性是等价的。安全性能够导出不可预测性这一事实是很直观的：如果能够有效地预测伪随机序列的下一比特，我们就能立即提供一个有效的统计检验。相反，由不可预测性能够导出安全性这一结论是相当有趣的（需要花一些精力来证明），这实际上是指，如果存在某个有效的统计检验能够打破 PRG 的安全性，就必然存在一个能够有效地预测伪随机序列的下一比特的方法。
+我们下面会正式定义 PRG 的\textbf{不可预测性 (unpredictability)}。它在本质上就是说，给定 $G$ 的输出前 $i$ 个比特（这里，$i$ 是一个由对手选择的索引），以显著高于 $1/2$ 的概率预测出下一个比特（即第 $i+1$ 比特）是困难的。之后，我们将证明，不可预测性与安全性是等价的。安全性能够导出不可预测性这一事实是很直观的：如果能够有效地预测伪随机序列的下一比特，我们就能立即提供一个有效的统计检验。相反，由不可预测性能够导出安全性这一结论是相当有趣的（需要花一些精力来证明），这实际上是指，如果存在某个有效的统计检验能够打破 PRG 的安全性，就必然存在一个能够有效地预测伪随机序列的下一比特的方法。
 
 \begin{game}[不可预测的 PRG]\label{game:3-2}
 对于一个定义在 $(\mathcal{S},\{0,1\}^L)$ 上的给定 PRG $G$ 和一个给定对手 $\mathcal{A}$，攻击游戏的过程如下：
@@ -21,7 +21,7 @@
 \end{game}
 
 \begin{definition}[不可预测的 PRG]\label{def:3-3}
-如果对于所有有效对手 $\mathcal{A}$，$\mathrm{Pred}\mathsf{adv}[\mathcal{A},G]$ 的值都可忽略不计，我们就称 PRG $G$ 是\textbf{不可预测的 (unpredictable)}。
+如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{Pred}\mathsf{adv}[\mathcal{A},G]$ 的值都可忽略不计，我们就称 PRG $G$ 是\textbf{不可预测的 (unpredictable)}。
 \end{definition}
 
 我们下面首先证明，安全性能够导出不可预测性。
@@ -86,51 +86,51 @@ x_1\cdots x_j\;x_{j+1}
 
 我们想把 $\mathcal{B}$ 的区分优势变成一种预测优势。大致的想法是这样的：给定 $x_1,\dots,x_j$，我们向 $\mathcal{B}$ 提供一个序列 $x_1\cdots x_j\;r$，其中的 $r$ 是一个随机选出的比特；如果 $\mathcal{B}$ 输出 $1$，我们对 $x_{j+1}$ 的预测值就是 $r$；否则，我们对 $x_{j+1}$ 的预测值就是 $\bar{r}$（$r$ 的补码）。
 
-下面的一般结论能够证明上述预测策略的有效性，我们称之为\emph{区分者/预测者引理}。基本设置是这样的：
+下面的一般结论能够证明上述预测策略的有效性，我们称之为\emph{区分者/预测者引理}。基本设置如下所述。我们有：
 \begin{itemize}
-	\item 一个随机变量 $\mathsf{X}$，它对应于上面的``侧信息" $x_1,\dots,x_j$，以及对手 $\mathcal{B}$ 所使用的任何随机硬币；
-	\item 一个取值为 $0$ 或 $1$ 的随机变量 $\mathsf{B}$，它对应于上面的 $x_{j+1}$，并可能与 $\mathsf{X}$ 相关；
-	\item 一个取值为 $0$ 或 $1$ 的随机变量 $\mathsf{R}$，它对应于上面的 $r$，并且与 $(\mathsf{X},\mathsf{B})$ 无关；
-	\item 一个函数 $d$，它对应于使得 $\mathcal{B}$ 的区分优势等于 $|\epsilon|$ 的 $\mathcal{B}$ 的策略，其中 $\epsilon=\Pr[d(\mathsf{X},\mathsf{B})=1]-\Pr[d(\mathsf{X},\mathsf{R})=1]$。
+	\item 一个随机变量 $\boldsymbol{\mathsf{X}}$，它对应于上面的``侧信息" $x_1,\dots,x_j$，以及对手 $\mathcal{B}$ 所使用的任何随机硬币；
+	\item 一个取值为 $0$ 或 $1$ 的随机变量 $\boldsymbol{\mathsf{B}}$，它对应于上面的 $x_{j+1}$，并可能与 $\boldsymbol{\mathsf{X}}$ 相关；
+	\item 一个取值为 $0$ 或 $1$ 的随机变量 $\boldsymbol{\mathsf{R}}$，它对应于上面的 $r$，并且与 $(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{B}})$ 无关；
+	\item 一个函数 $d$，它对应于 $\mathcal{B}$ 的策略，该策略使得 $\mathcal{B}$ 的区分优势等于 $|\epsilon|$，其中 $\epsilon=\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{B}})=1]-\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{R}})=1]$。
 \end{itemize}
-该引理表明，如果我们使用上面介绍的预测策略来定义 $\mathsf{B}'$，即当 $d(\mathsf{X},\mathsf{R})=1$ 时，令 $\mathsf{B}'=\mathsf{R}$，否则令 $\mathsf{B}'=\mathsf{\overline R}$，那么预测值 $\mathsf{B}'$ 等于实际值 $\mathsf{B}$ 的概率正好就是 $1/2+\epsilon$。下面是该引理的精确陈述：
+该引理表明，如果我们使用上面介绍的预测策略来定义 $\boldsymbol{\mathsf{B}}'$，即当 $d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{R}})=1$ 时，令 $\boldsymbol{\mathsf{B}}'=\boldsymbol{\mathsf{R}}$，否则令 $\boldsymbol{\mathsf{B}}'=\boldsymbol{\mathsf{\overline R}}$，那么预测值 $\boldsymbol{\mathsf{B}}'$ 等于实际值 $\boldsymbol{\mathsf{B}}$ 的概率正好就是 $1/2+\epsilon$。下面是该引理的精确陈述：
 
 \begin{lemma}[区分者/预测者引理]\label{lemma:3-5}
-令 $\mathsf{X}$ 是一个在某个集合 $S$ 中取值的随机变量，令 $\mathsf{B}$ 和 $\mathsf{R}$ 是取值为 $0$ 或 $1$ 的随机变量，其中 $\mathsf{R}$ 均匀分布在 $\{0,1\}$ 上，且与 $(\mathsf{X},\mathsf{B})$ 无关。令 $d:S\times\{0,1\}\to\{0,1\}$ 是一个任意的函数，并令：
+令 $\boldsymbol{\mathsf{X}}$ 是一个在某个集合 $S$ 中取值的随机变量，令 $\boldsymbol{\mathsf{B}}$ 和 $\boldsymbol{\mathsf{R}}$ 是取值为 $0$ 或 $1$ 的随机变量，其中 $\boldsymbol{\mathsf{R}}$ 均匀分布在 $\{0,1\}$ 上，且与 $(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{B}})$ 无关。令 $d:S\times\{0,1\}\to\{0,1\}$ 是一个任意的函数，并令：
 \[
 \epsilon
 :=
-\Pr[d(\mathsf{X},\mathsf{B})=1]
+\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{B}})=1]
 -
-\Pr[d(\mathsf{X},\mathsf{R})=1]
+\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{R}})=1]
 \]
-按如下方式定义随机变量 $\mathsf{B}'$：
+按如下方式定义随机变量 $\boldsymbol{\mathsf{B}}'$：
 \[
-\mathsf{B}':=
+\boldsymbol{\mathsf{B}}':=
 \left\{
 \begin{array}{ll}
-\mathsf{R}, & d(\mathsf{X},\mathsf{R})=1\\
-\mathsf{\overline R}, & \text{otherwise}
+\boldsymbol{\mathsf{R}}, & d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{R}})=1\\
+\boldsymbol{\mathsf{\overline R}}, & \text{其他情况}
 \end{array}
 \right.
 \]
 则有：
 \[
-\Pr[\mathsf{B}'=\mathsf{B}]={1}/{2}+\epsilon
+\Pr[\boldsymbol{\mathsf{B}}'=\boldsymbol{\mathsf{B}}]={1}/{2}+\epsilon
 \]
 \end{lemma}
 
 \begin{proof}
-以事件 $\mathsf{B}=\mathsf{R}$ 和 $\mathsf{B}=\mathsf{\overline R}$ 为条件，我们计算 $\Pr[\mathsf{B}'=\mathsf{B}]$：
+以事件 $\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{R}}$ 和 $\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{\overline R}}$ 为条件，我们计算 $\Pr[\boldsymbol{\mathsf{B}}'=\boldsymbol{\mathsf{B}}]$：
 \[
 \begin{aligned}
-\Pr[\mathsf{B}'=\mathsf{B}]
-&=\Pr[\mathsf{B}'=\mathsf{B}\,|\,\mathsf{B}=\mathsf{R}]\cdot\Pr[\mathsf{B}=\mathsf{R}]+\Pr[\mathsf{B}'=\mathsf{B}\,|\,\mathsf{B}=\mathsf{\overline R}]\cdot\Pr[\mathsf{B}=\mathsf{\overline R}]\\
-&=\Pr[d(\mathsf{X},\mathsf{R})=1\,|\,\mathsf{B}=\mathsf{R}]\cdot\frac{1}{2}+\Pr[d(\mathsf{X},\mathsf{R})=0\,|\,\mathsf{B}=\mathsf{\overline R}]\cdot\frac{1}{2}\\
+\Pr[\boldsymbol{\mathsf{B}}'=\boldsymbol{\mathsf{B}}]
+&=\Pr[\boldsymbol{\mathsf{B}}'=\boldsymbol{\mathsf{B}}\,|\,\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{R}}]\cdot\Pr[\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{R}}]+\Pr[\boldsymbol{\mathsf{B}}'=\boldsymbol{\mathsf{B}}\,|\,\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{\overline R}}]\cdot\Pr[\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{\overline R}}]\\
+&=\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{R}})=1\,|\,\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{R}}]\cdot\frac{1}{2}+\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{R}})=0\,|\,\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{\overline R}}]\cdot\frac{1}{2}\\
 &=\frac{1}{2}
-\Big(\Pr[d(\mathsf{X},\mathsf{R})=1\,|\,\mathsf{B}=\mathsf{R}]+
+\Big(\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{R}})=1\,|\,\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{R}}]+
 \big(
-1-\Pr[d(\mathsf{X},\mathsf{R})=1\,|\,\mathsf{B}=\mathsf{\overline R}]
+1-\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{R}})=1\,|\,\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{\overline R}}]
 \big)
 \Big)\\
 &=\frac{1}{2}+\frac{1}{2}(\alpha-\beta)
@@ -138,13 +138,13 @@ x_1\cdots x_j\;x_{j+1}
 \]
 其中：
 \[
-\alpha:=\Pr[d(\mathsf{X},\mathsf{R})=1\,|\,\mathsf{B}=\mathsf{R}],
+\alpha:=\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{R}})=1\,|\,\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{R}}],
 \quad
-\beta:=\Pr[d(\mathsf{X},\mathsf{R})=1\,|\,\mathsf{B}=\mathsf{\overline R}]
+\beta:=\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{R}})=1\,|\,\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{\overline R}}]
 \]
 根据独立性，我们有：
 \[
-\alpha=\Pr[d(\mathsf{X},\mathsf{R})=1\,|\,\mathsf{B}=\mathsf{R}]=\Pr[d(\mathsf{X},\mathsf{B})=1\,|\,\mathsf{B}=\mathsf{R}]=\Pr[d(\mathsf{X},\mathsf{B})=1]
+\alpha=\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{R}})=1\,|\,\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{R}}]=\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{B}})=1\,|\,\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{R}}]=\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{B}})=1]
 \]
 想要知道最后一个等式为什么成立，可以参考练习 \ref{exer:3-25} 的结论。
 
@@ -152,9 +152,9 @@ x_1\cdots x_j\;x_{j+1}
 \[
 \begin{aligned}
 \epsilon
-&=\Pr[d(\mathsf{X},\mathsf{B})=1]-\Pr[d(\mathsf{X},\mathsf{R})=1]\\
+&=\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{B}})=1]-\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{R}})=1]\\
 &=\alpha-
-\Big(\Pr[d(\mathsf{X},\mathsf{R})=1\,|\,\mathsf{B}=\mathsf{R}]\cdot\Pr[\mathsf{B}=\mathsf{R}]+\Pr[d(\mathsf{X},\mathsf{R})=1\,|\,\mathsf{B}=\mathsf{\overline R}]\cdot\Pr[\mathsf{B}=\mathsf{\overline R}]
+\Big(\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{R}})=1\,|\,\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{R}}]\cdot\Pr[\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{R}}]+\Pr[d(\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{R}})=1\,|\,\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{\overline R}}]\cdot\Pr[\boldsymbol{\mathsf{B}}=\boldsymbol{\mathsf{\overline R}}]
 \Big)\\
 &=\alpha-\frac{1}{2}(\alpha+\beta)\\
 &=\frac{1}{2}(\alpha-\beta)

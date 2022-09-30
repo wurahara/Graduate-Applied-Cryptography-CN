@@ -4,9 +4,9 @@
 
 \subsection{一种并行构造}\label{subsec:3-4-1}
 
-令 $G$ 是一个定义在 $(\mathcal S,\mathcal R)$ 上的 PRG。假设在某些应用中，我们想要多次使用 $G$。我们希望 $G$ 的所有输出都与 $\mathcal{\rm R}$ 上的随机元素在计算上无法区分。如果 $G$ 是一个安全的 PRG，并且种子是独立产生的，那么这样的 $G$ 就能满足这个要求。
+令 $G$ 是一个定义在 $(\mathcal S,\mathcal R)$ 上的 PRG。假设在某些应用中，我们想要多次使用 $G$。我们希望 $G$ 的所有输出都与 $\mathcal{R}$ 上的随机元素是计算上无法区分的。如果 $G$ 是一个安全的 PRG，并且种子是独立产生的，那么这样的 $G$ 就能满足这个要求。
 
-我们可以将对 $G$ 的多次应用建模为一个新的 PRG $G'$。也就是说，我们构建一个新的PRG $G'$，它将 $G$ 应用于 $n$ 个种子，并将所有输出连接起来。因此，$G'$ 定义在 $(\mathcal S^n,\mathcal R^n)$ 上，对于 $s_1,\dots,d_n\in\mathcal S$，我们有：
+我们可以多次应用 $G$，并将该过程建模成一个新的 PRG $G'$。也就是说，我们构建一个新的PRG $G'$，它将 $G$ 应用于 $n$ 个种子，并将所有输出连接起来。因此，$G'$ 定义在 $(\mathcal S^n,\mathcal R^n)$ 上，对于 $s_1,\dots,d_n\in\mathcal S$，我们有：
 \[
 G'(s_1,\dots,s_n):=\big(G(s_1),\dots,G(s_n)\big)
 \]
@@ -37,7 +37,7 @@ G'(s_1,\dots,s_n):=\big(G(s_1),\dots,G(s_n)\big)
 \noindent
 记 $p_0$ 为 $\mathcal A$ 在该游戏中输出 $1$ 的概率。
 
-下面，我们定义\textbf{游戏$\mathbf{1}$}，它在 $\mathcal A$ 与一个挑战者之间进行，其工作方式如下：
+下面，我们定义\textbf{游戏$\mathbf{1}$}，它在 $\mathcal A$ 与一个挑战者之间进行，后者的工作方式如下：
 
 \vspace*{10pt}
 
@@ -50,7 +50,7 @@ G'(s_1,\dots,s_n):=\big(G(s_1),\dots,G(s_n)\big)
 \noindent
 请注意，游戏 $1$ 既不对应于攻击游戏 \ref{game:3-1} 中的实验 $0$，也不对应于实验 $1$；它其实是一个``混合"实验，对应于实验 $0$ 和实验 $1$ 之间的某个状态。我们所做的就是在游戏 $0$ 中用一个真随机值取代伪随机值 $r_1$（见上面的高亮行）。直观地说，当假设 $G$ 是一个安全的 PRG 时，对手 $\mathcal A$ 应该注意不到这种差异。为了更精确地论证这一点，记 $p_1$ 为 $\mathcal A$ 在游戏 $1$ 中输出 $1$ 的概率。
 
-令 $\delta_1:=|p_1-p_0|$。我们声称，当 $G$ 是一个安全的 PRG 时，$\delta_1$ 就是可忽略不计的。事实上，我们很容易构建一个有效 PRG 对手 $\mathcal B_1$，它在攻击游戏 \ref{game:3-1} 中攻击 $G$ 的优势恰好等于 $\delta_1$。对手 $\mathcal B_1$ 的工作方式如下：
+令 $\delta_1:=|p_1-p_0|$。我们声称，当 $G$ 是一个安全的 PRG 时，$\delta_1$ 可忽略不计。事实上，我们很容易构建一个有效 PRG 对手 $\mathcal B_1$，它在攻击游戏 \ref{game:3-1} 中攻击 $G$ 的优势恰好等于 $\delta_1$。对手 $\mathcal B_1$ 的工作方式如下：
 
 \vspace*{10pt}
 
@@ -69,7 +69,7 @@ G'(s_1,\dots,s_n):=\big(G(s_1),\dots,G(s_n)\big)
 \vspace*{10pt}
 
 \noindent
-注意到，当 $\mathcal B_1$ 位于其攻击游戏的实验 $0$ 中时，它完美地模仿了挑战者在游戏 $0$ 中的行为；而当它位于实验 $1$ 中时，它也完美地模仿了挑战者在游戏 $1$ 中的行为。因此，$p_0$ 就等于 $\mathcal B_1$ 在攻击游戏 \ref{game:3-1} 的实验 $0$ 中输出 $1$ 的概率，而 $p_1$ 就等于 $\mathcal B_1$ 在攻击游戏 \ref{game:3-1} 的实验 $1$ 中输出 $1$ 的概率。因此，$\mathcal B_1$ 在攻击 $G$ 时的优势恰好就是 $|p_1-p_0|$，正如我们所声称的。
+注意到，当 $\mathcal B_1$ 处于其攻击游戏的实验 $0$ 中时，它完美地模仿了挑战者在游戏 $0$ 中的行为；而当它处于实验 $1$ 中时，它也完美地模仿了挑战者在游戏 $1$ 中的行为。因此，$p_0$ 就等于 $\mathcal B_1$ 在攻击游戏 \ref{game:3-1} 的实验 $0$ 中输出 $1$ 的概率，而 $p_1$ 就等于 $\mathcal B_1$ 在攻击游戏 \ref{game:3-1} 的实验 $1$ 中输出 $1$ 的概率。因此，$\mathcal B_1$ 在攻击 $G$ 时的优势恰好就是 $|p_1-p_0|$，正如我们所声称的。
 
 接下来，我们定义\textbf{游戏$\mathbf{2}$}，它在 $\mathcal A$ 和一个挑战者之间进行，其工作方式如下：
 
@@ -263,16 +263,16 @@ $p_1$ 显然就等于 $\mathcal B_2$ 在攻击游戏 \ref{game:3-1} 的实验 $0
 =n\cdot
 \mathrm{PRG}\mathsf{adv}[\mathcal{B},G]
 \]
-由于我们假设 $G$ 是一个安全的 PRG，则 ${\rm PRG\mathsf{adv}}[\mathcal{B},G]$ 就可忽略不计，而由于 $n$ 是多项式边界的，$\mathrm{PRG}\mathsf{adv}[\mathcal{B},G']$ 就也是可忽略不计的（见事实 \ref{fact:2-6}）。这就证明了该定理。
+由于我们假设 $G$ 是一个安全的 PRG，因此 ${\rm PRG\mathsf{adv}}[\mathcal{B},G]$ 可忽略不计，而由于 $n$ 是多项式边界的，$\mathrm{PRG}\mathsf{adv}[\mathcal{B},G']$ 就也是可忽略不计的（见事实 \ref{fact:2-6}）。这就证明了该定理。
 \end{proof}
 
-定理 3.2 表明，PRG 的安全性随着我们使用它的次数增多而最多呈线性下降。有人可能会问，这个约束是否是严格的？也即，安全性是否真的会随着使用次数的增加而线性下降？答案其实是肯定的（见练习 \ref{exer:3-14}）。
+定理 \ref{theo:3-2} 表明，PRG 的安全性随着我们使用它的次数增多而最多呈线性下降。有人可能会问，这个约束是否是严格的？也即，安全性是否真的会随着使用次数的增加而线性下降？答案其实是肯定的（见练习 \ref{exer:3-14}）。
 
 \subsection{一种串行构造：Blum-Micali 方法}\label{subsec:3-4-2}
 
 我们下面介绍一种由 Blum 和 Micali 发明的串行构造，它使用一个只能稍微拉伸一点的 PRG 来构建一个可以拉伸到任意长度的 PRG。
 
-令 $G$ 是一个定义在 $(\mathcal{S},\mathcal{R}\times\mathcal{S})$ 上的 PRG，其中 $\mathcal S$ 和 $\mathcal R$ 是两个有限集。对于每个多项式边界的值 $n\geq 1$，我们可以构造一个定义在 $(\mathcal{S},\mathcal{R}^n\times\mathcal{S})$ 上的新 PRG $G'$。对于 $s\in\mathcal{S}$，我们令：
+令 $G$ 是一个定义在 $(\mathcal{S},\mathcal{R}\times\mathcal{S})$ 上的 PRG，其中 $\mathcal S$ 和 $\mathcal R$ 是两个有限集。对于每个多项式边界的值 $n\geq 1$，我们都可以构造一个定义在 $(\mathcal{S},\mathcal{R}^n\times\mathcal{S})$ 上的新 PRG $G'$。对于 $s\in\mathcal{S}$，我们令：
 
 \vspace*{10pt}
 
@@ -337,6 +337,13 @@ $p_1$ 显然就等于 $\mathcal B_2$ 在攻击游戏 \ref{game:3-1} 的实验 $0
 =|p_n-p_0|
 \end{equation}
 
+\begin{figure}
+	\centering
+	\input{figures/chapter3/fig7.tex}
+	\caption{$n=3$ 时，混合游戏中挑战者的计算。圆圈表示随机产生的 $\mathcal{S}$ 或 $\mathcal{R}$ 上的元素，如标签所示。}
+	\label{fig:3-7}
+\end{figure}
+
 接下来，我们定义一个 PRG 对手 $\mathcal B$，它就 $G$ 进行攻击游戏 \ref{game:3-1}，工作方式如下：
 
 \vspace*{10pt}
@@ -369,21 +376,14 @@ $p_1$ 显然就等于 $\mathcal B_2$ 在攻击游戏 \ref{game:3-1} 的实验 $0
 \Pr[W_1\,|\,\omega=j]=p_{j}
 \]
 
-\begin{figure}
-	\centering
-	\input{figures/chapter3/fig7.tex}
-	\caption{$n=3$ 时，混合游戏中挑战者的计算。圆圈表示随机产生的 $\mathcal{S}$ 或 $\mathcal{R}$ 上的元素，如标签所示。}
-	\label{fig:3-7}
-\end{figure}
-
 接下来的证明只是简单的计算，与定理 \ref{theo:3-2} 的证明的最后一段\emph{相同}，不再赘述。
 \end{proof}
 
-评价 PRG 的一个标准是它的\textbf{扩展率 (expansion rate)}：一个将 $n$ 比特种子拉伸为 $m$ 比特输出的 PRG 的扩展率就是 $m/n$。更一般地说，如果种子空间是 $\mathcal{S}$，输出空间是 $\mathcal{R}$，我们就可以将扩展率定义为 $\log|\mathcal{R}|/\log|\mathcal{S}|$。串行组合能够比并行组合提供更高的扩展率，但是它有一个缺点，那就是它不能被并行化。事实上，存在一种构造可以兼顾这两种优点：高的扩展率和高度可并行的结构，见 \ref{subsec:4-4-4} 小节。
+评价 PRG 的一个标准是它的\textbf{扩展率 (expansion rate)}：一个将 $n$ 比特种子拉伸为 $m$ 比特输出的 PRG 的扩展率就是 $m/n$。更一般地说，如果种子空间是 $\mathcal{S}$，输出空间是 $\mathcal{R}$，我们就可以将扩展率定义为 $\log|\mathcal{R}|/\log|\mathcal{S}|$。串行组合能够比并行组合提供更高的扩展率，但是它有一个缺点，那就是它不能被并行化。事实上，存在一种构造可以同时兼顾高扩展率和高度可并行构造这两个优点，见 \ref{subsec:4-4-4} 小节。
 
 \subsection{数学细节}\label{subsec:3-4-3}
 
-在定理 \ref{theo:3-2} 和 \ref{theo:3-3} 的证明中，有一些具体的细节值得讨论。
+在定理 \ref{theo:3-2} 和 \ref{theo:3-3} 的证明中，有一些微妙的细节值得讨论。
 
 首先，在这两个构造中，底层的 PRG $G$ 可能包含系统参数。也就是说，可能存在一个概率性算法，它将安全参数 $\lambda$ 作为输入，并输出一个系统参数 $\Lambda$。回顾一下，系统参数是能够完全地将构造实例化的公共数据（在这个场景中，它可能定义了种子空间和输出空间）。对于并行和串行构造，我们可以对 $G$ 的所有 $n$ 个实例使用相同的系统参数；事实上，对于串行构造来说，这是必须的，因为我们要确保一轮的输出可以被用作下一轮的输入。无论是对所有 $G$ 的实例使用相同的系统参数，还是对不同的实例使用不同的系统参数，这些安全定理的证明都是完全有效的。
 

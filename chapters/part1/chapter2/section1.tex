@@ -127,12 +127,12 @@ D(k,c)=c-k \bmod n
 
 如果 Alice 使用一个密钥 $k$ 来加密一条消息 $m$，而一个窃听对手获得了密文 $c$，Alice 只有在密钥 $k$ 难以猜测的情况下才有希望保持 $m$ 的机密性，而这至少意味着密钥 $k$ 应该是从一个大的密钥空间中随机选出的。说 $m$ ``隐藏得很好"，至少得意味着在不知道 $k$ 的情况下，很难从 $c$ 中完全确定 $m$；然而，这其实是不够的。即使对手可能并不知道 $k$，我们假设它知道加密算法和 $k$ 的分布。事实上，我们将假设，当加密一条消息时，我们总是从密钥空间中的所有密钥中随机均匀地选出密钥 $k$。对手也可能对被加密的消息有一些了解——视具体情况，它也许知道消息的可能取值集合其实是相当小的，而且它可能对消息的每个可能取值被选出的概率有一定的了解。比方说，假设它知道消息 $m$ 可能是 $m_0=\,$\texttt{"ATTACK␣AT␣DAWN"}或者 $m_1=\,$\texttt{"ATTACK␣AT␣DUSK"}。根据对手现有的情报，Alice 选择这两条消息中任何一条的概率都是均等的。在没有看到密文 $c$ 的情况下，对手只有 $50\%$ 的机会猜到 Alice 发送的是哪条信息。但我们假设对手确实知道 $c$。即使有这样的知识，两条消息仍然都有可能；也就是说，可能存在密钥 $k_0$ 和 $k_1$ 使得 $E(k_0,m_0)=c$ 和 $E(k_1,m_1)=c$ 都成立，所以对手还是不能\emph{确定}是 $m=m_0$ 还是 $m=m_1$。但是，它还是可以猜测的。假如说密码有这样一个属性，有 $800$ 个密钥 $k_0$ 使得 $E(k_0,m_0)=c$ 成立，有 $600$ 个密钥 $k_1$ 使得 $E(k_1,m_1)=c$ 成立。那么，猜测正确的概率就等于 $800/(800+600)\approx57\%$，这高于它在不知道密文时的 $50\%$ 的猜中概率。我们对完美安全性的正式定义明确地排除了这样的一种可能性，即对密文的了解能够增加猜中原始消息的概率，或者确定消息明文的\emph{任何}属性。
 
-闲话少说，我们下面正式定义完美安全性。在这个定义中，我们将考虑一个概率实验，其中密钥是从密钥空间中随机均匀选出的。我们记 $\mathsf{k}$ 为代表这个随机密钥的随机变量。对于一条消息 $m$，$E(\mathsf{k},m)$ 是另一个随机变量，它代表将加密函数应用于随机密钥 $\mathsf{k}$ 和消息 $m$ 的结果。这样，每条消息 $m$ 都会产生一个不同的随机变量 $E(\mathsf{k},m)$。
+闲话少说，我们下面正式定义完美安全性。在这个定义中，我们将考虑一个概率实验，其中密钥是从密钥空间中随机均匀选出的。我们记 $\boldsymbol{\mathsf{k}}$ 为代表这个随机密钥的随机变量。对于一条消息 $m$，$E(\boldsymbol{\mathsf{k}},m)$ 是另一个随机变量，它代表将加密函数应用于随机密钥 $\boldsymbol{\mathsf{k}}$ 和消息 $m$ 的结果。这样，每条消息 $m$ 都会产生一个不同的随机变量 $E(\boldsymbol{\mathsf{k}}, m)$。
 
 \begin{definition}[完美安全性]\label{def:2-1}
-令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。考虑一个概率实验，其中随机变量 $\mathsf{k}$ 均匀分布在 $\mathcal{K}$ 上。如果对于所有的 $m_0,m_1\in\mathcal{M}$ 和所有的 $c\in\mathcal{C}$，都有：
+令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。考虑一个概率实验，其中随机变量 $\boldsymbol{\mathsf{k}}$ 均匀分布在 $\mathcal{K}$ 上。如果对于所有的 $m_0,m_1\in\mathcal{M}$ 和所有的 $c\in\mathcal{C}$，都有：
 \[
-\Pr[E(\mathsf{k},m_0)=c]=\Pr[E(\mathsf{k},m_1)=c]
+\Pr[E(\boldsymbol{\mathsf{k}},m_0)=c]=\Pr[E(\boldsymbol{\mathsf{k}},m_1)=c]
 \]
 我们就说 $\mathcal{E}$ 是一个\textbf{完美安全的}香农密码。
 \end{definition}
@@ -147,22 +147,22 @@ D(k,c)=c-k \bmod n
 	\[
     \big\lvert\{k\in\mathcal{K}:E(k,m)=c\}\big\rvert = N_c
     \]
-    \item 如果随机变量 $\mathsf{k}$ 均匀分布在 $\mathcal{K}$ 上，那么对于 $m\in\mathcal{M}$，每个随机变量 $E(\mathsf{k},m)$ 都有相同的分布。
+    \item 如果随机变量 $\boldsymbol{\mathsf{k}}$ 均匀分布在 $\mathcal{K}$ 上，那么对于 $m\in\mathcal{M}$，每个随机变量 $E(\boldsymbol{\mathsf{k}},m)$ 都有相同的分布。
 \end{enumerate}
 \end{theorem}
 
 \begin{proof}
-首先，让我们把(ii)重述如下：对于每个 $c\in\mathcal{C}$，都存在一个（取决于 $c$ 的）$P_c$，使得对于所有的 $m\in\mathcal{M}$，我们都有 $\Pr[E(\mathsf{k},m)=c]=P_c$。这里，$\mathsf{k}$ 是一个均匀分布在 $\mathcal{K}$ 上的随机变量。注意到 $P_c=N_c/|\mathcal{K}|$，$N_c$ 与 (ii) 中的原始表述一致。
+首先，让我们把(ii)重述如下：对于每个 $c\in\mathcal{C}$，都存在一个（取决于 $c$ 的）$P_c$，使得对于所有的 $m\in\mathcal{M}$，我们都有 $\Pr[E(\boldsymbol{\mathsf{k}},m)=c]=P_c$。这里，$\boldsymbol{\mathsf{k}}$ 是一个均匀分布在 $\mathcal{K}$ 上的随机变量。注意到 $P_c=N_c/|\mathcal{K}|$，$N_c$ 与 (ii) 中的原始表述一致。
 
 这个版本的 (ii) 显然与 (iii) 等价。
 
 \vspace{5pt}
 
 \emph{(i)} $\Longrightarrow$ \emph{(ii)}。假设 (i) 成立，我们证明 (ii)。
-为了证明(ii)，令 $c\in\mathcal{C}$ 是某个固定密文。挑选某条任意的消息 $m_0\in\mathcal{M}$，并令 $P_c:=\Pr[E(\mathsf{k},m_0)=c]$。根据 (i)，我们知道，对于所有的 $m\in\mathcal{M}$，我们都有 $\Pr[E(\mathsf{k},m)=c]=Pr[E(\mathsf{k},m_0)=c]=P_c$ 成立，这就证明了 (ii)。
+为了证明(ii)，令 $c\in\mathcal{C}$ 是某个固定密文。挑选某条任意的消息 $m_0\in\mathcal{M}$，并令 $P_c:=\Pr[E(\boldsymbol{\mathsf{k}},m_0)=c]$。根据 (i)，我们知道，对于所有的 $m\in\mathcal{M}$，我们都有 $\Pr[E(\boldsymbol{\mathsf{k}},m)=c]=Pr[E(\boldsymbol{\mathsf{k}},m_0)=c]=P_c$ 成立，这就证明了 (ii)。
 
 \emph{(ii)} $\Longrightarrow$ \emph{(i)}。假设 (ii) 成立，我们证明 (i)。
-考虑任意固定的 $m_0,m_1\in\mathcal{M}$ 和 $c\in\mathcal{C}$，(ii) 表明 $\Pr[E(\mathsf{k},m_0)=c]=P_c=\Pr[E(\mathsf{k}，m_1)=c]$ 成立，这就证明了 (i)。
+考虑任意固定的 $m_0,m_1\in\mathcal{M}$ 和 $c\in\mathcal{C}$，(ii) 表明 $\Pr[E(\boldsymbol{\mathsf{k}},m_0)=c]=P_c=\Pr[E(\boldsymbol{\mathsf{k}},m_1)=c]$ 成立，这就证明了 (i)。
 \end{proof}
 
 正如我们所承诺的，我们下面证明一次性密码本（见例 \ref{exmp:2-1}）是完美安全的。
@@ -180,11 +180,11 @@ k\oplus m =c
 \end{proof}
 
 \begin{example}\label{exmp:2-5}
-重新考察例 \ref{exmp:2-2} 中定义的变长一次性密码本。这种密码并不符合我们对完美安全性的定义，因为一条密文的长度与相应的明文相同。事实上，让我们选择一条长度为 $1$ 的任意序列 $m_0$，以及一条长度为 $2$ 的任意序列 $m_1$。此外，假设 $c$ 是一个长度为 $1$ 的任意序列，而 $\mathsf{k}$ 是一个均匀分布在密钥空间上的随机变量。那么我们有：
+重新考察例 \ref{exmp:2-2} 中定义的变长一次性密码本。这种密码并不符合我们对完美安全性的定义，因为一条密文的长度与相应的明文相同。事实上，让我们选择一条长度为 $1$ 的任意序列 $m_0$，以及一条长度为 $2$ 的任意序列 $m_1$。此外，假设 $c$ 是一个长度为 $1$ 的任意序列，而 $\boldsymbol{\mathsf{k}}$ 是一个均匀分布在密钥空间上的随机变量。那么我们有：
 \[
-\Pr[E(\mathsf{k},m_0)=c]={1}/{2},
+\Pr[E(\boldsymbol{\mathsf{k}},m_0)=c]={1}/{2},
 \quad\quad
-\Pr[E(\mathsf{k},m_1)=c]=0
+\Pr[E(\boldsymbol{\mathsf{k}},m_1)=c]=0
 \]
 这恰好是定理 \ref{theo:2-1} 的一个直接的反例。
 
@@ -201,7 +201,7 @@ m_0[0]=m_0[1],
 \quad
 m_1[0]\neq m_1[1]
 \]
-那么对于每个密钥 $k$，也就是 $\Sigma$ 上的一种置换，如果 $c = E(k,m_0)$，那么必然有 $c[0] = c[1]$；而如果 $c = E(k,m_1)$，那么也必然有 $c[0]\neq c[1]$。由此可见，如果 $\mathsf{k}$ 均匀分布在密钥空间上，$E(\mathsf{k},m_0)$ 和 $E(\mathsf{k},m_1)$ 的分布就不会相同。
+那么对于每个密钥 $k$，也就是 $\Sigma$ 上的一种置换，如果 $c = E(k,m_0)$，那么必然有 $c[0] = c[1]$；而如果 $c = E(k,m_1)$，那么也必然有 $c[0]\neq c[1]$。由此可见，如果 $\boldsymbol{\mathsf{k}}$ 均匀分布在密钥空间上，$E(\boldsymbol{\mathsf{k}},m_0)$ 和 $E(\boldsymbol{\mathsf{k}},m_1)$ 的分布就不会相同。
 
 有的人可能会认为上面描述的弱点显得有些刻意，但还有一种更加现实的针对置换密码的攻击方式。假设置换密码被用于加密电子邮件信息。众所周知，电子邮件以一个``标准首部"开始，如 \texttt{"FROM"}。假设密文 $c\in\Sigma^L$ 被对手截获。因为密钥 $k$ 其实就是 $\Sigma$ 的一个置换。对手知道：
 \[
@@ -217,10 +217,10 @@ c[0\dots3]=(k(\mathtt F),k(\mathtt R),k(\mathtt O),k(\mathtt M))
 下面要介绍的两个定理进一步阐述了完美安全性的另外两个特征。对于前者，假设一个窃听对手将某个谓词 $\phi$ 应用于它所获得的密文。谓词 $\phi$（是一个密文空间上的一个布尔函数）的逻辑可能非常简单，比如奇偶判断函数（判断密文中比特 $1$ 有偶数个还是奇数个），也可能是类型更加复杂的统计测试。但无论谓词 $\phi$ 是简单还是复杂，完美安全性都会保证谓词在密文上的评估结果也不会透露任何关于明文的信息。
 
 \begin{theorem}\label{theo:2-3}
-令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。考虑一个概率实验，其中 $\mathsf{k}$ 是一个均匀分布在 $\mathcal{K}$ 上的随机变量。那么，当且仅当对于 $\mathcal{C}$ 上的每个谓词 $\phi$ 和所有的 $m_0,m_1\in\mathcal{M}$，我们都有：
+令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。考虑一个概率实验，其中 $\boldsymbol{\mathsf{k}}$ 是一个均匀分布在 $\mathcal{K}$ 上的随机变量。那么，当且仅当对于 $\mathcal{C}$ 上的每个谓词 $\phi$ 和所有的 $m_0,m_1\in\mathcal{M}$，我们都有：
 \[
-\Pr[\phi(E(\mathsf{k},m_0))]=
-\Pr[\phi(E(\mathsf{k}, m_1))]
+\Pr[\phi(E(\boldsymbol{\mathsf{k}},m_0))]=
+\Pr[\phi(E(\boldsymbol{\mathsf{k}}, m_1))]
 \]
 时，$\mathcal{E}$ 才是完美安全的。
 \end{theorem}
@@ -228,99 +228,99 @@ c[0\dots3]=(k(\mathtt F),k(\mathtt R),k(\mathtt O),k(\mathtt M))
 \begin{proof}
 这实际上只是一个简单的计算。一方面，假设 $\mathcal{E}$ 是完美安全的，而且 $\phi$，$m_0$ 和 $m_1$ 已被给定。令 $S:=\{c\in\mathcal{C}:\phi(c)\}$，那么我们有：
 \[
-\Pr[\phi(E(\mathsf{k}, m_0))]=\sum_{c\in S}\Pr[E(\mathsf{k}, m_0) = c]=\sum_{c\in S}\Pr[E(\mathsf{k}, m_1) = c]=\Pr[\phi(E(\mathsf{k}, m_1) )]
+\Pr[\phi(E(\boldsymbol{\mathsf{k}}, m_0))]=\sum_{c\in S}\Pr[E(\boldsymbol{\mathsf{k}}, m_0) = c]=\sum_{c\in S}\Pr[E(\boldsymbol{\mathsf{k}}, m_1) = c]=\Pr[\phi(E(\boldsymbol{\mathsf{k}}, m_1) )]
 \]
 这里，在建立第二个等号时，我们使用了 $\mathcal{E}$ 是完美安全的假设。另一方面，假设 $\mathcal{E}$ 不是完全安全的，则必然存在 $m_0$，$m_1$ 和 $c$ 使得：
 \[
-\Pr[E(\mathsf{k},m_0)=c]\neq
-\Pr[E(\mathsf{k},m_1)=c]
+\Pr[E(\boldsymbol{\mathsf{k}},m_0)=c]\neq
+\Pr[E(\boldsymbol{\mathsf{k}},m_1)=c]
 \]
 不妨定义谓词 $\phi$ 对该特定密文 $c$ 输出真，对所有其他密文都输出假，我们可以发现：
 \[
 \pushQED{\qed}
-\Pr[\phi(E(\mathsf{k}, m_0))]= 
-\Pr[E(\mathsf{k}, m_0) = c]\neq
-\Pr[E(\mathsf{k}, m_1) = c]=
-\Pr[\phi(E(\mathsf{k}, m_1))]\qedhere
+\Pr[\phi(E(\boldsymbol{\mathsf{k}}, m_0))]= 
+\Pr[E(\boldsymbol{\mathsf{k}}, m_0) = c]\neq
+\Pr[E(\boldsymbol{\mathsf{k}}, m_1) = c]=
+\Pr[\phi(E(\boldsymbol{\mathsf{k}}, m_1))]\qedhere
 \]
 \end{proof}
 
-下一个定理以另一种方式说明，完美安全性能够确保密文不会泄露任何关于明文的信息。假设 $\mathsf{m}$ 是一个分布在消息空间 $\mathcal{M}$ 上的随机变量。注意，我们并没有假设 $\mathsf{m}$ 是均匀分布在 $\mathcal{M}$ 上的。现在，假设 $\mathsf{k}$ 是一个均匀分布在密钥空间 $\mathcal{K}$ 上的随机变量，它与 $\mathsf{m}$ 无关，并定义 $\mathsf{c}:=E(\mathsf{k},\mathsf{m})$ 是一个分布在密文空间 $\mathcal{C}$ 上的随机变量。下面的定理将表明，完美安全性能够保证随机变量 $\mathsf{c}$ 和 $\mathsf{m}$ 相互独立。
+下一个定理以另一种方式说明，完美安全性能够确保密文不会泄露任何关于明文的信息。假设 $\boldsymbol{\mathsf{m}}$ 是一个分布在消息空间 $\mathcal{M}$ 上的随机变量。注意，我们并没有假设 $\boldsymbol{\mathsf{m}}$ 是均匀分布在 $\mathcal{M}$ 上的。现在，假设 $\boldsymbol{\mathsf{k}}$ 是一个均匀分布在密钥空间 $\mathcal{K}$ 上的随机变量，它与 $\boldsymbol{\mathsf{m}}$ 无关，并定义 $\boldsymbol{\mathsf{c}}:=E(\boldsymbol{\mathsf{k}},\boldsymbol{\mathsf{m}})$ 是一个分布在密文空间 $\mathcal{C}$ 上的随机变量。下面的定理将表明，完美安全性能够保证随机变量 $\boldsymbol{\mathsf{c}}$ 和 $\boldsymbol{\mathsf{m}}$ 相互独立。
 
-描述这种独立性的一种方法是，对于每个以非零概率出现的密文 $\mathsf{c}\in\mathcal{C}$，以及每条消息 $\mathsf{m}\in\mathcal{M}$，我们都有：
+描述这种独立性的一种方法是，对于每个以非零概率出现的密文 $\boldsymbol{\mathsf{c}}\in\mathcal{C}$ 以及每条消息 $\boldsymbol{\mathsf{m}}\in\mathcal{M}$，我们都有：
 \[
-\Pr[\mathsf{m}=m\;|\;\mathsf{c}=c]=
-\Pr[\mathsf{m}=m]
+\Pr[\boldsymbol{\mathsf{m}}=m\;|\;\boldsymbol{\mathsf{c}}=c]=
+\Pr[\boldsymbol{\mathsf{m}}=m]
 \]
 直观上说，这意味着在看到一个密文后，我们对消息的了解不会比在看到密文之前更多。
 
-另一种描述这种独立性的方法是，对于每条以非零概率出现的消息 $\mathsf{m}\in\mathcal{M}$，以及每个密文 $\mathsf{c}\in\mathcal{C}$，我们都有：
+另一种描述这种独立性的方法是，对于每条以非零概率出现的消息 $\boldsymbol{\mathsf{m}}\in\mathcal{M}$，以及每个密文 $\boldsymbol{\mathsf{c}}\in\mathcal{C}$，我们都有：
 \[
-\Pr[\mathsf{c}=c\;|\;\mathsf{m}=m]=
-\Pr[\mathsf{c}=c]
+\Pr[\boldsymbol{\mathsf{c}}=c\;|\;\boldsymbol{\mathsf{m}}=m]=
+\Pr[\boldsymbol{\mathsf{c}}=c]
 \]
 直观上说，这意味着明文消息的选择对密文的分布不会产生任何影响。
 
-限制 $\mathsf{m}$ 和 $\mathsf{k}$ 是相互独立的随机变量这一点是合理的：不管你使用的是哪一种密码，根据消息选择密钥都是一个非常糟糕的主意，根据密钥选择消息也是一样（参见练习 \ref{exer:2-16}）。
+限制 $\boldsymbol{\mathsf{m}}$ 和 $\boldsymbol{\mathsf{k}}$ 是相互独立的随机变量这一点是合理的：不管你使用的是哪一种密码，根据消息选择密钥都是一个非常糟糕的主意，根据密钥选择消息也是一样（参见练习 \ref{exer:2-16}）。
 
 \begin{theorem}\label{theo:2-4}
-令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。考虑一个随机实验，其中 $\mathsf{k}$ 和 $\mathsf{m}$ 是随机变量，满足：
+令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的香农密码。考虑一个随机实验，其中 $\boldsymbol{\mathsf{k}}$ 和 $\boldsymbol{\mathsf{m}}$ 是随机变量，满足：
 \begin{itemize}
-	\item $\mathsf{k}$ 均匀分布在 $\mathcal{K}$ 上，
-	\item $\mathsf{m}$ 分布在 $\mathcal{M}$ 上，且
-	\item $\mathsf{k}$ 和 $\mathsf{m}$ 相互独立。
+	\item $\boldsymbol{\mathsf{k}}$ 均匀分布在 $\mathcal{K}$ 上，
+	\item $\boldsymbol{\mathsf{m}}$ 分布在 $\mathcal{M}$ 上，且
+	\item $\boldsymbol{\mathsf{k}}$ 和 $\boldsymbol{\mathsf{m}}$ 相互独立。
 \end{itemize}
-定义随机变量 $\mathsf{c}:=E(\mathsf{k},\mathsf{m})$。那么我们有：
+定义随机变量 $\boldsymbol{\mathsf{c}}:=E(\boldsymbol{\mathsf{k}},\boldsymbol{\mathsf{m}})$。那么我们有：
 \begin{itemize}
-	\item 如果 $\mathcal{E}$ 是完美安全的，则 $\mathsf{c}$ 和 $\mathsf{m}$ 相互独立。
-	\item 反过来说，如果 $\mathsf{c}$ 和 $\mathsf{m}$ 相互独立，并且 $\mathcal{M}$ 中的每条消息都以非零概率出现，则 $\mathcal{E}$ 是完美安全的。
+	\item 如果 $\mathcal{E}$ 是完美安全的，则 $\boldsymbol{\mathsf{c}}$ 和 $\boldsymbol{\mathsf{m}}$ 相互独立。
+	\item 反过来说，如果 $\boldsymbol{\mathsf{c}}$ 和 $\boldsymbol{\mathsf{m}}$ 相互独立，并且 $\mathcal{M}$ 中的每条消息都以非零概率出现，则 $\mathcal{E}$ 是完美安全的。
 \end{itemize}
 \end{theorem}
 
 \begin{proof}
-对于第一个结论，假设 $\mathcal{E}$ 是完美安全的。考虑任意固定的 $\mathsf{m}\in\mathcal{M}$ 和 $\mathsf{c}\in\mathcal{C}$，我们想要证明：
+对于第一个结论，假设 $\mathcal{E}$ 是完美安全的。考虑任意固定的 $\boldsymbol{\mathsf{m}}\in\mathcal{M}$ 和 $\boldsymbol{\mathsf{c}}\in\mathcal{C}$，我们想要证明：
 \[
-\Pr[\mathsf{c}=c\land\mathsf{m}=m]=
-\Pr[\mathsf{c}=c]\cdot
-\Pr[\mathsf{m}=m]
+\Pr[\boldsymbol{\mathsf{c}}=c\land\boldsymbol{\mathsf{m}}=m]=
+\Pr[\boldsymbol{\mathsf{c}}=c]\cdot
+\Pr[\boldsymbol{\mathsf{m}}=m]
 \]
 而我们有：
 \[
 \begin{aligned}
-\Pr[\mathsf{c}=c\land\mathsf{m}=m]
-&=\Pr[E(\mathsf{k},\mathsf{m})
-=c\land\mathsf{m}=m]\\
-&=\Pr[E(\mathsf{k},m)=c\land\mathsf{m}=m]\\
-&=\Pr[E(\mathsf{k},m)=c]\cdot\Pr[\mathsf{m}=m]
-\quad\text{\emph{（}\,} \mathsf{k} \text{\emph{\;和\;}} \mathsf{m} \text{\;\emph{相互独立）}}
+\Pr[\boldsymbol{\mathsf{c}}=c\land\boldsymbol{\mathsf{m}}=m]
+&=\Pr[E(\boldsymbol{\mathsf{k}},\boldsymbol{\mathsf{m}})
+=c\land\boldsymbol{\mathsf{m}}=m]\\
+&=\Pr[E(\boldsymbol{\mathsf{k}},m)=c\land\boldsymbol{\mathsf{m}}=m]\\
+&=\Pr[E(\boldsymbol{\mathsf{k}},m)=c]\cdot\Pr[\boldsymbol{\mathsf{m}}=m]
+\quad\text{\emph{（}\,} \boldsymbol{\mathsf{k}} \text{\emph{\;和\;}} \boldsymbol{\mathsf{m}} \text{\;\emph{相互独立）}}
 \end{aligned}
 \]
-因此，我们只需证明 $\Pr[E(\mathsf{k},m)=c]=\Pr[\mathsf{c}=c]$ 就足够了。我们有：
+因此，我们只需证明 $\Pr[E(\boldsymbol{\mathsf{k}},m)=c]=\Pr[\boldsymbol{\mathsf{c}}=c]$ 就足够了。我们有：
 \[
 \begin{aligned}
-\Pr[\mathsf{c}=c]&=
-\Pr[E(\mathsf{k},\mathsf{m})=c]\\
-&=\sum_{m'\in\mathcal{M}}\Pr[E(\mathsf{k},\mathsf{m})=c \land \mathsf{m}=m']
+\Pr[\boldsymbol{\mathsf{c}}=c]&=
+\Pr[E(\boldsymbol{\mathsf{k}},\boldsymbol{\mathsf{m}})=c]\\
+&=\sum_{m'\in\mathcal{M}}\Pr[E(\boldsymbol{\mathsf{k}},\boldsymbol{\mathsf{m}})=c \land \boldsymbol{\mathsf{m}}=m']
 \quad\text{\emph{（全概率）}}\\
-&=\sum_{m'\in\mathcal{M}}\Pr[E(\mathsf{k},m')=c \land \mathsf{m}=m']\\
-&=\sum_{m'\in\mathcal{M}}\Pr[E(\mathsf{k},m')=c]\cdot\Pr[\mathsf{m}=m']\quad\text{\emph{（}\,} \mathsf{k} \text{\emph{\;和\;}} \mathsf{m} \text{\;\emph{相互独立）}}\\
-&=\sum_{m'\in\mathcal{M}}\Pr[E(\mathsf{k},m)=c]\cdot\Pr[\mathsf{m}=m']
+&=\sum_{m'\in\mathcal{M}}\Pr[E(\boldsymbol{\mathsf{k}},m')=c \land \boldsymbol{\mathsf{m}}=m']\\
+&=\sum_{m'\in\mathcal{M}}\Pr[E(\boldsymbol{\mathsf{k}},m')=c]\cdot\Pr[\boldsymbol{\mathsf{m}}=m']\quad\text{\emph{（}\,} \boldsymbol{\mathsf{k}} \text{\emph{\;和\;}} \boldsymbol{\mathsf{m}} \text{\;\emph{相互独立）}}\\
+&=\sum_{m'\in\mathcal{M}}\Pr[E(\boldsymbol{\mathsf{k}},m)=c]\cdot\Pr[\boldsymbol{\mathsf{m}}=m']
 \quad\text{\emph{（完美安全性的定义）}}\\
-&=\Pr[E(\mathsf{k},m)=c]\sum_{m'\in\mathcal{M}}\Pr[\mathsf{m}=m']\\
-&=\Pr[E(\mathsf{k},m)=c]\quad\text{\emph{（全概率）}}
+&=\Pr[E(\boldsymbol{\mathsf{k}},m)=c]\sum_{m'\in\mathcal{M}}\Pr[\boldsymbol{\mathsf{m}}=m']\\
+&=\Pr[E(\boldsymbol{\mathsf{k}},m)=c]\quad\text{\emph{（全概率）}}
 \end{aligned}
 \]
 
-对于第二个结论，假设 $\mathsf{c}$ 和 $\mathsf{m}$ 相互独立，并且 $\mathcal{M}$ 中的每条消息都以非零概率出现。令 $m\in\mathcal{M}$，$c\in\mathcal{C}$。我们想要证明 $\Pr[E(\mathsf{k},m)=c]=\Pr[\mathsf{c}=c]$，这样自然就能证明 $\mathcal{E}$ 是完美安全的。由于 $\Pr[\mathsf{m}=m]\neq0$，我们可以看出：
+对于第二个结论，假设 $\boldsymbol{\mathsf{c}}$ 和 $\boldsymbol{\mathsf{m}}$ 相互独立，并且 $\mathcal{M}$ 中的每条消息都以非零概率出现。令 $m\in\mathcal{M}$，$c\in\mathcal{C}$。我们想要证明 $\Pr[E(\boldsymbol{\mathsf{k}},m)=c]=\Pr[\boldsymbol{\mathsf{c}}=c]$，这样自然就能证明 $\mathcal{E}$ 是完美安全的。由于 $\Pr[\boldsymbol{\mathsf{m}}=m]\neq0$，我们可以看出：
 \[
 \begin{aligned}
-\Pr[E(\mathsf{k},m)=c]\cdot\Pr[\mathsf{m}=m]
-&=\Pr[E(\mathsf{k},m)=c\land \mathsf{m}=m]
-\quad\text{\emph{（}\,} \mathsf{k} \text{\emph{\;和\;}} \mathsf{m} \text{\;\emph{相互独立）}}\\
-&=\Pr[E(\mathsf{k},\mathsf{m})=c\land \mathsf{m}=m]\\
-&=\Pr[\mathsf{c}=c \land\mathsf{m}=m]\\
-&=\Pr[\mathsf{c}=c]\cdot\Pr[\mathsf{m}=m]
-\quad\text{\emph{（}\,} \mathsf{c} \text{\emph{\;和\;}} \mathsf{m} \text{\;\emph{相互独立）}}
+\Pr[E(\boldsymbol{\mathsf{k}},m)=c]\cdot\Pr[\boldsymbol{\mathsf{m}}=m]
+&=\Pr[E(\boldsymbol{\mathsf{k}},m)=c\land \boldsymbol{\mathsf{m}}=m]
+\quad\text{\emph{（}\,} \boldsymbol{\mathsf{k}} \text{\emph{\;和\;}} \boldsymbol{\mathsf{m}} \text{\;\emph{相互独立）}}\\
+&=\Pr[E(\boldsymbol{\mathsf{k}},\boldsymbol{\mathsf{m}})=c\land \boldsymbol{\mathsf{m}}=m]\\
+&=\Pr[\boldsymbol{\mathsf{c}}=c \land\boldsymbol{\mathsf{m}}=m]\\
+&=\Pr[\boldsymbol{\mathsf{c}}=c]\cdot\Pr[\boldsymbol{\mathsf{m}}=m]
+\quad\text{\emph{（}\,} \boldsymbol{\mathsf{c}} \text{\emph{\;和\;}} \boldsymbol{\mathsf{m}} \text{\;\emph{相互独立）}}
 \qedhere
 \end{aligned}
 \]
@@ -337,10 +337,10 @@ c[0\dots3]=(k(\mathtt F),k(\mathtt R),k(\mathtt O),k(\mathtt M))
 \begin{proof}
 假设 $|\mathcal{K}|<|\mathcal{M}|$，我们想要证明 $\mathcal{E}$ 不是完美安全的。为此，我们说明存在消息 $m_0$ 和 $m_1$，以及一条密文 $c$ 使得：
 \begin{align}
-& \Pr[E(\mathsf{k},m_0)=c]>0,\quad\text{且} \label{eq:2-1}\\
-& \Pr[E(\mathsf{k},m_1)=c]=0 \label{eq:2-2}
+& \Pr[E(\boldsymbol{\mathsf{k}},m_0)=c]>0,\quad\text{且} \label{eq:2-1}\\
+& \Pr[E(\boldsymbol{\mathsf{k}},m_1)=c]=0 \label{eq:2-2}
 \end{align}
-成立。这里，$\mathsf{k}$ 是一个均匀分布在 $\mathcal{K}$ 上的随机变量。
+成立。这里，$\boldsymbol{\mathsf{k}}$ 是一个均匀分布在 $\mathcal{K}$ 上的随机变量。
 
 为了做到这一点，我们选择某个消息 $m_0\in\mathcal{M}$ 和某个密钥 $k_0\in\mathcal{K}$。令 $c:=E(k_0,m_0)$。很明显，此时式 \ref{eq:2-1} 成立。
 

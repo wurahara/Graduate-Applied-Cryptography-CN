@@ -42,12 +42,12 @@ m'\overset{\rm R}\leftarrow D(k,c)
 
 为了引入语义安全性的定义，考虑一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的确定性密码 $\mathcal{E}=(E,D)$。我们重新考察定理 \ref{theo:2-3} 给出的关于完美安全性的表述。它表明，对于密文空间上的所有谓词 $\phi$ 和所有消息 $m_0,m_1$，我们都有：
 \begin{equation}\label{eq:2-3}
-\Pr[\phi(E(\mathsf{k},m_0))]=\Pr[\phi(E(\mathsf{k}, m_1))]
+\Pr[\phi(E(\boldsymbol{\mathsf{k}},m_0))]=\Pr[\phi(E(\boldsymbol{\mathsf{k}}, m_1))]
 \end{equation}
-其中 $\mathsf{k}$ 是一个均匀分布在 $\mathcal{K}$ 上的随机变量。现在，我们不再坚持概率是相等的，而只是要求它们非常接近，即：
+其中 $\boldsymbol{\mathsf{k}}$ 是一个均匀分布在 $\mathcal{K}$ 上的随机变量。现在，我们不再坚持概率是相等的，而只是要求它们非常接近，即：
 \begin{equation}\label{eq:2-4}
 \Big\lvert
-\Pr[\phi(E(\mathsf{k},m_0))]-\Pr[\phi(E(\mathsf{k}, m_1))]
+\Pr[\phi(E(\boldsymbol{\mathsf{k}},m_0))]-\Pr[\phi(E(\boldsymbol{\mathsf{k}}, m_1))]
 \Big\rvert
 \leq\epsilon
 \end{equation}
