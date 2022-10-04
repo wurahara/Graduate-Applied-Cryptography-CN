@@ -1,1 +1,139 @@
 \section{一个有趣的应用：彩虹表}\label{sec:18-7}
+
+令 $h:\mathcal{P}\to\mathcal{Y}$ 是一个随机函数，并设置 $N:=|\mathcal{P}|$。我们来看看计算 $h$ 的逆这个一般的问题。我们假设 $|\mathcal{Y}|\geq N$，因为这是实践中的典型情况。比如说，$\mathcal{P}$ 可能是所有 $8$ 字符口令的集合，而 $\mathcal{Y}=\{0,1\}^{256}$。
+
+令 $pw\overset{\rm R}\leftarrow\mathcal{P}$，并令 $y\leftarrow h(pw)$。显然，对 $\mathcal{P}$ 的所有可能性进行穷举搜索，只要对 $h$ 进行最多 $N$ 次查询，就可以确保找到 $y$ 的原像。在本节中，我们将开发一种更快的算法，它使用一种称作\textbf{彩虹表(rainbow table)}的方法来求取 $h$ 的逆。求逆算法 $\mathcal{A}=(\mathcal{A}_0,\mathcal{A}_1)$ 分两个阶段进行：
+\begin{itemize}
+	\item 预处理阶段：算法 $\mathcal{A}_0$ 查询 $h$，并输出一张包含 $\ell$ 个 $\mathcal{P}^2$ 中的数对的表 $L$，其中 $\ell$ 是某个正整数。该预处理阶段耗时为 $O(N)$，但它在获知挑战 $y$ 之前已被离线完成。产生的表 $L$ 被称为彩虹表，它必须被妥善储存，以便在第二阶段使用。
+	\item 攻击阶段：一旦被赋予一个挑战 $y\in\mathcal{Y}$，$\mathcal{A}_1$ 算法就会以 $\mathcal{A}_1(L,y)$ 的方式被调用，使用 $L$ 快速地找到 $y$ 的逆元。它能以接近 $1$ 的概率输出一个 $h^{-1}(y)$ 中的原像 $pw'$。
+\end{itemize}
+令 $t$ 为 $\mathcal{A}_1$ 在攻击阶段中的运行时间。下面，我们展示如何在时间 $t$ 内计算 $h$ 的逆，其中：
+\begin{equation}\label{eq:18-9}
+t\times\ell^2\approx N^2
+\end{equation}
+举例来说，如果我们可以存储一个大小为 $\ell=N^{2/3}$ 的表 $L$，我们就可以在 $t\approx N^{2/3}$ 的时间内以接近 $1$ 的概率计算 $h$ 的逆，这比在 $\mathcal{P}$ 上进行穷举搜索要快得多。
+
+式 \ref{eq:18-9} 被称作\textbf{时空权衡(time-space tradeoff)}。我们留给表 $L$ 的空间越大，求取 $h$ 的逆的速度就越快。当然，一旦我们有了表 $L$，我们就可以用它来快速地找到许多 $\mathcal{Y}$ 中元素的逆。
+
+正如 \ref{subsubsec:18-3-1-3} 小节所述，彩虹表通常被用于破解未加盐的口令。它们也可以用于从已知的明文-密文对 $\big(m,\,c=E(k,m)\big)$ 中恢复分组密码 $(E,D)$ 的秘钥 $k$。这是因为密钥 $k$ 就是函数 $h(k):=E(k,m)$ 在 $c$ 点处的逆元。如果 $m$ 足够长，或者提供足够多的明文-密文对，那么这个逆元 $k$ 就是唯一的。将此结论应用于 AES-128，我们就可以得到一个大小为 $128\times(2^{128})^{(2/3)}\approx 128\times 2^{85}$ 比特的表 $L$（约 $10$ 亿艾字节），它可以被用来在 $2^{85}$ 的时间内破解 AES。它的耗时在今天来看可能太长，但在几十年后可能会变得可以接受。我们曾在第 \ref{subsubsec:4-2-2-1} 小节中讨论过这种威胁。这种威胁也是迫使人们转向 AES-256 的一个很重要的原因。但是请注意，建立表 $L$ 需要大量（一次性的）工作，即大约 $2^{128}$ 次对 AES-128 的评估。
+
+细心的读者会注意到，式 \ref{eq:18-9} 中的边界在 $\ell=1$ 时相当差，此时，我们有 $t\approx N^2$。这比耗时为 $N$ 的简单穷举搜索还要差得多。这说明，彩虹表算法对于某些 $\ell$ 值来说并不严格。改进时空权衡 \ref{eq:18-9} 是一个长期存在的开放性问题（见练习 \ref{exer:18-7}）。
+
+\begin{snote}[Hellman 的基本时空权衡。]
+第一个用于求取随机函数的逆的时空权衡是由 Hellman 发明的，它是对 DES 的短密钥设计（$56$ 比特）的一个有力批评。Hellman 的方法使用了一个可有效计算的辅助函数 $g:\mathcal{Y}\to\mathcal{P}$，被称为\textbf{还原函数(reduction function)}。它能将 $h$ 的一个 $\mathcal{Y}$ 上的输出``还原"为一个 $\mathcal{P}$ 上的元素。简单起见，我们假设 $g$ 也是一个随机函数。那么，函数 $f(pw):=g(h(pw))$ 就会将 $\mathcal{P}$ 映射到它自身。
+
+预处理算法 $\mathcal{A}_0$ 使用函数 $f:\mathcal{P}\to\mathcal{P}$，它以两个正常数 $\tau$ 和 $\ell$ 为参数。回顾一下，对于 $\tau>0$，函数 $f^{(\tau)}$ 就是定义在 \ref{eq:18-5} 中的 $f$ 的 $\tau$ 次迭代。图 \ref{fig:18-13-a} 直观地展示了算法 $\mathcal{A}_0$ 的工作原理，它运行如下：
+
+\vspace*{10pt}
+
+\hspace*{5pt} 算法 $\mathcal{A}_0$：（预处理 $h$）\\
+\hspace*{50pt} 对于 $i=1,\dots,\ell$：\\
+\hspace*{75pt} 随机选取 $pw_i\overset{\rm R}\leftarrow\mathcal{P}$\\
+\hspace*{75pt} 令 $z_i\leftarrow f^{(\tau)}(pw_i)\in\mathcal{P}$
+\hspace*{100pt} // \emph{对 $f$ 进行 $\tau$ 次评估}
+
+\vspace*{5pt}
+
+\hspace*{28.5pt} 输出 $L:=\big\{(pw_1,z_1),\dots,(pw_\ell,z_\ell)\big\}\subseteq\mathcal{P}^2$
+\hspace*{37pt} // \emph{输出 $\ell$ 个 $\mathcal{P}^2$ 中的数对}
+
+\vspace*{10pt}
+
+\begin{figure}
+  \centering
+  \subfigure[Hellman 的基本时空权衡]{
+  	  \input{figures/chapter18/fig13-a.tex}
+  	  \label{fig:18-13-a}
+  }
+  \subfigure[彩虹表]{
+      \input{figures/chapter18/fig13-b.tex}
+  	  \label{fig:18-13-b}
+  }
+  \caption{时空权衡表，方框内的表项组成了表 $L$。}
+  \label{fig:18-13}
+\end{figure}
+
+算法 $\mathcal{A}_0$ 建立了 $\ell$ 条水平方向的链，如图 \ref{fig:18-13-a} 所示。对于每条链，表 $L$ 都会记录其起点和终点，其运行时间与 $\tau\times\ell$ 成正比。
+
+接下来，为了使用 $L$ 计算元素 $y\in\mathcal{Y}$ 的逆，我们重复地将 $f$ 作用于 $g(y)$，直到抵达图 \ref{fig:18-13-a} 的最右侧。然后，我们使用 $L$ 跳跃到相关链的起点，并遍历它，直到我们找到 $y$ 的原像。更确切地说，为了计算 $y$ 的逆，我们进行以下操作：
+
+\vspace*{10pt}
+
+\hspace*{5pt} 算法 $\mathcal{A}_1(L,y)$：\\
+\hspace*{26pt} 1. \quad 令 $z\leftarrow g(y)\in\mathcal{P}$\\
+\hspace*{26pt} 2. \quad 对于 $i=1,\dots,\tau$：\\
+\hspace*{26pt} 3. \quad\qquad 如果存在某个 $\widetilde{pw}$ 使得 $(\widetilde{pw},z)\in L$：
+\hspace*{20pt} // \emph{如果 $z$ 是一条链的终点} \\
+\hspace*{26pt} 4. \quad\qquad\qquad 令 $pw\leftarrow f^{(\tau-i)}(\widetilde{pw})$
+\hspace*{73.5pt} // \emph{从起点开始遍历链} \\
+\hspace*{26pt} 5. \quad\qquad\qquad 如果 $h(pw)=y$：
+\hspace*{87pt} // \emph{如果发现逆元，将其输出} \\
+\hspace*{116pt} 输出 $pw$ 并终止\\
+\hspace*{26pt} 6. \quad\qquad 令 $z\leftarrow f(z)\in\mathcal{P}$
+\hspace*{109pt} // \emph{将链下移} \\
+\hspace*{26pt} 7. \quad 输出 $\mathsf{fail}$
+\hspace*{168.5pt} // \emph{$g(y)$ 不在任何一条链上}
+
+\vspace*{10pt}
+
+如果图片看起来像图 \ref{fig:18-13-a}，那么 $g(y)$ 就会出现在其中一条链的某处，就像图中所展示的那样。一旦我们找到这条链的终点，表 $L$ 就会给出其起点 $pw$。第 $4$ 行的遍历将会给出 $y$ 的逆。求取 $y$ 的逆的总运行时间就是对 $f$ 进行 $\tau$ 次评估和对 $L$ 进行 $\tau$ 次查询的总耗时。
+
+然而，有时情况可能会更复杂一些。图 \ref{fig:18-13-a} 忽略了链之间发生碰撞的可能性，如图 \ref{fig:18-14} 所示。在该图中，第一条链和第二条链发生了碰撞，因为 $f^{(4)}(pw_1)=f^{(6)}(pw_2)$。第二条链和第三条链也发生了碰撞，因为 $f^{(5)}(pw_2)=f^{(7)}(pw_3)$。输入的 $g(y)$ 恰好位于顶部的链上。当我们从 $g(y)$ 开始，沿着顶上这条链移动时，我们首先找到了第三条链的终点 $z_3$，然后是第二条链的终点 $z_2$，最后才是第一条链的终点 $z_1$，后者让我们可以反转 $y$。这就是为什么在第 $5$ 行，我们必须在输出之前检查我们是否已经找到了 $y$ 的逆，以避免误报导致我们遍历错误的链。在图\ref{fig:18-14} 中，$z_3$ 和 $z_2$ 都会引起误报。此外，当 $g(h(pw))=g(y)$ 但 $h(pw)\neq y$ 时，误报也有可能发生，这也是第 $5$ 行检验的另一个原因。
+\end{snote}
+
+\begin{snote}[链合并问题。]
+尽管 Hellman 的基本方法相当巧妙，但它并不能如描述的那样工作，几乎所有对 $y=h(pw)$ 逆的计算都会失败。让我们来看看原因。要使 $\mathcal{A}_1$ 成功，我们需要确保几乎所有的 $pw\in\mathcal{P}$ 都在至少一条链上。$\mathcal{A}_0$ 能够处理的最大口令有 $\tau\times\ell$ 条。因此，我们至少需要 $\tau\times\ell\geq N$。为了获得最佳性能，我们应该设置 $\tau\times\ell=N$，并希望 $\mathcal{P}$ 中的大多数 $pw$ 都在某条链上。
+
+事实证明，这并不可行。一旦两条链发生碰撞，它们就会合并并且覆盖相同的元素，如图 \ref{fig:18-14} 所示。在建立一张有大量长链的表时，链的合并是不可避免的，并且经常发生。为了说明这个问题的严重性，我们不妨取 $\tau=N^{1/3}$，$\ell=N^{2/3}$，则 $\tau\times\ell=N$。令 $A$ 是预处理过程中遭遇的所有 $\mathcal{P}$ 上元素的集合。如果我们将 $f:\mathcal{P}\to\mathcal{P}$ 建模为一个随机函数，我们就可以证明，集合 $A$ 不太可能包含超过 $o(N)$ 个 $\mathcal{P}$ 上的元素。这意味着，当 $N$ 趋近于无穷大时，$|A|/N$ 趋近于 $0$，因而算法 $\mathcal{A}_1(L,y)$ 对于几乎所有的 $y=h(pw)$ 都会失败。事实上，为了捕获 $\mathcal{P}$ 的一个恒定比例的部分，我们需要 $\ell=\Omega(N)$ 条长度为 $\tau$ 的链。这将使得表 $L$ 的大小也是 $\Omega(N)$，这又使得这种时空权衡失去意义：有一个这么大的表，我们可以在恒定时间内轻而易举地计算 $h$ 的逆。
+
+Hellman 对这个问题的解决方案是建立许多独立的小表，每张表使用不同的还原函数 $g$。每个表包含少量长度为 $τ$ 的链，这确保在单张表内不会发生碰撞。算法 $\mathcal{A}_1$ 分别在每张表中进行搜索，因此，如果有 $m$ 张表的话，运行速度就会慢 $m$ 倍。这样做效果很好，能够达到式 \ref{eq:18-9} 中的约束。然而，另一种被称为彩虹表的解决方案更为简单高效。
+\end{snote}
+
+\begin{figure}
+  \centering
+  \input{figures/chapter18/fig14.tex}
+  \caption{一个链碰撞实例，三条链的长度都是 $10$}
+  \label{fig:18-14}
+\end{figure}
+
+\begin{snote}[彩虹表。]
+链合并问题的一个优雅的解决方案是为图 \ref{fig:18-13-a} 的每一列 $i=1,\dots,\tau$ 使用不同的还原函数 $g_i:\mathcal{Y}\to\mathcal{P}$。和之前一样，令 $f_i(pw)= g_i(h(pw))$。预处理算法 $\mathcal{A}_0$ 现在执行图 \ref{fig:18-13-b} 中的流程。它输出一张与之前相同的表 $L$，该表包含每条链的起点和终点。如果把每条链染上不同的颜色，然后将它们略微向上弯曲，图片看起来就像是一道彩虹，这就是它名字的由来。
+
+在每一列中使用不同的函数 $f_i$ 的意义在于，链的碰撞不一定会导致链的合并。只有当两条链在完全相同的索引处发生碰撞时，它们才会合并。这使得链合并的概率大大降低（见练习 \ref{exer:18-18}）。此外，如果一条以 $pw$ 为起点的链恰好与一条以 $pw'$ 为起点的链合并，这两条链的终点 $z$ 和 $z'$ 也会是相等的。预处理算法 $\mathcal{A}_0$ 可以很容易地检测到这种重复的终点，并丢弃掉其中的一条链。最终的结果是，我们可以设定 $\tau=N^{1/3}$，$\ell=N^{2/3}$，并在预处理过程中捕获 $\mathcal{P}$ 的一个恒定比例的部分。
+
+现在，想要用表 $L$ 计算元素 $y\in\mathcal{Y}$ 的逆，注意到，如果 $g(y)$ 包含在图 \ref{fig:18-13-b} 的倒数第二列中，$f_\tau(g(y))$ 就是 $L$ 中某条链的终点；如果 $g(y)$ 包含在图的倒数第三列中，$f_{\tau}f_{\tau-1}(g(y))$ 就是 $L$ 中某条链的终点，以此类推。这就为我们提供了下面这个使用 $L$ 计算 $y$ 的逆的算法：
+
+\vspace*{10pt}
+
+\hspace*{5pt} 算法 $\mathcal{A}_1(L,y)$：\\
+\hspace*{26pt} 1. \quad 令 $z\leftarrow g(y)\in\mathcal{P}$\\
+\hspace*{26pt} 2. \quad 对于 $i=\tau-1,\dots,0$：\\
+\hspace*{26pt} 3. \quad\qquad 如果存在某个 $\widetilde{pw}$ 使得 $(\widetilde{pw},z)\in L$：
+\hspace*{40pt} // \emph{如果 $z$ 是一条链的终点} \\
+\hspace*{26pt} 4. \quad\qquad\qquad 令 $pw\leftarrow f_i\big(\cdots f_2(f_1(\widetilde{pw}))\cdots\big)$
+\hspace*{43pt} // \emph{从起点开始遍历链} \\
+\hspace*{26pt} 5. \quad\qquad\qquad 如果 $h(pw)=y$：
+\hspace*{107pt} // \emph{如果发现逆元，将其输出} \\
+\hspace*{116pt} 输出 $pw$ 并终止\\
+\hspace*{26pt} 6. \quad\qquad 令 $z\leftarrow f_{\tau}\big(f_{\tau-1}(\cdots f_{i+1}(g(y))\cdots)\big) \in\mathcal{P}$
+\hspace*{25pt} // \emph{检查 $g(y)$ 是否在第 $i$ 列上} \\
+\hspace*{26pt} 7. \quad 输出 $\mathsf{fail}$
+\hspace*{188.5pt} // \emph{$g(y)$ 不在任何一条链上}
+
+\vspace*{10pt}
+
+\noindent
+该算法的大部分工作是在第 $6$ 行完成的。在第一次迭代中，该行评估了一次 $f$，在第二次迭代中评估了两次，以此类推。总的来说，第 $6$ 行导致最坏情况下的工作量是 $1+2+\cdots+\tau=\tau(\tau+1)/2\approx\tau^2/2$。因此，$\mathcal{A}_1$ 的最大运行时间是 $t:=\tau^2/2$。为了捕获大部分的 $\mathcal{P}$，我们需要 $\tau\times\ell\geq N$，而由于 $\tau=(2t)^{1/2}$，我们可得：
+\[
+\ell\times(2t)^{1/2}\geq N
+\]
+将两边同时平方，我们可得 $\ell^2\times t\geq N^2/2$，这就与式 \ref{eq:18-9} 中承诺的时空权衡一致。还需要注意的是，算法 $\mathcal{A}_1$ 最多只能对表 $L$ 进行 $\tau$ 次查找。
+\end{snote}
+
+\begin{snote}[实践中的彩虹表。]
+许多流行的哈希函数的彩虹表都是现成的。它们被设计成可以与一个叫做 \textbf{RainbowCrack} 的程序配合使用。比如说，有一张大小为 460 GB 的 SHA1 彩虹表，它可以寻找字母表 \texttt{ascii-32-95} 中所有 $8$ 字符口令的原像。这个字母表包含了美国标准键盘上的所有 $95$ 个字符。该表的成功率接近97\%，而且任何人都可以免费下载它。在 GPU 上，使用该表破解一个 $8$ 字符的 SHA1 哈希口令仅需大约一个小时。
+\end{snote}
+
+\begin{snote}[扩展。]
+尽管彩虹表旨在计算随机函数的逆，但 Fiat 和 Naor 的另一个算法给出了计算任意函数 $h:\mathcal{P}\to\mathcal{Y}$ 的逆的时空权衡 \cite{fiat1991rigorous}。他们的时空权衡满足 $\ell^2t\geq\lambda N^3$，这意味着，为了在 $t$ 时间内以 $1/2$ 的概率计算函数 $h$ 的逆，他们的预处理算法必须生成一张大小约为 $(\lambda N^3/t)^{1/2}$ 的表。这里，$\lambda$ 是 $h$ 的碰撞概率，定义为 $\lambda:=\Pr[h(x)=h(y)]$，其中 $x,y\overset{\rm R}\leftarrow\mathcal{P}$。当 $h$ 是一个随机函数，并且 $|\mathcal{Y}|\gg|\mathcal{P}|$ 时，我们有 $\lambda=1/N$，这就恢复了式 \ref{eq:18-9} 中的约束。
+\end{snote}

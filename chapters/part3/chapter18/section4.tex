@@ -127,9 +127,9 @@
 	\left\{
 	\begin{aligned}
 		& x_0\leftarrow F(pw, salt)\\
-		& \text{for }i=1,\dots,d-1:\\
+		& \text{对于}\;i=1,\dots,d-1:\\
 		& \quad\quad x_i\leftarrow F(pw,x_{i-1})\\
-		& \text{output }y\leftarrow x_0 \oplus x_1 \oplus \cdots \oplus x_{d-1}\in\mathcal{X}
+		& \text{输出}\;y\leftarrow x_0 \oplus x_1 \oplus \cdots \oplus x_{d-1}\in\mathcal{X}
 	\end{aligned}
 	\right\}
 \end{equation}
@@ -195,7 +195,7 @@ PBKDF2 的一个重要问题是它容易受到并行硬件攻击。我们知道�
 	\begin{aligned}
 		& x_0\leftarrow {\rm PBKDF2}_F(pw,salt,1)\\
 		& y\leftarrow \text{Scrypt}_h(x_0,d)\\
-		& \text{output }{\rm PBKDF2}_F(pw,y,1)
+		& \text{输出}\;{\rm PBKDF2}_F(pw,y,1)
 	\end{aligned}
 	\right\}
 \end{equation}

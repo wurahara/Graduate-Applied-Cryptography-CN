@@ -1,0 +1,27 @@
+\tikzset{every picture/.style={line width=0.75pt}}   
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (0,60) -- (60,60) -- (60,150) -- (0,150) -- cycle ;
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (250,60) -- (310,60) -- (310,150) -- (250,150) -- cycle ;
+
+\draw  [->]  (140,20) -- (30,55) ;
+\draw  [->]  (170,20) -- (280,55) ;
+
+\draw  [<-]  (64,85) -- (250,85) ;
+\draw  [->]  (60,125) -- (249,125) ;
+
+\draw  [->]  (280,150) -- (280,190) ;
+
+\draw (30,75) node   [align=left] {证明者};
+\draw (280,75) node   [align=left] {验证者};
+\draw (155,5) node    {$k\overset{\rm R}\leftarrow\mathcal{K}$};
+
+\draw (155,72) node    {$c\overset{\rm R}\leftarrow\mathcal{M}$};
+\draw (155,112) node    {$t\overset{\rm R}\leftarrow S_\mathrm{mac}(k,c)$};
+
+\draw (280,193) node [anchor=north] [inner sep=0.75pt]   [align=left] {$V_\mathrm{mac}(k,m,t)$};
+\draw (83,34.1) node [anchor=south east] [inner sep=0.75pt]    {$k$};
+\draw (227,34.1) node [anchor=south west] [inner sep=0.75pt]    {$k$};
+
+\end{tikzpicture}

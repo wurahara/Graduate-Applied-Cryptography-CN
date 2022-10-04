@@ -1,57 +1,29 @@
-
-
-\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\tikzset{every picture/.style={line width=0.75pt}}
 
 \begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-0.9,xscale=0.9]
-%uncomment if require: \path (0,369); %set diagram left start at 0, and has height of 369
 
-%Shape: Rectangle [id:dp26654228996316176] 
 \draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (10,80) -- (110,80) -- (110,300) -- (10,300) -- cycle ;
-%Shape: Rectangle [id:dp7569838380400329] 
 \draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (510,80) -- (550,80) -- (550,300) -- (510,300) -- cycle ;
-%Shape: Rectangle [id:dp8533457962352082] 
 \draw  [dash pattern={on 5.63pt off 4.5pt}][line width=1.2]  (260,40) -- (590,40) -- (590,340) -- (260,340) -- cycle ;
-%Shape: Rectangle [id:dp9157199572503583] 
 \draw   (25,245) -- (95,245) -- (95,285) -- (25,285) -- cycle ;
-%Straight Lines [id:da21399463334844526] 
-\draw    (60,337) -- (60,285) ;
-\draw [shift={(60,340)}, rotate = 270] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da925421640822562] 
-\draw    (507,110) -- (110,110) ;
-\draw [shift={(510,110)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da6618660867514581] 
-\draw    (510,270) -- (116,270) ;
-\draw [shift={(113,270)}, rotate = 360] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-\draw [shift={(510,270)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da6795099348296265] 
-\draw    (310,150) -- (507,150) ;
-\draw [shift={(510,150)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
-%Straight Lines [id:da5247033753927413] 
-\draw    (310,230) -- (507,230) ;
-\draw [shift={(510,230)}, rotate = 180] [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.08]  [draw opacity=0] (7.14,-3.43) -- (0,0) -- (7.14,3.43) -- cycle    ;
 
-% Text Node
+\draw  [->]  (60,285) -- (60,340) ;
+
+\draw  [->]  (110,110) -- (508,110) ;
+\draw  [->]  (310,150) -- (508,150) ;
+\draw  [->]  (310,225) -- (508,225) ;
+\draw  [<->]  (97,265) -- (508,265) ;
+
 \draw (60,65) node   [align=left] {直接挑战者};
-% Text Node
-\draw (60,95) node    {$( sk,vk)\overset{\mathrm{R}}{\leftarrow } G$};
-% Text Node
-\draw (60,265) node    {$V( vk)$};
-% Text Node
-\draw (185,106.6) node [anchor=south] [inner sep=0.75pt]    {$vk$};
-% Text Node
-\draw (410,146.6) node [anchor=south] [inner sep=0.75pt]    {$Sim( vk)$};
-% Text Node
-\draw (410,226.6) node [anchor=south] [inner sep=0.75pt]    {$Sim( vk)$};
-% Text Node
-\draw (410,180) node    {$\vdots $};
-% Text Node
-\draw (385,267) node [anchor=south] [inner sep=0.75pt]   [align=left] {冒充尝试};
-% Text Node
-\draw (530,65) node   [align=left] {窃听对手 $\displaystyle \mathcal{A}$};
-% Text Node
-\draw (297,25) node   [align=left] {直接对手 $\displaystyle \mathcal{B}$};
-% Text Node
-\draw (62,340) node [anchor=west] [inner sep=0.75pt]   [align=left] {$\displaystyle \mathsf{accept}$ 或 $\displaystyle \mathsf{reject}$};
-
+\draw (60,100) node    {$(\mathit{sk},\mathit{vk})\overset{\mathrm{R}}{\leftarrow}G$};
+\draw (60,265) node    {$V(\mathit{vk})$};
+\draw (185,106.6) node [anchor=south] [inner sep=0.75pt]    {$\mathit{vk}$};
+\draw (410,146.6) node [anchor=south] [inner sep=0.75pt]    {$\mathit{Sim}(\mathit{vk})$};
+\draw (410,221.6) node [anchor=south] [inner sep=0.75pt]    {$\mathit{Sim}(\mathit{vk})$};
+\draw (410,177.5) node    {$\vdots$};
+\draw (385,262) node [anchor=south] [inner sep=0.75pt]   [align=left] {冒充尝试};
+\draw (530,65) node   [align=left] {窃听对手 $\mathcal{A}$};
+\draw (297,25) node   [align=left] {直接对手 $\mathcal{B}$};
+\draw (62,340) node [anchor=west] [inner sep=0.75pt]   [align=left] {$\mathsf{accept}$ 或 $\mathsf{reject}$};
 
 \end{tikzpicture}

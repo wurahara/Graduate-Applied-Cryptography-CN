@@ -116,7 +116,7 @@ Mantin-Shamir 区分器表明，RC4 输出的第二字节是有偏差的。AlFar
 \begin{lemma}[Fluhrer-McGrew 定理]\label{lemma:3-9}
 假设 RC4 由 $\mathrm{ST}_\mathrm{RC4}$ 中的一个随机状态 $T$ 初始化。令 $(z_1,z_2)$ 是 RC4 在状态 $T$ 下启动时输出的前两个字节。则有：
 \[
-\begin{aligned}\label{lemma:3-9}
+\begin{aligned}
 & i\neq n−1 & \Longrightarrow & \quad\Pr[(z_1,z_2)=(0,0)]\geq(1/n^2)\cdot\big(1+(1/n)\big)\\
 & i\neq 0,1 & \Longrightarrow & \quad\Pr[(z_1,z_2)=(0,1)]\geq(1/n^2)\cdot\big(1+(1/n)\big)
 \end{aligned}

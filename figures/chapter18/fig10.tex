@@ -1,0 +1,39 @@
+\tikzset{every picture/.style={line width=0.75pt}}
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (5,30) -- (115,30) -- (115,250) -- (5,250) -- cycle ;
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (340,30) -- (450,30) -- (450,250) -- (340,250) -- cycle ;
+
+\draw   (25,200) -- (95,200) -- (95,240) -- (25,240) -- cycle ;
+\draw   (25,80) -- (95,80) -- (95,120) -- (25,120) -- cycle ;
+\draw   (25,140) -- (95,140) -- (95,180) -- (25,180) -- cycle ;
+
+\draw  [->]  (115,60) -- (338,60) ;
+
+\draw  [<-]  (97,87) -- (340,87) ;
+\draw  [->]  (95,113) -- (338,113) ;
+
+\draw  [<-]  (97,147) -- (340,147) ;
+\draw  [->]  (95,173) -- (338,173) ;
+
+\draw  [<-]  (97,207) -- (340,207) ;
+\draw  [->]  (95,233) -- (338,233) ;
+
+\draw  [->]  (60,240) -- (60,290) ;
+
+\draw (60,15) node   [align=left] {挑战者};
+\draw (60,50) node    {$(vk,sk)\overset{\mathrm{R}}{\leftarrow}G()$};
+\draw (60,220) node    {$V(vk)$};
+\draw (225,56.6) node [anchor=south] [inner sep=0.75pt]    {$vk$};
+\draw (395,15) node   [align=left] {对手 $\mathcal{A}$};
+\draw (65,287) node [anchor=west] [inner sep=0.75pt] [align=left] {$\mathsf{accept}$ 或 $\mathsf{reject}$};
+\draw (225,128) node    {$\vdots$};
+\draw (60,100) node    {$P(sk)$};
+\draw (60,160) node    {$P(sk)$};
+
+\draw (225,100) node  [align=left] {探测 \#$1$};
+\draw (225,160) node  [align=left] {探测 \#$Q$};
+\draw (225,220) node  [align=left] {冒充尝试};
+
+\end{tikzpicture}
