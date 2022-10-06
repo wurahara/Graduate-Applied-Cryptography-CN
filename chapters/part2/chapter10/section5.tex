@@ -1,28 +1,111 @@
 \section{离散对数及相关假设}\label{sec:10-5}
 
+在本节中，我们将更精确、更一般地阐述离散对数和与之相关的假设，并且更详细地探讨它们之间的关系。
+
+我们在 \ref{sec:10-4} 节中定义的 $\mathbb{Z}_p^*$ 的子集 $\mathbb{G}$ 是一种被称作\emph{循环群(cyclic group)}的一般类型的数学对象的具体实例。事实上，还存在另外一些在密码学领域中非常有用的循环群，最著名的就是基于\emph{椭圆曲线}的群，我们将在第\ref{chap:15}章研究椭圆曲线密码学。从现在开始，我们会用一个由 $g\in\mathbb{G}$ 生成的 $q$ 阶循环群 $\mathbb{G}$ 来说明所有的假设和算法，其中 $q$ 是一个素数。一般来说，这种循环群可以通过随机过程选出。与之前一样，我们将对循环群 $\mathbb{G}$ 的描述（包括 $g\in\mathbb{G}$ 和 $q$）作为一个系统参数，它在系统设置时被一次性生成，并由所有参与方共享。
+
+我们只会使用很少一部分群论的术语。不熟悉群概念的读者可以参考附录 \ref{chap:A}；或者，读者也可以暂时先完全忽略这些抽象的概念：
+\begin{itemize}
+	\item 每当我们提及一个``循环群"时，读者都可以认为我们所说的就是上面定义的，作为 $\mathbb{Z}_p^*$ 的一个子群的特定集合 $\mathbb{G}$。
+	\item ``$\mathbb{G}$ 的阶"只是对 $\mathbb{G}$ 这个集合的大小的一个花哨的说法，它的值就是 $q$。
+	\item ``$\mathbb{G}$ 的生成元" 指的是一个元素 $g\in\mathbb{G}$，它有一个特殊的属性，即 $\mathbb{G}$ 中的所有元素都可以被表示为 $g$ 的整数幂。
+\end{itemize}
+
+下面，我们首先给出离散对数假设的正式陈述，我们用一种更一般的语言来描述它。与之前一样，我们需要一个攻击游戏。
+
 \begin{game}[离散对数]\label{game:10-4}
-	
+令 $\mathbb{G}$ 是一个由 $g\in\mathbb{G}$ 生成的 $q$ 阶循环群，其中 $q$ 是素数。对于一个给定的对手 $\mathcal{A}$，攻击游戏运行如下：
+\begin{itemize}
+	\item 挑战者计算
+	\[
+	\alpha\overset{\rm R}\leftarrow\mathbb{Z}_q,
+	\quad
+	u\leftarrow g^\alpha
+	\]
+	并将 $u$ 发送给对手。
+	\item 对手输出某个 $\hat{\alpha}\in\mathbb{Z}_q$。
+\end{itemize}
+我们将 \textbf{$\mathcal{A}$ 求解 $\mathbb{G}$ 上的离散对数问题的优势 ($\mathcal{A}$'s advantage in solving the discrete logarithm problem for $\mathbb{G}$)} 定义为 $\mathrm{DL}\mathsf{adv}[\mathcal{A},\mathbb{G}]$，即 $\hat{\alpha}=\alpha$ 成立的概率。
 \end{game}
 
 \begin{definition}[离散对数假设]\label{def:10-6}
-	
+如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{DL}\mathsf{adv}[\mathcal{A},\mathbb{G}]$ 的值都可忽略不计，我们就称\textbf{离散对数假设(discrete logarithm assumption)} 对 $\mathbb{G}$ 成立。
 \end{definition}
 
+我们称 $g^\alpha$ 是\textbf{离散对数 (DL) 问题}的一个\textbf{实例（对 $\mathbb{G}$ 而言）}，而 $\alpha$ 是该问题实例的一个解。按照惯例，我们假设对 $\mathbb{G}$ 的描述包含其阶 $q$ 和生成元 $g$。DL 假设断言，不存在可以有效地解决 DL 问题的有效算法。
+
+请注意，DL 假设是用群 $\mathbb{G}$ 和生成元 $g\in\mathbb{G}$ 来定义的。如之前所述，群 $\mathbb{G}$ 和生成元 $g$ 是在系统设置时通过一个可能是随机的过程来选择和固定的。还需要注意的是，事实上，$\mathbb{G}\setminus\{1\}$ 中的所有元素都是 $\mathbb{G}$ 的生成元，但是我们并不会坚持 $g$ 是从这些元素中均匀选出的（可见练习 \ref{exer:10-18}）。不同的选择群和生成元的方法会产生不同的 DL 假设（同样也适用于 CDH 和 DDH 假设，见下文）。
+
 \begin{game}[计算性 Diffie-Hellman]\label{game:10-5}
-	
+令 $\mathbb{G}$ 是一个由 $g\in\mathbb{G}$ 生成的 $q$ 阶循环群，其中 $q$ 是素数。对于一个给定的对手 $\mathcal{A}$，攻击游戏运行如下：
+\begin{itemize}
+	\item 挑战者计算
+	\[
+	\alpha,\beta\overset{\rm R}\leftarrow\mathbb{Z}_q,
+	\quad
+	u\leftarrow g^\alpha,
+	\quad
+	v\leftarrow g^\beta,
+	\quad
+	w\leftarrow g^{\alpha\beta}
+	\]
+	并将数对 $(u,v)$ 发送给对手。
+	\item 对手输出某个 $\hat{w}\in\mathbb{G}$。
+\end{itemize}
+我们将 \textbf{$\mathcal{A}$ 求解 $\mathbb{G}$ 上的计算性 Diffie-Hellman 问题的优势 ($\mathcal{A}$'s advantage in solving the computational Diffie-Hellman problem for $\mathbb{G}$)} 定义为 $\mathrm{CDH}\mathsf{adv}[\mathcal{A},\mathbb{G}]$，即 $\hat{w}=w$ 成立的概率。
 \end{game}
 
 \begin{definition}[计算性 Diffie-Hellman 假设]\label{def:10-7}
-	
+如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{CDH}\mathsf{adv}[\mathcal{A},\mathbb{G}]$ 的值都可忽略不计，我们就称\textbf{计算性 Diffie-Hellman 假设(computational Diffie-Hellman assumption)} 对 $\mathbb{G}$ 成立。
 \end{definition}
 
-\begin{game}[确定性 Diffie-Hellman]\label{game:10-6}
-	
+我们称 $(g^{\alpha},g^{\beta})$ 计算性 Diffie-Hellman (CDH) 问题的一个实例，而 $g^{\alpha\beta}$ 是该问题实例的一个解。同样地，按照惯例，我们假设对 $\mathbb{G}$ 的描述包含其阶 $q$ 和生成元 $g$。CDH 假设断言，不存在可以有效地解决 CDH 问题的有效算法。
+
+CDH 问题的一个有趣的特性是，甚至都没有一个通用的有效算法能够识别 CDH 问题的正确解。也就是说，给定 CDH 问题的一个实例 $(u,v)$ 和一个群元素 $\hat{w}$，判断 $\hat{w}$ 是否是给定问题实例的解是困难的。这与 RSA 问题正好相反：给定 RSA 问题的一个实例 $(n,e,y)$ 和一个 $\mathbb{Z}^*_n$ 上的元素 $\hat{x}$，我们只需检验 $\hat{x}^e=y$ 是否成立，就可以有效地检验 $\hat{x}$ 是否是给定问题实例的一个解。然而，这种明显的限制也可能是一个\emph{机会}：如果我们假设，不但解决 CDH 问题是困难的，而且识别 CDH 问题的解也是困难的，我们有时就可以为特定的密码学方案证明更强的安全属性。
+
+现在，我们正式定义识别 CDH 问题的解是困难的这一假设。事实上，我们将给出一个更强的假设，也就是说，从随机的群元素中区分出解甚至也是困难的。事实证明，这个更强的假设与较弱的假设是等价的（见练习 \ref{exer:10-9}）。
+
+\begin{game}[决定性 Diffie-Hellman]\label{game:10-6}
+令 $\mathbb{G}$ 是一个由 $g\in\mathbb{G}$ 生成的 $q$ 阶循环群，其中 $q$ 是素数。对于一个给定的对手 $\mathcal{A}$，我们定义两个实验：实验 $0$ 和实验 $1$。对于 $b=0,1$，我们定义：
+
+\noindent\textbf{实验 $b$：}
+\begin{itemize}
+	\item 挑战者计算
+	\[
+	\alpha,\beta,\gamma\overset{\rm R}\leftarrow\mathbb{Z}_q,
+	\quad
+	u\leftarrow g^\alpha,
+	\quad
+	v\leftarrow g^\beta,
+	\quad
+	w_0\leftarrow g^{\alpha\beta},
+	\quad
+	w_1\leftarrow g^{\gamma}
+	\]
+	并将三元组 $(u,v,w_b)$ 发送给对手。
+	\item 对手输出一个比特 $\hat{b}\in\{0,1\}$。
+\end{itemize}
+令 $W_b$ 是 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件。我们将 \textbf{$\mathcal{A}$ 求解 $\mathbb{G}$ 上的决定性 Diffie-Hellman 问题的优势 ($\mathcal{A}$'s advantage in solving the decisional Diffie-Hellman problem for $\mathbb{G}$)} 定义为：
+\[
+\mathrm{DDH}\mathsf{adv}[\mathcal{A},\mathbb{G}]
+:=
+\big\lvert
+\Pr[W_0]-\Pr[W_1]
+\big\rvert
+\]
 \end{game}
 
-\begin{definition}[确定性 Diffie-Hellman 假设]\label{def:10-8}
-	
+\begin{definition}[决定性 Diffie-Hellman 假设]\label{def:10-8}
+如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{DDH}\mathsf{adv}[\mathcal{A},\mathbb{G}]$ 的值都可忽略不计，我们就称\textbf{决定性 Diffie-Hellman 假设(decisional Diffie-Hellman assumption)} 对 $\mathbb{G}$ 成立。
 \end{definition}
+
+对于 $\alpha,\beta,\gamma\in\mathbb{Z}_q$，如果 $\gamma=\alpha\beta$ 成立，我们就称 $(g^\alpha,g^\beta,g^\gamma)$ 是一个\textbf{DH 三元组 (DH-triple)}；否则，我们就称它是一个\textbf{非 DH 三元组 (non-DH-triple)}。DDH 假设表明，不存在可以有效地区分随机 DH 三元组和随机普通三元组的有效算法。更确切地说，使用 \ref{sec:3-11} 节中的语言，DDH 假设断言，DH 三元组上的均匀分布和 $\mathbb{G}^3$ 上的均匀分布是计算上不可区分的。不难看出，DDH 假设意味着，区分随机的 DH 三元组和随机的非 DH 三元组是困难的（见练习 \ref{exer:10-6}）。
+
+显然，DDH 假设能够推出 CDH 假设：如果我们能够有效地解决 CDH 问题，我们就可以通过计算 CDH 问题实例 $(u,v)$ 的一个正确解 $w$，然后检验 $\hat{w}=w$ 是否成立，来轻而易举地确定一个给定的三元组 $(u,v,\hat{w})$ 是否是一个 DH 三元组。
+
+\vspace*{10pt}
+
+在定义 DL、CDH 和 DDH 假设时，我们将注意力集中在素阶群上。由于一些技术原因，这是很方便的。例如，读者可以参见练习 \ref{exer:10-22}，在该练习中，我们要求读者证明偶阶群上的 DDH 假设是错误的。
 
 \subsection{随机自归约性}\label{subsec:10-5-1}
 

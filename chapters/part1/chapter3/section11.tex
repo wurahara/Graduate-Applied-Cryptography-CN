@@ -151,68 +151,68 @@ P_0[\mathcal{R}']-P_1[\mathcal{R}']
 
 \vspace{5pt}
 
-我们还可以将两个随机变量之间的统计距离定义为它们相应分布之间的统计距离。也就是说，如果 $\mathsf{X}$ 和 $\mathsf{Y}$ 是在一个有限集 $\mathcal{R}$ 中取值的随机变量，它们的\textbf{统计距离}就是：
+我们还可以将两个随机变量之间的统计距离定义为它们相应分布之间的统计距离。也就是说，如果 $\boldsymbol{\mathsf{X}}$ 和 $\boldsymbol{\mathsf{Y}}$ 是在一个有限集 $\mathcal{R}$ 中取值的随机变量，它们的\textbf{统计距离}就是：
 \[
-\Delta[\mathsf{X},\mathsf{Y}]
+\Delta[\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{Y}}]
 :=
 \frac{1}{2}
 \sum_{r\in\mathcal{R}}
 \big\lvert
-\Pr[\mathsf{X}=r]-Pr[\mathsf{Y}=r]
+\Pr[\boldsymbol{\mathsf{X}}=r]-Pr[\boldsymbol{\mathsf{Y}}=r]
 \big\rvert
 \]
 在这种情况下，定理 \ref{theo:3-10} 表明：
 \[
 \max_{\mathcal{R}'\subseteq\mathcal{R}}
 \big\lvert
-\Pr[\mathsf{X}\in\mathcal{R}']-\Pr[\mathsf{Y}\in\mathcal{R}']
+\Pr[\boldsymbol{\mathsf{X}}\in\mathcal{R}']-\Pr[\boldsymbol{\mathsf{Y}}\in\mathcal{R}']
 \big\rvert
-=\Delta[\mathsf{X},\mathsf{Y}]
+=\Delta[\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{Y}}]
 \]
 其中，最大值在 $\mathcal R$ 的所有子集 $\mathcal R'$ 上都能取得。
 
 类似地，我们还可以对随机变量而非分布来定义区分优势。使用随机变量的好处是，我们可以更方便地处理彼此相关的分布，正如下面的定理所例证的那样。
 
 \begin{theorem}\label{theo:3-12}
-如果 $\mathcal{S}$ 和 $\mathcal{T}$ 是有限集，$\mathsf{X}$ 和 $\mathsf{Y}$ 是在 $\mathcal{S}$ 上取值的随机变量，并且 $f:\mathcal{S}\to\mathcal{T}$ 是一个函数，则有 $\Delta[f(\mathsf{X}),f(\mathsf{Y})]\leq\Delta[\mathsf{X},\mathsf{Y}]$。
+如果 $\mathcal{S}$ 和 $\mathcal{T}$ 是有限集，$\boldsymbol{\mathsf{X}}$ 和 $\boldsymbol{\mathsf{Y}}$ 是在 $\mathcal{S}$ 上取值的随机变量，并且 $f:\mathcal{S}\to\mathcal{T}$ 是一个函数，则有 $\Delta[f(\boldsymbol{\mathsf{X}}),f(\boldsymbol{\mathsf{Y}})]\leq\Delta[\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{Y}}]$。
 \end{theorem}
 
 \begin{proof}
 对于某个 $\mathcal{T}'\subseteq\mathcal{T}$，我们有：
 \[
 \begin{aligned}
-\Delta[f(\mathsf{X}),f(\mathsf{Y})]
+\Delta[f(\boldsymbol{\mathsf{X}}),f(\boldsymbol{\mathsf{Y}})]
 &=
 \big\lvert
-\Pr[f(\mathsf{X})\in\mathcal{T}']-\Pr[f(\mathsf{Y})\in\mathcal{T}']
+\Pr[f(\boldsymbol{\mathsf{X}})\in\mathcal{T}']-\Pr[f(\boldsymbol{\mathsf{Y}})\in\mathcal{T}']
 \big\rvert
 \quad\text{\emph{（根据定理} \ref{theo:3-10}\emph{\,）}}\\
 &=
 \big\lvert
-\Pr[\mathsf{X}\in f^{-1}(\mathcal{T}')]-\Pr[\mathsf{Y}\in f^{-1}(\mathcal{T}')]
+\Pr[\boldsymbol{\mathsf{X}}\in f^{-1}(\mathcal{T}')]-\Pr[\boldsymbol{\mathsf{Y}}\in f^{-1}(\mathcal{T}')]
 \big\rvert\\
-&\leq\Delta[\mathsf{X},\mathsf{Y}]\quad\text{\emph{（根据定理} \ref{theo:3-10}\emph{\,）}}\qedhere
+&\leq\Delta[\boldsymbol{\mathsf{X}},\boldsymbol{\mathsf{Y}}]\quad\text{\emph{（根据定理} \ref{theo:3-10}\emph{\,）}}\qedhere
 \end{aligned}
 \]
 \end{proof}
 
 \begin{example}\label{exmp:3-2}
-令 $\mathsf{X}$ 均匀分布在集合 $\{0,\dots,m-1\}$ 上，$\mathsf{Y}$ 均匀分布在集合 $\{0,\dots,N-1\}$ 上，且 $N\geq m$。令 $f(t):=t\bmod m$。我们想计算 $\mathsf{X}$ 和 $f(\mathsf{Y})$ 之间统计距离的上界。我们可以这样做。令 $N=qm-r$，其中 $0\leq r<m$，则有 $q=\lceil{N}/{m}\rceil$。同时，令 $\mathsf{Z}$ 均匀分布在集合 $\{0,\dots,qm-1\}$ 上。那么 $f(\mathsf{Z})$ 就均匀分布在集合 $\{0,\dots,m-1\}$ 上，这是因为 $\{0,\dots,m-1\}$ 中的每个元素在函数 $f$ 下都有相同个数的原像（即 $q$ 个），这些原像都落在集合 $\{0,\dots,qm-1\}$ 中。由于统计距离只取决于随机变量的分布，根据定理 \ref{theo:3-12}，我们有：
+令 $\boldsymbol{\mathsf{X}}$ 均匀分布在集合 $\{0,\dots,m-1\}$ 上，$\boldsymbol{\mathsf{Y}}$ 均匀分布在集合 $\{0,\dots,N-1\}$ 上，且 $N\geq m$。令 $f(t):=t\bmod m$。我们想计算 $\boldsymbol{\mathsf{X}}$ 和 $f(\boldsymbol{\mathsf{Y}})$ 之间统计距离的上界。我们可以这样做。令 $N=qm-r$，其中 $0\leq r<m$，则有 $q=\lceil{N}/{m}\rceil$。同时，令 $\boldsymbol{\mathsf{Z}}$ 均匀分布在集合 $\{0,\dots,qm-1\}$ 上。那么 $f(\boldsymbol{\mathsf{Z}})$ 就均匀分布在集合 $\{0,\dots,m-1\}$ 上，这是因为 $\{0,\dots,m-1\}$ 中的每个元素在函数 $f$ 下都有相同个数的原像（即 $q$ 个），这些原像都落在集合 $\{0,\dots,qm-1\}$ 中。由于统计距离只取决于随机变量的分布，根据定理 \ref{theo:3-12}，我们有：
 \[
-\Delta[\mathsf{X},f(\mathsf{Y})]
-=\Delta[f(\mathsf{Z}),f(\mathsf{Y})]
-\leq\Delta[\mathsf{Z},\mathsf{Y}]
+\Delta[\boldsymbol{\mathsf{X}},f(\boldsymbol{\mathsf{Y}})]
+=\Delta[f(\boldsymbol{\mathsf{Z}}),f(\boldsymbol{\mathsf{Y}})]
+\leq\Delta[\boldsymbol{\mathsf{Z}},\boldsymbol{\mathsf{Y}}]
 \]
 正如我们在例 \ref{exmp:3-1} 中所看到的：
 \[
-\Delta[\mathsf{Z},\mathsf{Y}]
+\Delta[\boldsymbol{\mathsf{Z}},\boldsymbol{\mathsf{Y}}]
 =\frac{r}{qm}
 <\frac{1}{q}
 \leq\frac{m}{N}
 \]
 因此有：
 \[
-\Delta[\mathsf{X},f(\mathsf{Y})]
+\Delta[\boldsymbol{\mathsf{X}},f(\boldsymbol{\mathsf{Y}})]
 <\frac{m}{N}
 \]
 \end{example}

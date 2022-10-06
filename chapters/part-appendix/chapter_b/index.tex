@@ -1,19 +1,132 @@
 \chapter{基本概率论}\label{chap:B}
 
+包括对统计距离的描述。
+
 \section{生日悖论}\label{sec:B-1}
 
 \begin{theorem}\label{theo:B-1}
-
+令 $\mathcal{M}$ 是一个大小为 $n$ 的集合，令 $X_1,\dots,X_k$ 是均匀分布在 $\mathcal{M}$ 上的 $k$ 个独立随机变量。令 $C$ 是以下事件：对于某两个互不相同的 $i,j\in\{1,\dots,k\}$，我们有 $X_i=X_j$。那么：
+\begin{enumerate}[(i)]
+	\item $\displaystyle \Pr[C]\geq 1-e^{-k(k-1)/2n}\geq\min\bigg\{\frac{k(k-1)}{4n},\,0.63\bigg\}$，并且
+	\item 当 $k<n/2$ 时，有 $\Pr[C]\leq 1-e^{-k(k-1)/n}$。
+\end{enumerate}
 \end{theorem}
 
-\begin{corollary}\label{cor:B-2}
+\begin{proof}
+上述两个不等式都很容易从不等式：
+\[
+1-x\leq e^{-x}\leq 1-x/2
+\]
+得出。该不等式对所有的 $x\in[0,1]$ 都成立。
+\end{proof}
 
+在大多数情况下，我们会使用上面的下界，并且表明，碰撞\emph{至少}会以一定的概率发生。但是，偶尔我们也会使用上界来论证碰撞不会发生。
+
+有资料显示，人们的生日并不是均匀分布在一年之中的。例如，在美国，$9$ 月份的出生率比其他月份都要高。接下来我们表明，这种非均匀性只会增加碰撞的概率。
+
+我们提出一个更强大的生日悖论版本，它适用于不一定均匀分布在 $\mathcal{M}$ 上的独立随机变量，但是我们要求，所有随机变量的分布都相同。这样的随机变量被称为是独立同分布 (independent and identically distributed, i.i.d.) 的。这个版本的生日悖论由 Blom 提出 \cite{bloom1973birthday}。
+
+\begin{figure}
+  \centering
+  \input{figures/appendixB/fig1.tex}
+  \begin{quote}
+  {\small 该图展示了当元素总数量 $n=10^6$，采样数量 $k$ 从 $1$ 增长到 $5000$ 时的碰撞概率。它揭示了平方根附近的门限现象。在平方根处，$\sqrt{n}=1000$，碰撞概率大约是 $0.4$。当 $4\sqrt{n}=4000$ 时，碰撞概率已经极接近 $1$。而当 $0.4\sqrt{n}=500$ 时，碰撞概率相当小。}
+  \end{quote}
+  \caption{生日悖论}
+  \label{fig:B-1}
+\end{figure}
+
+\begin{corollary}\label{cor:B-2}
+令 $\mathcal{M}$ 是一个大小为 $n$ 的集合，令 $X_1,\dots,X_k$ 是 $\mathcal{M}$ 上的 $k$ 个独立同分布的随机变量，其中 $k\geq 2$。令 $C$ 是以下事件：对于某两个互不相同的 $i,j\in\{1,\dots,k\}$，我们有 $X_i=X_j$。那么：
+\[
+\Pr[C]\geq 1-e^{-k(k-1)/2n}\geq\min\bigg\{\frac{k(k-1)}{4n},\,0.63\bigg\}
+\]
 \end{corollary}
+
+\begin{proof}
+令 $X$ 是一个与 $X_1$ 分布相同的随机变量。令 $\mathcal{M}=\{a_1,\dots,a_n\}$，$p_i=\Pr[X=a_i]$。令 $I$ 是 $\mathcal{M}$ 上所有元素各不相同的 $k$ 元组构成的集合。那么 $I$ 中包含 $\tbinom{n}{k}k!$ 个元组。由于变量相互独立，我们有：
+\begin{equation}\label{eq:B-1}
+\Pr[\lnot C]
+=\sum_{(b_1,\dots,b_k)\in I}\Pr[X_1=b_1\land\dots\land X_k=b_k]
+=\sum_{(b_1,\dots,b_k)\in I}\prod_{j=1}^k p_{b_j}
+\end{equation}
+我们表明，当 $p_1=p_2=\dots=p_n=1/n$ 时，这个和是最大的。这将意味着，当所有变量都均匀的时候，碰撞的概率是最小的。然后，我们就可以从定理 \ref{theo:B-1} 中得出该推论。
+
+假设有些 $p_i$ 不是 $1/n$，比如说 $p_i<1/n$。由于 $\sum^n_{j=1}p_i=1$，必然有另一个 $p_j$ 满足 $p_j>1/n$。令 $\epsilon=\min((1/n)-p_i,\,p_j-1/n)$，并且，注意到 $p_j-p_i>\epsilon$。我们表明，用 $p_i+\epsilon$ 替换 $p_i$，并用 $p_j-\epsilon$ 替换 $p_j$，会增加式 \ref{eq:B-1} 中的和。显然，所得到的 $p_1,\dots,p_n$ 的和仍为 $1$。因此，所产生的 $p_1,\dots,p_n$ 形成一个 $\mathcal{M}$ 上的分布，其中少了一个不是 $1/n$ 的值。此外，在这个分布中，不发生碰撞的概率要比在未修改的分布中更大。重复这个替换过程最多 $n$ 次，我们将会看到，当所有的 $p_i$ 都等于 $1/n$ 时，和才是最大的。同样，这意味着当变量是均匀的时候，不发生碰撞的概率是最大的。
+
+现在，考虑式 \ref{eq:B-1} 中的和。注意到，存在四种不同类型的项。首先，有一些项不包含 $p_i$ 和 $p_j$。这些项不受 $p_i$ 和 $p_j$ 的变化的影响。第二，有的项恰好含有 $p_i$ 或 $p_j$ 中的一个。这些项会成对出现。对于每个包含 $i$ 但不包含 $j$ 的 $k$ 元组，都存在一个对应的包含 $j$ 但不包含 $i$ 的元组。于是，在式 \ref{eq:B-1} 中，对应两项的和看起来就形如 $A(p_i+\epsilon)+A(p_j-\epsilon)$，其中 $A\in[0,1]$。由于这就等于 $Ap_i+Ap_j$，这两项的和也不受 $p_i$ 和 $p_j$ 的变化的影响。最后，式 \ref{eq:B-1} 中有些项同时包含 $p_i$ 和 $p_j$。这些项的变化是：
+\[
+B(p_i+\epsilon)(p_j-\epsilon)-Bp_ip_j=B[\epsilon(p_j-p_i)-\epsilon^2]
+\]
+其中 $B\in[0,1]$。根据 $\epsilon$ 的定义，我们有 $p_j-p_i>\epsilon$，因此 $\epsilon(p_j-p_i)-\epsilon^2>0$。这样，修改了 $p_i$ 和 $p_j$ 之后，总和将大于修改前的和。
+
+总的来说，我们证明了对 $p_i$ 和 $p_j$ 的修改增大了式 \ref{eq:B-1} 中的和，正如所推论所要求的。这就完成了对推论的证明。
+\end{proof}
 
 \subsection{更多的碰撞约束}\label{subsec:B-1-1}
 
-\subsection{一个简单的区分者}\label{subsec:B-1-2}
+对于一个随机函数 $f:\mathcal{X}\to\mathcal{X}$ 考虑序列 $x_i\leftarrow f(x_{i-1})$。分析以下游程的周期时间（用于 Pollard）。现在，对于一个置换 $\pi:\mathcal{X}\to\mathcal{X}$，考虑相同的序列。分析周期时间（用于对 SecurID 身份识别的分析）。
+
+\subsection{一种简单的区分器}\label{subsec:B-1-2}
+
+下面，我们描述一种简单的算法，它可以区分 $\{0,1\}^n$ 上字符串的两种分布。令 $X_1,\dots,X_n$ 和 $Y_1,\dots,Y_n$ 是在 $\{0,1\}$ 中取值的独立随机变量。那么：
+\[
+X:=(X_1,\dots,X_n)
+\qquad\text{和}\qquad
+Y:=(Y_1,\dots,Y_n)
+\]
+是 $\{0,1\}^n$ 上的两个元素。假设对于 $i=1,\dots,n$，我们有：
+\[
+\Pr[X_i=1]=p
+\qquad\text{并且}\qquad
+\Pr[Y_i=1]=(1+2\epsilon)\cdot p
+\]
+对于某个 $p\in[0,1]$ 和某个满足 $(1+2\epsilon)\cdot p\leq 1$ 的 $\epsilon >0$ 成立。那么，$X$ 和 $Y$ 就导出了 $\{0,1\}^n$ 上的两个不同分布。
+
+现在，我们被给定一个 $n$ 比特的字符串 $T$，并被告知，它是根据分布 $X$ 或分布 $Y$ 采样得到的，所以 $p$ 和 $\epsilon$ 都是已知的。我们的目标是确定 $T$ 是根据哪个分布采样的。考虑下面的一个简单算法 $A$：
+
+\vspace*{10pt}
+
+\hspace*{5pt} 输入：$T:=(t_1,\dots,t_n)\in\{0,1\}^n$\\
+\hspace*{26pt} 输出：如果 $T$ 是从 $X$ 种采样的，则输出 $1$，否则输出 $0$
+
+\vspace*{5pt}
+
+\hspace*{5pt} 令 $s\leftarrow(1/n)\cdot\sum_{i=1}^nt_i$\\
+\hspace*{26pt} 如果 $s>p\cdot(1+\epsilon)$，则输出 $0$，否则输出 $1$
+
+\vspace*{10pt}
+
+\noindent
+我们主要关注的是这个值：
+\[
+\Delta:=\big\lvert
+\Pr[\mathcal{A}(T_x)=1]-\Pr[\mathcal{A}(T_y)=1]
+\big\rvert
+\quad\in[0,1]
+\]
+其中 $T_x\overset{\rm R}\leftarrow X$，$T_y\overset{\rm R}\leftarrow Y$。这个值反映了 $\mathcal{A}$ 对分布 $X$ 和 $Y$ 的区分程度。对于一个好的区分器，$\Delta$ 将接近于 $1$。下面的定理表明，当 $n$ 约为 $1/(p\epsilon^2)$ 时，$\Delta$ 约为 $1/2$。
 
 \begin{theorem}\label{theo:B-3}
-
+对于所有的 $p\in[0,1]$ 和 $\epsilon<0.3$，如果 $n=4\lceil 1/(p\epsilon^2)\rceil$，则有 $\Delta>0.5$。
 \end{theorem}
+
+\begin{proof}
+对该定理的证明直接来自 Chernoff 约束。如果 $T$ 是从 $X$ 中采样得到的，Chernoff 约束就意味着：
+\[
+\Pr[\mathcal{A}(T_x)=1]
+=\Pr[s>p(1+\epsilon)]
+\leq e^{-n\cdot(p\epsilon^2/2)}
+\leq e^{-2}
+\leq 0.135
+\]
+如果 $T$ 是从 $Y$ 中采样得到的，Chernoff 约束就意味着：
+\[
+\Pr[\mathcal{A}(T_y)=0]
+=\Pr[s<p(1+\epsilon)]
+\leq e^{-n\cdot(p\epsilon^2/4)}
+\leq e^{-1}
+\leq 0.368
+\]
+因此，$\Delta>|(1-0.368)-0.135|=0.503$，这就得到了约束。
+\end{proof}
