@@ -72,7 +72,7 @@ Sim\big((y_0,y_1),\,c\big):=\big((t_0,t_1),(z_0,z_1)\big)
 
 协议 $(P,V)$ 运行如下，其中验证者 $P$ 由 $((b,x),(y_0,y_1))\in\mathcal{R}_{\rm OR}$ 初始化，验证者 $V$ 由 $(y_0,y_1)\in\mathcal{Y}_0\times\mathcal{Y}_1$ 初始化，且 $d:=1-b$：
 \begin{enumerate}
-	\item $P$ 选取 $c_d\overset{\rm R}\leftarrow\mathcal{C}$ 并计算 $(t_d,z_d)\overset{R}\leftarrow Sim_d(y_d,c_d)$\\$P$ 运行 $P_b(x,y_b)$ 得到一个承诺 $t_b$，并将承诺对 $(t_0,t_1)$ 发送给 $V$；
+	\item $P$ 选取 $c_d\overset{\rm R}\leftarrow\mathcal{C}$ 并计算 $(t_d,z_d)\overset{\rm R}\leftarrow Sim_d(y_d,c_d)$\\$P$ 运行 $P_b(x,y_b)$ 得到一个承诺 $t_b$，并将承诺对 $(t_0,t_1)$ 发送给 $V$；
 	\item $V$ 选取 $c\overset{\rm R}\leftarrow\mathcal{C}$，并将挑战 $c$ 发送给 $P$；
 	\item $P$ 计算 $c_b\leftarrow c\oplus c_d$\\$P$ 将挑战 $c_b$ 转发给 $P_b(x,y_b)$，得到一个响应 $z_b$，并将 $(c_0,z_0,z_1)$ 发送给 $V$；
 	\item $V$ 计算 $c_1\leftarrow c\oplus c_0$，并检查 $(t_0,c_0,z_0)$ 是否是 $y_0$ 的接受对话，以及 $(t_1,c_1,z_1)$ 是否是 $y_1$ 的接受对话。

@@ -1,6 +1,6 @@
 \section{分组密码：基本定义与性质}\label{sec:4-1}
 
-从功能上讲，\textbf{分组密码}是一种确定性密码 $\mathcal{E}=(E,D)$，其消息空间和密码空间是同一（有限）集 $\mathcal{X}$。如果 $\mathcal{E}$ 的密钥空间是 $\mathcal{K}$，我们就称 $\mathcal{E}$ 是一个\textbf{定义在 $(\mathcal{K},\mathcal{X})$ 上}的分组密码。我们称元素 $x\in\mathcal{X}$ 为一个\textbf{数据分组(data block)}，并称 $\mathcal{X}$ 为 $\mathcal{E}$ 的\textbf{数据分组空间}。
+从功能上讲，\textbf{分组密码}是一种确定性密码 $\mathcal{E}=(E,D)$，其消息空间和密文空间是同一（有限）集 $\mathcal{X}$。如果 $\mathcal{E}$ 的密钥空间是 $\mathcal{K}$，我们就称 $\mathcal{E}$ 是一个\textbf{定义在 $(\mathcal{K},\mathcal{X})$ 上}的分组密码。我们称元素 $x\in\mathcal{X}$ 为一个\textbf{数据分组(data block)}，并称 $\mathcal{X}$ 为 $\mathcal{E}$ 的\textbf{数据分组空间}。
 
 对于每个固定的密钥 $k\in\mathcal{K}$，我们可以定义函数 $f_k:=E(k,\cdot)$；也就是说，$f_k:\mathcal{X}\to\mathcal{X}$ 可以把 $x\in\mathcal{X}$ 映射为 $E(k,x)\in\mathcal{X}$。密码的正确性属性要求，对于任意的固定密钥 $k$，函数 $f_k$ 都是一一对应的，并且由于 $\mathcal{X}$ 是有限集，$f_k$ 也必须在有限集上。因此，$f_k$ 本质上就是有限集 $\mathcal{X}$ 上的一个置换，而 $D(k,\cdot)$ 是其逆置换 $f^{-1}_k$。
 
@@ -150,7 +150,7 @@ i=1,\dots,Q
 \vspace*{10pt}
 
 \noindent
-为了使这个实现尽可能快，我们可以使用一个恰当的字典数据结构（比如哈希表、搜索前缀树、平衡树等）来实现对``是否存在某个 $j<i$ 使得 $x_i=x_j$ 成立"的检验。假设可以有效地生成 $\mathcal{X}$ 中的随机元素，那么实现 ``$y_i\overset{R}\leftarrow\mathcal{X}\setminus\{y_1,\dots,y_{i-1}\}$"这一步的方法如下：
+为了使这个实现尽可能快，我们可以使用一个恰当的字典数据结构（比如哈希表、搜索前缀树、平衡树等）来实现对``是否存在某个 $j<i$ 使得 $x_i=x_j$ 成立"的检验。假设可以有效地生成 $\mathcal{X}$ 中的随机元素，那么实现 ``$y_i\overset{\rm R}\leftarrow\mathcal{X}\setminus\{y_1,\dots,y_{i-1}\}$"这一步的方法如下：
 
 \vspace*{10pt}
 
@@ -160,7 +160,7 @@ i=1,\dots,Q
 \vspace*{10pt}
 
 \noindent
-同样，我们可以使用适当的字典数据结构来检验``$y\notin\{y_1,\dots,y_{i-1}\}$"是否成立。当 $i<{|\mathcal{X}|}/{2}$ 时，预期上只需要运行两次迭代即可找到满足要求的 $y_i$。
+同样，我们可以使用适当的字典数据结构来检验``$y\notin\{y_1,\dots,y_{i-1}\}$"是否成立。当 $i<{|\mathcal{X}|}/{2}$ 时，预计只需要运行两次迭代即可找到满足要求的 $y_i$。
 
 一种理解这个实现的方式是，实验 $1$ 中的挑战者就是一个``黑盒"，但盒子里有一个\textbf{忠实的侏儒(faithful gnome)}，它的工作就是维护一张表示随机置换 $f$ 的输入/输出表，如图 \ref{fig:4-3} 所示。
 

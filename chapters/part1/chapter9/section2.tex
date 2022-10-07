@@ -1,23 +1,163 @@
-\section{认证加密的含义}\label{sec:9-2}
+\section{认证加密的引申义}\label{sec:9-2}
 
-\subsection{选择密文攻击：一个激励性的例子}\label{subsec:9-2-1}
+在构建 AE 安全的系统之前，让我们先再讨论一下定义 \ref{def:9-1}，看看它到底意味着什么。考虑一个发送者 Alice 和一个接收者 Bob，他们共享一个密钥 $k$。Alice 通过公网向 Bob 发送了一连串的消息。每条消息都用一个 AE 安全的密码 $\mathcal{E}=(E,D)$ 加密，使用的密钥就是 $k$。
 
+首先，考虑一个窃听对手 $\mathcal{A}$。由于 $\mathcal{E}$ 是 CPA 安全的，这并不能使得 $\mathcal{A}$ 获取任何新的关于 Alice 发送给 Bob 的消息的信息。
+
+现在，考虑一个更具侵略性的对手 $\mathcal{A}$，它试图让 Bob 收到一条并不由 Alice 发出的消息。我们声称这不可能发生。为了了解原因，不妨考虑下面这个只有一条消息的例子：Alice 向 Bob 发送一条 $m$ 的加密消息，但密文 $c$ 在中途被 $\mathcal{A}$ 截获。对手的目标是创造某个 $\hat{c}$，使得 $\hat{m}:=D(k,\hat{c})\neq\mathsf{reject}$，同时 $\hat{m}\neq m$。这样的 $\hat{c}$ 就能够欺骗 Bob，使他认为 Alice 发送的是 $\hat{m}$，而不是 $m$。但这样一来，$\mathcal{A}$ 也能够就 $\mathcal{E}$ 赢得攻击游戏 \ref{game:9-1}，而这与 $\mathcal{E}$ 的密文完整性相矛盾。因此，$\mathcal{A}$ 不可能修改 $c$ 而不被发现。更一般地说，将该论证应用于多条消息的场合，我们就能表明，$\mathcal{A}$ 不能使 Bob 接受任何不由 Alice 发出的消息。这里，更一般的结论是，\emph{密文完整性}就能够导出\emph{消息完整性}。
+
+\subsection{选择密文攻击：一个例子}\label{subsec:9-2-1}
+
+我们现在考虑一种更具侵略性的攻击类型，称为\textbf{选择密文攻击(chosen ciphertext attack)}。正如我们将要看到的，即使面对如此强大的攻击，AE 安全的密码也能为消息提供机密性和完整性。
+
+为了说明选择密文攻击，假设 Alice 向 Bob 发送了一封电子邮件。简单起见，我们假设每封电子邮件都以字符 \texttt{To:} 为开头，后面紧跟着收件人的邮箱地址。因此，发送给 Bob 的邮件会以 \texttt{To:bob@mail.com} 作为开头，而发送给 Mel 的邮件则会从 \texttt{To:mel@mail.com} 开始。邮件服务器会解密收到的每一封邮件，并将其发送到收件人的收件箱：以 \texttt{To:bob@mail.com} 为开头的邮件会被送入 Bob 的收件箱，而以 \texttt{To:mel@mail.com} 为开头的邮件会被送入 Mel 的收件箱。
+
+这个故事中的攻击者 Mel 想要阅读 Alice 发给 Bob 的邮件。对 Mel 来说不幸的是，Alice 很小心，她用一个只有 Alice 和邮件服务器知道的密钥加密了邮件。当邮件服务器收到密文 $c$ 时，它会解密密文，并将得到的明文发送到 Bob 的收件箱。因此，Mel 是无法阅读这封邮件的。
+
+然而，我们表明，如果 Alice 用 CPA 安全的密码，比如随机化计数器模式或随机化 CBC 模式来加密邮件，Mel就能很容易地获得邮件内容。方法如下：Mel 在密文 $c$ 到达邮件服务器之前截获它，并对其进行修改，以获取一个新的密文 $\hat{c}$，并使 $\hat{c}$ 的密文以 \texttt{To:mel@mail.com} 为开头，但其余部分与原始消息相同。此后，Mel 再将 $\hat{c}$ 转发给邮件服务器。当邮件服务器收到 $\hat{c}$ 时，它会解密这条密文，并（错误地）将明文发送给 Mel 的收件箱，使得 Mel 可以轻松读取它。
+
+为了成功发起这种攻击，Mel 必须首先解决以下问题：给定某条消息 $(u\,\Vert\,m)$ 的加密 $c$，其中 $u$ 是一个固定的已知前缀（在我们的例子中，$u:=\texttt{To:bob@mail.com}$），生成一条密文 $\hat{c}$，它的解密是 $(v\,\Vert\,m)$，其中，$v$ 是另一个前缀（在我们的例子中，$v:=\texttt{To:mel@mail.com}$）。
+
+我们表明，如果加密方案是随机化计数器模式或随机化 CBC 模式，Mel 就可以轻松地解决这个问题。简单起见，我们假设 $u$ 和 $v$ 都是二进制序列，其长度与底层分组密码的分组大小相同。与之前一样，我们记 $c[0]$ 和 $c[1]$ 分别是 $c$ 的第一个和第二个分组，其中 $c[0]$ 就是随机 IV。Mel 构建 $\hat{c}$ 的方法如下：
+\begin{itemize}
+	\item 随机化计数器模式：$\hat{c}$ 与 $c$ 基本相同，只是 $\hat{c}[1]:=c[1]\oplus u\oplus v$。
+	\item 随机化 CBC 模式：$\hat{c}$ 与 $c$ 基本相同，只是 $\hat{c}[0]:=c[0]\oplus u\oplus v$。
+\end{itemize}
+不难看出，在这两种情况下，对 $\hat{c}$ 的解密都是从前缀 $v$ 开始的（见 \ref{subsec:3-3-2} 小节）。现在，Mel 就能够获得 $\hat{c}$ 的解密，并且明文读取秘密消息 $m$。
+
+刚才发生了什么？我们已经证明了，这两种加密模式都是 CPA 安全的，但是上面的介绍展示了破解它们的方法。这就是一个选择密文攻击的例子——通过查询对 $\hat{c}$ 的解密，Mel 就能够推断出对 $c$ 的解密。这种攻击再次展示了攻击者如何利用一个密码的\emph{易被控制性(malleability)}——我们曾经在 \ref{subsec:3-3-2} 小节中展示过一个基于易被控制性的攻击方式。
+
+正如我们刚刚看到的，当攻击者可以解密某些密文时，即便他不能直接解密他感兴趣的密文，一个 CPA 安全的系统也会变得完全不安全。换句话说，密文完整性的缺失就会完全损害机密性——就算明文完整性不是明确的安全要求，情况也是如此。
+
+我们非正式地论证，如果 Alice 使用的是一个 AE 安全的密码 $\mathcal{E}=(E,D)$，上述攻击就无法成功。假设 Mel 截获了一条密文 $c:=E(k,m)$。他试图创建另一条密文 $\hat{c}$，它满足 (1) $\hat{m}:=D(k,\hat{c})$ 从前缀 $v$ 开始，以及 (2) 对手可以从 $\hat{m}$ 恢复 $m$，特别地，$\hat{m}\neq\mathsf{reject}$。密文完整性——以及随之而来的 AE 安全性——意味着，攻击者无法创建这样的 $\hat{c}$。事实上，攻击者无法创建任何新的有效密文，因此，一个 AE 安全的密码就可以挫败这种攻击。
+
+在下一小节中，我们将正式定义选择密文攻击。我们还将表明，如果一个密码是 AE 安全的，那么即使面对这种类型的攻击，它也是安全的。
+ 
 \subsection{选择密文攻击：定义}\label{subsec:9-2-2}
 
+在这一小节中，我们将正式定义选择密文攻击。在这样的攻击中，对手拥有选择明文攻击中攻击者所拥有的所有权力，除此之外，它还可以获取由它选取的密文的解密——但受到一个限制。回顾一下，在选择明文攻击中，对手向挑战者发起了一连串的加密查询，并获取了一些密文作为应答。我们施加的限制是，对手不得要求解密这些密文中的任意一条。虽然这样的限制对于使攻击游戏有意义来说是有必要的，但它看起来可能有点不直观：如果对手可以解密由它选择的密文，为什么它不能解密最重要的密文？我们将在后面（\ref{sec:9-3} 节）更深层次地解释这个定义背后的直觉。我们将在下面（\ref{subsec:9-2-3} 小节）表明，如果一个密码是 AE 安全的，它对选择密文攻击也是安全的。
+
+下面是正式的攻击游戏：
+
 \begin{game}[CCA 安全性]\label{game:9-2}
-	
+对于一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的给定密码 $\mathcal{E}=(E,D)$ 和一个给定对手 $\mathcal{A}$，我们定义两个实验。对于 $b=0,1$，我们定义：
+
+\vspace*{5pt}
+
+\noindent\textbf{实验 $b$：}
+\begin{itemize}
+	\item 挑战者随机选取 $k\overset{\rm R}\leftarrow\mathcal{K}$。
+	\item $\mathcal{A}$ 向挑战者发起一连串查询。每个查询都属于下面两种类型中的一个：
+	\begin{itemize}
+		\item \emph{加密查询}：对于 $i=1,2,\dots$，第 $i$ 个加密查询由一对消息 $(m_{i0},m_{i1})\in\mathcal{M}^2$ 组成。挑战者计算 $c_i\overset{\rm R}\leftarrow E(k,m_{ib})$，并将 $c_i$ 发送给 $\mathcal{A}$。
+		\item \emph{解密查询}：对于 $j=1,2,\dots$，第 $j$ 个解密查询由一条密文 $\hat{c}_j\in\mathcal{C}$ 组成，该密文不是对之前任意一次加密查询的应答，即：
+			\[
+			\hat{c}_j\notin\{c_1,c_2,\dots\}
+			\]
+		挑战者计算 $\hat{m}_j\leftarrow D(k,\hat{c}_j)$，并将 $\hat{m}_j$ 发送给 $\mathcal{A}$。
+	\end{itemize}
+	\item 在游戏结束时，对手输出一个比特 $\hat{b}\in\{0,1\}$。
+\end{itemize}
+令 $W_b$ 是 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件。我们将 $\mathcal{A}$ 相对于 $\mathcal{E}$ 的\textbf{优势}定义为：
+\[
+\mathrm{CCA}\mathsf{adv}[\mathcal{A},\mathcal{E}]
+:=
+\big\lvert
+\Pr[W_0]-\Pr[W_1]
+\big\rvert
+\]
 \end{game}
 
+我们强调，在上述攻击游戏中，加密查询和解密查询可以以任意次序交错进行。
+
 \begin{definition}[CCA 安全性]\label{def:9-5}
-	
+如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{CCA}\mathsf{adv}[\mathcal{A},\mathcal{E}]$ 的值都可忽略不计，我们就称密码 $\mathcal{E}$ \textbf{对选择密文攻击是语义安全的(semantically secure against chosen ciphertext attack)}，简称为 \textbf{CCA 安全的 (CCA-secure)}。
 \end{definition}
 
+在某些情况下，每条消息都需要生成一个新的密钥，因此，一个特定的密钥 $k$ 只会被用于加密一条消息。当攻击者试图愚弄用户用一个 $k$ 来解密多条密文时，系统也想要对选择密文攻击保持安全性。对于这些情况，我们定义针对下述对手的安全性，它只能发起\emph{一次}加密查询，但是可以发起多次解密查询。
+
 \begin{definition}[1CCA 安全性]\label{def:9-6}
-	
+在攻击游戏 \ref{game:9-2} 中，如果对手 $\mathcal{A}$ 被限制只能发起一次加密查询，我们就将其优势表示为 $\mathrm{1CCA}\mathsf{adv}[\mathcal{A},\mathcal{E}]$。如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{1CCA}\mathsf{adv}[\mathcal{A},\mathcal{E}]$ 的值都可忽略不计，我们就称密码 $\mathcal{E}$ \textbf{对选择密文攻击是一次性语义安全的(one-time semantically secure against chosen ciphertext attack)}，简称为 \textbf{1CCA 安全的 (CCA-secure)}。
 \end{definition}
+
+正如 \ref{subsec:2-2-5} 小节所讨论的，攻击游戏 \ref{game:9-2} 也可以被重构为一个``比特猜测"游戏，此时，挑战者不再拥有两个独立的实验，而是会随机选择一个 $b\in\{0,1\}$，然后针对对手 $\mathcal{A}$ 运行实验 $b$。在这个游戏中，我们定义 $\mathcal{A}$ 的\emph{比特猜测优势} $\mathrm{CCA}\mathsf{adv}^*[\mathcal{A},\mathcal{E}]$（以及 $\mathrm{1CCA}\mathsf{adv}^*[\mathcal{A},\mathcal{E}]$）为 $\lvert\Pr[\hat{b}=b]-1/2\lvert$。\ref{subsec:2-2-5} 小节中的一般结论（即式 \ref{eq:2-11}）在此也同样适用：
+\begin{equation}\label{eq:9-1}
+\mathrm{CCA}\mathsf{adv}[\mathcal{A},\mathcal{E}]
+=
+2\cdot
+\mathrm{CCA}\mathsf{adv}^*[\mathcal{A},\mathcal{E}]
+\end{equation}
+同样地，对于被限制只能进行单次加密查询的对手，我们有：
+\begin{equation}\label{eq:9-2}
+\mathrm{1CCA}\mathsf{adv}[\mathcal{A},\mathcal{E}]
+=
+2\cdot
+\mathrm{1CCA}\mathsf{adv}^*[\mathcal{A},\mathcal{E}]
+\end{equation}
+
+% TODO: here
 
 \subsection{认证加密意味着选择密文安全性}\label{subsec:9-2-3}
 
+我们现在表明，每个AE安全的系统也是CCA安全的。同样地，每个1AE安全的系统都是1CCA安全的。
+
 \begin{theorem}\label{theo:9-1}
-	
+让E = (E,D) 是一个密码。如果E是AE安全的，那么它就是CCA安全的。如果E是1AE安全的，那么它就是1CCA安全的。
+
+特别是，假设A是E的一个CCA-反面，它最多只能进行Qe次加密查询和Qd次解密查询。那么，存在一个CPA-adversary Bcpa和一个CI-adversary Bci，其中Bcpa和Bci是围绕A的基本包装，从而
+
+CCAadv[A, E] ≤ CPAadv[Bcpa, E] + 2Qd - CIadv[Bci, E]。
+
+此外，Bcpa和Bci都最多进行Qe次加密查询。
 \end{theorem}
+
+在证明这个定理之前，我们要指出一个反证：如果一个密码是CCA安全的，并且提供明文完整性，那么它一定是AE安全的。在练习9.15中要求你证明这一点。这两个结果共同为AE安全是不安全网络上通用通信的正确安全概念这一说法提供了有力支持。我们还注意到，有可能建立一个不提供密文（或明文）完整性的CCA安全密码--见练习9.12的例子。
+
+\begin{proof}[证明思路]
+一个CCA对手A发出加密和允许解密的查询。我们首先论证，对所有这些解密查询的响应必须是拒绝。为了了解原因，观察一下，如果对手曾经发出一个有效的解密查询ci，其解密不是拒绝，那么这个ci可以用来赢得密码文本完整性游戏。因此，由于A的所有解密查询都被拒绝了，对手通过发出解密查询没有学到任何东西，还不如把它们丢掉。在去除解密查询后，我们最终得到一个标准的CPA游戏。由于E是CPA安全的，对手无法赢得这个游戏。我们的结论是，A在赢得CCA游戏中的优势可以忽略不计。
+\end{proof}
+
+\begin{proof}
+假设A是一个高效的CCA对手，如攻击游戏9.2中那样攻击E，它最多进行Qe次加密查询和Qd次解密查询。我们想证明CCAadv[A,E]是可以忽略的，假设E是AE安全的。我们将使用CCA和CPA攻击游戏的比特猜测版本，并表明
+
+CCAadv∗[A, E] ≤ CPAadv∗[Bcpa, E] + Qd - CIadv[Bci, E]。(9.4)
+
+为有效对手Bcpa和Bci。然后（9.3）由（9.4）以及（9.1）和（5.4）得出。此外，我们将看到，对手Bcpa最多只能进行Qe次加密查询；因此，如果E是1AE安全的，它也是1CCA安全的。
+
+让我们把游戏0定义为攻击游戏9.2的比特猜测版本。在这个游戏中，挑战者被称为游戏0，其工作方式如下。
+
+b←R {0,1}//A在收到第1个加密查询时，将尝试猜测b k←R K
+在收到A的第i个加密查询(mi0,mi1)时，做：发送ci←R E(k,mb)给A
+在收到A的第j个解密查询cˆj时，做：发送D(k,cˆj)给A
+(1)
+
+最终，对手输出一个猜测ˆb∈{0，1}。如果b = ˆb，我们就说A赢得了游戏。用W0表示这一事件。根据定义，比特猜测的优势是
+
+CCAadv∗[A, E] = |Pr[W0] - 1/2|。(9.5)
+
+游戏1。现在我们把挑战者的第（1）行修改如下。
+
+(1) 发送拒绝信息给A
+
+我们认为，A无法将这个挑战者与原挑战者区分开来。设Z是指在游戏1中，A发出一个解密查询cˆj，使D(k, cˆj ) ̸=拒绝的事件。显然，只要Z不发生，游戏0和1的进程是相同的。因此，根据差异定理（即定理4.7），可以得出|Pr[W0] - Pr[W1]| ≤ Pr[Z]。
+
+使用类似于定理6.1证明中使用的 "猜测策略"，我们可以使用A来建立一个CI对抗者Bci，以至少Pr[Z]/Qd的概率赢得CI攻击游戏。请注意，在游戏1中，根本没有使用解密算法。对手Bci的策略是简单地猜测一个随机数ω∈{1, . . . , Qd}，然后扮演A的挑战者的角色。
+
+- 当A进行加密查询时，Bci将其转发给自己的挑战者，并将响应返回给A。
+- 当A进行解密查询cˆj时，Bci只是简单地将拒绝发送给A，但如果j = ω，Bci会输出cˆj并停止。
+
+不难看出，CIadv[Bci,E]≥Pr[Z]/Qd，所以
+
+|Pr[W0]-Pr[W1]|≤Pr[Z]≤Qd-CIadv[Bci, E]。(9.6)
+
+最后的还原。由于在博弈1中所有的解密查询都被拒绝，这本质上是一个CPA攻击游戏。更确切地说，我们可以构建一个CPA对手Bcpa，它扮演着A的挑战者的角色，如下所示。
+
+- 当A进行加密查询时，Bcpa将其转发给自己的挑战者，并将响应返回给A。
+- 当A进行解密查询时，Bcpa只是向A发送拒绝。
+
+在游戏结束时，Bcpa只需输出A所输出的位ˆb。显然。
+
+|Pr[W1] - 1/2| = CPAadv∗[Bcpa, E] 。
+
+将方程(9.5)-(9.7)放在一起，可以得到(9.4)，这就证明了该定理。
+\end{proof}

@@ -1,0 +1,36 @@
+\tikzset{every picture/.style={line width=0.75pt}}
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+
+\draw [line width=1.2]  (0,0) -- (140,0) -- (140,20) -- (0,20) -- cycle ;
+\draw  [fill={rgb, 255:red, 155; green, 155; blue, 155 }  ,fill opacity=0.5 ][line width=1.2] (0,50) -- (140,50) -- (140,80) -- (0,80) -- cycle ;
+\draw  [fill={rgb, 255:red, 155; green, 155; blue, 155 }  ,fill opacity=0.5 ][line width=1.2] (0,120) -- (140,120) -- (140,140) -- (0,140) -- cycle ;
+\draw [line width=1.2] (140,120) -- (190,120) -- (190,140) -- (140,140) -- cycle ;
+
+\draw    (0,20) -- (0,120) ;
+\draw    (140,0) -- (140,80) ;
+\draw    (140,80) -- (190,120) ;
+
+\draw  [line width=1.2] (280,0.67) -- (420,0.67) -- (420,20.67) -- (280,20.67) -- cycle ;
+\draw  [fill={rgb, 255:red, 155; green, 155; blue, 155 }  ,fill opacity=0.5 ][line width=1.2] (280,110) -- (470,110) -- (470,140) -- (280,140) -- cycle ;
+\draw  [line width=1.2] (280,50) -- (420,50) -- (420,70) -- (280,70) -- cycle ;
+\draw  [line width=1.2] (420,50) -- (470,50) -- (470,70) -- (420,70) -- cycle ;
+
+\draw    (280,0.67) -- (280,140) ;
+\draw    (420,20.67) -- (470,50) ;
+\draw    (470,70) -- (470,110) ;
+
+\draw (70,10) node    {$m$};
+\draw (70,130) node    {$c$};
+\draw (165,130) node    {$\mathrm{tag}$};
+\draw (70,65) node    {$c\leftarrow E(k_{\mathrm{enc}},m)$};
+\draw (80,100) node    {$\mathrm{tag}\leftarrow S( k_{\mathrm{mac}},c)$};
+\draw (350,10.67) node   {$m$};
+\draw (350,60) node    {$m$};
+\draw (445,60) node    {$\mathrm{tag}$};
+\draw (375,125) node    {$c\leftarrow E\big(k_{\mathrm{enc}} ,(m,\mathrm{tag})\big)$};
+\draw (360,35) node    {$\mathrm{tag}\leftarrow S(k_{\mathrm{mac}} ,m)$};
+\draw (95,170) node   [align=left] {先加密后 MAC};
+\draw (375,170) node   [align=left] {先 MAC 后加密};
+
+\end{tikzpicture}

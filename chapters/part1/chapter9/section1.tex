@@ -1,23 +1,51 @@
-\section{认证加密的定义}\label{sec:9-1}
+\section{认证加密：定义}\label{sec:9-1}
+
+首先，对于一个密码 $\mathcal{E}$，我们定义什么叫做 $\mathcal{E}$ 提供认证加密。事实上，它必须满足两个属性。第一，$\mathcal{E}$ 必须是 CPA 安全的。第二，$\mathcal{E}$ 必须提供密文完整性，其定义如下。密文完整性是一个新的属性，它抓住这样一个事实，即 $\mathcal{E}$ 应当具备与 MAC 相似的属性。令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的密码。我们使用下面的攻击游戏来定义密文完整性，如图 \ref{fig:9-2} 所示。该游戏与 MAC 攻击游戏 \ref{game:6-1} 相似。
 
 \begin{game}[密文完整性]\label{game:9-1}
-	
+对于一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的给定密码 $\mathcal{E}=(E,D)$ 和一个给定对手 $\mathcal{A}$，攻击游戏运行如下：
+\begin{itemize}
+	\item 挑战者随机选择一个 $k\overset{\rm R}\leftarrow\mathcal{K}$。
+	\item $\mathcal{A}$ 向挑战者发起多次查询。对于 $i=1,2,\dots$，第 $i$ 次查询包含一条消息 $m_i\in\mathcal{M}$。挑战者计算 $c_i\overset{\rm R}\leftarrow E(k, m_i)$，并将 $c_i$ 发送给 $\mathcal{A}$。
+	\item 最后，$\mathcal{A}$ 输出一个候选密文 $c\in\mathcal{C}$，该文本不在 $\mathcal{A}$ 所得到的密文集合中，即：
+	\[
+	c\notin\{c_1,c_2,\dots\}
+	\]
+\end{itemize}
+如果 $c$ 是用 $k$ 加密得到的一条有效密文，即 $D(k,c)\neq\mathsf{reject}$，我们就称 $\mathcal{A}$ 赢得游戏。我们将 $\mathcal{A}$ 相对于 $\mathcal{E}$ 的优势定义为 $\mathrm{CI}\mathsf{adv}[\mathcal{A},\mathcal{E}]$，即 $\mathcal{A}$ 赢得游戏的概率。最后，如果 $\mathcal{A}$ 最多发起 $Q$ 次加密查询，我们就称 $\mathcal{A}$ 是一个 \textbf{$Q$ 次查询对手 ($Q$-query adversary)}。
 \end{game}
 
 \begin{definition}\label{def:9-1}
-	
+如果对于每个有效对手 $\mathcal{A}$，$\mathrm{CI}\mathsf{adv}[\mathcal{A},\mathcal{E}]$ 的值都可忽略不计，我们就称密码 $\mathcal{E}=(E,D)$ 提供\textbf{密文完整性 (ciphertext integrity, CI)}。
 \end{definition}
 
+CPA 安全性和密文完整性是认证加密所必须的属性。这在下面的定义中得到了体现。
+
+\begin{figure}
+  \centering
+  \input{figures/chapter9/fig2.tex}
+  \caption{密文完整性攻击游戏（攻击游戏 \ref{game:9-1}）}
+  \label{fig:9-2}
+\end{figure}
+
 \begin{definition}\label{def:9-2}
-	
+对于一个密码 $\mathcal{E}=(E,D)$，如果 $\mathcal{E}$ (1) 在选择明文攻击下是语义安全的，以及 (2) 能够提供密文完整性，我们就称 $\mathcal{E}$ 能够提供\textbf{认证加密}，或者简单地称它是 \textbf{AE 安全}的。
 \end{definition}
+
+为什么定义 \ref{def:9-2} 是正确的？特别地，为什么我们要求\emph{密文}完整性，而不是其他的什么\emph{明文}完整性的概念（这可能看起来更自然）？在 \ref{sec:9-2} 节中，我们会描述一类非常阴险的攻击，称为\emph{选择密文攻击}，我们将看到，我们对 AE 安全性的定义足以（事实上是必要的）防止这种攻击。在 \ref{sec:9-3} 节中，我们将对该定义给出一个更高层次的理由。
 
 \subsection{一次性认证加密}\label{subsec:9-1-1}
 
+在实践中，我们经常使用对称密钥对单一消息进行加密。该密钥不会被再次使用。例如，在发送加密电子邮件时，我们经常选择一个临时密钥，并用这个临时密钥来加密电子邮件的正文。随后，这个临时密钥也会被加密，然后附在电子邮件的首部中被一起发送出去。每发送一封电子邮件，都会生成一个新的临时密钥。
+
+在这种设置下，我们可以使用一次性的加密方案，比如流密码。所选择的密码必须是语义安全的，但不一定需要是 CPA 安全的。同样地，该密码提供一次性的密文完整性就足够了，这是一个比密文完整性更弱的概念。特别是，我们可以修改攻击游戏 \ref{game:9-1}，使得对手只能获得单独的某条消息 $m$ 的加密。
+
 \begin{definition}\label{def:9-3}
-	
+如果对于每个有效的单次查询对手 $\mathcal{A}$，$\mathrm{CI}\mathsf{adv}[\mathcal{A},\mathcal{E}]$ 的值都可忽略不计，我们就称密码 $\mathcal{E}=(E,D)$ 提供\textbf{一次性密文完整性 (one-time ciphertext integrity)}。
 \end{definition}
 
 \begin{definition}\label{def:9-4}
-
+对于一个密码 $\mathcal{E}=(E,D)$，如果 $\mathcal{E}$ 是语义安全的，并且能够提供一次性密文完整性，我们就称 $\mathcal{E}$ 能够提供\textbf{一次性认证加密(one-time authenticated encryption)}，或者称它是 \textbf{1AE 安全}的。
 \end{definition}
+
+在那些对称密钥只会被使用一次的应用中，1AE 安全性就足够了。我们将会表明，对于图 \ref{fig:9-1} 中的先加密后 MAC 构造，如果所使用的是语义安全的密码和一次性 MAC，它就能够提供一次性认证加密。用一次性 MAC 替代 MAC 能够显著提高效率。

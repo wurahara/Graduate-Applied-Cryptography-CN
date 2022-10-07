@@ -168,7 +168,7 @@ c\leftarrow H(\;(u,v,e),\;(v_{\rm t0},w_{\rm t0},v_{\rm t1},w_{\rm t1})\;)
   \hspace*{120pt} 如果 $(y_i,t_i)\notin{\rm Domain}(Map)$，则令 $Map[y_i,t_i]\leftarrow c_i$\\
   \hspace*{120pt} 返回 $(t_i,z_i)$；\\
   \hspace*{95pt} 当收到第 $j$ 个随机预言机查询 $(\widehat{y_j},\widehat{t_j})\in\mathcal{Y}\times\mathcal{T}$ 时：\\
-  \hspace*{120pt} 如果 $(\widehat{y_j},\widehat{t_j})\notin{\rm Domain}(Map)$，则令 $Map[\widehat{y_j},\widehat{t_j}]\overset{R}\leftarrow\mathcal{C}$\\
+  \hspace*{120pt} 如果 $(\widehat{y_j},\widehat{t_j})\notin{\rm Domain}(Map)$，则令 $Map[\widehat{y_j},\widehat{t_j}]\overset{\rm R}\leftarrow\mathcal{C}$\\
   \hspace*{120pt} 返回 $Map[\widehat{y_j},\widehat{t_j}]$
   \caption{Fiat-Shamir 的 niZK 模拟器}
   \label{fig:20-2}

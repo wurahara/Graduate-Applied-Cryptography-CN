@@ -1,5 +1,33 @@
 \chapter{认证加密}\label{chap:9}
 
+本章，我们终于来到了对称加密的最高点。在这里，我们将构建能够同时确保数据机密性和完整性的系统，即使面对的是那些能够同时与发送方和接收方进行恶意交互的，极具攻击性的攻击者。我们将这样的系统称为\textbf{认证加密(authenticated encryption)}。或者简单地称它们是 AE 安全的。本章将会收束我们对对称加密的讨论，还会展示如何在现实世界中正确地进行安全的加密。
+
+回顾一下，当我们在第\ref{chap:5}章中讨论 CPA 安全性时，我们强调，CPA 安全性并不提供任何完整性保证。攻击者可以篡改 CPA 安全密码的输出，而不被解密者发现。在本章中，我们将会介绍许多现实世界中的设置，其中，未被发现的密文篡改会损害消息的机密性和完整性。因此，单靠 CPA 安全性几乎无法满足任何应用的实际需求。相对地，应用程序总是应该使用认证加密来确保消息的机密性和完整性。我们强调，即使一个系统只要求机密性，CPA 安全性也是远远不够的。
+
+在本章中，我们将讨论认证加密的概念，并构建几个 AE 系统。有两种构建 AE 系统的一般范式。第一种被称为\textbf{通用组合(generic composition)}，它可以将 CPA 安全的密码与安全的 MAC 相结合。有许多方法可以结合这两个密码学原语，但并非所有的组合都是安全的。下面，我们简单考虑两个例子。
+
+令 $(E,D)$ 是一个密码，$(S,V)$ 是一个 MAC。令 $k_\mathrm{enc}$ 是一个密码密钥，$k_\mathrm{mac}$ 是一个 MAC 密钥。我们立即就可以想到两种将加密与完整性相结合的方案，如图 \ref{fig:9-1} 所示，它们运行如下：
+\begin{description}
+	\item [先加密后 MAC] 使用 $c\overset{\rm R}\leftarrow E(k_\mathrm{enc},m)$ 加密消息，然后用 $\mathrm{tag}\overset{\rm R}\leftarrow S(k_\mathrm{mac},c)$ 计算密文的 MAC；结果是密文-标签对 $(c,\mathrm{tag})$。这种方法在 TLS 1.2 协议和后续版本中，以及在 IPsec 协议和广泛使用的 NIST GCM 标准中都得到了支持（见 \ref{sec:9-7} 节）。
+	\item [先 MAC 后加密] 使用 $\mathrm{tag}\overset{\rm R}\leftarrow S(k_\mathrm{mac},m)$ 计算消息的 MAC，然后使用 $c\overset{\rm R}\leftarrow E\big(k_\mathrm{enc},(m,\mathrm{tag})\big)$ 加密消息-标签对；结果是密文 $c$。这种方法被用在了 TLS 的旧版本（例如 SSL 3.0 和后续的 TLS 1.0 版本）和 802.11i WiFi 加密协议中。
+\end{description}
+事实证明，对于任意 CPA 安全的密码和安全的 MAC 的组合，都只有第一种方法是安全的。其直觉是，密文上的 MAC 可以防止对密文的任何篡改。我们将表明，第二种方法可能是不安全的——MAC 和密码之间的交互可能会出现问题，导致所产生的系统不是 AE 安全的。这使得一些已经被广泛部署的系统反复遭到攻击。
+
+\begin{figure}
+	\centering
+	\input{figures/chapter9/fig1.tex}
+	\caption{两种组合加密和 MAC 的方法}
+	\label{fig:9-1}
+\end{figure}
+
+构建认证加密的第二种范式是直接利用分组密码或 PRF，而不需要先构建一个独立的密码或 MAC。这种方法有时被称为\textbf{集成方案(integrated schemes)}。OCB 加密模式是这一范式的一个典型案例（见练习 \ref{exer:9-17}）。其他的例子包括 IAPM、XCBC、CCFB 等方案。
+
+\begin{snote}[认证加密标准。]
+像 OpenSSL 这样的密码学库通常会提供一个 CPA 安全加密的接口（比如带有随机 IV 的计数器模式），以及一个单独用来计算消息的 MAC 的接口。在过去，开发者需要自己正确地组合这两种密码学原语来实现认证加密。每个系统的做法都不尽相同，而且，并非所有在实践中使用的实例都是安全的。
+
+最近，一些安全认证加密标准被陆续提出。一种被称为 Galois 计数模式 (Galois Counter Mode, GCM) 的流行方法使用先加密后 MAC 的方法来组合随机计数器模式加密和 Carter-Wegman MAC（见 \ref{sec:9-7} 节）。我们将在本章的稍后部分研究这种结构的细节及其安全性。我们鼓励开发者使用由底层密码学库提供的认证加密模式，而不要自己去实现它们。
+\end{snote}
+
 
 \input{chapters/part1/chapter9/section1}
 \input{chapters/part1/chapter9/section2}
