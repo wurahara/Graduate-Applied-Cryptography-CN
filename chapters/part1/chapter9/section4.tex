@@ -1,16 +1,236 @@
 \section{基于通用组合的认证加密密码}\label{sec:9-4}
 
+在本节，我们试图通过组合一个 CPA 安全的密码和一个安全的 MAC 组合来构建认证加密。我们将会表明，先加密后 MAC 范式总是 AE 安全的，但是先 MAC 后加密范式却不是这样。
+
 \subsection{先加密后MAC}\label{subsec:9-4-1}
 
+令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K}_\mathrm{e},\mathcal{M},\mathcal{C})$ 上的密码，$\mathcal{I}=(S,V)$ 是一个定义在 $(\mathcal{K}_\mathrm{m},\mathcal{C},\mathcal{T})$ 上的 MAC。先加密后 MAC 系统 $\mathcal{E}_\mathrm{EtM}=(E_\mathrm{EtM},D_\mathrm{EtM})$，简称为 $\mathrm{EtM}$，定义如下：
+
+\vspace*{10pt}
+
+\hspace*{20pt} $E_\mathrm{EtM}\big((k_\mathrm{e},k_\mathrm{m}),\;m\big)$
+				\quad $:=$ \quad
+				$c\overset{\rm R}\leftarrow E(k_\mathrm{e},m)$,
+				\quad
+				$t\overset{\rm R}\leftarrow S(k_\mathrm{m},c)$\\
+\hspace*{165.5pt} 输出 $(c,t)$
+
+\vspace*{5pt}
+
+\hspace*{7pt} $D_\mathrm{EtM}\big((k_\mathrm{e},k_\mathrm{m}),\;(c,t)\big)$
+				\quad $:=$ \quad
+				如果 $V(k_\mathrm{m},c,t)=\mathsf{reject}$，则输出 $\mathsf{reject}$\\
+\hspace*{165.5pt} 否则输出 $D(k_\mathrm{e},c)$
+
+\vspace*{10pt}
+
+\noindent
+我们称 $\mathrm{EtM}$ 系统定义在 $(\mathcal{K}_\mathrm{e}\times\mathcal{K}_\mathrm{m},\;\mathcal{M},\;\mathcal{C}\times\mathcal{T})$ 上。下面的定理将表明，$\mathcal{E}_\mathrm{EtM}$ 能够提供认证加密。
+
 \begin{theorem}\label{theo:9-2}
-	
+令 $\mathcal{E}=(E,D)$ 是一个密码，$\mathcal{I}=(S,V)$ 是一个 MAC 系统。如果 $\mathcal{E}$ 是 CPA 安全的，且 $\mathcal{I}$ 是一个安全的 MAC 系统，则 $\mathcal{E}_\mathrm{EtM}$ 就是 AE 安全的。此外，如果 $\mathcal{E}$ 是语义安全的，且 $\mathcal{I}$ 是一个一次性安全的 MAC 系统，则 $\mathcal{E}_\mathrm{EtM}$ 就是 1AE 安全的。
+\begin{quote}
+特别地，对于每个像攻击游戏 \ref{game:9-1} 中那样攻击 $\mathcal{E}_\mathrm{EtM}$ 的密文完整性对手 $\mathcal{A}_\mathrm{ci}$，都存在一个像攻击游戏 \ref{game:6-1} 中那样攻击 $\mathcal{I}$ 的 MAC 对手 $\mathcal{B}_\mathrm{mac}$，其中 $\mathcal{B}_\mathrm{mac}$ 是一个围绕 $\mathcal{A}_\mathrm{ci}$ 的基本包装器，由其发起的签名查询不多于由 $\mathcal{A}_\mathrm{ci}$ 发起的加密查询，满足：
+\end{quote}
+\[
+\mathrm{CI}\mathsf{adv}[\mathcal{A}_\mathrm{ci},\mathcal{E}_\mathrm{EtM}]
+=
+\mathrm{MAC}\mathsf{adv}[\mathcal{B}_\mathrm{mac},\mathcal{I}]
+\]
+\begin{quote}
+对于每个像攻击游戏 \ref{game:5-2} 中那样攻击 $\mathcal{E}_\mathrm{EtM}$ 的 CPA 对手 $\mathcal{A}_\mathrm{cpa}$，都存在一个像攻击游戏 \ref{game:5-2} 中那样攻击 $\mathcal{E}$ 的 CPA 对手 $\mathcal{B}_\mathrm{cpa}$，其中 $\mathcal{B}_\mathrm{cpa}$ 是一个围绕 $\mathcal{A}_\mathrm{cpa}$ 的基本包装器，由其发起的加密查询不多于由 $\mathcal{A}_\mathrm{cpa}$ 发起的加密查询，满足：
+\end{quote}
+\[
+\mathrm{CPA}\mathsf{adv}[\mathcal{A}_\mathrm{cpa},\mathcal{E}_\mathrm{EtM}]
+=
+\mathrm{CPA}\mathsf{adv}[\mathcal{B}_\mathrm{cpa},\mathcal{E}]
+\]
 \end{theorem}
 
-\subsection{先MAC后加密一般是不安全的：SSL上的填充预言机攻击}\label{subsec:9-4-2}
+\begin{proof}
+我们先证明 $\mathcal{E}_\mathrm{EtM}$ 能够提供密文完整性。该证明可以通过一个直接的归约实现。假设 $\mathcal{A}_\mathrm{ci}$ 是一个攻击 $\mathcal{E}_\mathrm{EtM}$ 的密文完整性对手。我们构建一个攻击 $\mathcal{I}$ 的 MAC 对手 $\mathcal{B}_\mathrm{mac}$。
 
-\subsection{更多的填充预言机攻击}\label{subsec:9-4-3}
+对手 $\mathcal{B}_\mathrm{mac}$ 在 $\mathcal{I}$ 的 MAC 攻击游戏中扮演对手的角色，它与一个 MAC 挑战者 $\mathbf{C}_\mathrm{mac}$ 交互，后者在交互开始时随机选取一个 $k_\mathrm{m}\overset{\rm R}\leftarrow\mathcal{K}_\mathrm{m}$。然后，对手 $\mathcal{B}_\mathrm{mac}$ 模拟 $\mathcal{A}_\mathrm{ci}$ 的 $\mathcal{E}_\mathrm{EtM}$ 密文完整性挑战者，运行如下：
 
-\subsection{先MAC后加密的安全范例}\label{subsec:9-4-4}
+\vspace*{10pt}
+
+\hspace*{5pt} 随机选取 $k_\mathrm{e}\overset{\rm R}\leftarrow\mathcal{K}_\mathrm{e}$\\
+\hspace*{26pt} 当从 $\mathcal{A}_\mathrm{ci}$ 处收到一个查询 $m_i\in\mathcal{M}$ 时：\\
+\hspace*{50pt} 令 $c_i\overset{\rm R}\leftarrow E(k_\mathrm{e},m_i)$\\
+\hspace*{50pt} 在 $c_i$ 处查询 $\mathbf{C}_\mathrm{mac}$，并获得一个应答 $t_i\overset{\rm R}\leftarrow S(k_\mathrm{m},c_i)$\\
+\hspace*{50pt} 将 $(c_i,t_i)$ 发送给 $\mathcal{A}_\mathrm{ci}$
+\hspace*{10pt} // \quad \emph{于是有} $(c_i,t_i)=E_\mathrm{EtM}\big((k_\mathrm{e},k_\mathrm{m}),m_i\big)$\\
+\hspace*{26pt} 最后，$\mathcal{A}_\mathrm{ci}$ 输出一条密文 $(c,t)\in\mathcal{C}\times\mathcal{T}$\\
+\hspace*{26pt} 输出该消息-标签对 $(c,t)$
+
+\vspace*{10pt}
+
+\noindent
+应该明确的是，$\mathcal{B}_\mathrm{mac}$ 就像在一个真正的密文完整性攻击游戏中一样对 $\mathcal{A}_\mathrm{ci}$ 的查询给出了应答。因此，对手 $\mathcal{A}_\mathrm{ci}$ 能以 $\mathrm{CI}\mathsf{adv}[\mathcal{A}_\mathrm{ci},\mathcal{E}_\mathrm{EtM}]$ 的概率输出一条能让它赢得攻击游戏 \ref{game:9-1} 的密文 $(c,t)$，满足 $(c,t)\notin\{(c_1,t_1),\dots\}$ 且 $V(k_\mathrm{m},c,t)=\mathsf{accept}$。由此可知，$(c,t)$ 是一个能让 $\mathcal{B}_\mathrm{mac}$ 赢得 MAC 攻击游戏的消息-标签对。因此，我们可得 $\mathrm{CI}\mathsf{adv}[\mathcal{A}_\mathrm{ci},\mathcal{E}_\mathrm{EtM}]=\mathrm{MAC}\mathsf{adv}[\mathcal{B}_\mathrm{mac},\mathcal{I}]$，正如定理所要求的。
+
+剩下的工作就是证明，如果 $\mathcal{E}$ 是 CPA 安全的，则 $\mathcal{E}_\mathrm{EtM}$ 也是安全的。这就等于是说，密文中包含的那个使用密钥 $k_\mathrm{m}$ 计算出来的（因而根本不涉及加密密钥 $k_\mathrm{e}$）标签不会在攻击者破坏 $\mathcal{E}_\mathrm{EtM}$ 的 CPA 安全性时提供帮助。这部分的证明非常简单，我们将其留作练习（可参见练习 \ref{exer:5-20}）。
+\end{proof}
+
+回顾一下我们在第\ref{chap:6}章中给出的安全的 MAC 的定义，我们要求，给定一个消息-标签对 $(c,t)$，攻击者无法制造一个新的标签 $t\neq t'$，同时使得 $(c,t')$ 也是一个合法的消息-标签对。在当时，这样的要求似乎有些奇怪：如果攻击者已经有了一个 $c$ 的有效标签，我们为什么还要关心它能否为 $c$ 找到另一个标签？现在，我们看到，如果攻击者能为 $c$ 找到另一个有效标签 $t'$，他就可以破坏 $\mathrm{EtM}$ 的密文完整性。攻击者可以使用 $\mathrm{EtM}$ 的密文 $(c,t)$ 来构建另一条有效密文 $(c,t')$，并赢得密文完整性游戏。我们对安全的 MAC 的定义能够确保，攻击者无法修改 $\mathrm{EtM}$ 的密文而不被发现。
+
+\subsubsection{实现先加密后 MAC 时的常见错误}\label{subsubsec:9-4-1-1}
+
+在实现先加密后 MAC 时，一个常见的错误是为密码和 MAC 选用相同的密钥，即设置 $k_\mathrm{e}=k_\mathrm{m}$。由此产生的系统无法提供认证加密，而且可能是不安全的，如练习 \ref{exer:9-8} 中所展示的那样。在定理 \ref{theo:9-2} 的证明中，我们利用了这样一个事实，即两个密钥 $k_\mathrm{e}$ 和 $k_\mathrm{m}$ 的选择是相互独立的。
+
+另一种常见的错误是只对密文的一部分应用 MAC 签名算法。我们看一个例子。假设底层的 CPA 安全密码 $\mathcal{E}=(E,D)$ 是由随机化 CBC 模式（见 \ref{subsec:5-4-3} 小节）构建的，那么消息 $m$ 的加密就是 $(r,c)\overset{\rm R}\leftarrow E(k,m)$，这里的 $r$ 是一个随机 IV。当实现先加密后 MAC $\mathcal{E}_\mathrm{EtM}=(E_\mathrm{EtM},D_\mathrm{EtM})$ 时，加密算法被错误地定义为：
+\[
+E_\mathrm{EtM}\big((k_\mathrm{e},k_\mathrm{m}),\;m\big)
+:=
+\big\{
+(r,c)\overset{\rm R}\leftarrow E(k_\mathrm{e},m),
+\;
+t\overset{\rm R}\leftarrow S(k_\mathrm{m},c),
+\;
+\text{输出}\,(r,c,t)
+\big\}
+\]
+这里，$E(k_\mathrm{e},m)$ 输出了密文 $(r,c)$，但 MAC 签名算法只被应用到了 $c$ 上，而 IV 没有受到 MAC 的保护。这个错误会完全破坏密文完整性：给定一条密文 $(r,c,t)$，攻击者可以创建另一条有效密文 $(r',c,t)$，而 $r'\neq r$。解密算法无法检测到这种对 IV 的修改，更不会输出 $\mathsf{reject}$。相反，解密算法会输出 $D\big(k_\mathrm{e},(r',c)\big)$。由于 $(r',c,t)$ 是一条有效密文，对手就赢得了密文完整性游戏。更糟糕的是，假如 $(r,c,t)$ 是对一条消息 $m$ 的加密，那么对于任意的 $\Delta$，将 $(r,c,t)$ 改为 $(r\oplus\Delta,c,t)$ 都会使得 CBC 解密算法输出一条消息 $m'$，而 $m'[0]=m[0]\oplus\Delta$。这意味着，攻击者可以将 $m$ 的第一个分组中的头部信息改为它自己所选择的任何值。ISO 19772 认证加密标准的一个早期版本正是犯了这个错误 \cite{namprempre2014reconsidering}。类似地，在 2013 年，有人发现苹果公司的 iOS 系统中为数据加密而建立的 \texttt{RNCryptor} 设施使用了一个错误的先加密后 MAC，其中的 HMAC 没有被应用到加密 IV 上 \cite{napier2013rncryptor}。
+
+在实现中，另一个需要注意的隐患是，在整条消息的完整性标签都被验证完成之前，系统不应当输出任何明文数据。\ref{sec:9-9} 节会介绍这方面的一个例子。
+
+\subsection{先 MAC 后加密一般是不安全的：SSL 上的填充预言机攻击}\label{subsec:9-4-2}
+
+接下来，我们考虑由一个 CPA 安全密码和一个安全的 MAC 的构成的先 MAC 后加密通用组合。我们将表明，这种构造不一定是 AE 安全的，而且可能会导致许多现实世界中的问题。
+
+为了准确定义先 MAC 后加密范式，令 $\mathcal{I}=(S,V)$ 是一个定义在 $(\mathcal{K}_\mathrm{m},\mathcal{M},\mathcal{T})$ 上的 MAC，$E=(E,D)$ 是一个定义在 $(\mathcal{K}_\mathrm{e},\mathcal{M}\times\mathcal{T},\mathcal{C})$ 上的密码。先 MAC 后加密系统 $\mathcal{E}_\mathrm{MtE}=(E_\mathrm{MtE},D_\mathrm{MtE})$，或简称 $\mathrm{MtE}$，定义如下：
+
+\vspace*{10pt}
+
+\hspace*{20pt} $E_\mathrm{MtE}\big((k_\mathrm{e},k_\mathrm{m}),\;m\big)$
+				\quad $:=$ \quad
+				$t\overset{\rm R}\leftarrow E(k_\mathrm{m},m)$,
+				\quad
+				$c\overset{\rm R}\leftarrow S\big(k_\mathrm{e},\,(m,t)\big)$\\
+\hspace*{165.5pt} 输出 $c$
+
+\vspace*{5pt}
+
+\hspace*{24pt} $D_\mathrm{MtE}\big((k_\mathrm{e},k_\mathrm{m}),\;c\big)$
+				\quad $:=$ \quad
+				$(m,t)\leftarrow D(k_\mathrm{e},c)$\\
+\hspace*{165.5pt} 如果 $V(k_\mathrm{m},m,t)=\mathsf{reject}$，则输出 $\mathsf{reject}$\\
+\hspace*{165.5pt} 否则输出 $D(k_\mathrm{e},c)$
+
+\vspace*{10pt}
+
+\noindent
+我们称 $\mathrm{MtE}$ 系统定义在 $(\mathcal{K}_\mathrm{e}\times\mathcal{K}_\mathrm{m},\;\mathcal{M},\;\mathcal{C})$。
+
+\begin{snote}[一种被彻底破解的 $\mathbf{MtE}$ 密码。]
+我们表明，就算 $\mathcal{E}$ 是一个 CPA 安全的密码，$\mathcal{I}$ 是一个安全的 MAC，$\mathrm{MtE}$ 也不一定是 AE 安全的。事实上，对于广泛使用的密码和 MAC 来说，$\mathrm{MtE}$ 很可能是不安全的，而这在事实上已经导致了很多针对已部署系统的重大攻击。
+
+考虑一下用于保护 WWW 流量的 SSL 3.0 协议，该协议已经被使用了二十多年（但在现代浏览器中被禁用）。SSL 3.0 使用 $\mathrm{MtE}$ 来组合随机化 CBC 模式加密和安全 MAC。我们曾在第\ref{chap:5}章中表明，随机化 CBC 模式加密是 CPA 安全的，尽管如此，这种组合仍然被彻底破解了：攻击者可以使用选择密文攻击有效地解密所有流量。这就导致了一种针对 SSL 3.0 的破坏性攻击，称为 \textbf{POODLE} \cite{moller2014poodle}。
+
+我们假设 CBC 中所使用的底层分组密码运行在 $16$ 字节分组上，就像 AES 那样。回顾一下，CBC 模式加密将其输入填充到分组长度的整数倍，而在 SSL 3.0 中，具体的做法如下：如果需要一个长度为 $p>0$ 字节的填充序列，该方案就用一个长为 $p-1$ 字节的任意序列来填充消息，并且增加再额外增加一个字节，该字节的值就是 $(p-1)$。如果消息长度已经是分组长度（$16$ 字节）的整数倍，SSL 3.0 就会添加一个长为 $16$ 字节的假分组，其最后一个字节被置为 $15$，而其前 $15$ 字节是任意内容。在解密过程中，算法会读取最后一个字节，并移除其值相应的那么多字节，以正确地移除填充。
+
+具体来说，将 $\mathrm{MtE}$ 应用于随机化 CBC 模式加密和安全 MAC 得到的密码 $\mathcal{E}_\mathrm{MtE}=(E_\mathrm{MtE},D_\mathrm{MtE})$ 工作如下：
+\begin{itemize}
+	\item $E_\mathrm{MtE}\big((k_\mathrm{e},k_\mathrm{m}),\,m\big)$：首先，使用 MAC 签名算法为 $m$ 计算一个定长标签 $t\overset{\rm R}\leftarrow E(k_\mathrm{m},m)$。然后，用随机化 CBC 加密对 $m\,\Vert\,t$ 进行加密：对信息进行填充，然后使用密钥 $k_\mathrm{e}$ 和一个随机的 IV 在 CBC 模式下进行加密。因此，下面的数据会被加密以生成密文 $c$：
+	\begin{equation}\label{eq:9-8}
+		\boxed{\qquad\qquad\text{消息}\; m \qquad\qquad}\boxed{\quad\text{标签}\; t \quad}\boxed{\quad\text{填充}\; p \quad}
+	\end{equation}
+	
+	请注意，标签 $t$ 并不保护填充的完整性。我们将利用这一点，用选择密文攻击来打破 CPA 安全性。
+	\item $D_\mathrm{MtE}\big((k_\mathrm{e},k_\mathrm{m}),\,c\big)$：运行 CBC 解密以获得式 \ref{eq:9-8} 中的明文数据。然后，读取式 \ref{eq:9-8} 中最后一字节，并从数据中移除与其值相等长度的字节（即，如果最后一字节的值是 $3$，就移除该字节，再额外移除 $3$ 个字节），以完全移除填充 $p$。最后验证 MAC 标签，如果有效，就返回剩余的字节作为消息，否则就输出 $\mathsf{reject}$。
+\end{itemize}
+SSL 3.0 和 TLS 1.0 都使用了随机化 CBC 加密的一种有缺陷的变体，我们曾在练习 \ref{exer:5-13} 中讨论过这个问题，但它与我们这里的讨论无关。在这里，我们假设所使用的随机化 CBC 加密的实现是正确的。
+\end{snote}
+
+\begin{snote}[选择密文攻击。]
+我们展示一种针对 $\mathcal{E}_\mathrm{MtE}$ 系统的选择密文攻击，它能让对手解密由其挑选的任何密文。考虑到这种攻击的存在，即使底层密码是 CPA 安全的，$\mathcal{E}_\mathrm{MtE}$ 也不一定是 AE 安全的。接下来，我们用 $(E,D)$ 表示用在 CBC 加密中的底层分组密码，它作用于 $16$ 字节的数据分组。
+
+假设对手截获了一条对应于未知消息 $m$ 的有效密文 $c:=E_\mathrm{MtE}\big((k_\mathrm{e},k_\mathrm{m}),\,m)$。$m$ 的长度满足如下条件，即当 MAC 标签 $t$ 被添加到 $m$ 之后，$(m\,\Vert\,t)$ 的长度是 $16$ 字节的整数倍。这就意味着，在 CBC 加密的过程中，有一个完整的 $16$ 字节填充分组被添加到了消息后，且这个填充分组的最后一个字节的值是 $15$。因此，密文看起来就像下面这样：
+\[
+	c\quad = \quad
+	\underbrace{\boxed{\quad c[0]\quad}}_{\text{IV}}\!
+	\underbrace{\boxed{\quad c[1]\quad}\;\;\;\cdots\quad}_{m\,\text{的加密}}
+	\underbrace{\quad\boxed{\; c[\ell-1]\;}}_{\text{加密标签}}\!
+	\underbrace{\boxed{\quad c[\ell]\quad}}_{\text{加密填充}}
+\]
+
+我们首先证明，对手能够学到一些关于 $m[0]$（$m$ 的第一个 $16$ 字节分组）的知识。这将打破 $\mathcal{E}_\mathrm{MtE}$ 的语义安全性。攻击者用 $c[1]$ 替换 $c$ 的最后一个分组，以准备一个选择密文查询 $\hat{c}$。也就是说：
+\begin{equation}\label{eq:9-9}
+\hat{c}\quad := \quad
+\boxed{\quad c[0]\quad}
+\boxed{\quad c[1]\quad}
+\quad\cdots\quad
+\boxed{\; c[\ell-1]\;}\!
+\underbrace{\boxed{\quad c[1]\quad}}_{\text{加密填充？}}
+\end{equation}
+根据 CBC 解密的定义，解密 $\hat{c}$ 的最后一个分组可以得到 $16$ 字节的明文分组：
+\[
+v:=D\left(k_\mathrm{e},c[1]\right)\oplus c[\ell-1]=m[0]\oplus c[0]\oplus c[\ell-1]
+\]
+如果 $v$ 最后一字节的值是 $15$，那么在解密过程中，最后一个分组会被视为一个填充分组而被删除。剩下的序列是一个有效的消息-标签对，能够被正确地解密。如果 $v$ 最后一字节的值不是 $15$，那么对解密查询的应答很有可能就是 $\mathsf{reject}$。
+
+换言之，如果对 $\hat{c}$ 的解密查询的应答不是 $\mathsf{reject}$，攻击者就能知道，$m[0]$ 的最后一个字节就等于 $u:=15\oplus c[0]\oplus c[\ell-1]$ 的最后一个字节。否则，攻击者也能知道 $m[0]$ 的最后一个字节不等于 $u$ 的最后一个字节。这就直接打破了 $\mathcal{E}_\mathrm{MtE}$ 的语义安全性：攻击者能够获得一些关于明文 $m$ 的知识。
+
+读者可以用选择密文攻击中的对手（就像在攻击游戏 \ref{game:9-2} 中那样）重述上述攻击，我们将它留作一个启发性的练习。只要通过单次明文查询和单次密文查询，对手就能以 $1/256$ 的优势赢得游戏。这就证明 $\mathcal{E}_\mathrm{MtE}$ 是不安全的。
+
+现在，假设攻击者使用另一个 IV 获得了对 $m$ 的另一个加密 $c'$。攻击者可以用密文 $c$ 和 $c'$ 来构造四个有用的选择密文查询：它可以用 $c[1]$ 或 $c'[1]$ 替换 $c$ 或 $c'$ 的最后一个分组。攻击者发出这四个密文查询，就可以了解到 $m[0]$ 的最后一字节是否等于以下四个值：
+\[
+15\oplus c[0]\oplus c[\ell-1],\qquad
+15\oplus c[0]\oplus c'[\ell-1],\qquad
+15\oplus c'[0]\oplus c[\ell-1],\qquad
+15\oplus c'[0]\oplus c'[\ell-1]
+\]
+中某一个的最后一字节。如果这四个值各不相同，他们就能给攻击者提供四次学习 $m[0]$ 的最后一字节的机会。使用对消息 $m$ 的新加密多次重复这一过程，攻击者很快就能确定 $m[0]$ 的最后一字节。每次选择密文查询都能以 $1/256$ 的概率确定该字节。因此，平均来说，只要进行 $256$ 次选择密文查询，攻击者就能知道 $m[0]$ 的最后一字节的确切值。所以，攻击者可以打破语义安全性，更具体地说，它可以恢复明文的一个字节。接下来，假设攻击者能够请求对 $m$ 右移一比特后明文的加密，得到一条密文 $c_1$。将 $c1[1]$ 插入上一阶段密文（即对未移位的 $m$ 的加密）的最后一个分组，然后发出选择密文查询，攻击者就能揭示 $m[0]$ 的倒数第二个字节。对 $m$ 的每个字节重复该过程，就能够揭示 $m$ 的全部信息。下面我们表明，这能够导出一种针对 SSL 3.0 的真实攻击。
+\end{snote}
+
+\begin{snote}[彻底攻破 SSL 3.0。]
+选择密文攻击似乎只在理论上可行，但事实上，它们经常被转化为极具破坏性的现实世界攻击。考虑一个网络浏览器和一个名为 \texttt{bank.com} 的受害网络服务器。在两者之间交换的信息使用 SSL 3.0 加密。浏览器和服务器之间共享一个被称为 cookie 的秘密，浏览器在它每一个发往 \texttt{bank.com} 的请求中都嵌入了这个 cookie。抽象地讲，浏览器发往 \texttt{bank.com} 的请求看起来就像：
+\[
+\boxed{\;\text{GET}\;\texttt{path}\quad\text{cookie:}\;\texttt{cookie}\;}
+\]
+其中，\texttt{path} 指浏览器向 \texttt{bank.com} 请求的资源的标识符。浏览器只会在它向 \texttt{bank.com} 发出的请求中插入该 cookie。
+
+攻击者的目标是恢复秘密的 cookie。首先，它让浏览器访问 \texttt{attacker.com}，在那里，它会向浏览器发送一个 JavaScript 程序。这个程序会迫使浏览器请求 \texttt{bank.com} 的资源 \texttt{/AA}。之所以请求这个路径，是为了确保消息和 MAC 的长度是分组长度（$16$ 字节）的倍数，这是攻击所需要的。因此，浏览器向 \texttt{bank.com} 发送以下请求：
+\begin{equation}\label{eq:9-10}
+\boxed{\;\text{GET}\;\texttt{/AA}\quad\text{cookie:}\;\texttt{cookie}\;}
+\end{equation}
+该请求会被 SSL 3.0 加密。攻击者可以截获这个加密请求 $c$，并对 MtE 发起选择密文攻击，以了解 cookie 的一个字节。也就是说，攻击者会像式 \ref{eq:9-9} 那样准备好一个 $\hat{c}$，将 $\hat{c}$ 发送给 \texttt{bank.com}，并查看\texttt{bank.com} 是否应答一个 SSL 报错信息。如果没有产生报错信息，攻击者就能知道 cookie 的一个字节。JavaScript 程序可以迫使浏览器重复发出式 \ref{eq:9-10} 中的请求，以给攻击者提供它所需的新鲜密文，直到最终揭示 cookie 的一个字节。
+
+一旦对手知道了 cookie 的一个字节，它就可以让 JavaScript 程序向 \texttt{bank.com} 发出请求：
+\[
+\boxed{\;\text{GET}\;\texttt{/AAA}\quad\text{cookie:}\;\texttt{cookie}\;}
+\]
+以将 cookie 右移一个字节。这就为攻击者提供了一新的密文分组，不妨将其称作 $c_1[2]$，其中 cookie 被右移了一个字节。重新向服务器发送上一阶段的请求，但现在最后一个分组被替换为 $c_1[2]$，直到揭示 cookie 的第二个字节。对 cookie 的每一个字节重复这一过程，最终就能够揭示整个 cookie。
+
+实际上，浏览器中的 JavaScript 程序能够为攻击者发动选择明文攻击提供充足的工具。而拦截网络中的数据包，对其进行修改并观察服务器的响应，就能为攻击者发动选择密文攻击提供充分的信息。这两者的结合就能完全打破 SSL 3.0 的 MtE 加密。
+
+一个小细节是，每当 \texttt{bank.com} 应答一个 SSL 报错信息，SSL 会话都会关闭。但这并不构成问题：每当浏览器中的 JavaScript 程序向 \texttt{bank.com} 发起一个新的请求，都会自动启动一个新的 SSL 会话。因此，每个选择密文查询都是在不同的会话密钥下加密的，但这对攻击来说没有任何区别：每个查询都会检验 cookie 的一个字节是否等于一个已知的随机字节。只要有足够的查询，攻击者就能了解整个 cookie。
+\end{snote}
+
+\subsection{其他填充预言机攻击}\label{subsec:9-4-3}
+
+TLS 1.0 是 SSL 3.0 的一个更新版本。它在填充中添加新的结构（见 \ref{subsec:5-4-4} 小节），以此来防御上一小节中的攻击：当填充 $p$ 个字节时，填充中所有字节的内容都会被置为 $p-1$。此外，在解密过程中，解密者需要检查所有填充字节的值是否都是正确的，如果不然就拒绝密文。这使得攻击者难以发动上一小节中介绍的攻击。当然，我们的目标只是想要表明 MtE 一般来说是不安全的，而 SSL 3.0 已经充分说明了这一点。
+
+\begin{snote}[一种填充预言机计时攻击。]
+尽管 TLS 1.0 加入了新的防御措施，但是对 MtE 解密的简陋实现仍然可能遭受攻击。假设这种实现是这样工作的：首先，它使用 CBC 解密所收到的密文；然后，它检查填充结构是否有效，如果不然，它就拒绝该密文；反之，如果填充是有效的，它就检查完整性标签，如果标签也是有效的，它就返回明文。在这个实现中，只有填充结构有效时，完整性标签才会被检查。这意味着，如果有一条密文包含无效的填充结构，而另一条密文包含有效的填充，但其标签是无效的，那么前者会比后者更快被拒绝。攻击者可以测量服务器应答一次选择密文查询所需的时间，如果很快就返回了一条 TLS 错误消息，它就能知道填充结构是无效的。否则，它至少能了解到这个填充是有效的。
+
+这种计时信道被称为\textbf{填充预言机边信道(padding oracle side-channel)}。就像我们在 SSL 3.0 中所做的那样，我们也可以根据这种行为设计一个选择密文攻击，来完全解密一个秘密 cookie，读者可以将其当作一种很好的练习。为了了解如何实现这种攻击，不妨假设一个攻击者截获了一条加密 TLS 1.0 记录 $c$。令 $m$ 是 $c$ 的解密。假设攻击者想要检验 $m[2]$ 的最后一字节是否等于某个固定值 $b$。攻击者创建一个新的密文分组 $\hat{c}[1]:=c[1]\oplus B$，并将包含三个分组的记录 $\hat{c}=(c[0],\hat{c}[1],c[2])$ 发送给服务器。在对 $\hat{c}$ 进行 CBC 解密后，最后一个明文分组将是：
+\[
+\hat{m}[2]
+:=\hat{c}[1]\oplus D\big(k,c[2]\big)
+=m[2]\oplus B
+\]
+如果 $m[2]$ 的最后一字节等于 $b$，$\hat{m}[2]$ 的最后一比特就是 $0$，而这是一个有效的填充。服务器会尝试验证完整性标签，而这就会导致响应缓慢。如果 $m[2]$ 的最后一字节不等于 $b$，$\hat{m}[2]$ 就不以 $0$ 结尾，并且这很可能是一个无效的填充，而服务器很快就会给出应答。通过测量响应时间，攻击者就可以了解到 $m[2]$ 的最后一字节是否等于 $b$。就像我们对 SSL 3.0 所做的那样，用多个选择密文查询来重复这一过程，就可以揭示整个秘密 cookie。
+
+有一种和用在 TLS 1.0 中的攻击类似，但更加复杂的 MtE 填充预言机计时攻击，被称作 Lucky13 \cite{al2013lucky}。想要在实现 TLS 1.0 解密时针对 Lucky13 攻击隐藏计时信息是相当有挑战性的。
+\end{snote}
+
+\begin{snote}[信息性报错消息。]
+更糟糕的是，TLS 1.0 规范 \cite{dierks1999rfc2246} 中规定，当收到的密文因 MAC 验证错误而被拒绝时，服务器应发送一种特定类型（被称作 \texttt{bad\_record\_mac}）的报错消息；而当密文因填充分组无效而被拒绝时，服务器应发送另一种类型（被称作 \texttt{decryption\_failed}）的报错消息。理论上，这就能告诉攻击者，一条密文被拒绝到底是因为填充分组无效，还是因为完整性标签被损坏。这就可以使上述选择密文攻击成为可能，而且不需要借助于计时信息。唯一幸运的是，报错消息是加密的，攻击者无法看到错误代码。
+
+尽管如此，这里仍然有一个重要的教训：当解密失败时，系统决不应该解释原因。应该发送一个通用的``\texttt{decryption\_failed}"代码，而不提供任何其他信息。这个问题在 TLS 1.1 中得到了承认和解决。此外，当解密失败时，无论失败的原因是什么，正确的实现总是应该花费相同的时间提供应答。
+\end{snote}
+
+\subsection{安全的先 MAC 后加密实例}\label{subsec:9-4-4}
 
 \begin{theorem}\label{theo:9-3}
 	

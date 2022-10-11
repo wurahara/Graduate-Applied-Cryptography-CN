@@ -95,69 +95,120 @@
 \mathrm{1CCA}\mathsf{adv}^*[\mathcal{A},\mathcal{E}]
 \end{equation}
 
-% TODO: here
-
 \subsection{认证加密意味着选择密文安全性}\label{subsec:9-2-3}
 
-我们现在表明，每个AE安全的系统也是CCA安全的。同样地，每个1AE安全的系统都是1CCA安全的。
+下面我们表明，每个 AE 安全的系统都是 CCA 安全的。同样地，每个 1AE 安全的系统都是 1CCA 安全的。
 
 \begin{theorem}\label{theo:9-1}
-让E = (E,D) 是一个密码。如果E是AE安全的，那么它就是CCA安全的。如果E是1AE安全的，那么它就是1CCA安全的。
-
-特别是，假设A是E的一个CCA-反面，它最多只能进行Qe次加密查询和Qd次解密查询。那么，存在一个CPA-adversary Bcpa和一个CI-adversary Bci，其中Bcpa和Bci是围绕A的基本包装，从而
-
-CCAadv[A, E] ≤ CPAadv[Bcpa, E] + 2Qd - CIadv[Bci, E]。
-
-此外，Bcpa和Bci都最多进行Qe次加密查询。
+令 $\mathcal{E}=(E,D)$ 是一个密码。如果 $\mathcal{E}$ 是 AE 安全的，那么它也是 CCA 安全的。如果 $\mathcal{E}$ 是 1AE 安全的，那么它也是 1CCA 安全的。
+\begin{quote}
+特别地，假设 $\mathcal{A}$ 是一个针对 $\mathcal{E}$ 的 CCA 对手，它最多发起 $Q_\mathrm{e}$ 次加密查询和 $Q_\mathrm{d}$ 次解密查询。则存在一个 CPA 对手 $\mathcal{B}_\mathrm{cpa}$ 和一个 CI 对手 $\mathcal{B}_\mathrm{ci}$，其中，$\mathcal{B}_\mathrm{cpa}$ 和 $\mathcal{B}_\mathrm{ci}$ 都是围绕 $\mathcal{A}$ 的基本包装器，满足：
+\end{quote}
+\begin{equation}\label{eq:9-3}
+\mathrm{CCA}\mathsf{adv}[\mathcal{A},\mathcal{E}]
+\leq
+\mathrm{CPA}\mathsf{adv}[\mathcal{B}_\mathrm{cpa},\mathcal{E}]+
+2Q_\mathrm{d}\cdot
+\mathrm{CI}\mathsf{adv}[\mathcal{B}_\mathrm{ci},\mathcal{E}]
+\end{equation}
+\begin{quote}
+此外，$\mathcal{B}_\mathrm{cpa}$ 和 $\mathcal{B}_\mathrm{ci}$ 最多都只能发起 $Q_\mathrm{e}$ 次加密查询。
+\end{quote}
 \end{theorem}
 
-在证明这个定理之前，我们要指出一个反证：如果一个密码是CCA安全的，并且提供明文完整性，那么它一定是AE安全的。在练习9.15中要求你证明这一点。这两个结果共同为AE安全是不安全网络上通用通信的正确安全概念这一说法提供了有力支持。我们还注意到，有可能建立一个不提供密文（或明文）完整性的CCA安全密码--见练习9.12的例子。
+在证明该定理之前，我们先指出它的一个逆命题：如果一个密码是 CCA 安全的，并且能够提供\emph{明文}完整性，它就一定是 AE 安全的。在练习 \ref{exer:9-15} 中，我们要求你证明这一命题。这两个结论共同为下面这一论断提供了一个非常强的支撑，即 AE 安全性对于在非安全信道上的通用通信需求来说是\emph{正确的}安全定义。我们还注意到，建立一个不提供密文（或明文）完整性的 CCA 安全密码也是有可能的，我们会在练习 \ref{exer:9-12} 中提供一个例子。
 
 \begin{proof}[证明思路]
-一个CCA对手A发出加密和允许解密的查询。我们首先论证，对所有这些解密查询的响应必须是拒绝。为了了解原因，观察一下，如果对手曾经发出一个有效的解密查询ci，其解密不是拒绝，那么这个ci可以用来赢得密码文本完整性游戏。因此，由于A的所有解密查询都被拒绝了，对手通过发出解密查询没有学到任何东西，还不如把它们丢掉。在去除解密查询后，我们最终得到一个标准的CPA游戏。由于E是CPA安全的，对手无法赢得这个游戏。我们的结论是，A在赢得CCA游戏中的优势可以忽略不计。
+一个 CCA 对手 $\mathcal{A}$ 发起加密查询和被允许的解密查询。我们首先论证，所有对于这些解密查询的应答都必然是 $\mathsf{reject}$。想要知道为什么，不妨观察一下，如果对手曾经发起过一个有效的解密查询 $c_i$，并且对它的解密不是 $\mathsf{reject}$，那么这个 $c_i$ 就可以被用于赢得密文完整性游戏。因此，由于 $\mathcal{A}$ 的所有解密查询都会被拒绝，对手无法通过发起解密查询学到任何新的东西，因此还不如直接丢弃掉它们。在移除解密查询后，我们最终得到的就是一个标准的 CPA 游戏。由于 $\mathcal{E}$ 是 CPA 安全的，因此对手无法赢得该游戏。我们的结论就是，$\mathcal{A}$ 在赢得 CCA 游戏中的优势可忽略不计。
 \end{proof}
 
 \begin{proof}
-假设A是一个高效的CCA对手，如攻击游戏9.2中那样攻击E，它最多进行Qe次加密查询和Qd次解密查询。我们想证明CCAadv[A,E]是可以忽略的，假设E是AE安全的。我们将使用CCA和CPA攻击游戏的比特猜测版本，并表明
+假设 $\mathcal{A}$ 是一个有效 CCA 对手，它像在攻击游戏 \ref{game:9-2} 中那样攻击 $\mathcal{E}$，最多发起 $Q_\mathrm{e}$ 次加密查询和 $Q_\mathrm{d}$ 次解密查询。我们想证明，如果 $\mathcal{E}$ 是 AE 安全的，$\mathrm{CCA}\mathsf{adv}[\mathcal{A},\mathcal{E}]$ 就是可忽略不计的。下面，我们使用 CCA 和 CPA 攻击游戏的比特猜测版本，并表明：
+\begin{equation}\label{eq:9-4}
+\mathrm{CCA}\mathsf{adv}^*[\mathcal{A},\mathcal{E}]
+\leq
+\mathrm{CPA}\mathsf{adv}^*[\mathcal{B}_\mathrm{cpa},\mathcal{E}]+
+Q_\mathrm{d}\cdot
+\mathrm{CI}\mathsf{adv}[\mathcal{B}_\mathrm{ci},\mathcal{E}]
+\end{equation}
+其中，$\mathcal{B}_\mathrm{cpa}$ 和 $\mathcal{B}_\mathrm{ci}$ 是两个有效对手。这样，根据式 \ref{eq:9-4}，\ref{eq:9-1} 和 \ref{eq:5-4}，我们就能得到式 \ref{eq:9-3}。此外，正如我们将要看到的，对手 $\mathcal{B}_\mathrm{cpa}$ 最多发起 $Q_\mathrm{e}$ 次加密查询；因此，如果 $\mathcal{E}$ 是 1AE 安全的，它也一定是 1CCA 安全的。
 
-CCAadv∗[A, E] ≤ CPAadv∗[Bcpa, E] + Qd - CIadv[Bci, E]。(9.4)
+\vspace*{5pt}
 
-为有效对手Bcpa和Bci。然后（9.3）由（9.4）以及（9.1）和（5.4）得出。此外，我们将看到，对手Bcpa最多只能进行Qe次加密查询；因此，如果E是1AE安全的，它也是1CCA安全的。
+\noindent\textbf{游戏 $\mathbf{0}$。}
+我们将游戏 $0$ 定义为攻击游戏 \ref{game:9-2} 的比特猜测版本。在该游戏中，挑战者工作如下：
 
-让我们把游戏0定义为攻击游戏9.2的比特猜测版本。在这个游戏中，挑战者被称为游戏0，其工作方式如下。
+\vspace*{10pt}
 
-b←R {0,1}//A在收到第1个加密查询时，将尝试猜测b k←R K
-在收到A的第i个加密查询(mi0,mi1)时，做：发送ci←R E(k,mb)给A
-在收到A的第j个解密查询cˆj时，做：发送D(k,cˆj)给A
-(1)
+\hspace*{5pt} 随机选取 $b\overset{\rm R}\leftarrow\{0,1\}$
+\hspace*{90pt} // \quad $\mathcal{A}$ \emph{会试着猜测} $b$\\
+\hspace*{26pt} 随机选取 $k\overset{\rm R}\leftarrow\mathcal{K}$
 
-最终，对手输出一个猜测ˆb∈{0，1}。如果b = ˆb，我们就说A赢得了游戏。用W0表示这一事件。根据定义，比特猜测的优势是
+\vspace*{5pt}
 
-CCAadv∗[A, E] = |Pr[W0] - 1/2|。(9.5)
+\hspace*{5pt} 当从 $\mathcal{A}$ 处收到第 $i$ 个加密查询 $(m_{i0},m_{i1})$ 时：\\
+\hspace*{50pt} 将 $c_i\overset{\rm R}\leftarrow E(k,m_b)$ 发送给 $\mathcal{A}$
 
-游戏1。现在我们把挑战者的第（1）行修改如下。
+\vspace*{5pt}
 
-(1) 发送拒绝信息给A
+\hspace*{5pt} 当从 $\mathcal{A}$ 处收到第 $j$ 个解密查询 $\hat{c}_j$ 时：\\
+\hspace*{5pt} ($1$)
+\hspace*{24.5pt} 将 $D(k,\hat{c}_j)$ 发送给 $\mathcal{A}$
 
-我们认为，A无法将这个挑战者与原挑战者区分开来。设Z是指在游戏1中，A发出一个解密查询cˆj，使D(k, cˆj ) ̸=拒绝的事件。显然，只要Z不发生，游戏0和1的进程是相同的。因此，根据差异定理（即定理4.7），可以得出|Pr[W0] - Pr[W1]| ≤ Pr[Z]。
+\vspace*{10pt}
 
-使用类似于定理6.1证明中使用的 "猜测策略"，我们可以使用A来建立一个CI对抗者Bci，以至少Pr[Z]/Qd的概率赢得CI攻击游戏。请注意，在游戏1中，根本没有使用解密算法。对手Bci的策略是简单地猜测一个随机数ω∈{1, . . . , Qd}，然后扮演A的挑战者的角色。
+\noindent
+最终，对手输出一个猜测比特 $\hat{b}\in\{0,1\}$。如果 $b=\hat{b}$，我们就称 $\mathcal{A}$ 赢得了该游戏，我们用 $W_0$ 表示这一事件。根据定义，比特猜测优势就是：
+\begin{equation}\label{eq:9-5}
+\mathrm{CCA}\mathsf{adv}^*[\mathcal{A},\mathcal{E}]
+=
+\big\lvert
+\Pr[W_0]-1/2
+\big\rvert
+\end{equation}
 
-- 当A进行加密查询时，Bci将其转发给自己的挑战者，并将响应返回给A。
-- 当A进行解密查询cˆj时，Bci只是简单地将拒绝发送给A，但如果j = ω，Bci会输出cˆj并停止。
+\noindent\textbf{游戏 $\mathbf{1}$。} 现在，我们将挑战者逻辑的第 ($1$) 行修改如下：
 
-不难看出，CIadv[Bci,E]≥Pr[Z]/Qd，所以
+\vspace*{10pt}
 
-|Pr[W0]-Pr[W1]|≤Pr[Z]≤Qd-CIadv[Bci, E]。(9.6)
+\noindent
+\hspace*{5pt} ($1$)
+\hspace*{24.5pt} 将 $\mathsf{reject}$ 发送给 $\mathcal{A}$
 
-最后的还原。由于在博弈1中所有的解密查询都被拒绝，这本质上是一个CPA攻击游戏。更确切地说，我们可以构建一个CPA对手Bcpa，它扮演着A的挑战者的角色，如下所示。
+\vspace*{10pt}
 
-- 当A进行加密查询时，Bcpa将其转发给自己的挑战者，并将响应返回给A。
-- 当A进行解密查询时，Bcpa只是向A发送拒绝。
+\noindent
+我们声称，$\mathcal{A}$ 无法将这个挑战者与原来的挑战者区分开来。令 $Z$ 为 $\mathcal{A}$ 在游戏 $1$ 中发出一个解密查询 $\hat{c}_j$，满足 $D(k,\hat{c}_j)\neq\mathsf{reject}$ 的事件。显然，只要 $Z$ 不发生，游戏 $0$ 和游戏 $1$ 的进程就是相同的。因此，根据差分引理（即定理 \ref{theo:4-7}），我们可以得到 $|\Pr[W_0]-\Pr[W_1]|\leq\Pr[Z]$。
 
-在游戏结束时，Bcpa只需输出A所输出的位ˆb。显然。
+使用与定理 \ref{theo:6-1} 的证明中类似的``猜测策略"，我们可以利用 $\mathcal{A}$ 来建立一个 CI 对手 $\mathcal{B}_\mathrm{ci}$，它能以至少 $\Pr[Z]/Q_\mathrm{d}$ 的概率赢得 CI 攻击游戏。请注意，在游戏 $1$ 中，解密算法根本就没有被使用过。对手 $\mathcal{B}_\mathrm{ci}$ 的策略就是简单地猜测一个随机数 $\omega\in\{1,\dots,Q_\mathrm{d}\}$，然后扮演 $\mathcal{A}$ 的挑战者：
+\begin{itemize}
+	\item 当 $\mathcal{A}$ 发起加密查询时，$\mathcal{B}_\mathrm{ci}$ 将其转发给自己的挑战者，并将挑战者的应答返回给 $\mathcal{A}$。
+	\item 当 $\mathcal{A}$ 发起解密查询 $\hat{c}_j$ 时，$\mathcal{B}_\mathrm{ci}$ 只是简单地将 $\mathsf{reject}$ 发送给 $\mathcal{A}$，除非 $j=\omega$，此时 $\mathcal{B}_\mathrm{ci}$ 会输出 $\hat{c}_j$ 并停机。
+\end{itemize}
+不难看出 $\mathrm{CI}\mathsf{adv}[\mathcal{B}_\mathrm{ci},\mathcal{E}]\geq\Pr[Z]/Q_\mathrm{d}$，因此：
+\begin{equation}\label{eq:9-6}
+\big\lvert
+\Pr[W_0]-\Pr[W_1]
+\big\rvert
+\leq
+\Pr[Z]
+\leq
+Q_\mathrm{d}\cdot
+\mathrm{CI}\mathsf{adv}[\mathcal{B}_\mathrm{ci},\mathcal{E}]
+\end{equation}
 
-|Pr[W1] - 1/2| = CPAadv∗[Bcpa, E] 。
-
-将方程(9.5)-(9.7)放在一起，可以得到(9.4)，这就证明了该定理。
+\noindent\textbf{最后的归约。}
+由于在游戏 $1$ 中，所有的解密查询都被拒绝，所以它本质上就是一个 CPA 攻击游戏。更确切地说，我们可以构建一个 CPA 对手 $\mathcal{B}_\mathrm{cpa}$，它扮演 $\mathcal{A}$ 的挑战者：
+\begin{itemize}
+	\item 当 $\mathcal{A}$ 发起加密查询时，$\mathcal{B}_\mathrm{cpa}$ 将其转发给自己的挑战者，并将挑战者的应答返回给 $\mathcal{A}$。
+	\item 当 $\mathcal{A}$ 发起解密查询时，$\mathcal{B}_\mathrm{cpa}$ 只是简单地将 $\mathsf{reject}$ 发送给 $\mathcal{A}$。
+\end{itemize}
+在游戏结束时，$\mathcal{B}_\mathrm{cpa}$ 只需输出 $\mathcal{A}$ 所输出的那个比特 $\hat{b}$。显然：
+\begin{equation}\label{eq:9-7}
+\big\lvert
+\Pr[W_1]-1/2
+\big\rvert
+=\mathrm{CPA}\mathsf{adv}^*[\mathcal{B}_\mathrm{cpa},\mathcal{E}]
+\end{equation}
+综合式 \ref{eq:9-5}，\ref{eq:9-6} 和 \ref{eq:9-7}，我们就可以得到式 \ref{eq:9-4}，故而定理得证。
 \end{proof}
