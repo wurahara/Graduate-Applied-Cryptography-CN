@@ -1,0 +1,25 @@
+\tikzset{every picture/.style={line width=0.75pt}}
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+
+\draw   (0,0) -- (200,0) -- (200,40) -- (0,40) -- cycle ;
+\draw  [fill={rgb, 255:red, 155; green, 155; blue, 155 }  ,fill opacity=0.5 ][line width=4]  (0,0) -- (200,0) -- (200,200) -- (0,200) -- cycle ;
+\draw   (0,140) -- (200,140) -- (200,200) -- (0,200) -- cycle ;
+\draw   (0,40) -- (200,40) -- (200,140) -- (0,140) -- cycle ;
+\draw   (0,200) -- (200,200) -- (200,260) -- (0,260) -- cycle ;
+\draw   (0,40) -- (80,40) -- (80,65) -- (0,65) -- cycle ;
+
+\draw  [<->]  (1,290) -- (199,290) ;
+\draw [shift={(200,290)}, rotate = 180]  (0,5) -- (0,-5);
+\draw [shift={(0,290)}, rotate = 0] (0,5) -- (0,-5);
+
+\draw  [draw opacity=0][fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ] (70,280) -- (130,280) -- (130,300) -- (70,300) -- cycle ;
+
+\draw (100,20) node   [align=left] {\texttt{packet-length}};
+\draw (100,90) node   [align=left] {\texttt{message}};
+\draw (40,52.5) node   [align=left] {\texttt{pad-length}};
+\draw (100,170) node   [align=left] {\texttt{pad}};
+\draw (100,230) node   [align=left] {完整性标签};
+\draw (100,290) node   [align=left] {$32$ 比特};
+
+\end{tikzpicture}

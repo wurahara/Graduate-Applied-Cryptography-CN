@@ -1,0 +1,82 @@
+\tikzset{every picture/.style={line width=0.75pt}}
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+
+
+\draw   (0,135) -- (240,135) -- (240,165) -- (0,165) -- cycle ;
+\draw  [line width=2.25]  (0,135) -- (240,135) -- (240,285) -- (0,285) -- cycle ;
+\draw   (0,165) -- (240,165) -- (240,195) -- (0,195) -- cycle ;
+\draw  [line width=2.25]  (0,285) -- (240,285) -- (240,375) -- (0,375) -- cycle ;
+\draw   (0,255) -- (240,255) -- (240,285) -- (0,285) -- cycle ;
+\draw   (0,225) -- (240,225) -- (240,255) -- (0,255) -- cycle ;
+\draw   (0,195) -- (240,195) -- (240,225) -- (0,225) -- cycle ;
+\draw   (0,135) -- (30,135) -- (30,165) -- (0,165) -- cycle ;
+\draw   (30,135) -- (60,135) -- (60,165) -- (30,165) -- cycle ;
+\draw   (60,135) -- (120,135) -- (120,165) -- (60,165) -- cycle ;
+\draw   (0,165) -- (120,165) -- (120,195) -- (0,195) -- cycle ;
+\draw   (0,195) -- (60,195) -- (60,225) -- (0,225) -- cycle ;
+\draw   (60,195) -- (120,195) -- (120,225) -- (60,225) -- cycle ;
+\draw   (120,165) -- (240,165) -- (240,195) -- (120,195) -- cycle ;
+\draw   (120,195) -- (240,195) -- (240,225) -- (120,225) -- cycle ;
+\draw   (120,135) -- (240,135) -- (240,165) -- (120,165) -- cycle ;
+\draw   (140,165) -- (240,165) -- (240,195) -- (140,195) -- cycle ;
+\draw  [line width=1.5]  (360,0) -- (600,0) -- (600,390) -- (360,390) -- cycle ;
+\draw   (360,0) -- (390,0) -- (390,30) -- (360,30) -- cycle ;
+\draw   (390,0) -- (420,0) -- (420,30) -- (390,30) -- cycle ;
+\draw   (420,0) -- (480,0) -- (480,30) -- (420,30) -- cycle ;
+\draw   (480,0) -- (600,0) -- (600,30) -- (480,30) -- cycle ;
+\draw   (360,30) -- (480,30) -- (480,60) -- (360,60) -- cycle ;
+\draw   (480,30) -- (600,30) -- (600,60) -- (480,60) -- cycle ;
+\draw   (360,60) -- (420,60) -- (420,90) -- (360,90) -- cycle ;
+\draw   (420,60) -- (480,60) -- (480,90) -- (420,90) -- cycle ;
+\draw   (360,90) -- (600,90) -- (600,120) -- (360,120) -- cycle ;
+\draw   (360,120) -- (600,120) -- (600,150) -- (360,150) -- cycle ;
+\draw   (360,150) -- (600,150) -- (600,180) -- (360,180) -- cycle ;
+\draw   (360,180) -- (600,180) -- (600,210) -- (360,210) -- cycle ;
+\draw  [fill={rgb, 255:red, 155; green, 155; blue, 155 }  ,fill opacity=0.5 ] (360,210) -- (600,210) -- (600,300) -- (360,300) -- cycle ;
+\draw  [fill={rgb, 255:red, 155; green, 155; blue, 155 }  ,fill opacity=0.5 ] (360,300) -- (600,300) -- (600,345) -- (360,345) -- cycle ;
+\draw   (360,345) -- (600,345) -- (600,390) -- (360,390) -- cycle ;
+\draw  [line width=4.5]  (360,150) -- (600,150) -- (600,345) -- (360,345) -- cycle ;
+
+\draw   (540,322.5) -- (600,322.5) -- (600,345) -- (540,345) -- cycle ;
+\draw   (480,322.5) -- (540,322.5) -- (540,345) -- (480,345) -- cycle ;
+
+\draw  [<->]  (1,400) -- (239,400) ;
+\draw [shift={(240,400)}, rotate = 180] (0,5) -- (0,-5);
+\draw [shift={(0,400)}, rotate = 0] (0,5) -- (0,-5) ;
+\draw  [<->]  (361,415) -- (599,415) ;
+\draw [shift={(600,415)}, rotate = 180] (0,5) -- (0,-5);
+\draw [shift={(360,415)}, rotate = 0](0,5) -- (0,-5);
+
+\draw  [draw opacity=0][fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ] (90,390) -- (150,390) -- (150,410) -- (90,410) -- cycle ;
+\draw  [draw opacity=0][fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ] (450,405) -- (510,405) -- (510,425) -- (450,425) -- cycle ;
+
+\draw  [dash pattern={on 4.5pt off 4.5pt}]  (240,135) -- (360,210) ;
+\draw  [dash pattern={on 4.5pt off 4.5pt}]  (240,375) -- (360,300) ;
+
+
+\draw (15,150) node   [align=left] [font=\small] {版本};
+\draw (180,150) node   [align=left] [font=\small]{数据包长度};
+\draw (90,210) node   [align=left] [font=\small]{协议};
+\draw (180,210) node   [align=left][font=\small] {包头校验和};
+\draw (120,240) node   [align=left][font=\small] {源 IP 地址};
+\draw (120,270) node   [align=left][font=\small] {目的 IP 地址};
+\draw (120,330) node   [align=left][font=\small] {载荷};
+\draw (375,15) node   [align=left][font=\small] {版本};
+\draw (540,15) node   [align=left][font=\small] {数据包长度};
+\draw (450,75) node   [align=left][font=\small] {prot=\texttt{ESP}};
+\draw (480,105) node   [align=left][font=\small] {源 IP 地址};
+\draw (480,135) node   [align=left][font=\small] {目的 IP 地址};
+\draw (480,367.5) node   [align=left][font=\small] {完整性标签};
+\draw (480,255) node   [align=left][font=\small] {数据包};
+\draw (480,195) node   [align=left][font=\small] {序列号};
+\draw (480,165) node   [align=left][font=\small] {安全参数索引 (SPI)};
+\draw (510,333) node   [align=left][font=\small] {填充长度};
+\draw (570,333) node   [align=left][font=\small] {下一包头};
+\draw (420,320) node   [align=left][font=\small] {填充};
+\draw (120,400) node   [align=left][font=\small] {$32$ 比特};
+\draw (480,415) node   [align=left][font=\small] {$32$ 比特};
+\draw (52,40) node [anchor=west] [inner sep=0.75pt]   [align=left] {灰色区域是加密的};
+\draw (52,60) node [anchor=west] [inner sep=0.75pt]   [align=left] {框内区域被完整性标签认证};
+
+\end{tikzpicture}

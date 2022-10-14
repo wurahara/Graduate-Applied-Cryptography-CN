@@ -1,9 +1,53 @@
-\section{另一个变体：带有关联数据的CCA安全密码}\label{sec:9-6}
+\section{另一个变体：带有关联数据的 CCA 安全密码}\label{sec:9-6}
+
+在 \ref{sec:9-5} 节中，我们为密码引入了两个新的特征：nonce 和关联数据。我们可以考虑两种变化：包含 nonce 但没有关联数据的密码，以及包含关联数据但没有 nonce 的密码。我们还可以考察这些变体的其他安全属性，比如 CCA 安全性。详细地考察所有变体显然是枯燥乏味的。尽管如此，我们还是考察一个在后文中很重要的变体，即带有关联数据的 CCA 安全密码（但不包含 nonce）。
+
+为了定义这个概念，我们首先定义带有关联数据的密码，或者 AD 密码的概念，该密码中不包含 nonce。对于这样的一个密码 $\mathcal{E}=(E,D)$，加密算法可能是概率性的，其工作原理如下：
+\[
+c\overset{\rm R}\leftarrow E(k,m,d)
+\]
+其中 $c\in\mathcal{C}$ 是密文，$k\in\mathcal{K}$ 是密钥，$m\in\mathcal{M}$ 是消息，$d\in\mathcal{D}$ 是关联数据。解密的语法是：
+\[
+D(k,c,d)
+\]
+它输出一条消息 $m$ 或 $\mathsf{reject}$。我们称 AD 密码定义在 $(\mathcal{K},\mathcal{M},\mathcal{D},\mathcal{C})$ 上。和之前一样，我们要求，只要两者被赋予相同的关联数据，由 $E$ 产生的密文就一定能被 $D$ 正确地解密，即：
+\[
+\Pr\big[D\big(k,\;E(k,m,d),\;d\big)=m\big]=1
+\]
 
 \begin{definition}[带有关联数据的 CCA 和 1CCA 安全性]\label{def:9-10}
-	
+普通密码的 CCA 安全性定义可以很自然地被迁移到 AD 密码上。我们可以按如下方式修改攻击游戏 \ref{game:9-2}。对于加密查询，除了一对消息 $(m_{i0},m_{i1})$ 外，对手还要提交关联数据 $d_i$，而挑战者会计算 $c_i\overset{\rm R}\leftarrow E(k,m_{ib},d_i)$。对于解密查询，除了密文 $\hat{c}$ 外，对手也要提交关联数据 $\hat{d}$，挑战者计算 $\hat{m}\leftarrow D(k,\hat{c},\hat{d})$。限制在于，数对 $(\hat{c},\hat{d})$ 不能与任何一个之前的加密查询 $(c_1,d_1),\,(c_2,d_2),\dots$ 相等。我们将对手 $\mathcal{A}$ 在这个游戏中的优势定义为 $\mathrm{CCA}_\mathrm{ad}\mathsf{adv}[\mathcal{A},\mathcal{E}]$。如果对于所有的有效对手 $\mathcal{A}$，上述优势都可忽略不计，我们就称该密码是 \textbf{CCA 安全的}。如果我们像定义 \ref{def:9-6} 那样将对手限制为只能发起单次加密查询，它的优势就被定义为 $\mathrm{1CCA}_\mathrm{ad}\mathsf{adv}[\mathcal{A},\mathcal{E}]$。如果对于所有的有效对手 $\mathcal{A}$，这个优势都可忽略不计，我们就称该密码是 \textbf{1CCA 安全的}。
 \end{definition}
 
+\begin{snote}[通用先加密后 MAC 组合。]
+在后面的应用中，我们主要使用 1CCA 安全性这个概念，所以简单起见，我们现在聚焦于对这个概念的考察。我们可以将一个语义安全密码 $(E,D)$ 和一个一次性 MAC $(S,V)$ 组合起来，以构建一个 1CCA 安全的 AD 密码 $\mathcal{E}=(E_\mathrm{EtM},D_\mathrm{EtM})$，方法如下：
+
+\vspace*{10pt}
+
+\hspace*{20pt} $E_\mathrm{EtM}\big((k_\mathrm{e},k_\mathrm{m}),\;m,d\big)$
+				\quad $:=$ \quad
+				$c\leftarrow E(k_\mathrm{e},m)$,
+				\quad
+				$t\leftarrow S\big(k_\mathrm{m},\;(c,d)\big)$\\
+\hspace*{175.5pt} 输出 $(c,t)$
+
+\vspace*{5pt}
+
+\hspace*{7pt} $D_\mathrm{EtM}\big((k_\mathrm{e},k_\mathrm{m}),\;(c,t),d\big)$
+				\quad $:=$ \quad
+				如果 $V\big(k_\mathrm{m},\;(c,d),\;t\big)=\mathsf{reject}$，则输出 $\mathsf{reject}$\\
+\hspace*{175.5pt} 否则输出 $D(k_\mathrm{e},c,d)$
+
+\vspace*{10pt}
+
+\noindent
+EtM 系统定义在 $(\mathcal{K}_\mathrm{e}\times\mathcal{K}_\mathrm{m},\mathcal{M},\mathcal{D},\mathcal{C}\times\mathcal{T})$ 上。
+\end{snote}
+
 \begin{theorem}\label{theo:9-5}
-	
+令 $\mathcal{E}=(E,D)$ 是一个语义安全密码，$\mathcal{I}=(S,V)$ 是一个一次性安全的 MAC。则 $\mathcal{E}_\mathrm{EtM}$ 是一个 1CCA 安全的 AD 密码。
 \end{theorem}
+
+定理 \ref{theo:9-5} 的证明是非常直接的，我们将其作为一个练习留给读者。
+
+我们观察到，在语义安全密码 $\mathcal{E}=(E,D)$ 的大多数常见实现中，加密算法 $E$ 都是确定性的。同样，在一次性安全 MAC $\mathcal{I}=(S,V)$ 的大多数常见实现中，签名算法也都是确定性的。因此，对于这样的实现，所产生的 1CCA 安全 AD 密码也会包含一个确定性的加密算法。

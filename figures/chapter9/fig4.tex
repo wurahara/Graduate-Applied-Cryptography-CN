@@ -1,0 +1,25 @@
+\tikzset{every picture/.style={line width=0.75pt}}
+
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+
+
+\draw   (70,0) -- (390,0) -- (390,40) -- (70,40) -- cycle ;
+\draw   (390,0) -- (470,0) -- (470,40) -- (390,40) -- cycle ;
+\draw   (70,55) -- (470,55) -- (470,95) -- (70,95) -- cycle ;
+\draw   (20,125) -- (65,125) -- (65,165) -- (20,165) -- cycle ;
+\draw  [fill={rgb, 255:red, 155; green, 155; blue, 155 }  ,fill opacity=0.5 ] (70,125) -- (470,125) -- (470,165) -- (70,165) -- cycle ;
+
+\draw [line width=2.5]    (60,110) -- (480,110) ;
+
+\draw   (40,48) .. controls (40,44.69) and (42.69,42) .. (46,42) .. controls (49.31,42) and (52,44.69) .. (52,48) .. controls (52,51.31) and (49.31,54) .. (46,54) .. controls (42.69,54) and (40,51.31) .. (40,48) -- cycle ;
+\draw   (40,48) -- (52,48) ;
+\draw   (46,42) -- (46,54) ;
+
+\draw (220,20) node   [align=left] {明文载荷 $m$};
+\draw (270,145) node   [align=left] {加密帧};
+\draw (42.5,145) node   [align=left] {IV};
+\draw (430,20) node    {$\mathrm{CRC}(m)$};
+\draw (270,75) node    {$\mathrm{RC4}(\mathrm{IV}\,\Vert\,k)$};
+
+
+\end{tikzpicture}

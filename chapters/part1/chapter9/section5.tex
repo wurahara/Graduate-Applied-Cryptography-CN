@@ -1,21 +1,109 @@
 \section{带有关联数据的基于nonce的认证加密}\label{sec:9-5}
 
+在这一节中，我们将扩展认证加密的语法来符合其常用的形式。首先，正如我们对加密和 MAC 所做的那样，我们会定义基于 nonce 的认证加密，它能使得加解密算法具有确定性，但是会将唯一的 nonce 作为输入。这种方法不但可以缩短密文，也能提高安全性。
+
+其次，为了扩展加密算法，我们会为加密算法额外提供一条输入消息，称为\textbf{关联数据(associated data)}，其完整性受到密文的保护，但机密性则不然。很多设置都会需要关联数据。例如，当在网络协议中加密数据包时，认证加密能够保护数据包主体，但数据包的首部必须以透明方式传输，以便网络能够将数据包传送到其预定的目的地。尽管如此，我们还是要确保数据包首部的完整性。此时，首部就可以作为关联数据被输入到加密算法中。
+
+支持关联数据的密码被称为 \textbf{AD 密码}。基于 nonce 的 AD 密码的语法如下：
+\[
+c=E(k,m,d,{\scriptstyle\mathpzc{N}})
+\]
+其中，$c\in\mathcal{C}$ 是密文，$k\in\mathcal{K}$ 是密钥，$m\in\mathcal{M}$ 是消息，$d\in\mathcal{D}$ 是关联数据，${\scriptstyle\mathpzc{N}}\in\mathpzc{N}$ 是 nonce。此外，我们要求加密算法 $E$ 是确定性的。类似地，解密的语法变成了：
+\[
+D(k,c,d,{\scriptstyle\mathpzc{N}})
+\]
+它输出一条消息 $m$ 或者 $\mathsf{reject}$。我们称基于 nonce 的 AD 密码定义在 $(\mathcal{K},\mathcal{M},\mathcal{D},\mathcal{C},\mathpzc{N})$ 上。和之前一样，我们要求，\emph{只要被赋予相同的 nonce 和关联数据}，由 $E$ 产生的密文就一定能被 $D$ 正确地解密。也就是说，对于所有的密钥 $k$，所有的消息 $m$，所有的关联数据 $d$，以及所有的 nonce 值 ${\scriptstyle\mathpzc{N}}\in\mathpzc{N}$，我们都有：
+\[
+D\big(k,\,E(k,m,d,{\scriptstyle\mathpzc{N}}),\,d,\,{\scriptstyle\mathpzc{N}}\big)=m
+\]
+
+如果输入到加密算法中的消息 $m$ 是一条空消息，那么密码 $(E,D)$ 本质上就变成了用于关联数据 $d$ 的 MAC 系统。
+
+\begin{snote}[CPA 安全性。]
+对于一个基于 nonce 的 AD 密码，假设在加密过程中\emph{没有 nonce 会被多次使用}，如果该密码不会向窃听者泄露任何有用的信息，我们就称它是 CPA 安全的。基于 nonce 的 AD 密码的 CPA 安全性定义与基于 nonce 的密码的 CPA 安全性定义（见 \ref{sec:5-5} 节）基本一致。唯一的区别在加密查询方面。对于 $b=0,1$，在实验 $b$ 中，加密查询会按如下方式处理：
+\begin{quote}
+第 $i$ 次加密查询的内容是一对长度相同的消息 $m_{i0},m_{i1}\in\mathcal{M}$，关联数据 $d_i\in\mathcal{D}$，以及一个唯一的 nonce ${\scriptstyle\mathpzc{N}}_i\in\mathpzc{N}\setminus\{{\scriptstyle\mathpzc{N}}_1,\dots,{\scriptstyle\mathpzc{N}}_{i-1}\}$。
+
+挑战者计算 $c_i\leftarrow E(k,m_{ib},d_i,{\scriptstyle\mathpzc{N}}_i)$，并将 $ci$ 发送给对手。
+\end{quote}
+除此之外，其他部分都与 \ref{sec:5-5} 节中的定义相同。请注意，关联数据 $d_i$ 是在对手的控制之下的，nonce 值 ${\scriptstyle\mathpzc{N}}_i$ 也是如此，只需要保证其唯一性即可。对于 $b=0,1$，令 $W_b$ 是对手 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件。我们将 $\mathcal{A}$ 相对于 $\mathcal{E}$ 的优势定义为：
+\[
+\mathrm{nCPA}_\mathrm{ad}\mathsf{adv}[\mathcal{A},\mathcal{E}]
+:=
+\big\lvert
+\Pr[W_0]-\Pr[W_1]
+\big\rvert
+\]
+\end{snote}
+
 \begin{definition}[CPA 安全性]\label{def:9-7}
-	
+如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{nCPA}_\mathrm{ad}\mathsf{adv}[\mathcal{A},\mathcal{E}]$ 的值都可忽略不计，我们就称基于 nonce 的 AD 密码\textbf{对选择明文攻击是语义安全的(semantically secure against chosen plaintext attack)}，简称为是 \textbf{CPA 安全的 (CPA-secure)}。
 \end{definition}
 
+\begin{snote}[密文完整性。]
+如果一个攻击者能够在密钥 $k$ 下请求由它所选择的消息、关联数据和 nonce 的加密结果，但仍然无法输出一个能够被解密算法接受的新三元组 $(c,d,{\scriptstyle\mathpzc{N}})$，我们就称基于 nonce 的 AD 密码能够提供密文完整性。尽管如此，对手决不能使用曾经使用过的 nonce 发起加密查询。
+
+更确切地说，我们按如下方式修改密文完整性游戏（攻击游戏 \ref{game:9-1}）：
+\end{snote}
+
 \begin{game}[密文完整性]\label{game:9-3}
-	
+对于一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{D},\mathcal{C},\mathpzc{N})$ 上的给定 AD 密码 $\mathcal{E}=(E,D)$ 和一个给定对手 $\mathcal{A}$，攻击游戏运行如下：
+\begin{itemize}
+	\item 挑战者随机选取一个 $k\overset{\rm R}\leftarrow\mathcal{K}$。
+	\item $\mathcal{A}$ 对挑战者发起一系列查询。对于 $i=1,2,\dots$，第 $i$ 次查询包含一条消息 $m_i\in\mathcal{M}$，关联数据 $d_i\in\mathcal{D}$，以及一个先前未被使用过的 nonce ${\scriptstyle\mathpzc{N}}_i\in\mathpzc{N}\setminus\{{\scriptstyle\mathpzc{N}}_1,\dots,{\scriptstyle\mathpzc{N}}_{i-1}\}$。挑战者计算 $c_i\leftarrow E(k,m_i,d_i,{\scriptstyle\mathpzc{N}}_i)$，并将 $ci$ 交给 $\mathcal{A}$。
+	\item 最终，$\mathcal{A}$ 输出一个候选三元组 $(c,d,{\scriptstyle\mathpzc{N}})$，其中 $c\in\mathcal{C}$，$d\in\mathcal{D}$，${\scriptstyle\mathpzc{N}}\in\mathpzc{N}$，且该三元组与它先前收到的所有三元组都不同，即：
+		\[
+		(c,d,{\scriptstyle\mathpzc{N}})\notin
+		\big\{
+			(c_1,d_1,{\scriptstyle\mathpzc{N}}_1),\;
+			(c_2,d_2,{\scriptstyle\mathpzc{N}}_2),\;
+			\cdots
+		\big\}
+		\]
+\end{itemize}
+如果 $D(k,c,d,{\scriptstyle\mathpzc{N}})\neq\mathsf{reject}$，我们就称 $\mathcal{A}$ 赢得游戏。我们将 $\mathcal{A}$ 相对于 $\mathcal{E}$ 的优势定义为 $\mathrm{nCI}_\mathrm{ad}\mathsf{adv}[\mathcal{A},\mathcal{E}]$，即 $\mathcal{A}$ 赢得游戏的概率。
 \end{game}
 
 \begin{definition}\label{def:9-8}
-	
+如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{nCI}_\mathrm{ad}\mathsf{adv}[\mathcal{A},\mathcal{E}]$ 的值都可忽略不计，我们就称基于 nonce 的 AD 密码 $\mathcal{E}=(E,D)$ 具有\textbf{密文完整性}。
 \end{definition}
+
+\begin{snote}[认证加密。]
+现在，我们可以为 AD 密码定义基于 nonce 的认证加密。我们将其称作\textbf{基于 nonce 的 AEAD 密码(nonce-based AEAD cipher)}，其中，AEAD 指的是\textbf{带有关联数据的认证加密 (authenticated encryption with associated data)}。
+\end{snote}
 
 \begin{definition}\label{def:9-9}
-	
+如果基于 nonce 的 AD 密码 $\mathcal{E}=(E,D)$ 是 CPA 安全的，并且具有密文完整性，我们就称 $\mathcal{E}$ 提供认证加密，或将其简称为\textbf{基于 nonce 的 AEAD 密码(nonce-based AEAD cipher)}。
 \end{definition}
 
+\begin{snote}[通用先加密后 MAC 组合。]
+我们可以将一个基于 nonce 的 CPA 安全密码 $(E,D)$（如 \ref{sec:5-5} 节）和一个基于 nonce 的安全 MAC $(S,V)$（如 \ref{sec:7-5} 节）组合起来，以构建一个基于 nonce 的 AEAD 密码 $\mathcal{E}=(E_\mathrm{EtM},D_\mathrm{EtM})$，方法如下：
+
+\vspace*{10pt}
+
+\hspace*{20pt} $E_\mathrm{EtM}\big((k_\mathrm{e},k_\mathrm{m}),\;m,d,{\scriptstyle\mathpzc{N}}\big)$
+				\quad $:=$ \quad
+				$c\leftarrow E(k_\mathrm{e},m,{\scriptstyle\mathpzc{N}})$,
+				\quad
+				$t\leftarrow S\big(k_\mathrm{m},\;(c,d),\;{\scriptstyle\mathpzc{N}}\big)$\\
+\hspace*{187pt} 输出 $(c,t)$
+
+\vspace*{5pt}
+
+\hspace*{7pt} $D_\mathrm{EtM}\big((k_\mathrm{e},k_\mathrm{m}),\;(c,t),d,{\scriptstyle\mathpzc{N}}\big)$
+				\quad $:=$ \quad
+				如果 $V\big(k_\mathrm{m},\;(c,d),\;t,\;{\scriptstyle\mathpzc{N}}\big)=\mathsf{reject}$，则输出 $\mathsf{reject}$\\
+\hspace*{187pt} 否则输出 $D(k_\mathrm{e},c,d,{\scriptstyle\mathpzc{N}})$
+
+\vspace*{10pt}
+
+\noindent
+EtM 系统定义在 $(\mathcal{K}_\mathrm{e}\times\mathcal{K}_\mathrm{m},\mathcal{M},\mathcal{D},\mathcal{C}\times\mathcal{T},\mathpzc{N})$上。下面的定理将表明，$\mathcal{E}_\mathrm{EtM}$ 是一个安全的 AEAD 密码。
+\end{snote}
+
+
 \begin{theorem}\label{theo:9-4}
-	
+令 $\mathcal{E}=(E,D)$ 是一个基于 nonce 的密码，$\mathcal{I}=(S,V)$ 是一个基于 nonce 的 MAC 系统。假设 $\mathcal{E}$ 是 CPA 安全的，$\mathcal{I}$ 是一个安全的 MAC，则 $\mathcal{E}_\mathrm{EtM}$ 是一个基于 nonce 的 AEAD 密码。
 \end{theorem}
+
+定理 \ref{theo:9-4} 的证明与定理 \ref{theo:9-2} 基本相同。

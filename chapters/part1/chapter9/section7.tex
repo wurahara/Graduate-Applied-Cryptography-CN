@@ -1,1 +1,82 @@
-\section{案例研究：Galois计数器模式(GCM)}\label{sec:9-7}
+\section{案例研究：Galois 计数器模式 (GCM)}\label{sec:9-7}
+
+
+Galois 计数器模式 (GCM) 是一种流行的基于 nonce 的 AEAD 密码，它于 2007 年被 NIST 标准化。GCM 是一个先加密后 MAC 密码，组合了一个 CPA 安全密码和一个安全的 MAC。这个 CPA 安全密码是基于 nonce 的计数器模式密码，通常使用 AES 实现。而安全 MAC 通常用一个 Carter-Wegman MAC 实现，它的底层是一个名为 GHASH 的带密钥哈希函数，后者是 \ref{sec:7-4} 节中 $H_\mathrm{xpoly}$ 函数的一个变体。当对空消息进行加密时，该密码就变成了一个称为 \textbf{GMAC} 的 MAC 系统，它能为关联数据提供完整性。
+
+GCM 在底层使用了一个分组密码 $\mathcal{E}=(E,D)$，比如定义在 $(\mathcal{K},\mathcal{X})$ 上的 AES，其中 $\mathcal{X}:=\{0,1\}^{128}$。该分组密码会被用于计数器模式加密和 Carter-Wegman MAC。GHASH 函数定义在 $(\mathcal{X},\mathcal{X}^{\leq\ell},\mathcal{X})$ 上，其中 $\ell:=2^{32}-1$。
+
+GCM 可以接受不同长度的 nonce，但我们先描述一个使用 $96$ 比特 nonce ${\scriptstyle\mathpzc{N}}$ 的 GCM，这是一个最简单的例子。GCM 的加密算法运行如下：
+
+\vspace*{10pt}
+
+\hspace*{5pt} 输入：密钥 $k\in\mathcal{K}$，消息 $m$，关联数据 $d$，以及 nonce ${\scriptstyle\mathpzc{N}}\in\{0,1\}^{96}$
+
+\vspace*{5pt}
+
+\hspace*{5pt} 令 $k_\mathrm{m}\leftarrow E(k,\,0^{128})$
+\hspace*{150pt} // \quad \emph{首先生成 GHASH 密钥}
+
+\vspace*{5pt}
+
+\hspace*{5pt} 计算计数器模式加密中计数器的初始值：\\
+\hspace*{50pt} 令 $x\leftarrow({\scriptstyle\mathpzc{N}}\,\Vert\,0^{31}1)\in\{0,1\}^{128}$\\
+\hspace*{50pt} 令 $x'\leftarrow x+1$
+\hspace*{152pt} // \quad \emph{计数器的初始值}
+
+\vspace*{5pt}
+
+\hspace*{5pt} 令 $c\leftarrow\{$ 令计数器从 $x'$ 开始，用计数器模式对 $m$ 进行加密的结果 $\}$\\
+\hspace*{26pt} 令 $d'\leftarrow\{$ 用 $0$ 将 $d$ 填充到 $128$ 比特的最小整数倍 $\}$\\
+\hspace*{26pt} 令 $c'\leftarrow\{$ 用 $0$ 将 $c$ 填充到 $128$ 比特的最小整数倍 $\}$
+
+\vspace*{5pt}
+
+\hspace*{5pt} 计算 Carter-Wegman MAC：\\
+\hspace*{5pt} ($*$)
+\hspace*{24.5pt} 令 $h\leftarrow\mathrm{GHASH}\Big(k_\mathrm{m},\;\big(d'\,\Vert\,c'\,\Vert\,\mathrm{length}(d)\,\Vert\,\mathrm{length}(c)\big)\Big)\quad\in\{0,1\}^{128}$\\
+\hspace*{50pt} 令 $t\leftarrow h\oplus E(k,x)\quad\in\{0,1\}^{128}$
+
+\vspace*{5pt}
+
+\hspace*{5pt} 输出 $(c,t)$
+\hspace*{193pt} // \quad \emph{先加密后 MAC 的密文}
+
+\vspace*{10pt}
+
+第 ($*$) 行中的每个 $\mathrm{length}$ 字段都是一个 $64$ 比特的值，表示各自字段的长度（以字节计）。如果输入 nonce ${\scriptstyle\mathpzc{N}}$ 的长度不是 $96$ 比特，它就会被填充到 $128$ 的最小整数倍，产生一个填充后的序列 ${\scriptstyle\mathpzc{N}}'$。此外，计数器的初始值 $x$ 由 $x\leftarrow\mathrm{GHASH}\big(k_\mathrm{m},({\scriptstyle\mathpzc{N}}'\,\Vert\,\mathrm{length}({\scriptstyle\mathpzc{N}}))\big)$ 产生，这是一个 $\{0,1\}^{128}$ 上的值。
+
+和之前一样，完整性标签 $t$ 可以被截断成任何所需的长度。标签 $t$ 越短，系统就越容易受到密文完整性攻击。
+
+被加密的消息必须短于 $2^{32}$ 个分组（即消息必须在 $\mathcal{X}_v$ 中，其中 $v<2^{32}$）。标准中建议，不要使用相同的密钥 $k$ 加密超过 $2^{32}$ 条消息。
+
+GCM 解密算法的输入包括一个密钥 $k\in\mathcal{K}$，一条密文 $(c,t)$，相关数据 $d$，以及一个 nonce ${\scriptstyle\mathpzc{N}}$。它的操作与先加密后 MAC 是一样的：它先计算 $k_\mathrm{m}\leftarrow E(k,0^{128})$，然后检查 Carter-Wegman 完整性标签 $t$。如果标签是有效的，它就输出对 $c$ 的计数器模式解密。我们强调，解密必须是原子性的：在整条消息全部通过完整性标签的验证之前，不应当输出任何明文数据。
+
+\begin{snote}[GHASH。]
+剩下的工作就是描述定义在 $(\mathcal{X},\mathcal{X}^{\leq\ell},\mathcal{X})$ 上的带密钥哈希函数 GHASH。这个哈希函数被用于 Carter-Wegman MAC 中，因此安全起见，它必须是一个 DUF。我们曾在 \ref{sec:7-4} 节中表明，函数 $H_\mathrm{xpoly}$ 是一个 DUF，而 GHASH 本质上和它是一样的。回顾一下，$H_\mathrm{xpoly}(k,z)$ 的工作原理是在 $k$ 点处评估一个由 $z$ 派生而来的多项式。我们在描述 $H_\mathrm{xpoly}$ 时使用了模素数 $p$ 的算术运算，所以 $z$ 的两个分组和输出都应当是 $\mathbb{Z}_p$ 上的元素。
+
+哈希函数 GHASH 与 $H_\mathrm{xpoly}$ 几乎完全相同，只是输入消息分组和输出都是 $\{0,1\}^{128}$ 上的元素。另外，在 GHASH 中，DUF 属性对异或运算符 $\oplus$（而不是模算术减法）成立。正如我们在备注 \ref{remark:7-4} 中所讨论的，为了建立一个 XOR-DUF，我们可以使用定义在有限域 $\mathrm{GF}(2^{128})$ 上的多项式。这是一个由 $2^{128}$ 个元素组成的域，称为 \textbf{Galois 域}，这也是 GCM 名字的来源。这个域由既约多项式 $g(X):=X^{128}+X^7+X^2+X+1$ 定义。$\mathrm{GF}(2^{128})$ 的元素是 $\mathrm{GF}(2)$ 上的小于 $128$ 阶的多项式，其算术运算都以 $g(X)$ 为模。虽然这听起来好像花哨，但 $\mathrm{GF}(2^{128})$ 中的所有元素都可以很方便地用一个 $128$ 比特序列表示（每一比特编码多项式的一个系数）。域中的加法就是异或计算，而乘法可能稍微复杂一点，但仍然不是太难（见下文——许多现代计算机都提供了直接的硬件支持）。
+
+有了上述符号，对于 $k\in\mathrm{GF}(2^{128})$ 和 $z\in\big(\mathrm{GF}(2^{128})\big)^v$，函数 $\mathrm{GHASH}(k,z)$ 就是 $\mathrm{GF}(2^{128})$ 上的多项式评估：
+\begin{equation}\label{eq:9-18}
+\mathrm{GHASH}(k,z):=
+z[0]k^v+z[1]k^{v-1}+\cdots+z[v-1]k
+\in\mathrm{GF}(2^{128})
+\end{equation}
+就是这样。在第($*$)行中，在 GHASH 的输入中加入两个 $\mathrm{length}$ 字段可以确保，即使对于不同长度的消息，XOR-DUF 属性也能得到保证。
+\end{snote}
+
+\begin{snote}[安全性。]
+GCM 的 AEAD 安全性与我们对先加密后 MAC 通用组合的分析（定理 \ref{theo:9-4}）类似，可以从作为 PRF 的底层分组密码的安全性得到。GCM 与我们的通用组合的主要区别在于，GCM 在涉及到密钥时``走了一些弯路"：它只使用了一个密钥 $k$，并使用 $E(k,0^n)$ 作为 GHASH 的密钥，并使用 $E(k,x)$ 作为掩盖 GHASH 输出的填充，这与 Carter-Wegman 的做法类似，但不完全相同。重要的是，计数器模式加密是从计数器值 $x':=x+1$ 开始的，因此我们可以确保，用于加密消息的 PRF 输入与用于派生 GHASH 密钥和填充的输入是不同的。上面的讨论聚焦于 nonce 是 $96$ 比特的情况。另一种情况，即 GHASH 被应用于 nonce 中以计算 $x$，需要更多的分析——见练习 \ref{exer:9-14}。
+
+GCM 没有抵抗 nonce 重复使用的能力。如果一个 nonce 意外地被用在了两条不同的消息上，这些消息的所有机密性都会丧失掉。更糟的是，GHASH 的密钥 $k_\mathrm{m}$ 也会被暴露（见练习 \ref{exer:7-13}），而这就可以被用来破坏密文完整性。因此在 GCM 中，至关重要的一件事就是不重复使用 nonce 值。
+\end{snote}
+
+\begin{snote}[优化和性能。]
+有很多方法可以对 GCM 和 GHASH 的实现进行优化。在实践中，我们通常使用 Horner 方法评估式 \ref{eq:9-18} 中的多项式，因此，处理每个明文分组都只需要在 $\mathrm{GF}(2^{128})$ 上做一次加法和一次乘法。
+
+最近，英特尔在其指令集中增加了一条特殊指令（称为 \texttt{PCLMULQDQ}）以快速进行二元多项式乘法。这条指令不能直接被用来实现 GHASH，因为它与 $\mathrm{GF}(2^{128})$ 中元素的标准表示方式不兼容。幸运的是，Gueron 的工作展示了如何克服这些困难并使用 \texttt{PCLMULQDQ} 指令来加速英特尔平台上的 GHASH 的方法。
+
+由于 GHASH 对每个分组只需要在 $\mathrm{GF}(2^{128})$ 上做一次加法和一次乘法，所以有人可能会认为，GCM 加解密过程中的大部分时间都花在了计数器模式的 AES 上。然而，由于 AES 硬件实现的改进，特别是 AES-NI 指令的流水线化，情况并非总是如此。在英特尔（于 2013 年推出）的 Haswell 处理器上，由于 GHASH 的额外开销，GCM 会比纯计数器模式慢三倍左右。然而，即将到来的 \texttt{PCLMULQDQ} 实现优化可能会使 GCM 只比纯计数器模式稍微昂贵一点点，这是人们所能期望的最好结果。
+
+我们应该指出，目前已经有可能实现成本并不显著高于 AES 计数器模式的安全认证加密——这可以通过 OCB 这样的集成方案实现（见练习 \ref{exer:9-17}）。
+\end{snote}

@@ -232,8 +232,246 @@ TLS 1.0 是 SSL 3.0 的一个更新版本。它在填充中添加新的结构（
 
 \subsection{安全的先 MAC 后加密实例}\label{subsec:9-4-4}
 
+尽管在应用于 CPA 安全的密码时，MtE 一般是不安全的，但是对于我们在第\ref{chap:5}章中讨论的一些特定的 CPA 密码来说，它仍然可以被证明是安全的。我们将在下面的定理 \ref{theo:9-3} 中表明，如果 $\mathcal{E}$ 恰好实现了随机化计数器模式，MtE 就是安全的。我们将在练习 \ref{exer:9-9} 中表明，假设没有消息填充，上述结论对于随机化 CBC 来说也是成立的。
+
+定理 \ref{theo:9-3} 表明，即使 MAC 只是一次性安全的，具有随机化计数模式的先 MAC 后加密也是 AE 安全的。也就是说，使用一个较弱的，只对能发起\emph{单次}选择消息查询的对手安全的 MAC 也足够了。直观地说，我们能用这样的弱 MAC 证明安全性的原因是，MAC 值是被加密的，因而对手更难攻击 MAC。由于一次性 MAC 比多次性 MAC 更短更快，所以具有随机化计数器模式的先 MAC 后加密比先加密后 MAC 略有优势。尽管如此，上一小节中介绍的针对先 MAC 后加密的攻击表明，想要正确实现它仍然是很难的，因此我们不应该使用这种构造。
+
+我们从一个如 \ref{subsec:5-4-2} 小节中讨论的随机化计数器模式密码 $\mathcal{E}=(E,D)$ 开始。我们假设 $\mathcal{E}$ 具有 \ref{subsec:5-4-2} 节末尾的 AES 计数器模式案例研究中所展示的一般结构。即我们使用一个计数器模式的变体，其中，密码 $\mathcal{E}$ 由一个定义在 $(\mathcal{K}_\mathrm{e},\,\mathcal{X}\times\mathbb{Z}_\ell,\,\mathcal{Y})$ 上的 PRF $F$ 构建，且 $\mathcal{Y}:=\{0,1\}^n$。更准确地说，对于消息 $m\in\mathcal{Y}^{\leq\ell}$，算法 $E$ 运行如下：
+\[
+E(k_\mathrm{e},\,m):=
+\left\{
+\begin{aligned}
+& x\overset{\rm R}\leftarrow\mathcal{X}\\
+& \text{对于}\;j=0,\dots,|m|-1:\\
+& \qquad u[j]\leftarrow F\big(k_\mathrm{e},\,(x,j)\big)\oplus m[j]\\
+& \text{输出}\;c:=(x,u)\in\mathcal{X}\times\mathcal{Y}^{|m|}
+\end{aligned}
+\right\}
+\]
+算法 $D(k_\mathrm{e},c)$ 的定义也与此类似。令 $\mathcal{I}=(S,V)$ 是一个定义在 $(\mathcal{K}_\mathrm{m},\,\mathcal{M},\,\mathcal{T})$ 上的一次性 MAC，其中 $\mathcal{M}:=\mathcal{Y}^{\leq\ell_\mathrm{m}}$，$\mathcal{T}:=\mathcal{Y}^{\ell_\mathrm{t}}$，并且 $\ell_\mathrm{m}+\ell_\mathrm{t}<\ell$。
+
+基于 $F$ 和 $\mathcal{I}$ 的先 MAC 后加密密码 $\mathcal{E}_\mathrm{MtE}=(E_\mathrm{MtE},D_\mathrm{MtE})$ 接受 $\mathcal{M}$ 中的消息，定义如下：
+\begin{equation}\label{eq:9-11}
+\begin{aligned}
+& E_\mathrm{MtE}\big((k_\mathrm{e},k_\mathrm{m}),\,m\big)
+:=
+\big\{\;
+t\overset{\rm R}\leftarrow S(k_\mathrm{m},m),\quad
+c\overset{\rm R}\leftarrow E\big(k_\mathrm{e},\,(m\,\Vert\,t)\big),\quad
+\text{输出}\;c
+\;\big\}\\
+& D_\mathrm{MtE}\big((k_\mathrm{e},k_\mathrm{m}),\,c\big)
+:=
+\left\{
+\begin{aligned}
+& (m\,\Vert\,t)\leftarrow D(k_\mathrm{e},c)\\
+& \text{如果}\;V(k_\mathrm{m},m,t)=\mathsf{reject}\text{，则输出}\;\mathsf{reject}\\
+& \text{否则输出}\;m
+\end{aligned}
+\right\}
+\end{aligned}
+\end{equation}
+正如我们在 \ref{subsec:9-4-1} 小节末尾和练习 \ref{exer:9-8} 中讨论的，两个密钥 $k_\mathrm{e}$ 和 $k_\mathrm{m}$ 的选择必须是相互独立的。如果设置 $k_\mathrm{e}=k_\mathrm{m}$，下面的安全性定理就会完全失效。
+
 \begin{theorem}\label{theo:9-3}
-	
+假设 $\mathcal{I}$ 是一个安全的一次性 MAC，$F$ 是一个安全的 PRF，其中 $1/|\mathcal{X}|$ 可忽略不计，则式 \ref{eq:9-11} 中的由 PRF $F$ 和 MAC $\mathcal{I}$ 构建的密码 $\mathcal{E}_\mathrm{MtE}=(E_\mathrm{MtE},D_\mathrm{MtE})$ 能够提供认证加密。
+\begin{quote}
+特别地，对于每个在攻击游戏 \ref{game:9-1} 中攻击 $\mathcal{E}_\mathrm{MtE}$ 的 $Q$ 次查询密文完整性对手 $\mathcal{A}_\mathrm{ci}$，都存在两个如攻击游戏 \ref{game:6-1} 中那样攻击 $\mathcal{I}$ 的 MAC 对手 $\mathcal{B}_\mathrm{mac}$ 和 $\mathcal{B}_\mathrm{mac}'$，以及一个如攻击游戏 \ref{game:4-2} 中那样攻击 $F$ 的 PRF 对手 $\mathcal{B}_\mathrm{prf}$，它们都是围绕 $\mathcal{A}_\mathrm{ci}$ 的基本包装器，满足：
+\end{quote}
+\begin{equation}\label{eq:9-12}
+\begin{aligned}
+\mathrm{CI}\mathsf{adv}[\mathcal{A}_\mathrm{ci},\mathcal{E}_\mathrm{MtE}]
+\leq
+& \mathrm{PRF}\mathsf{adv}[\mathcal{B}_\mathrm{prf},F]+\\
+& \;\; Q\cdot
+\mathrm{MAC}_1\mathsf{adv}[\mathcal{B}_\mathrm{mac},\mathcal{I}]+
+\mathrm{MAC}_1\mathsf{adv}[\mathcal{B}_\mathrm{mac}',\mathcal{I}]
++\frac{Q^2}{2|\mathcal{X}|}
+\end{aligned}
+\end{equation}
+\begin{quote}
+对于每个如攻击游戏 \ref{game:5-2} 中那样攻击 $\mathcal{E}_\mathrm{MtE}$ 的 CPA 对手 $\mathcal{A}_\mathrm{cpa}$，都存在一个如攻击游戏 \ref{game:5-2} 中那样攻击 $\mathcal{E}$ 的 CPA 对手 $\mathcal{B}_\mathrm{cpa}$，其中 $\mathcal{B}_\mathrm{cpa}$ 是一个围绕 $\mathcal{A}_\mathrm{cpa}$ 的基本包装器，满足：
+\end{quote}
+\[
+\mathrm{CPA}\mathsf{adv}[\mathcal{A}_\mathrm{cpa},\mathcal{E}_\mathrm{MtE}]
+=
+\mathrm{CPA}\mathsf{adv}[\mathcal{B}_\mathrm{cpa},\mathcal{E}]
+\]
 \end{theorem}
 
-\subsection{是先加密后MAC还是先MAC后加密？}\label{subsec:9-4-5}
+\begin{proof}[证明思路]
+该系统的 CPA 安全性可以由随机化计数器模式的 CPA 安全性立即得出。挑战在于，如何证明 $\mathcal{E}_\mathrm{MtE}$ 的密文完整性。令 $\mathcal{A}_\mathrm{ci}$ 是一个密文完整性对手。该对手发起一系列的查询 $m_1,\dots,m_Q$。对于每个 $m_i$，CI 挑战者都向 $\mathcal{A}_\mathrm{ci}$ 发送一条密文 $c_i=(x_i,u_i)$，其中 $x_i$ 是一个随机的 IV，$u_i$ 是使用 PRF $F$ 由 $x_i$ 派生的伪随机填充 $r_i$ 对数对 $m_i\,\Vert\,t_i$ 进行一次性填充加密的结果。这里，$t_i$ 是在 $m_i$ 上计算的 MAC 标签。在攻击游戏结束时，对手 $\mathcal{A}_\mathrm{ci}$ 输出一条密文 $c=(x,u)$，该密文不在 $c_i$ 之列，如果 $c$ 是一条有效密文，我们就称 $\mathcal{A}_\mathrm{ci}$ 获胜。这意味着，$u$ 使用从 $x$ 派生来的伪随机填充 $r$ 解密到 $m\,\Vert\,t$，而 $t$ 是一个 $m$ 上的有效标签。
+
+现在，利用 PRF 安全性和 $x_i$ 不太可能重复的事实，我们可以有效地用真随机的填充取代伪随机的 $r_i$（和 $r$），同时不影响 $\mathcal{A}_\mathrm{ci}$ 的优势。这就是式 \ref{eq:9-12} 中 $\mathrm{PRF}\mathsf{adv}[\mathcal{B}_\mathrm{prf},F]$ 和 $Q^2/2|\mathcal{X}|$ 这两项的来源。请注意，在做了这一修改后，$t_i$ 就被完美地隐藏了起来，不会被对手发现。
+
+下面，我们考虑 $\mathcal{A}_\mathrm{ci}$ 在这个修改后的攻击游戏中获胜的两种不同的方式：
+\begin{itemize}
+	\item 在第一种方式中，$\mathcal{A}_\mathrm{ci}$ 输出的 $x$ 值不在 $x_i$ 中。但是，在这种情况下，$\mathcal{A}_\mathrm{ci}$ 获胜的唯一方法就是希望随机消息上的随机标签是有效的。这就是式 \ref{eq:9-12} 中 $\mathrm{MAC}_1\mathsf{adv}[\mathcal{B}_\mathrm{mac}',\mathcal{I}]$ 这一项的由来。
+	\item 在第二种情况下，对于某个 $j=1,\dots,Q$，$x$ 的值就等于 $x_j$。在这种情况下，为了获胜，$u$ 必须能在填充 $r_j$ 下被解密为 $m\,\Vert\,t$，其中 $t$ 是一个 $m$ 上的有效标签。此外，由于 $c\neq c_j$，我们有 $(m,t)\neq(m_j,t_j)$。为了把 $\mathcal{A}_\mathrm{ci}$ 变成一个一次性 MAC 对手，我们必须事先猜测索引 $j$：对于所有与猜测索引不同的索引 $i$，我们都可以用一个假标签来代替标签 $t_i$。这种猜测策略就是式 \ref{eq:9-12} 中 $Q\cdot\mathrm{MAC}_1\mathsf{adv}[\mathcal{B}_\mathrm{mac},\mathcal{I}]$ 这一项的来源。\qedhere
+\end{itemize}
+\end{proof}
+
+\begin{proof}
+为了证明密文完整性，我们让 $\mathcal{A}_\mathrm{ci}$ 与几个挑战者交互，这些挑战者之间密切相关。对于 $j=0,1,2,3,4$，我们定义 $W_j$ 为对手在游戏 $j$ 中获胜的事件。
+
+\vspace*{5pt}
+\noindent\textbf{游戏 $\mathbf{0}$。}和之前一样，我们首先让 $\mathcal{A}_\mathrm{ci}$ 与攻击游戏 \ref{game:9-1} 中的标准密文完整性挑战者交互，因为后者适用于 $\mathcal{E}_\mathrm{MtE}$，因此，我们有 $\Pr[W_0]= \mathrm{CI}\mathsf{adv}[\mathcal{A}_\mathrm{ci},\mathcal{E}_\mathrm{MtE}]$。
+
+\vspace*{5pt}
+\noindent\textbf{游戏 $\mathbf{1}$。}现在，我们用真正独立的一次性填充来替换计数器模式密码中的伪随机填充。由于 $F$ 是一个安全的 PRF，并且 $1/|\mathcal{X}|$ 可忽略不计，对手不会注意到这种差别。由此产生的 $\mathcal{E}_\mathrm{MtE}$ 的 CI 挑战者的工作方式如下：
+
+\vspace*{10pt}
+
+\hspace*{5pt} 随机选取 $k_\mathrm{m}\overset{\rm R}\leftarrow\mathcal{K}_\mathrm{m}$
+\hspace*{141.5pt} // \quad \emph{选择一个随机 MAC 密钥}\\
+\hspace*{26pt} 随机选取 $\omega\overset{\rm R}\leftarrow\{1,\dots,Q\}$
+\hspace*{114.5pt} // \quad \emph{这个 $\omega$ 将在游戏 3 中使用}
+
+\vspace*{5pt}
+
+\hspace*{5pt} 当收到第 $i$ 个查询 $m_i\in\mathcal{Y}^{\leq\ell_\mathrm{m}}$ 时，对于 $i=1,2,\dots$：\\
+\hspace*{7pt} ($1$)
+\hspace*{22.5pt} 令 $t_i\leftarrow S(k_\mathrm{m},m_i)\in\mathcal{T}$
+\hspace*{103pt} // \quad \emph{计算 $m_i$ 的标签}\\
+\hspace*{7pt} ($2$) 
+\hspace*{22.5pt} 随机选取 $x_i\overset{\rm R}\leftarrow\mathcal{X}$
+\hspace*{126pt} // \quad \emph{选择一个随机的 IV}\\
+\hspace*{47pt} \colorbox{gray!50}{随机选取 $r_i\overset{\rm R}\leftarrow\mathcal{Y}^{|m_i|+\ell_\mathrm{t}}$}
+\hspace*{97pt} // \quad \emph{选择一个足够长的真随机一次性填充}\\
+\hspace*{50pt} 令 $u_i\leftarrow (m_i\,\Vert\,t_i)\oplus r_i$，$c_i\leftarrow(x_i,u_i)$
+\hspace*{42.5pt} // \quad \emph{构建密文}\\
+\hspace*{50pt} 将 $c_i$ 发送给对手
+
+\vspace*{5pt}
+
+\hspace*{5pt} 当收到 $c=(x,u)\notin\{c_1,c_2,\dots\}$ 时：\\
+\hspace*{50pt} // \quad \emph{解密密文 $c$}\\
+\hspace*{7pt} ($3$)
+\hspace*{22.5pt} 如果存在某个 $j$ 使得 $x=x_i$：\\
+\hspace*{75pt} 则令 $(m\,\Vert\,t)\leftarrow u\oplus r_j$\\
+\hspace*{7pt} ($4$)
+\hspace*{47.2pt} 否则，随机选取 $r\overset{\rm R}\leftarrow\mathcal{Y}^{|u|}$，并令 $(m\,\Vert\,t)\leftarrow u\oplus r$
+
+\vspace*{5pt}
+
+\hspace*{29pt} // \quad \emph{检查产生的消息-标签对}\\
+\hspace*{50pt} 如果 $V(k_\mathrm{m},m,t)=\mathsf{accept}$：\\
+\hspace*{75pt} 则输出``获胜"\\
+\hspace*{75pt} 否则输出``失败"
+
+\vspace*{10pt}
+
+请注意，在第 ($3$) 行中，可能会出现多个满足 $x=x_j$ 的 $j$，此时，我们可以取较小的那一个。
+
+一个标准论证表明，存在一个有效的 PRF 对手 $\mathcal{B}_\mathrm{prf}$ 满足：
+\begin{equation}\label{eq:9-13}
+\big\lvert
+\Pr[W_1]-\Pr[W_0]
+\big\rvert
+\leq
+\mathrm{PRF}\mathsf{adv}[\mathcal{B}_\mathrm{prf},F]+\frac{Q^2}{2|\mathcal{X}|}
+\end{equation}
+请注意，如果想要再小心一点，我们也可以把这个论证分成两步。在第一步中，我们打出我们的``PRF牌"，将 $F(k_\mathrm{e},\cdot)$ 替换成一个真随机函数 $f$，这就引入了式 \ref{eq:9-13} 中的 $\mathrm{PRF}\mathsf{adv}[\mathcal{B}_\mathrm{prf},F]$ 这一项。在第二步中，我们使用``健忘的侏儒"技术，让 $f$ 的所有输出都是相互独立的。对``所有 $x_i$ 都是各不相同的"这一事件使用差分引理，就会在式 \ref{eq:9-13} 中引入 ${Q^2}/{2|\mathcal{X}|}$ 这一项。
+
+\vspace*{5pt}
+\noindent\textbf{游戏 $\mathbf{2}$。}现在，我们限制对手的获胜条件，要求最终的密文 $c$ 中所使用的 IV 就是游戏期间发送给 $\mathcal{A}_\mathrm{ci}$ 的诸多 IV 中的一个。特别地，我们将第 ($4$) 行改为：
+
+\vspace*{10pt}
+
+\noindent
+\hspace*{7pt} ($4$)
+\hspace*{47.2pt} 否则，输出``失败"（并停机）
+
+\vspace*{10pt}
+
+\noindent
+令 $Z_2$ 表示如下事件：在游戏 $2$ 中，尽管使用了先前未使用过的 $x\in\mathcal{X}$，但来自 $\mathcal{A}_\mathrm{ci}$ 的最终密文 $c=(x,u)$ 仍然是有效的。我们知道，除非事件 $Z_2$ 发生，否则这两个游戏的进程是完全相同的。当事件 $Z_2$ 在游戏 $2$ 中发生时，产生的数对 $(m,t)$ 随机均匀地分布在 $\mathcal{Y}^{|u|-\ell_\mathrm{t}}\times\mathcal{Y}^{\ell_\mathrm{t}}$ 上。这样的数对不太可能是一个有效的消息-标签对。不仅如此，游戏 $2$ 中的挑战者对第 ($1$) 行中生成的所有标签 $t_i$ 都使用一次性填充进行了有效的加密，所以即使用假标签替换这些标签，也不会影响 $Z_2$ 发生的概率。基于这些观察，我们很容易构建一个有效的 MAC 对手 $\mathcal{B}_\mathrm{mac}'$，使得 $\Pr[Z_2]\leq\mathrm{MAC}_1\mathsf{adv}[\mathcal{B}_\mathrm{mac}',\mathcal{I}]$。对手 $\mathcal{B}_\mathrm{mac}'$ 运行如下：它像在游戏 $2$ 中一样扮演 $\mathcal{A}_\mathrm{ci}$ 的挑战者，除了在上述第 ($1$) 行中，它会令 $t_i\leftarrow 0^{\ell_\mathrm{t}}$。当 $\mathcal{A}_\mathrm{ci}$ 输出 $c=(x,u)$ 时，对手 $\mathcal{B}_\mathrm{mac}'$ 输出一个 $\mathcal{Y}^{|u|-\ell_\mathrm{t}}\times\mathcal{Y}^{\ell_\mathrm{t}}$ 上的随机数对。因此，根据差分引理，我们有：
+\begin{equation}\label{eq:9-14}
+\big\lvert
+\Pr[W_2]-\Pr[W_1]
+\big\rvert
+\leq
+\mathrm{MAC}_1\mathsf{adv}[\mathcal{B}_\mathrm{mac}',\mathcal{I}]
+\end{equation}
+
+\noindent\textbf{游戏 $\mathbf{3}$。}我们进一步限制对手的获胜条件，要求密文伪造使用的是发送给 $\mathcal{A}_\mathrm{ci}$ 的第 $\omega$ 条密文中的 IV。这里的 $\omega$ 是 $\{1,\dots,Q\}$ 中的一个随机数，由挑战者选出。和游戏 $2$ 相比，获胜条件的唯一变化是将第 ($3$) 修改为：
+
+\vspace*{10pt}
+
+\noindent
+\hspace*{7pt} ($3$)
+\hspace*{22.5pt} 如果 $x=x_\omega$：\\
+
+\vspace*{10pt}
+
+\noindent
+由于 $\omega$ 与 $\mathcal{A}_\mathrm{ci}$ 的观察完全无关，我们知道：
+\begin{equation}\label{eq:9-15}
+\Pr[W_3]\geq
+(1/Q)\cdot\Pr[W_2]
+\end{equation}
+
+
+\noindent\textbf{游戏 $\mathbf{4}$。}最后，我们修改挑战者，使其只对 $\mathcal{A}_\mathrm{ci}$ 发出的第 $\omega$ 次查询计算有效标签。对于所有其他的查询，挑战者只会编造一个任意的（无效）标签。由于标签是用一次性填充加密的，对手无法分辨他得到的是不是无效标签的加密结果。特别地，和游戏 $3$ 相比，唯一的变化是用下面这两行替换掉第 ($1$) 行：
+
+\vspace*{10pt}
+
+\noindent
+\hspace*{7pt} ($1$)
+\hspace*{22.5pt} 令 $t_i\leftarrow(0^n)^{\ell_\mathrm{t}}\in\mathcal{T}$\\
+\hspace*{50pt} 如果 $i=\omega$，则令 $t_i\leftarrow S(k_\mathrm{m},m_i)\in\mathcal{T}$
+\qquad // \quad \emph{只会为 $m_\omega$ 计算正确的标签}
+
+\vspace*{10pt}
+
+\noindent
+从对手的视角来看，这个游戏与游戏 $3$ 是完全相同的，因此：
+\begin{equation}\label{eq:9-16}
+\Pr[W_4]=\Pr[W_3]
+\end{equation}
+
+\noindent\textbf{最后的归约。}我们声称，存在一个有效的一次性 MAC 伪造者 $\mathcal{B}_\mathrm{mac}$，使得：
+\begin{equation}\label{eq:9-17}
+\Pr[W_4]=
+\mathrm{MAC}_1\mathsf{adv}[\mathcal{B}_\mathrm{mac},\mathcal{I}]
+\end{equation}
+成立。对手 $\mathcal{B}_\mathrm{mac}$ 与 MAC 挑战者 $\mathbf{C}$ 交互，其工作方式如下：
+
+\vspace*{10pt}
+
+\hspace*{5pt} 随机选取 $\omega\overset{\rm R}\leftarrow\{1,\dots,Q\}$\\
+\hspace*{26pt} 当收到第 $i$ 个查询 $m_i\in\{0,1\}^{\ell_\mathrm{m}}$ 时，对于 $i=1,2,\dots$：\\
+\hspace*{50pt} 令 $t_i\leftarrow(0^n)^{\ell_\mathrm{t}}\in\mathcal{T}$\\
+\hspace*{50pt} 如果 $i=\omega$，则向 $\mathbf{C}$ 查询 $m_i$ 上的标签，记应答为 $t_i\in\mathcal{T}$\\
+\hspace*{50pt} 随机选取 $x\overset{\rm R}\leftarrow\mathcal{X}$
+\hspace*{114.2pt} // \quad \emph{选择一个随机的 IV}\\
+\hspace*{50pt} 随机选取 $r_i\overset{\rm R}\leftarrow\mathcal{Y}^{|m_i|+\ell_\mathrm{t}}$
+\hspace*{85pt} // \quad \emph{选择一个足够长的随机一次性填充}\\
+\hspace*{50pt} 令 $u_i\leftarrow(m_i\,\Vert\,t_i)\oplus r_i$，$c_i\leftarrow(x_i,u_i)$\\
+\hspace*{50pt} 将 $c_i$ 发送给对手
+
+\vspace*{5pt}
+
+\hspace*{5pt} 当 $\mathcal{A}_\mathrm{ci}$ 输出 $c=(x,u)$ 时：\\
+\hspace*{50pt} 如果 $x=x_\omega$：\\
+\hspace*{75pt} 令 $(m\,\Vert\,t)\leftarrow u\oplus r_\omega$\\
+\hspace*{75pt} 输出 $(m,t)$ 作为消息-标签伪造
+
+\vspace*{10pt}
+
+\noindent
+由于 $c\neq c_\omega$，我们知道 $(m,t)\neq(m_\omega,t_\omega)$。因此，只要 $\mathcal{A}_\mathrm{ci}$ 赢得游戏 $4$，我们就知道 $\mathcal{B}_\mathrm{mac}$ 没有中止，而且会输出一个能够让它赢得一次性 MAC 攻击游戏的数对 $(m,t)$。由此可见 $\Pr[W_4]=\mathrm{MAC}_1\mathsf{adv}[\mathcal{B}_\mathrm{mac},\mathcal{I}]$，正如定理所要求的。
+\end{proof}
+
+\subsection{是先加密后 MAC，还是先 MAC 后加密？}\label{subsec:9-4-5}
+
+到目前为止，我们证明了以下几个关于 MtE 和 EtM 范式的事实：
+\begin{itemize}
+	\item 只要密码是 CPA 安全的，MAC 是安全的，EtM 就能提供认证加密。密文上的 MAC 可以防止对密文的任何篡改。
+	\item MtE 通常不是安全的——存在一些基于 CPA 安全密码的非 AE 安全 MtE。此外，由于潜在的计时边信道可能会导致严重的选择密文攻击，正确实现 MtE 也是很困难的。尽管如此，对于特定的密码，比如随机化计数器模式和随机化 CBC 模式的密码，即使 MAC 只是一次性安全的，MtE 也是 AE 安全的。
+	\item 练习 \ref{exer:9-10} 中讨论了第三种范式，称为加密并 MAC (EaM)。该练习表明，如果使用的是随机化计数器模式的密码，只要 MAC 是安全的 PRF，EaM 就是安全的。EaM 在各方面都比 EtM 差，因此不应该被使用。
+\end{itemize}
+
+这些事实，以及对 MtE 的攻击实例都表明，EtM 是更好的应用范式。当然，至关重要的是，底层密码首先必须是 CPA 安全的，底层 MAC 也必须是安全的 MAC。否则，EtM 可能根本无法提供安全性。
+
+鉴于历史上实现这些范式时曾出现过的种种错误，我们建议开发者不要自己去实现 EtM。开发者最好使用一个加密标准，比如说 GCM（见 \ref{sec:9-7} 节），它使用 EtM 来提供开箱即用的认证加密。

@@ -1,1 +1,83 @@
-\section{TLS 1.3 记录协议}\label{sec:9-8}
+\section{案例研究：TLS 1.3 记录协议}\label{sec:9-8}
+
+传输层安全 (Transport Layer Security, TLS) 协议是迄今为止部署最广泛的安全协议。几乎所有的网上购物都受到 TLS 的保护。尽管 TLS 主要用于保护网络流量，但它其实是一个通用的协议，可以用来保护许多其他类型的流量，比如电子邮件、即时通信等等。
+
+TLS 的原始版本由网景 (Netscape) 设计，它在当时被称作安全套接字层协议 (Secure Socket Layer protocol, SSL)。SSL 2.0 于 1994 年问世，用于保护网络电商流量。1995 年提出的 SSL 3.0 纠正了 SSLv2 的几个重大安全问题。例如，SSL 2.0 对密码和 MAC 使用相同的密钥。这是一种非常不好的做法，因为它会使对 MtE 和 EtM 的安全证明失效；与此同时，它还意味着，如果我们使用一个弱的密码密钥（比方说由于出口限制），那么 MAC 密钥也必须是弱的。SSL 2.0 只支持少量的算法，具体地说，它只支持基于 MD5 的 MAC。
+
+此后，互联网工程任务组 (Internet Engineering Task Force, IETF) 创建了一个传输层安全工作组，目标是标准化一个类 SSL 协议。该工作组于 1999 年制定了 TLS 1.0 协议规范 \cite{dierks1999rfc2246}。TLS 1.0 其实只是 SSL 3.0 的一个小升级，因此也常被称作 SSL 3.1。在此之后，TLS 又先后在 2006 年和 2008 年引入了若干小的更新，这将其升级到了 TLS 1.2 版本。TLS 1.2 由于其中存在的几个安全漏洞，于 2017 年被推翻，被一个更强的 TLS 1.3 取代。现在，TLS 已经变得无处不在，它被用于全世界的许多软件工程中。在本节中，我们主要关注 TLS 1.3 版本。
+
+\begin{snote}[TLS 1.3 记录协议。]
+抽象地讲，TLS 由两个部分组成。第一部分被称为 \textbf{TLS 会话设置 (TLS session setup)}，它负责协商即将用于加密会话的密码套件，然后在浏览器和服务器之间建立一个共享秘密。第二部分被称为 \textbf{TLS 记录协议 (TLS record protocol)}，它使用上述共享秘密在双方之间安全地传输数据。TLS 会话设置会使用公钥密码学技术，我们会在第\ref{chap:21}章讨论这个部分。在本节中，我们主要关注 TLS 记录协议。
+
+在 TLS 术语中，会话建立过程中所产生的共享秘密被称为\textbf{主秘密 (master-secret)}。这个高熵的主秘密被用于推导出两个密钥 $k_{b\to s}$ 和 $k_{s\to b}$。密钥 $k_{b\to s}$ 负责加密从浏览器到服务器的消息，而 $k_{s\to b}$ 则负责反方向的通信。TLS 使用主秘密和其他随机元作为种子来派生这两个密钥，这个密钥派生函数被称为 HKDF（见 \ref{subsec:8-10-5} 小节），它能够派生出足够多的伪随机比特，用来构造这两个密钥。这一步骤由浏览器和服务器共同完成，因此，当协商结束时，双方都将持持有密钥 $k_{b\to s}$ 和 $k_{s\to b}$。
+
+TLS 记录协议以记录形式发送数据，每条记录最长为 $2^{14}$ 字节。如果一方需要传输超过 $2^{14}$ 字节的数据，记录协议就会将数据分割成多个记录，每个的长度都不长于 $2^{14}$ 字节。每一通信方都需要维护一个 $64$ 比特的\textbf{写序列号 (write sequence number)}，它的初始值是 $0$，每发送一条记录，它就会递增 $1$。
+
+TLS 1.3 使用一个基于 nonce 的 AEAD 密码 $(E,D)$ 来加密所有记录。具体选择哪一个基于 nonce 的 AEAD 密码，需要由通信双方在 TLS 会话设置期间协商决定。AEAD 加密算法会被赋予以下参数：
+\begin{itemize}
+	\item 密钥：$k_{b\to s}$ 或 $k_{s\to b}$，取决于正在运行加密的是浏览器还是服务器。
+	\item 明文数据：最长 $2^{14}$ 字节。
+	\item 关联数据：空（长度为 $0$）。
+	\item nonce（$8$ 字节或更长）：nonce 的计算方法是：(1) 在加密方的 $64$ 比特写序列号左侧填充 $0$，以达到预期的 nonce长度；(2) 将这个填充后的序列号与一个随机序列（称为 \texttt{client\_write\_iv} 或 \texttt{server\_write\_iv}，取决于谁正在加密）进行异或，该随机序列是在会话设置期间从主秘密中得到的，并且在会话期间是固定的。TLS 1.3 本可以使用一个效果相同但更容易理解的方法：随机选择一个初始 nonce 值，然后为每条记录依次递增。但 TLS 1.3 所使用的方法相比来说更容易实现。
+\end{itemize}
+
+AEAD 密码会输出一条密文 $c$，它会被格式化成一条加密 TLS 记录，其格式如下：
+\begin{center}
+\input{figures/chapter9/fig-vac1.tex}
+\end{center}
+其中，\texttt{type} 是一个 $1$ 字节的记录类型（握手记录或应用数据记录），\texttt{version} 是一个历史遗留的 $2$ 字节字段，总是会被置为 \texttt{0301}，\texttt{length} 是一个 $2$ 字节字段，表示 $c$ 的长度，而 $c$ 是密文本身。类型、版本和长度字段都以透明方式发送。请注意，nonce 不是加密 TLS 记录的一部分。接收方会自行计算 nonce。
+
+为什么我们需要将 nonce 的初始值置为一个随机数，而不是简单地将其置为 $0$？原因在于，在网络协议中，通过 TLS 发送的第一个消息分组通常是一个固定的公共值。如果 nonce 被置为 $0$，那么第一条密文就是用 $c_0\leftarrow E(k,m_0,d,0)$ 计算得到的，而对手已经知道了 $m_0$ 和关联数据 $d$。这就意味着，对手可以针对密钥 $k$ 进行\emph{时空权衡}的穷举搜索的攻击，后者将会在 \ref{sec:18-7} 节中讨论。这种攻击表明，依靠大量的预计算和足够的存储，攻击者能以不可忽略不计的优势迅速地从 $c_0$ 中恢复 $k$——对于 $128$ 比特的密钥，这种攻击可能在不远的将来变得可行。将初始 nonce 随机化，就可以使 TLS ``在未来也能"免受此类攻击。
+
+当收到一条记录时，接收方运行 AEAD 解密算法来解密 $c$。如果解密的结果是 $\mathsf{reject}$，接收方就会向对方发送一个 \texttt{bad\_record\_mac} 致命警报，然后关闭 TLS 会话。
+\end{snote}
+
+\begin{snote}[长度字段。]
+和早期版本的 TLS 一样，在 TLS 1.3 中，记录的长度是以透明方式发送的。一些基于流量分析的攻击会利用记录长度来推断关于记录内容的信息。比如说，如果一条加密 TLS 记录中包含了两张不同大小的图片其中的某一张，长度就会向窃听者泄露加密的是哪张图片。Chen 等人表明，加密记录的长度可以揭示用户提供给云应用程序的私人数据的大量信息 \cite{chen2010side}。他们以一个在线报税系统作为例子。还有一些工作对许多其他系统发起了类似的攻击。由于尚无针对该问题的完整解决方案，它因此经常被大众忽视。
+
+当加密一条 TLS 记录时，长度字段并不是关联数据的一部分，因此其完整性无法得到保护。原因在于，由于变长填充的存在，在加密算法终止之前，我们可能无法得知 $c$ 的长度。因此，我们无法将长度作为加密算法的输入。但这并不影响安全性：一个安全的 AEAD 密码会拒绝一条长度字段被篡改的密文。
+\end{snote}
+
+\begin{snote}[防止重放。]
+攻击者可能会试图重放以前的记录，以促使接收方出现错误的举动。例如，攻击者可以简单地重放包含采购订单的记录，以试图让接收方重复处理同一张采购订单。TLS 使用 $64$ 比特的写序列号来拒绝这种重复的数据包。TLS 假定记录是按顺序传递的，这样，不需要记录中的任何额外信息，接收方也能对即将收到的序列号有一个正确的预期。重复或者失序的记录都会被丢弃，因为此时，AEAD 解密算法会以错误的 nonce 为输入，而这将导致它最终拒绝密文。
+\end{snote}
+
+\begin{snote}[cookie 切割机攻击。]
+TLS 提供了一个流式接口，在这种接口中，记录一准备好就会被发送出去。虽然对记录的重放、重排和流中的删除都会被 $64$ 比特的序列号组织，但是对流中\emph{最后一条}记录的删除却没有任何防御措施。特别是，一个主动攻击者可以在一个会话的中途关闭网络连接，对另一个参与方来说，这看起来就像是对话正常结束了一样。这可能会导致一种被称为 \textbf{cookie 切割机}的现实世界攻击。为了说明这种攻击是如何工作的，考虑一个受害网站和一个受害网络浏览器。受害浏览器访问了一个恶意网站，该网站会指示浏览器连接到 \texttt{victim.com}。假设受害网站的加密响应看起来是这样的：
+
+\vspace*{10pt}
+
+\hspace*{29pt} \texttt{HTTP/1.1 302 Redirect}\\
+\hspace*{50pt} \texttt{Location: http://victim.com/path}\\
+\hspace*{50pt} \texttt{Set-Cookie: SID=[AuthenticationToken]; secure}\\
+\hspace*{50pt} \texttt{Content-Length: 0\;\;\;\textbackslash r\textbackslash n\textbackslash r\textbackslash n}
+         
+\vspace*{10pt}
+        
+\noindent
+前两行表明了响应的类型。注意，第二行包含一个从浏览器请求中复制的``\texttt{path}"值。第三行设置了一个将被储存在浏览器上的 cookie。在这里，``\texttt{secure}"属性表明，这个 cookie 只能通过一个加密 TLS 会话被发送到 \texttt{victim.com}。第四行表示响应结束。
+
+假设在最初的浏览器请求中，``\texttt{path}"值相当长，那么服务器的响应就会被切分到两个 TLS 帧中：
+
+\vspace*{10pt}
+
+\hspace*{1pt} \texttt{frame 1:}
+\hspace*{10.5pt} \texttt{HTTP/1.1 302 Redirect}\\
+\hspace*{85pt} \texttt{Location: http://victim.com/path}\\
+\hspace*{85pt} \texttt{Set-Cookie: SID=[AuthenticationToken]}
+         
+\vspace*{10pt}
+
+\hspace*{1pt} \texttt{frame 2:}
+\hspace*{10.5pt} \texttt{; secure}\\
+\hspace*{85pt} \texttt{Content-Length: 0\;\;\;\textbackslash r\textbackslash n\textbackslash r\textbackslash n}
+
+\vspace*{10pt}
+
+\noindent
+网络攻击者在发送第一帧后关闭了连接，因此第二帧永远不会到达浏览器。这导致浏览器将 cookie 标记为非安全的。现在，攻击者将浏览器引向 \texttt{victim.com} 的明文 (http) 版本，浏览器就会以明文方式发送 SID cookie，攻击者就可以轻易地获取到它。
+
+实际上，对手能够让浏览器收到并不是由服务器发出的消息：服务器发送了两个帧，但浏览器只收到了其中的一个，并将其作为有效消息接受。尽管每一帧都用上了适当的认证加密，但这种攻击仍然可能发生。
+
+TLS 假设应用层会防御这种攻击。特别是，服务器响应当以一个形如 \texttt{\textbackslash r\textbackslash n\textbackslash r\textbackslash n} 的消息结束标志 (end-of-message, EOM) 来标记结束。浏览器在看到 EOM 之前不应当处理传入的消息。但是在实践中，浏览器总是会尝试一收到报头就开始处理请求，这就会导致上述漏洞。每个使用 TLS 的应用程序都必须意识到这个问题，并使用 EOM 或类似的机制来防御它。
+\end{snote}
