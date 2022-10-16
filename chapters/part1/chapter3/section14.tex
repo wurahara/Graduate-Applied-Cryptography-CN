@@ -1,76 +1,96 @@
 \section{练习}\label{sec:3-14}
 
-\begin{exercise}\label{exer:3-1}
+\begin{exercise}[随机消息的语义安全性]\label{exer:3-1}
+我们可以为随机消息定义语义安全性的概念。在这里，我们修改攻击游戏 \ref{game:2-1}，现在不是由对手选择消息 $m_0$，$m_1$，而是由挑战者从消息空间中随机生成 $m_0$，$m_1$。除此之外，优势和安全性的定义都保持不变。
+\begin{enumerate}[\indent(a)]
+	\item 假设 $\mathcal{E}=(E,D)$ 定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上，其中 $\mathcal{M}=\{0,1\}^L$。假设 $\mathcal{E}$ 对随机消息是语义安全的，请说明如何构建一个新的密码 $\mathcal{E}'$，使其在普通意义上是安全的。你的新密码应该定义在 $(\mathcal{K}',\mathcal{M}',\mathcal{C}')$ 上，其中 $\mathcal{K}'=\mathcal{K}$，$\mathcal{M}'=\mathcal{M}$。
+	\item 举一个对随机消息语义安全，但在普通意义上不安全的密码的例子。
+\end{enumerate}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-2}
+\begin{exercise}[加密链]\label{exer:3-2}
+令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的完美安全密码，其中 $\mathcal{K}=\mathcal{M}$。令 $\mathcal{E}'=(E',D')$ 是另一个密码，加密定义为 $E'\big((k_1,k_2),\,m\big):=\big(E(k_1,k_2),\,E(k_2,m)\big)$。证明 $\mathcal{E}'$ 是完美安全的。
 \end{exercise}
 
-\begin{exercise}\label{exer:3-3}
+\begin{exercise}[语义安全性的比特猜测定义]\label{exer:3-3}
+这个练习给出了语义安全性的另一种表示。令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的密码。假设我们可以有效地从消息空间 $\mathcal{M}$ 中生成随机消息。我们按如下方式定义对手 $\mathcal{A}$ 和挑战者之间的攻击游戏。对手选择一条消息 $m\in\mathcal{M}$，接着将 $m$ 发送给挑战者。然后，挑战者计算：
+\[
+b\overset{\rm R}\leftarrow\{0,1\},\quad
+k\overset{\rm R}\leftarrow\mathcal{K},\quad
+m_0\leftarrow m,\quad
+m_1\overset{\rm R}\leftarrow\mathcal{M},\quad
+c\overset{\rm R}\leftarrow E(k,m_b)
+\]
+并将密文 $c$ 发送给 $\mathcal{A}$，后者计算并输出一个比特 $\hat{b}$。我们将 $\mathcal{A}$ 的优势定义为 $\big\lvert\Pr[\hat{b}=b]-1/2\big\rvert$。如果对于所有的有效对手，上述优势都可忽略不计，我们就称 $\mathcal{E}$ 是\emph{真实/随机语义安全的 (real/random semantically secure)}。
+
+\vspace{3pt}
+
+\noindent
+证明当且仅当 $\mathcal{E}$ 在普通意义上满足语义安全性时，它才是真实/随机语义安全的。
 \end{exercise}
 
-\begin{exercise}\label{exer:3-4}
+\begin{exercise}[与随机元的不可区分性]\label{exer:3-4}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-5}
+\begin{exercise}[小种子空间是不安全的]\label{exer:3-5}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-6}
+\begin{exercise}[另一个易被控制性的例子]\label{exer:3-6}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-7}
+\begin{exercise}[理解安全的 PRG 的定义]\label{exer:3-7}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-8}
+\begin{exercise}[定理 \ref{theo:3-1} 的逆命题]\label{exer:3-8}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-9}
+\begin{exercise}[预测下一字符]\label{exer:3-9}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-10}
+\begin{exercise}[简单的统计距离计算]\label{exer:3-10}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-11}
+\begin{exercise}[分配比率]\label{exer:3-11}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-12}
+\begin{exercise}[Bernoulli 不等式的一个变体]\label{exer:3-12}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-13}
+\begin{exercise}[有替换和无替换的采样：距离和比率]\label{exer:3-13}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-14}
+\begin{exercise}[定理 \ref{theo:3-2} 是严格的]\label{exer:3-14}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-15}
+\begin{exercise}[定理 \ref{theo:2-8} （在某种意义上）的逆命题]\label{exer:3-15}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-16}
+\begin{exercise}[上一比特预测]\label{exer:3-16}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-17}
+\begin{exercise}[一种基于线性代数的不安全的 PRG]\label{exer:3-17}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-18}
+\begin{exercise}[使用 PRG 生成加密密钥]\label{exer:3-18}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-19}
+\begin{exercise}[嵌套 PRG 构造]\label{exer:3-19}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-20}
+\begin{exercise}[自嵌套 PRG 构造]\label{exer:3-20}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-21}
+\begin{exercise}[坏的种子]\label{exer:3-21}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-22}
+\begin{exercise}[好的意图，坏的想法]\label{exer:3-22}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-23}
+\begin{exercise}[种子恢复攻击]\label{exer:3-23}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-24}
+\begin{exercise}[一种 PRG 组合器]\label{exer:3-24}
 \end{exercise}
 
-\begin{exercise}\label{exer:3-25}
+\begin{exercise}[引理 \ref{lemma:3-5} 证明中的一个技术步骤]\label{exer:3-25}
 \end{exercise}

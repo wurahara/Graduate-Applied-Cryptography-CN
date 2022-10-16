@@ -53,14 +53,16 @@ x\leftarrow\hat{D}(k_1,\hat{D}(k_2,\dots,\hat{D}(k_{d-1},\hat{D}(k_d,y))\dots))
 \begin{tabular}{lcccc}
 \hline
  &
-  \begin{tabular}[c]{@{}c@{}}key size\\ (bits)\end{tabular} &
-  \begin{tabular}[c]{@{}c@{}}block size\\ (bits)\end{tabular} &
-  \begin{tabular}[c]{@{}c@{}}number of\\ rounds\end{tabular} &
-  \begin{tabular}[c]{@{}c@{}}performance\footnotemark[1]\\ (MB/s)\end{tabular} \\ \hline
-DES     & 56  & 64  & 16 & 80  \\
-3DES    & 168 & 64  & 48 & 30  \\
-AES-128 & 128 & 128 & 10 & 163 \\
-AES-256 & 256 & 128 & 14 & 115 \\ \hline
+  \begin{tabular}[c]{@{}c@{}}\textbf{密钥长度}\\ \textbf{（比特）}\end{tabular} &
+  \begin{tabular}[c]{@{}c@{}}\textbf{分组长度}\\ \textbf{（比特）}\end{tabular} &
+  \begin{tabular}[c]{@{}c@{}}\textbf{加密}\\ \textbf{轮数}\end{tabular} &
+  \begin{tabular}[c]{@{}c@{}}\textbf{性能}\footnotemark[1]\\ \textbf{（MB/s）}\end{tabular} \\
+\hline
+\textbf{DES}     & 56  & 64  & 16 & 80  \\
+\textbf{3DES}    & 168 & 64  & 48 & 30  \\
+\textbf{AES-128} & 128 & 128 & 10 & 163 \\
+\textbf{AES-256} & 256 & 128 & 14 & 115 \\
+\hline
 \end{tabular}
 \caption{分组密码示例}
 \label{tab:4-1}
@@ -338,13 +340,15 @@ Rijndael 由比利时的密码学家 Joan Daemen 和 Vincent Rijmen 设计 \cite
 
 \begin{center}
 \begin{tabular}{c|c|c|c}
-\begin{tabular}[c]{@{}c@{}}密码\\ 名称\end{tabular} &
-  \begin{tabular}[c]{@{}c@{}}密钥长度\\  (比特)\end{tabular} &
-  \begin{tabular}[c]{@{}c@{}}分组长度 \\ (比特)\end{tabular} &
-  \begin{tabular}[c]{@{}c@{}}迭代\\ 轮数\end{tabular} \\ \hline\hline
+\begin{tabular}[c]{@{}c@{}}\textbf{密码}\\ \textbf{名称}\end{tabular} &
+  \begin{tabular}[c]{@{}c@{}}\textbf{密钥长度}\\  \textbf{（比特）}\end{tabular} &
+  \begin{tabular}[c]{@{}c@{}}\textbf{分组长度} \\ \textbf{（比特）}\end{tabular} &
+  \begin{tabular}[c]{@{}c@{}}\textbf{迭代}\\ \textbf{轮数}\end{tabular} \\
+\hline\hline
 AES-128 & 128 & 128 & 10 \\
 AES-192 & 192 & 128 & 12 \\
-AES-256 & 256 & 128 & 14 \\ \hline
+AES-256 & 256 & 128 & 14 \\
+\hline
 \end{tabular}
 \end{center}
 例如，图 \ref{fig:4-11} 展示了一个包含十轮的 AES-128 密码的结构。这里的 $\Pi_{\rm AES}$ 是 $\{0,1\}^{128}$ 上的一个固定置换（一个双射），它不依赖于密钥。每轮的最后一步是将本轮密钥与 $\Pi_{\rm AES}$ 的输出进行异或。这样重复 $9$ 次，直至最后一轮使用一个稍加修改的置换 $\hat\Pi_{\rm AES}$。AES 的逆运算可以通过反向运行上面的步骤来完成。之所以只需要简单地反向就可以，是因为AES的每一步都是很容易反向运行的。

@@ -49,7 +49,10 @@
 \draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (150,95) .. controls (150,86.72) and (156.72,80) .. (165,80) .. controls (173.28,80) and (180,86.72) .. (180,95) .. controls (180,103.28) and (173.28,110) .. (165,110) .. controls (156.72,110) and (150,103.28) .. (150,95) -- cycle ;
 \draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][line width=1.2] [general shadow={fill=black,shadow xshift=2.25pt,shadow yshift=-2.25pt}] (255,375) .. controls (255,366.72) and (261.72,360) .. (270,360) .. controls (278.28,360) and (285,366.72) .. (285,375) .. controls (285,383.28) and (278.28,390) .. (270,390) .. controls (261.72,390) and (255,383.28) .. (255,375) -- cycle ;
 
-\draw (270,170) node  [font=\Large]  {$\bigoplus $};
+\draw [line width=1.2]  (261,170) .. controls (261,165.03) and (265.03,161) .. (270,161) .. controls (274.97,161) and (279,165.03) .. (279,170) .. controls (279,174.97) and (274.97,179) .. (270,179) .. controls (265.03,179) and (261,174.97) .. (261,170) -- cycle ;
+\draw [line width=1.2]  (261,170) -- (279,170) ;
+\draw [line width=1.2]  (270,161) -- (270,179) ;
+
 \draw (165,50) node   [align=left] {$32$-bit $x$};
 \draw (375,50) node   [align=left] {$48$-bit $k$};
 \draw (165,140) node   [align=left] {$48$ bits};

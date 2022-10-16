@@ -1,18 +1,87 @@
 \section{来自配对的高级加密方案}\label{sec:15-6}
 
+下面，我们讨论基于配对的加密和密钥交换方案。利用配对，我们可以构建一些具有新特性的加密方案，这些方案在没有配对的循环群中是无法被有效地构建出来的。我们从介绍\textbf{基于身份的加密}开始。在下一节中，我们将讨论它的极端推广，即\textbf{函数式加密}。
+
 \subsection{基于身份的加密}\label{subsec:15-6-1}
 
+当 Alice 想要向 Bob 发送一条加密的消息时，她必须首先得到 Bob 当前的公钥。她或者向 Bob 索取他的公钥证书，或者在某个公钥目录中查找 Bob 的公钥。无论哪种方式，在 Alice 向 Bob 发送加密消息之前，都必然存在一次从 Alice 开始的通信往返。基于身份的加密，或称 IBE，是一种省去这种初始往返的方法。除了密钥交换，IBE 还可以用于构建选择密文安全的公钥加密，并且可以用于在加密数据上进行搜索，我们将在 \ref{subsec:15-6-4} 小节看到这个案例。
+
+在 IBE 方案中，任何序列都可以被用作公钥。Bob 的电子邮件地址可以是一个公钥，当前日期可以是一个公钥，甚至数字 $1$，$2$，$3$ 都可以是公钥。如果 Bob 将自己的电子邮件地址用作公钥，Alice 就可以向 Bob 发送一封加密邮件，而不需要在开始时发起一次往返通信来查询 Bob 的公钥。只要了解 Bob 的电子邮件地址，就足以向他发送一封加密邮件。
+
+更详细地说，在一个\textbf{基于身份的加密(identity based encryption, IBE)}方案中，存在一个可信实体，我们称之为 Trudy，他生成一个主密钥对 $(\mathit{mpk},\mathit{msk})$。密钥 $\mathit{mpk}$ 被称为\textbf{主公钥}，为所有人所知。Trudy 会自己保留\textbf{主私钥} $\mathit{msk}$。当 Bob 想要将自己的电子邮件地址用作公钥时，他必须以某种方式获得对应的私钥，而这个私钥是由 $\mathit{msk}$ 和 Bob 的公钥共同派生而来的。
+
+我们将 Bob 的电子邮件地址称为他的（公共）身份 $\mathit{id}$，并用 $\mathit{sk}_\mathit{id}$ 表示对应的私钥。Bob 通过联系可信实体 Trudy 来获得 $\mathit{sk}_\mathit{id}$。他首先向 Trudy 证明他的身份 $\mathit{id}$，即证明他拥有相应的电子邮件地址。这是用一个密码系统之外的协议完成的。一旦 Trudy 确信 Bob 拥有身份 $\mathit{id}$，她就用 $\mathit{msk}$ 和 $\mathit{id}$ 生成 $\mathit{sk}_\mathit{id}$，并通过安全信道将这个密钥发送给 Bob。现在，Bob 就可以使用 $\mathit{sk}_\mathit{id}$ 来解密所有用他的身份 $\mathit{id}$ 加密的密文。Alice 和其他所有人都可以向 Bob 发送加密邮件，而不需要先查询他的公钥。这里，我们假设 Alice 和其他人已经持有全局主公钥 $\mathit{mpk}$。
+
+在解释如何使用这样的方案之前，我们先更精确地定义 IBE。
+
 \begin{definition}\label{def:15-7}
-	
+一个\textbf{基于身份的加密方案} $\mathcal{E}_\mathit{id}=(S,G,E,D)$ 是由四个有效算法组成的四元组：一个\textbf{设置算法} $S$，一个\textbf{密钥生成算法} $G$，一个\textbf{加密算法} $E$，以及一个\textbf{解密算法} $D$。
+\begin{itemize}
+	\item $S$ 是一个概率性算法，调用方式为 $(\mathit{mpk},\mathit{msk})\overset{\rm R}\leftarrow S()$，其中 $\mathit{mpk}$ 被称为\textbf{主公钥(master public key)}，$\mathit{msk}$ 被称为\textbf{主私钥(master secret key)}。
+	\item $G$ 是一个概率性算法，调用方式为 $\mathit{sk}_\mathit{id}\overset{\rm R}\leftarrow G(\mathit{msk},\mathit{id})$，其中 $\mathit{msk}$ 是（由 $S$ 输出的）主私钥，$\mathit{id}\in\mathcal{ID}$ 是一个身份，$\mathit{sk}_\mathit{id}$ 是与 $\mathit{id}$ 对应的私钥。
+	\item $E$ 是一个概率性算法，调用方式为 $c\overset{\rm R}\leftarrow E(\mathit{mpk},\mathit{id},m)$。
+	\item $D$ 是一个确定性算法，调用方式为 $m\leftarrow D(\mathit{sk}_\mathit{id},c)$。这里 $m$ 是一条消息，或是一个特殊的（与所有消息都不同的）$\mathsf{reject}$ 值。
+	\item 和之前一样，我们要求解密能够抵消加密；具体地说，对于 $S$ 的所有可能输出 $(\mathit{mpk},\mathit{msk})$，所有身份 $\mathit{id}\in\mathcal{ID}$，以及所有消息 $m$，我们都有：
+	\[
+	\Pr\left[D\big(G(\mathit{msk},\mathit{id}),\;E(\mathit{mpk},\mathit{id},m)\big)=m\right]=1
+	\]
+	\item 我们假设，身份位于某个有限的\textbf{身份空间} $\mathcal{ID}$ 中，消息位于某个有限的\textbf{消息空间} $\mathcal{M}$ 中，密文位于某个有限的\textbf{密文空间} $\mathcal{C}$ 中。我们称 IBE 方案 $\mathcal{E}_\mathit{id}$ 定义在 $(\mathcal{ID},\mathcal{M},\mathcal{C})$ 上。
+\end{itemize}
 \end{definition}
 
+我们可以将 IBE 视作一种特殊的公钥加密方案，其中，待加密的消息是数对 $(\mathit{id},m)\in\mathcal{ID}\times\mathcal{M}$。主秘钥 $\mathit{msk}$ 可以解密所有格式完整的密文。然而，也存在一些较弱的密钥，比如 $\mathit{sk}_\mathit{id}$，它们只能解密一部分格式完整的密文：只有当 $\mathit{id}=\mathit{id'}$ 时，$\mathit{sk}_\mathit{id}$ 才能解密密文 $c\overset{\rm R}\leftarrow E(\mathit{mpk},\mathit{id'},m)$。
+
+此外，我们也可以将 IBE 看作是一种公钥系统，其中包含了指数级数量的公钥。这些公钥就是 $(\mathit{mpk},1), (\mathit{mpk},2),\dots,(\mathit{mpk},N)$，其中 $N$ 是一个大整数（比如 $N=2^{128}$）。在普通的公钥系统中，包含 $N$ 个公钥的列表是无法被压缩的，需要 $O(N)$ 级别的空间来存储。而在 IBE 中，这 $N$ 个公钥可以被压缩，我们只需存储一个简短的 $\mathit{mpk}$。
+
+如果一个公司决定使用 IBE 作为其内部加密电子邮件的系统，那么很有可能的情况是，雇员 Bob 并不会使用他的邮箱地址 $\mathit{id}$ 来作为其 IBE 公钥。原因在于，如果 Bob 的私钥 $\mathit{sk}_\mathit{id}$ 被盗，他就需要改变自己的邮箱地址，以确保 $\mathit{sk}_\mathit{id}$ 不再能够解密之后收到的新邮件。这显然是不现实的。
+
+相对地，Bob 可以使用他的身份序列 $(\mathit{id},\,\text{\emph{今天的日期}})$ 作为他的 IBE 公钥。任何知道 Bob 的 $\mathit{id}$ 以及当前日期的人都可以向 Bob 发送加密邮件，而不需要预先查询他的公钥。事实上，Bob 的公钥每天都在变化。每天早上，Bob 都会与可信实体 Trudy 通信，以获得他当日的私钥。此后，他就可以解密当天收到的所有电子邮件，而不需要再与 Trudy 联系。这种设置带来了两个有趣的特性：
+\begin{itemize}
+	\item 首先，如果 Bob 离开了公司，他的权限就需要被撤销，Trudy 可以停止为 Bob 发放新的私钥。这可以使 Bob 无法解密任何在他离职后发送给他的消息。
+	\item 其次，Alice 可以用公钥 $(\mathit{id},\,\text{\emph{今天的日期}}+\text{\emph{一年}})$ 加密一封给 Bob 的邮件。由于 Trudy 在一年之后才会发布对应的私钥，因此 Bob 在一年之后的今天才能解读这封邮件。这实际上就意味着，Alice 可以向未来发送邮件。
+\end{itemize}
+当然，通过一些工程设计，普通的公钥加密同样也能实现类似的功能。但是，它们要不然需要 Trudy 深度参与到每一次解密中，要不然就需要额外的发送方通信往返，才能查询到 Bob 每日的公钥。正如我们将在 \ref{sec:21-10} 节讨论的，在真实世界的密钥交换中，缩短密钥交换协议的往返轮数是非常有用的。
+
+需要指出的是，使用 IBE 进行密钥管理会导致一种与传统的证书机构 (certificate authority, CA) 完全不同的信任模型。当使用 IBE 时，持有 $\mathit{msk}$ 的可信实体 Trudy 可以解密所有人的消息。在标准的公钥系统中，一个诚实的 CA 不应该有这样的权限。因此，IBE 并不适合所有的场景。它非常适用于企业环境，因为在这种环境中，一个能够访问所有数据的可信实体本来就是操作所必须的。在需要端到端安全的环境中，IBE 并不适用，因为只有端点才能获取明文。尽管如此，我们也可以通过在多方之间共享 Trudy 的 $\mathit{msk}$ 来有效地限制她的权限。正如练习 \ref{exer:15-17} 中将讨论的，为了恶意使用 $\mathit{msk}$，所有人，或者至少有大部分人，需要串通起来才行。
+
+除了公钥管理外，IBE 还有几个重要的应用。我们将在 \ref{subsec:15-6-4} 小节探讨这些问题。
+
+\begin{snote}[安全的基于身份的加密。]
+下面，我们定义 IBE 方案的语义安全性。在给出基本定义后，我们将讨论这个基本概念的几个变体，包括选择密文安全。
+
+基本的安全定义考察了这样的一个对手，它能够获得与它所选择的身份相对应的私钥。对于其他的某个由对手选定的，但对应的私钥不为对手持有的身份，对手不应当能够打破语义安全性。
+\end{snote}
+
 \begin{game}[语义安全性]\label{game:15-4}
-	
+对于一个定义在 $(\mathcal{ID},\mathcal{M},\mathcal{C})$ 上的给定 IBE 方案 $\mathcal{E}_\mathit{id}=(S,G,E,D)$，以及一个给定对手 $\mathcal{A}$，我们定义两个实验：实验 $0$ 和实验 $1$。对于 $b=0,1$，我们定义：
+
+\vspace{5pt}
+
+\noindent\textbf{实验 $b$：}
+\begin{itemize}
+	\item 挑战者计算 $(\mathit{mpk},\mathit{msk})\overset{\rm R}\leftarrow S()$，并将 $\mathit{mpk}$ 发送给对手 $\mathcal{A}$。
+	\item 然后，$\mathcal{A}$ 向挑战者发起一系列查询。每个查询可以是以下两种类型中的一种：
+	\begin{itemize}
+		\item \emph{密钥查询：}对于 $j=1,2,\dots$，第 $j$ 次密钥查询的内容是一个身份 $\mathit{id'}_j\in\mathcal{ID}$。挑战者计算私钥 $\mathit{sk'}_j\leftarrow G(\mathit{msk},\mathit{id'}_j)$，并将 $\mathit{sk'}_j$ 发送给 $\mathcal{A}$。
+		\item \emph{单次加密查询：}查询包含一个三元组 $(\mathit{id},m_0,m_1)\in\mathcal{ID}\times\mathcal{M}^2$，其中 $m_0$ 和 $m_1$ 是长度相同的两条消息。挑战者计算 $c\overset{\rm R}\leftarrow E(\mathit{mpk},\mathit{id},m_b)$，并将 $c$ 发送给 $\mathcal{A}$。
+	\end{itemize}
+	我们要求，挑战者从未对其加密查询中所使用的身份 $\mathit{id}$ 发起过密钥查询。
+	\item 在游戏结束时，对手输出一个比特 $\hat{b}\in\{0,1\}$。
+\end{itemize}
+令 $W_b$ 是 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件。我们将 $\mathcal{A}$ 相对于 $\mathcal{E}_\mathit{id}$ 的优势定义为：
+\[
+\mathrm{SS}\mathsf{adv}[\mathcal{A},\mathcal{E}_\mathrm{id}]:=
+\big\lvert
+\Pr[W_0]-\Pr[W_1]
+\big\rvert
+\]
 \end{game}
 
 \begin{definition}\label{def:15-8}
-	
+如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{SS}\mathsf{adv}[\mathcal{A},\mathcal{E}_\mathrm{id}]$ 的值都可忽略不计，我们就称 IBE 方案 $\mathcal{E}_\mathit{id}$ 是语义安全的。
 \end{definition}
+
+这种语义安全的概念有时也被称为\textbf{自适应安全的 IBE (adaptively secure IBE)}，因为对手可以在看到它选择的许多密钥后，自适应地选择挑战身份 $\mathit{id}$。
 
 \subsection{相关的安全概念}\label{subsec:15-6-2}
 
@@ -44,7 +113,66 @@
 
 \subsection{来自配对的 IBE}\label{subsec:15-6-3}
 
+下面，我们尝试构建 IBE 方案。存在许多使用配对的安全 IBE 构造。这里，我们给出两个简单的构造，它们揭示了使用配对的不同方式。第一种构造给出了随机预言机模型下的一个简单的私有 IBE。第二种构造能提供比第一种更优秀的性能，而且不需要依赖随机预言机，但是只能提供选择性安全性。使用定理 \ref{theo:15-5} 可以使它具有自适应安全性。第三种构造将在练习 \ref{exer:15-18} 中介绍。
+
+我们将会需要以下组件：
+\begin{itemize}
+	\item 和之前一样，令 $e:\mathbb{G}_0\times\mathbb{G}_1\to\mathbb{G}_\mathrm{T}$ 是一个配对，其中 $\mathbb{G}_0$，$\mathbb{G}_1$ 和 $\mathbb{G}_\mathrm{T}$ 都是素阶 $q$ 的循环群，有生成元 $g_0\in\mathbb{G}_0$，$g_1\in\mathbb{G}_1$，
+	\item 一个定义在 $(\mathcal{K},\mathcal{M},\mathcal{C})$ 上的对称密码 $\mathcal{E}_\mathrm{s}=(E_\mathrm{s},D_\mathrm{s})$，以及
+	\item 哈希函数 $H_0:\mathcal{ID}\to\mathbb{G}_0$ 和 $H_1:\mathbb{G}_1\times\mathbb{G}_\mathrm{T}\to\mathcal{K}$。
+\end{itemize}
+
 \subsubsection{构造 1}\label{subsubsec:15-6-3-1}
+
+令 $\mathcal{E}_\mathit{BF}=(S,G,E,D)$ 是如下的具有身份空间 $\mathcal{ID}$ 和消息空间 $\mathcal{M}$ 的 IBE 方案：
+\begin{itemize}
+	\item $S()$：设置算法运行如下：
+	
+	\vspace{3pt}
+	
+	\hspace*{30pt}	$\alpha\overset{\rm R}\leftarrow\mathbb{Z}_q,\quad
+					u_1\leftarrow g_1^\alpha,\quad
+					\mathit{mpk}\leftarrow u_1,\quad
+					\mathit{msk}\leftarrow\alpha,\quad
+					\text{输出}\;\ (\mathit{mpk},\mathit{msk})$
+
+	\item $G(\mathit{msk},\mathit{id})$：密钥生成算法使用 $\mathit{msk}=\alpha$，运行如下：
+
+	\vspace{3pt}
+	
+	\hspace*{30pt}	$\mathit{sk}_\mathit{id}\leftarrow H_0(\mathit{id})^\alpha\in\mathbb{G}_0,\quad
+					\text{输出}\;\ \mathit{sk}_\mathit{id}$
+
+	\item $E(\mathit{mpk},\mathit{id},m)$：加密算法使用公共参数 $\mathit{mpk}=u_1$，运行如下：
+	
+	\vspace{3pt}
+	
+	\hspace*{30pt}	$\beta\overset{\rm R}\leftarrow\mathbb{Z}_q,\quad
+					w_1\leftarrow g_1^\beta,\quad
+					z\leftarrow e\big(H_0(\mathit{id}),\,u_1^\beta\big)\in\mathbb{G}_\mathrm{T},$
+	
+	\hspace*{30pt}	$k\leftarrow H_1(w_1,z),\quad
+					c\overset{\rm R}\leftarrow E_\mathrm{s}(k,m),\quad
+					\text{输出}\;\ (w_1,c)$
+
+	\item $D(\mathit{sk}_\mathit{id},\,(w_1,c))$：解密算法使用与密文 $(w_1,c)$ 对应的私钥 $\mathit{sk}_\mathit{id}$，运行如下：
+	
+	\vspace{3pt}
+	
+	\hspace*{30pt}	$z\leftarrow e(\mathit{sk}_\mathit{id},w_1),\quad
+					k\leftarrow H_1(w_1,z),\quad
+					m\leftarrow D_\mathrm{s}(k,c),\quad
+					\text{输出}\;\ m$
+\end{itemize}
+
+想要说明该方案的正确性，我们只需要证明，在加密过程中计算出的 $k$ 与解密过程中得到的 $k$ 是相同的即可。由于$k=H_1(w_1,z)$，我们只需证明，解密算法通过计算 $z\leftarrow e(\mathit{sk}_\mathit{id},w_1)$ 恢复的 $z$ 是正确的。这可以由以下论证得到：
+\[
+e(\mathit{sk}_\mathit{id},w_1)
+=e\big(H_0(\mathit{id})^\alpha,\,g_1^\beta\big)
+=e\big(H_0(\mathit{id}),\,g_1^{\alpha\beta}\big)
+=e\big(H_0(\mathit{id}),\,u_1^\beta\big)
+\]
+而右侧的值正是加密过程中所使用的 $z$ 值。
 
 \subsubsection{确定性 BDH 假设}\label{subsubsec:15-6-3-2}
 
