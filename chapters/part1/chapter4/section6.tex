@@ -1,245 +1,271 @@
 \section{树构造：从 PRG 到 PRF}\label{sec:4-6}
 
-事实证明，给定一个合适的、安全的 PRG，我们可以用一种叫做\textbf{树构造 (tree construction)}的技术来构建一个安全的 PRF。将这一结果与 \ref{sec:4-5} 节中的卢比-拉克福构造相结合，我们可以看到，我们可以基于任何一个安全 PRG 构造出一个安全的分组密码。虽然这一结果具有一定的理论意义，但这种构造并不十分高效，而且在实践中也没有被真正使用。然而，我们注意到，这种构造的一种简单推广在实际的消息认证方案中发挥着重要的作用，我们将在 \ref{subsec:6-4-2} 小节中讨论这个问题。
+事实证明，给定一个合适的、安全的 PRG，我们可以用一种叫做\textbf{树构造 (tree construction)}的技术来构建安全的 PRF。将这一结论与 \ref{sec:4-5} 节中的 Luby-Rackoff 构造相结合，我们就可以看到，我们可以基于任何一个安全的 PRG 来构造一个安全的分组密码。虽然这一结果具有一定的理论意义，但这种构造并不是很高效，而且在实践中也没有被真正使用过。尽管如此，我们注意到，这种构造的一个简单的推广在实际的消息认证方案中发挥着重要的作用，我们将在 \ref{subsec:6-4-2} 小节中讨论这个问题。
 
-我们从一个定义在 $(\mathcal{S},\mathcal{S}^2)$ 上的伪随机数生成器 $G$ 开始。也就是说，$G$ 的种子空间是一个集合 $\mathcal{S}$，而输出空间是所有种子对的集合 $\mathcal{S}^2$。比如，$G$ 可以将 $n$ 比特序列拉伸为 $2n$ 比特的序列\footnote[2]{事实上，我们甚至可以从一个 PRG 开始，将 $n$ 比特的序列拉伸为 $(n+1)$ 比特，然后应用定理 \ref{theo:3-3} 中分析的$n$次串行组合构造来获得一个合适的 $G$。}。方便的做法是将其表示成$G(s) = (G_0(s),G_1(s))$；也就是说，$G_0(s)\in\mathcal{S}$ 表示 $G(s)$ 的第一个组成部分，$G_1(s)$ 表示 $G(s)$ 的第二个组成部分。我们将基于 $G$ 构造一个伪随机函数 $F$，其密钥空间为 $\mathcal{S}$，输入空间为 $\{0,1\}^\ell$（其中 $\ell$ 是一个任意的、多项式边界的值），输出空间为 $\mathcal{S}$。
+我们从一个定义在 $(\mathcal{S},\mathcal{S}^2)$ 上的 PRG $G$ 开始；也就是说，$G$ 的种子空间是一个集合 $\mathcal{S}$，而输出空间是所有种子对的集合 $\mathcal{S}^2$。比如说，$G$ 可以将 $n$ 比特序列拉伸为 $2n$ 比特的序列\footnote[2]{事实上，我们甚至可以从一个 PRG 开始，将 $n$ 比特的序列拉伸到 $(n+1)$ 比特，然后应用定理 \ref{theo:3-3} 中介绍的 $n$ 次串行组合构造来获得一个合适的 $G$。}。方便的做法是将其表示成 $G(s)=\big(G_0(s),\,G_1(s)\big)$，其中 $G_0(s)\in\mathcal{S}$ 表示 $G(s)$ 的第一个组成部分，而 $G_1(s)$ 表示 $G(s)$ 的第二个组成部分。基于 $G$，我们可以进一步构造一个伪随机函数 $F$，其密钥空间为 $\mathcal{S}$，输入空间为 $\{0,1\}^\ell$（其中 $\ell$ 是一个任意的多项式边界值），输出空间为 $\mathcal{S}$。
 
-我们首先定义一个算法 $G^*$，它接受 $s\in\mathcal{S}$ 和 $x=(a_1,\dots,a_n)\in\{0,1\}^n$ 作为输入，其中对于 $i=1,\dots,n$ 有 $a_i\in\{0,1\}$，输出一个元素 $t\in\mathcal{S}$，其工作原理如下：
+我们首先定义一个算法 $G^*$，它接受 $s\in\mathcal{S}$ 和 $x=(a_1,\dots,a_n)\in\{0,1\}^n$ 作为输入，对于 $i=1,\dots,n$ 有 $a_i\in\{0,1\}$，它输出一个元素 $t\in\mathcal{S}$，运行如下：
 
-\vspace{5pt}
+\vspace{10pt}
 
 \hspace*{5pt} 令 $t\leftarrow s$\\
 \hspace*{26pt} 对于 $i=1,\dots,n$：\\
 \hspace*{50pt} 令 $t\leftarrow G_{a_i}(t)$\\
 \hspace*{26pt} 输出 $t$。
 
-\vspace{5pt}
+\vspace{10pt}
 
 \noindent
 对于 $s\in\mathcal{S}$ 和 $x\in\{0,1\}^\ell$，我们定义：
 \[
 F(s,x):=G^*(s,x)
 \]
-我们将用这种方式从 $G$ 派生出来的 PRF $F$ 称为\textbf{树构造}。
+我们将用这种方式由 $G$ 派生而来的 PRF $F$ 称为\textbf{树构造}。
 
-不妨将输入 $x\in\{0,1\}^\ell$ 的各个比特想象成一棵高为 $\ell$，有 $2^\ell$ 个叶子结点的完全二叉树上的一条由根结点到叶子结点的追踪路径。我们将这棵树称为\textbf{评估树 (evaluation tree)}，比特为 $0$ 意味着左子树，为 $1$ 则意味着右子树。这样一来，树中的任何结点都可以由一个长度最多为 $\ell$ 的比特序列唯一寻址；长度为 $j\leq\ell$ 的比特序列能够寻址到树中第 $j$ 层中的结点：空序列可以寻址到根结点（位于第$0$层），长度为 $1$ 的序列可以寻址到根结点的两个子结点（位于第$1$层），以此类推。评估树中的所有结点都可以使用以下规则，用 $\mathcal{S}$ 中的元素来标记：
+我们不妨将输入 $x\in\{0,1\}^\ell$ 的各个比特想象成一棵高为 $\ell$，有 $2^\ell$ 个叶子结点的完全二叉树上的一条由根结点到叶子结点的追踪路径。我们将这棵树称为\textbf{评估树 (evaluation tree)}：比特为 $0$ 意味着左子树，为 $1$ 则意味着右子树。这样一来，树中的任何结点都可以由一个长度最多为 $\ell$ 的比特序列唯一寻址；长度为 $j\leq\ell$ 的比特序列能够寻址到树中第 $j$ 层上的结点：空序列寻址到根结点（位于第 $0$ 层），长度为 $1$ 的序列寻址到根结点的两个子结点（位于第 $1$ 层），以此类推。评估树中的所有结点都可以被 $\mathcal{S}$ 上的元素标记，规则如下：
 \begin{itemize}
 	\item 树根结点的标签为 $s$；
-	\item 任何其他的结点都是由其父结点的标签$t$\textbf{派生}而来，方法如下：如果该结点是左子结点，则其标签为$G_0(t)$，如果该结点是右子结点，则其标签为$G_1(t)$。
+	\item 任何其他结点的标签都由其父结点标签 $t$ \textbf{派生}而来，方法如下：如果该结点是左子结点，则其标签为 $G_0(t)$，如果该结点是右子结点，则其标签为 $G_1(t)$。
 \end{itemize}
-那么 $F(s,x)$ 的值就对应由 $x$ 寻址的叶子结点的标签，如图 \ref{fig:4-15} 所示。
+那么 $F(s,x)$ 的值就对应由 $x$ 寻址的叶子结点上的标签，如图 \ref{fig:4-15} 所示。
 
 \begin{figure}
   \centering
   \input{figures/chapter4/fig15.tex}
-  \caption{$\ell=3$时的评估树。加粗的路径对应于输入$x=101$。根结点被阴影着色，说明它被分配了一个随机标签。所有其他的结点都按照派生规则分配标签。}
+  \caption{$\ell=3$ 时的评估树。加粗的路径对应于输入 $x=101$。根结点被阴影着色，说明它被分配了一个随机标签。所有其他的结点都按照派生规则分配标签。}
   \label{fig:4-15}
 \end{figure}
 
 \begin{theorem}\label{theo:4-10}
-如果 $G$ 是一个安全的 PRG，那么使用树构造由 $G$ 得到的 PRF $F$ 是一个安全的 PRF。
+如果 $G$ 是一个安全的 PRG，那么使用树构造由 $G$ 得到的 PRF $F$ 也是一个安全的 PRF。
 \begin{quote}
 特别地，对于每一个就 $F$ 进行攻击游戏 \ref{game:4-2} 的 PRF 对手 $\mathcal{A}$，如果它最多向挑战者发起 $Q$ 次查询，则必然存在一个就 $G$ 进行攻击游戏 \ref{game:3-1} 的 PRG 对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
 \end{quote}
 \[
-{\rm PRF\mathsf{adv}}[\mathcal{A},F]=\ell Q\cdot{\rm PRG\mathsf{adv}}[\mathcal{B},G]
+\mathrm{PRF}\mathsf{adv}[\mathcal{A},F]
+=\ell Q\cdot
+\mathrm{PRG}\mathsf{adv}[\mathcal{B},G]
 \]
 \end{theorem}
 
 \begin{proof}[证明思路]
-证明的基本思路是一个混合论证。我们建立一连串的游戏：混合$0$，$\dots$，混合$\ell$。这些游戏中的每一个都是在一个给定的攻击 $F$ 的 PRF 对手和一个挑战者之间进行的，其中挑战者在每个游戏中的行为都略有不同。在混合 $j$ 中，挑战者会构建一颗评估树，其结点按以下方式标记：
+证明的基本思路是一个混合论证。我们构建一系列游戏：混合 $0$，$\dots$，混合 $\ell$。每一个游戏都在一个给定的攻击 $F$ 的 PRF 对手和一个挑战者之间进行，其中挑战者在每个游戏中的行为都略有不同。在混合 $j$ 中，挑战者会构建一颗评估树，其结点按以下方式标记：
 \begin{itemize}
 	\item 第 $0$ 层到第 $j$ 层的结点会被分配随机标签；
 	\item 第 $j+1$ 层到第 $\ell$ 层的结点会被分配派生标签。
 \end{itemize}
-为了应答混合 $j$ 中的查询 $x\in\{0,1\}^\ell$，挑战者向对手发送由 $x$ 寻址的叶子结点的标签，见图 \ref{fig:4-16}。
+为了应答混合 $j$ 中的查询 $x\in\{0,1\}^\ell$，挑战者向对手发送由 $x$ 寻址的叶子结点标签，见图 \ref{fig:4-16}。
 
 \begin{figure}
   \centering
   \input{figures/chapter4/fig16.tex}
-  \caption{混合$2$中$\ell=4$时的评估树。被阴影着色的结点被分配了随机标签，未被着色的结点被分配了派生标签。加粗的路径对应于输入 $0000$，$0011$，$1010$ 和 $1111$。}
+  \caption{$\ell=4$ 时混合 $2$ 中的评估树。被阴影着色的结点被分配了随机标签，未被着色的结点被分配了派生标签。加粗的路径对应于输入 $0000$，$0011$，$1010$ 和 $1111$。}
   \label{fig:4-16}
 \end{figure}
 
-显然，混合 $0$ 等同于攻击游戏 \ref{game:4-2} 的实验 $0$，而混合 $\ell$ 等同于实验 $1$。直观地说，在假设 $G$ 是一个安全的 PRG 的情况下，对于 $j=0,\dots,\ell-1$，对手应该无法分辨混合 $j$ 和混合 $j+1$。在严格表述这一想法的时候，我们必须要注意，评估树可能是非常巨大的，为了建立一个有效的攻击 $G$ 的 PRG 对手，我们无法负担写下整棵树的开销（甚至是写下树中的一层的开销）。相对地，我们需要利用这样一个事实，即如果 PRF 对手最多向其挑战者发起 $Q$ 次查询（这是一个多项式边界的值），那么在评估树的任何一层 $j$，这 $Q$ 次查询所跟踪的路径最多会涉及 $Q$ 个 $j$ 层中的结点（在图 \ref{fig:4-16} 中，对于给定的输入，应当是第$2$层的第一、第三和第四个结点）。我们构建的 PRG 对手会根据需要使用``忠实的侏儒"思路的一个变体来有效地维护第 $j$ 层的相关随机标签。
+显然，混合 $0$ 就相当于攻击游戏 \ref{game:4-2} 的实验 $0$，而混合 $\ell$ 相当于实验 $1$。直观地说，在假设 $G$ 是一个安全的 PRG 的情况下，对于 $j=0,\dots,\ell-1$，对手应该无法分辨混合 $j$ 和混合 $j+1$。在严格表述这一想法的时候，我们必须要注意，评估树可能是非常巨大的，而为了建立一个攻击 $G$ 的有效 PRG 对手，我们可能无法负担保存整棵树的开销（甚至是保存树的其中一层的开销）。相对地，我们需要利用这样一个事实，即如果 PRF 对手最多向其挑战者发起 $Q$ 次查询（这是一个多项式边界的值），那么在评估树的任何一层 $j$，这 $Q$ 次查询所跟踪的路径最多只会涉及 $Q$ 个 $j$ 层上的结点（在图 \ref{fig:4-16} 中，对于给定的输入，应当是第 $2$ 层的第一、第三和第四个结点）。我们构建的 PRG 对手会根据需要使用``忠实的侏儒"思路的一个变体来有效地维护第 $j$ 层上相关的随机标签。
 \end{proof}
 
 \begin{proof}
-令 $\mathcal{A}$ 是一个有效对手，它就 $F$ 进行攻击游戏 \ref{game:4-2} 中的攻击。我们假设 $\mathcal{A}$ 最多向其挑战者发起 $Q$ 次查询，其中 $Q$ 是一个多项式边界的值。
+令 $\mathcal{A}$ 是一个有效对手，它就 $F$ 进行攻击游戏 \ref{game:4-2}。我们假设 $\mathcal{A}$ 最多向其挑战者发起 $Q$ 次查询，其中 $Q$ 是一个多项式边界的值。
 
-如上所述，我们定义 $\ell+1$ 个混合游戏：混合$0$，$\dots$，混合$\ell$，其中每个游戏都在 $\mathcal{A}$ 和一个挑战者之间进行。在混合 $j$ 中，挑战者的工作方式如下：
+如上所述，我们定义 $\ell+1$ 个混合游戏：混合 $0$，$\dots$，混合 $\ell$，其中每个游戏都在 $\mathcal{A}$ 和一个挑战者之间进行。在混合 $j$ 中，挑战者运行如下：
+
+\vspace{10pt}
+
+\hspace*{5pt} 随机选取 $f\overset{\rm R}\leftarrow{\rm Funs}[\{0,1\}^j,\mathcal{S}]$
 
 \vspace{5pt}
 
-\hspace*{5pt} 选取 $f\overset{\rm R}\leftarrow{\rm Funs}[\{0,1\}^j,\mathcal{S}]$\\
-\hspace*{26pt} 当从 $\mathcal{A}$ 处收到查询 $x=(a_1,\dots,a_\ell)\in\{0,1\}^\ell$ 时：\\
+\hspace*{5pt} 当从 $\mathcal{A}$ 处收到查询 $x=(a_1,\dots,a_\ell)\in\{0,1\}^\ell$ 时：\\
 \hspace*{50pt} 令 $u\leftarrow(a_1,\dots,a_j)$，$v\leftarrow(a_{j+1},\dots,a_\ell)$\\
 \hspace*{50pt} 令 $y\leftarrow G^*(f(u),v)$\\
 \hspace*{50pt} 将 $y$ 发送给 $\mathcal{A}$。
 
-\vspace{5pt}
+\vspace{10pt}
 
 \noindent
-直观地说，对于 $u\in\{0,1\}^j$，$f(u)$ 代表 $u$ 所寻址的第 $j$ 层结点的随机标签。因此，第 $j$ 层的每个结点都会被分配一个随机标签，而第 $j+1$ 层到第 $l$ 层的结点都会被分配派生标签。请注意，在我们对混合游戏的描述中，我们没有明确地给第 $0$ 层到第 $j-1$ 层的结点分配标签，因为这些标签不影响任何输出。
+直观地说，对于 $u\in\{0,1\}^j$，$f(u)$ 就代表由 $u$ 寻址的第 $j$ 层结点的随机标签。因此，第 $j$ 层的每个结点都会被分配一个随机标签，而第 $j+1$ 层到第 $\ell$ 层的结点都会被分配派生标签。请注意，在我们对混合游戏的描述中，我们没有显式地为第 $0$ 层到第 $j-1$ 层的结点分配标签，因为这些标签不会影响到任何输出。
 
-对于 $j=0,\dots,\ell$，由于混合 $0$ 相当于攻击游戏 \ref{game:4-2} 的实验 $0$，而混合 $\ell$ 相当于实验 $1$，我们有：
+对于 $j=0,\dots,\ell$，令 $p_j$ 为 $\mathcal{A}$ 在混合 $j$ 中输出 $1$ 的概率。由于混合 $0$ 相当于攻击游戏 \ref{game:4-2} 的实验 $0$，而混合 $\ell$ 相当于实验 $1$，我们有：
 \begin{equation}\label{eq:4-30}
-{\rm PRF\mathsf{adv}}[\mathcal{A},F]=|p_\ell-p_0|
+\mathrm{PRF}\mathsf{adv}[\mathcal{A},F]
+=
+|p_\ell-p_0|
 \end{equation}
 
-用 $G'$ 表示 $G$ 的 $Q$ 次并行组合，如我们在 \ref{subsec:3-4-1} 小节中介绍过的那样。$G'$ 以 $(s_1,\dots,s_Q)\in\mathcal{S}^Q$ 为输入，输出 $(G(s_1),\dots,G(s_Q))\in(\mathcal{S}^2)^Q$。根据定理 \ref{theo:3-2}，如果 $G$ 是一个安全的 PRG，那么 $G'$ 也是一个安全的 PRG。
+令 $G'$ 为 $G$ 的 $Q$ 次并行组合，我们在 \ref{subsec:3-4-1} 小节中介绍过后者。$G'$ 以 $(s_1,\dots,s_Q)\in\mathcal{S}^Q$ 为输入，输出 $\big(G(s_1),\dots,G(s_Q)\big)\in(\mathcal{S}^2)^Q$。根据定理 \ref{theo:3-2}，如果 $G$ 是一个安全的 PRG，那么 $G'$ 也是一个安全的 PRG。
 
-现在，我们建立一个有效 PRG 对手 $\mathcal{B}'$ 来攻击 $G'$，使得：
+现在，我们建立一个攻击 $G'$ 的有效 PRG 对手 $\mathcal{B}'$，满足：
 \begin{equation}\label{eq:4-31}
-{\rm PRG\mathsf{adv}}[\mathcal{B}',G']=\frac{1}{\ell}\cdot|p_\ell-p_0|
+\mathrm{PRG}\mathsf{adv}[\mathcal{B}',G']
+=\frac{1}{\ell}\cdot|p_\ell-p_0|
 \end{equation}
-我们首先概述 $\mathcal{B}'$ 的工作原理。在针对 $G'$ 进行攻击游戏 \ref{game:3-1} 中的攻击时，挑战者向 $\mathcal{B}'$ 提出一个向量：
+我们首先概述 $\mathcal{B}'$ 的工作原理。在就 $G'$ 进行攻击游戏 \ref{game:3-1} 时，挑战者向 $\mathcal{B}'$ 展示一个向量：
 \begin{equation}\label{eq:4-32}
-\vec{r}=((r_{10},r_{11}),\dots,(r_{Q0},r_{Q1}))\in(\mathcal{S}^2)^Q
+\vec{r}=\big((r_{10},r_{11}),\dots,(r_{Q0},r_{Q1})\big)\in(\mathcal{S}^2)^Q
 \end{equation}
-在攻击游戏的实验 $0$ 中，对于随机的 $\vec{s}\in\mathcal{S}^Q$，有 $\vec{r}=G(\vec{s})$。而在实验 $1$ 中，$\vec{r}$ 是从 $(\mathcal{S}^2)^Q$ 中随机选出的。为了区分这两个实验，$\mathcal{B}'$ 随机选择一个 $\omega\in\{1,\dots,\ell\}$，并扮演 $\mathcal{A}$ 的挑战者的角色，并使用 $\vec r$ 的元素按顺序给评估树的第 $\omega$ 层的结点打上标签。为此，$\mathcal{B}'$ 需要维护一张查找表，这使得它可以将每某个查询 $x\in\{0,1\}^\ell$ 的每个前缀 $u\in\{0,1\}^{\omega-1}$ 与一个索引 $p$ 关联起来，这样，由 $u$ 寻址的结点的子结点就被种子对 $(r_{p0},r_{p1})$ 标记。最后，当 $\mathcal{A}$ 终止并输出一个比特时，$\mathcal{B}'$ 就输出相同的比特。从 $\mathcal{B}'$ 的构造细节可以看出，对于任何固定的 $j=1,\dots,\ell$，以 $\omega=j$ 为条件，$\mathcal{B}'$ 输出 $1$ 的概率为：
+在攻击游戏的实验 $0$ 中，对于随机的 $\vec{s}\in\mathcal{S}^Q$，我们有 $\vec{r}=G(\vec{s})$。而在实验 $1$ 中，$\vec{r}$ 是从 $(\mathcal{S}^2)^Q$ 中随机选出的。为了区分这两个实验，$\mathcal{B}'$ 随机选择一个 $\omega\in\{1,\dots,\ell\}$，然后扮演 $\mathcal{A}$ 的挑战者的角色，并使用 $\vec r$ 中的元素，以一致的方式给评估树第 $\omega$ 层上的结点打上标签。为此，$\mathcal{B}'$ 需要维护一张查找表，这使得它可以将某次查询 $x\in\{0,1\}^\ell$ 中的每个前缀 $u\in\{0,1\}^{\omega-1}$ 都与一个索引 $p$ 关联起来，这样，由 $u$ 寻址的结点的子结点就会被种子对 $(r_{p0},r_{p1})$ 标记。最后，当 $\mathcal{A}$ 终止并输出一个比特时，$\mathcal{B}'$ 就输出相同的比特。从 $\mathcal{B}'$ 的构造细节可以看出，对于任何固定的 $j=1,\dots,\ell$，以 $\omega=j$ 为条件，$\mathcal{B}'$ 输出 $1$ 的概率为：
 \begin{itemize}
 	\item $p_{j-1}$，如果 $\mathcal{B}'$ 处于其攻击游戏的实验 $0$ 中，或
 	\item $p_j$，如果 $\mathcal{B}'$ 处于其攻击游戏的实验 $1$ 中。
 \end{itemize}
-然后通过简单的放缩计算，我们就能得到式 \ref{eq:4-31}。
+然后，通过简单的放缩计算，我们就能得到式 \ref{eq:4-31}。
 
-下面我们来说说细节。我们将查找表实现为一个关联数组 $Map:\{0,1\}^*\to\mathbb{Z}_{>0}$。下面是 $\mathcal{B}'$ 的工作原理：
+下面，我们来看看细节。我们将查找表实现为一个关联数组 $\mathit{Map}:\{0,1\}^*\to\mathbb{Z}_{>0}$。以下是 $\mathcal{B}'$ 的运行逻辑：
+
+\vspace{10pt}
+
+\hspace*{5pt} 当从挑战者处收到如式 \ref{eq:4-32} 的向量 $\vec r$ 时，$\mathcal{B}'$ 扮演 $\mathcal{A}$ 的挑战者的角色，运行如下：\\
+\hspace*{50pt} 随机选取 $\omega\overset{\rm R}\leftarrow\{1,\dots,\ell\}$\\
+\hspace*{50pt} 初始化一个空的关联数组 $\mathit{Map}:\{0,1\}^*\to\mathbb{Z}_{>0}$\\
+\hspace*{50pt} 令 $\mathit{ctr}\leftarrow 0$
 
 \vspace{5pt}
 
-\hspace*{5pt} 当从挑战者处收到如式 \ref{eq:4-32} 的向量 $\vec r$ 时，$\mathcal{B}'$ 扮演 $\mathcal{A}$ 的挑战者的角色，如下所示：\\
-\hspace*{50pt} 选取 $\omega\overset{\rm R}\leftarrow\{1,\dots,\ell\}$\\
-\hspace*{50pt} 初始化一个空关联数组 $Map:\{0,1\}^*\to\mathbb{Z}_{>0}$\\
-\hspace*{50pt} 令 $ctr\leftarrow 0$\\
-\hspace*{50pt} 当从 $\mathcal{A}$ 处收到一个查询 $x=(a_1,\dots,a_\ell)\in\{0,1\}^\ell$ 时：\\
+\hspace*{29pt} 当从 $\mathcal{A}$ 处收到一个查询 $x=(a_1,\dots,a_\ell)\in\{0,1\}^\ell$ 时：\\
 \hspace*{75pt} 令 $u\leftarrow(a_1,\dots,a_{\omega-1})$，$d\leftarrow a_\omega$，$v\leftarrow(a_{\omega+1},\dots,a_\ell)$\\
-\hspace*{75pt} 如果 $u\notin{\rm Domain}(Map)$：\\
-\hspace*{100pt} 令 $ctr\leftarrow ctr+1$，$Map[u]\leftarrow ctr$\\
-\hspace*{75pt} 令 $p\leftarrow Map[u]$，$y\leftarrow G^*(r_{pd},v)$\\
+\hspace*{75pt} 如果 $u\notin{\rm Domain}(\mathit{Map})$：\\
+\hspace*{100pt} 令 $\mathit{ctr}\leftarrow \mathit{ctr}+1$，$\mathit{Map}[u]\leftarrow\mathit{ctr}$\\
+\hspace*{75pt} 令 $p\leftarrow\mathit{Map}[u]$，$y\leftarrow G^*(r_{pd},v)$\\
 \hspace*{75pt} 将 $y$ 发送给 $\mathcal{A}$。
 
-\vspace{3pt}
+\vspace{5pt}
 
 \hspace*{5pt} 最后，$\mathcal{B}'$ 输出 $\mathcal{A}$ 所输出的任何东西。
 
-\vspace{5pt}
+\vspace{10pt}
 
-对于$b=0,1$，令 $W_b$ 为 $\mathcal{B}'$ 就 $G'$ 在攻击游戏 \ref{game:3-1} 的实验 $b$ 中输出 $1$ 的事件。我们声称，对于任何固定的 $j=1,\dots,\ell$，都有：
+对于$b=0,1$，令 $W_b$ 为 $\mathcal{B}'$ 在就 $G'$ 的攻击游戏 \ref{game:3-1} 的实验 $b$ 中输出 $1$ 的事件。我们声称，对于任何固定的 $j=1,\dots,\ell$，我们都有：
 \[
 \Pr[W_0|\omega=j]=p_{j-1},
 \quad
 \Pr[W_1|\omega=j]=p_j
 \]
-事实上，以 $\omega=j$ 为条件，对于固定的 $j$，考虑 $\mathcal{B}'$ 如何给评估树中的结点加标签。一方面，当 $\mathcal{B}'$ 处于其攻击游戏的实验 $1$ 时，它可以有效地给第 $j$ 层的结点分配随机标签，而查找表能够确保这些标签不会重复。另一方面，当 $\mathcal{B}'$ 处于其攻击游戏的实验 $0$ 时，它可以有效地给第 $j$ 层的结点分配伪随机标签，这等于给这些结点在第 $j-1$ 层的父结点分配随机标签，并在第 $j$ 层分配派生标签；同样，查找表能够确保标签不会重复。
+事实上，以 $\omega=j$ 为条件，对于固定的 $j$，考虑 $\mathcal{B}'$ 如何给评估树中的结点加标签。一方面，当 $\mathcal{B}'$ 处于其攻击游戏的实验 $1$ 时，它可以有效地给第 $j$ 层的结点分配随机标签，而查找表能够确保这个过程是一致的。另一方面，当 $\mathcal{B}'$ 处于其攻击游戏的实验 $0$ 时，它可以有效地给第 $j$ 层的结点分配伪随机标签，这就等于是给这些结点在第 $j-1$ 层的父结点分配随机标签，并在第 $j$ 层分配派生标签；同样，查找表能够确保标签的一致性。
 
-基于上述声称，我们可以通过一个简单的放缩计算得到式 \ref{eq:4-31}：
+基于上述声称，我们可以通过一个简单的放缩得到式 \ref{eq:4-31}：
 \[
 \begin{aligned}
-{\rm PRG\mathsf{adv}}[\mathcal{B}',G']
-&=|\Pr[W_1]-\Pr[W_0]|\\
-&=\frac{1}{\ell}\cdot\Big\lvert\sum_{j=1}^\ell\Pr[W_1\,|\,\omega=j]-\sum_{j=1}^\ell\Pr[W_0\,|\,\omega=j]\Big\rvert\\
-&=\frac{1}{\ell}\cdot\Big\lvert\sum_{j=1}^\ell p_j-\sum_{j=1}^\ell p_{j-1}\Big\rvert\\
+\mathrm{PRG}\mathsf{adv}[\mathcal{B}',G']
+&=\big\lvert\Pr[W_1]-\Pr[W_0]\big\rvert\\
+&=\frac{1}{\ell}\cdot\bigg\lvert\sum_{j=1}^\ell\Pr[W_1\,|\,\omega=j]-\sum_{j=1}^\ell\Pr[W_0\,|\,\omega=j]\bigg\rvert\\
+&=\frac{1}{\ell}\cdot\bigg\lvert\sum_{j=1}^\ell p_j-\sum_{j=1}^\ell p_{j-1}\bigg\rvert\\
 &=\frac{1}{\ell}\cdot|p_\ell-p_0|
 \end{aligned}
 \]
 
-最后，根据定理 \ref{theo:3-2}，必然存在一个有效 PRG 对手 $\mathcal{B}$，使得：
+最后，根据定理 \ref{theo:3-2}，必然存在一个有效的 PRG 对手 $\mathcal{B}$，满足：
 \begin{equation}\label{eq:4-33}
-{\rm PRG\mathsf{adv}}[\mathcal{B}',G']=Q\cdot{\rm PRG\mathsf{adv}}[\mathcal{B},G]
+\mathrm{PRG}\mathsf{adv}[\mathcal{B}',G']
+=Q\cdot
+\mathrm{PRG}\mathsf{adv}[\mathcal{B},G]
 \end{equation}
-现在，结合式 \ref{eq:4-30}，\ref{eq:4-31} 和 \ref{eq:4-33}，可以得到该定理。
+现在，结合式 \ref{eq:4-30}，\ref{eq:4-31} 和 \ref{eq:4-33}，该定理得证。
 \end{proof}
 
 \subsection{变长树构造}\label{subsec:4-6-1}
 
-很自然地，我们下面考虑树构造如何在可变长度的输入上工作。和之前一样，令 $G$ 是一个定义在 $(\mathcal{S},\mathcal{S}^2)$ 上的 PRG，$G^*$ 的定义与之前也一样。对于任何多项式边界值 $\ell$，我们定义 PRF $\tilde F$，其密钥空间为 $\mathcal{S}$，输入空间为 $\{0,1\}^{\leq l}$，输出空间为 $\mathcal{S}$，对于 $s\in\mathcal{S}$ 和 $x\in\{0,1\}^{\leq\ell}$，我们定义：
+我们自然会考虑，树构造如何在\emph{变长}的输入上工作。和之前一样，令 $G$ 是一个定义在 $(\mathcal{S},\mathcal{S}^2)$ 上的 PRG，$G^*$ 的定义与之前也一样。对于任何多项式边界值 $\ell$，我们定义 PRF $\tilde F$，其密钥空间为 $\mathcal{S}$，输入空间为 $\{0,1\}^{\leq\ell}$，输出空间为 $\mathcal{S}$，对于 $s\in\mathcal{S}$ 和 $x\in\{0,1\}^{\leq\ell}$，我们定义：
 \[
 \tilde F(s,x)=G^*(s,x)
 \]
 
-不幸的是，$\tilde F$ 不是一个安全的 PRF，原因是存在着一种平凡的\textbf{扩展攻击 (extension attack)}。假设 $u,v\in\{0,1\}^{\leq\ell}$，其中 $u$ 是 $v$ 的真前缀，即存在非空序列 $w$ 使得 $v=u\,\Vert\,w$。那么，给定 $u$，$v$ 以及 $y:=\tilde F(s,u)$，我们很容易基于 $G^*(y,w)$ 计算 $F(s,v)$。当然，对于一个真随机函数来说，给定 $u$ 处的值，我们无法预测它在 $v$ 处的值。因此，我们很容易将 $\tilde F(s,\cdot)$ 与一个真随机函数区分开来。
+不幸的是，$\tilde F$ 并不是一个安全的 PRF。原因在于，存在着一种平凡的\textbf{扩展攻击 (extension attack)}。假设 $u,v\in\{0,1\}^{\leq\ell}$，其中 $u$ 是 $v$ 的真前缀；也就是说，存在非空序列 $w$ 使得 $v=u\,\Vert\,w$。那么，给定 $u$，$v$ 以及 $y:=\tilde F(s,u)$，我们很容易基于 $G^*(y,w)$ 计算 $F(s,v)$。当然，对于一个真随机函数来说，给定它在 $u$ 处的值，我们无法预测它在 $v$ 处的值。因此，我们很容易将 $\tilde F(s,\cdot)$ 与一个真随机函数区分开来。
 
-即便 $\tilde F$ 不是一个安全的 PRF，我们仍然可以得出一些关于它的有趣结论。我们下面表明，针对特定的受限对手所组成的集合，$\tilde F$ 是一个 PRF，这种对手被称为\textbf{无前缀对手 (prefix-free adversaries)}。
+即便 $\tilde F$ 不是一个安全的 PRF，我们仍然可以得出一些关于它的有趣结论。我们下面表明，对于一种被称为\textbf{无前缀对手}的受限对手，$\tilde F$ 确实是一个 PRF。
 
 \begin{definition}\label{def:4-5}
-令 $F$ 是一个定义在 $(\mathcal{K},\mathcal{X}^{\leq\ell}, \mathcal{Y})$ 上的 PRF。对于一个就 $F$ 进行攻击游戏 \ref{game:4-2} 中的攻击的 PRF 对手 $\mathcal{A}$，如果它所发出的所有查询都是 $\mathcal{X}$ 上长度不超过 $\ell$ 的非空序列，且其中任何一个查询都不是其他查询的真前缀\footnote[3]{对于序列 $x=(a_1\dots a_s)$ 和 $y=(b_1\dots b_t)$，如果 $s\leq t$，且对于 $i=1,\dots,s$ 都有 $a_i=b_i$，我们就称 $x$ 是 $y$ 的一个\textbf{前缀}；在此基础上，如果 $s<t$，我们就称 $x$ 是 $y$ 的一个\textbf{真前缀(proper prefix)}。}，我们就称这样的对手 $\mathcal{A}$ 是一个\textbf{无前缀对手 (prefix-free adversary)}。我们将 $\mathcal{A}$ 赢得游戏的优势记为 ${\rm PRF^{pf}\mathsf{adv}}[\mathcal{A},F]$。此外，如果对于所有有效的无前缀对手 $\mathcal{A}$，${\rm PRF^{pf}\mathsf{adv}}[\mathcal{A},F]$ 的值都可忽略不计，我们就称 $F$ 是一个\textbf{无前缀安全的 PRF (prefix-free secure PRF)}。
+令 $F$ 是一个定义在 $(\mathcal{K},\mathcal{X}^{\leq\ell}, \mathcal{Y})$ 上的 PRF。对于一个就 $F$ 进行攻击游戏 \ref{game:4-2} 的 PRF 对手 $\mathcal{A}$，如果它所发出的所有查询都是 $\mathcal{X}$ 上的长度不超过 $\ell$ 的非空序列，且其中任何一个查询都不是其他查询的真前缀\footnote[3]{对于序列 $x=(a_1\dots a_s)$ 和 $y=(b_1\dots b_t)$，如果 $s\leq t$，且对于 $i=1,\dots,s$，都有 $a_i=b_i$ 成立，我们就称 $x$ 是 $y$ 的一个\textbf{前缀 (prefix)}；在此基础上，如果 $s<t$，我们就称 $x$ 是 $y$ 的一个\textbf{真前缀(proper prefix)}。}，我们就称这样的对手 $\mathcal{A}$ 是一个\textbf{无前缀对手 (prefix-free adversary)}。我们将 $\mathcal{A}$ 赢得游戏的优势记为 ${\rm PRF^{pf}\mathsf{adv}}[\mathcal{A},F]$。此外，如果对于所有有效的无前缀对手 $\mathcal{A}$，${\rm PRF^{pf}\mathsf{adv}}[\mathcal{A},F]$ 的值都可忽略不计，我们就称 $F$ 是一个\textbf{无前缀安全的 PRF (prefix-free secure PRF)}。
 \end{definition}
 
 比如，如果一个无前缀对手对序列 $(a_1,a_2,a_3)$ 发起查询，那么它就不能再对 $(a_1)$ 和 $(a_1,a_2)$ 发起查询。
 
 \begin{theorem}\label{theo:4-11}
-如果 $G$ 是一个安全 PRG，那么由 $G$ 派生的变长树构造 $\tilde F$ 是一个无前缀安全的 PRF。
+如果 $G$ 是一个安全的 PRG，那么由 $G$ 派生的变长树构造 $\tilde F$ 就是一个无前缀安全的 PRF。
 \begin{quote}
-特别地，对于每个就 $\tilde F$ 进行攻击游戏 \ref{game:4-2} 的无前缀对手 $\mathcal{A}$，如果它最多能向其挑战者发起 $Q$ 次查询，那么必然存在一个就 $G$ 进行攻击游戏 \ref{game:3-1} 的 PRG 对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
+特别地，对于每个就 $\tilde F$ 进行攻击游戏 \ref{game:4-2} 的无前缀对手 $\mathcal{A}$，如果它最多能向其挑战者发起 $Q$ 次查询，则必然存在一个就 $G$ 进行攻击游戏 \ref{game:3-1} 的 PRG 对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
 \end{quote}
 \[
-{\rm PRF^{pf}\mathsf{adv}}[\mathcal{A},\tilde{F}]=\ell Q\cdot{\rm PRG\mathsf{adv}}[\mathcal{B},G]
+{\rm PRF^{pf}\mathsf{adv}}[\mathcal{A},\tilde{F}]
+=
+\ell Q\cdot
+{\rm PRG\mathsf{adv}}[\mathcal{B},G]
 \]
 \end{theorem}
 
 \begin{proof}
-该证明的基本思路与定理 \ref{theo:4-10} 完全相同。我们在此仅简述主要观点，并强调与那个证明的不同之处。
+该证明的基本思路与定理 \ref{theo:4-10} 完全相同。我们在此仅简述主要思路，并强调与那个证明的不同之处。
 
-令 $\mathcal{A}$ 是一个有效的无前缀对手，它就 $\tilde F$ 进行攻击游戏 \ref{game:4-2}。假设 $\mathcal{A}$ 最多向其挑战者发起 $Q$ 次查询。此外，为了方便起见，我们假设 $\mathcal{A}$ 发起的任意两次查询都不相同，也不会出现其中一个是另一个的前缀的情况。攻击游戏 \ref{game:4-2} 中的挑战者不需要强制服从这一假设，我们只是假设 $\mathcal{A}$ 在按规则行事。
+令 $\mathcal{A}$ 是一个有效的无前缀对手，它就 $\tilde F$ 进行攻击游戏 \ref{game:4-2}。假设 $\mathcal{A}$ 最多向其挑战者发起 $Q$ 次查询。此外，方便起见，我们假设 $\mathcal{A}$ 不会发起两次内容相同的查询。因此，我们假设的内容其实是，对于 $\mathcal{A}$ 所发起的任意两次查询，其中一次不会等于另外一次，或是另外一次的前缀。攻击游戏 \ref{game:4-2} 中的挑战者不需要强制服从这一假设——我们只是假设 $\mathcal{A}$ 在按规则行事。
 
-和之前一样，我们用一棵评估树来考察 $\tilde F(s,\cdot)$ 的计算：其根结点的标签为 $s$，所有其他结点的标签都是派生标签。现在唯一的区别是，$\tilde F(s,\cdot)$ 的输入也可以寻址到评估树的\emph{内部}结点。然而，无前缀的约束意味着，没有任何一个输入可以寻址到一个由之前输入所寻址的结点的祖先结点。
+和之前一样，我们用一棵评估树来考察对 $\tilde F(s,\cdot)$ 的评估：其根结点被标记为 $s$，而所有其他结点的标签都是派生标签。现在唯一的区别是，$\tilde F(s,\cdot)$ 的输入也可以寻址到评估树的\emph{内部}结点。然而，无前缀的约束意味着，没有任何一个输入可以寻址到一个由另一个输入所寻址的结点的祖先结点。
 
-我们再次定义 $\ell$ 个混合游戏：混合$0$，$\dots$，混合$\ell$。在这些游戏中，挑战者使用的评估树的标记方式与定理 \ref{theo:4-10} 的证明中完全相同：在混合 $j$ 中，第 $0$ 层到第 $j$ 层的结点被分配随机标签，而其他层的结点被分配派生标签。挑战者对查询 $x$ 的应答是返回评估树中 $x$ 所寻址的结点的标签，注意该结点现在不一定是叶子结点。更正式地说，混合 $j$ 中的挑战者的工作方式如下：
+我们再次定义 $\ell$ 个混合游戏：混合 $0$，$\dots$，混合 $\ell$。在这些游戏中，挑战者使用的评估树的标记方式与定理 \ref{theo:4-10} 的证明中完全相同：在混合 $j$ 中，第 $0$ 层到第 $j$ 层的结点被分配了随机标签，而其他层的结点被分配了派生标签。挑战者对查询 $x$ 的应答是返回评估树中由 $x$ 寻址结点的标签，注意该结点现在不一定是叶子结点。更正式地说，混合 $j$ 中的挑战者工作如下：
+
+\vspace{10pt}
+
+\hspace*{5pt} 随机选取 $f\overset{\rm R}\leftarrow{\rm Funs}[\{0,1\}^{\leq j},\mathcal{S}]$
 
 \vspace{5pt}
 
-\hspace*{5pt} 选取 $f\overset{\rm R}\leftarrow{\rm Funs}[\{0,1\}^{\leq j},\mathcal{S}]$\\
-\hspace*{26pt} 当从 $\mathcal{A}$ 处收到查询 $x=(a_1,\dots,a_n)\in\{0,1\}^\ell$ 时：\\
+\hspace*{5pt} 当从 $\mathcal{A}$ 处收到查询 $x=(a_1,\dots,a_n)\in\{0,1\}^\ell$ 时：\\
 \hspace*{50pt} 如果 $n<j$：\\
 \hspace*{75pt} 则令 $y\leftarrow f(x)$\\
 \hspace*{75pt} 否则令 $u\leftarrow(a_1,\dots,a_j)$，$v\leftarrow(a_{j+1},\dots,a_n)$，$y\leftarrow G^*(f(u),v)$\\
 \hspace*{50pt} 将 $y$ 发送给 $\mathcal{A}$。
 
-\vspace{5pt}
+\vspace{10pt}
 
 \noindent
-对于$j=0,\dots,l$，定义 $p_j$ 为 $\mathcal{A}$ 在混合 $j$ 中输出 $1$ 的概率。读者很容易验证，我们有：
+对于$j=0,\dots,\ell$，定义 $p_j$ 为 $\mathcal{A}$ 在混合 $j$ 中输出 $1$ 的概率。读者很容易验证：
 \[
 {\rm PRF^{pf}\mathsf{adv}}[\mathcal{A},\tilde{F}]=|p_\ell-p_0|
 \]
 
-接下来，我们定义一个攻击 $G$ 的 $Q$ 次并行组合 $G'$ 的有效 PRG 对手 $\mathcal{B}'$，使得：
+接下来，我们定义一个攻击 $G$ 的 $Q$ 次并行组合 $G'$ 的有效 PRG 对手 $\mathcal{B}'$，满足：
 \[
-{\rm PRG}\mathsf{adv}[\mathcal{B}',G']=\frac{1}{\ell}\cdot|p_\ell-p_0|
+{\rm PRG}\mathsf{adv}[\mathcal{B}',G']
+=
+\frac{1}{\ell}
+\cdot
+|p_\ell-p_0|
 \]
-对手 $\mathcal{B}'$ 的工作方式如下：
+对手 $\mathcal{B}'$ 工作如下：
+
+\vspace{10pt}
+
+\hspace*{5pt} 当从挑战者处收到如式 \ref{eq:4-32} 的向量 $\vec r$ 时，$\mathcal{B}'$ 扮演 $\mathcal{A}$ 的挑战者的角色，如下所示：\\
+\hspace*{50pt} 随机选取 $\omega\overset{\rm R}\leftarrow\{1,\dots,\ell\}$\\
+\hspace*{50pt} 初始化一个空的关联数组 $\mathit{Map}:\{0,1\}^*\to\mathbb{Z}_{>0}$\\
+\hspace*{50pt} 令 $\mathit{ctr}\leftarrow 0$
 
 \vspace{5pt}
 
-\hspace*{5pt} 当从挑战者处收到如式 \ref{eq:4-32} 的向量 $\vec r$ 时，$\mathcal{B}'$ 扮演 $\mathcal{A}$ 的挑战者的角色，如下所示：\\
-\hspace*{50pt} 选取 $\omega\overset{\rm R}\leftarrow\{1,\dots,\ell\}$\\
-\hspace*{50pt} 初始化一个空关联数组 $Map:\{0,1\}^*\to\mathbb{Z}_{>0}$\\
-\hspace*{50pt} 令 $ctr\leftarrow 0$\\
-\hspace*{50pt} 当从 $\mathcal{A}$ 处收到一个查询 $x=(a_1,\dots,a_n)\in\{0,1\}^\ell$ 时：\\
+\hspace*{29pt} 当从 $\mathcal{A}$ 处收到一个查询 $x=(a_1,\dots,a_n)\in\{0,1\}^\ell$ 时：\\
 \hspace*{75pt} 如果 $n<\omega$：\\
 \hspace*{11pt} ($*$)
 \hspace*{69pt} 选取 $y\overset{\rm R}\leftarrow\mathcal{S}$\\
 \hspace*{75pt} 否则：\\
 \hspace*{100pt} 令 $u\leftarrow(a_1,\dots,a_{\omega-1})$，$d\leftarrow a_\omega$，$v\leftarrow(a_{\omega+1},\dots,a_n)$\\
-\hspace*{100pt} 如果 $u\notin{\rm Domain}(Map)$：\\
-\hspace*{125pt} 令 $ctr\leftarrow ctr+1$，$Map[u]\leftarrow ctr$\\
-\hspace*{100pt} 令 $p\leftarrow Map[u]$，$y\leftarrow G^*(r_{pd},v)$\\
+\hspace*{100pt} 如果 $u\notin{\rm Domain}(\mathit{Map})$：\\
+\hspace*{125pt} 令 $\mathit{ctr}\leftarrow\mathit{ctr}+1$，$\mathit{Map}[u]\leftarrow\mathit{ctr}$\\
+\hspace*{100pt} 令 $p\leftarrow \mathit{Map}[u]$，$y\leftarrow G^*(r_{pd},v)$\\
 \hspace*{75pt} 将 $y$ 发送给 $\mathcal{A}$。
-
-\vspace{3pt}
-
-\hspace*{5pt} 最后，$\mathcal{B}'$ 输出 $\mathcal{A}$ 所输出的任何东西。
 
 \vspace{5pt}
 
-对于 $b=0,1$，记 $W_b$ 为 $\mathcal{B}'$ 就 $G'$ 在攻击游戏 \ref{game:4-2} 的实验 $b$ 中输出 $1$ 的事件。不难看出，对于任意固定的 $j=1,\dots,\ell$，我们有：
+\hspace*{5pt} 最后，$\mathcal{B}'$ 输出 $\mathcal{A}$ 所输出的任何东西。
+
+\vspace{10pt}
+
+对于 $b=0,1$，令 $W_b$ 为 $\mathcal{B}'$ 在就 $G'$ 的攻击游戏 \ref{game:4-2} 的实验 $b$ 中输出 $1$ 的事件。不难看出，对于任意固定的 $j=1,\dots,\ell$，我们都有：
 \[
 \Pr[W_0|\omega=j]=p_{j-1},
 \quad
 \Pr[W_1|\omega=j]=p_j
 \]
-事实上，以 $\omega=j$ 为条件，对于固定的 $j$，考察 $\mathcal{B}'$ 如何给评估树中的结点加上标签。在标有($*$)的那一行，$\mathcal{B}'$ 给评估树中第 $0$ 层到第 $j-1$ 层的所有结点都分配了随机标签。由于我们假设 $\mathcal{A}$ 不会发起两次同样的查询，因此同一个结点不会在不同时间收到两个不同的标签。现在，一方面，当 $\mathcal{B}'$ 处于其攻击游戏的实验 $1$ 时，它可以有效地给第 $j$ 层的结点分配随机标签，而查找表能够确保不会出现重复。另一方面，当 $\mathcal{B}'$ 处于其攻击游戏的实验 $0$ 时，它可以有效地给第 $j$ 层的结点分配伪随机标签，这等同于给这些结点在第 $j-1$ 层的父结点分配随机标签；而无前缀的假设能够保证，在标有($*$)的那一行，这些父结点中的任何一个都不会被赋予已经分配出去的标签。
+事实上，以 $\omega=j$ 为条件，对于固定的 $j$，考察 $\mathcal{B}'$ 如何给评估树中的结点加标签。在标有 ($*$) 的那一行，$\mathcal{B}'$ 给评估树中第 $0$ 层到第 $j-1$ 层的所有结点都分配了随机标签。由于我们假设 $\mathcal{A}$ 不会发起两次相同的查询，所以这保证了这些标签都是一致的（同一结点不会在不同时间收到两个不同标签）。现在，一方面，当 $\mathcal{B}'$ 处于其攻击游戏的实验 $1$ 时，它可以有效地给第 $j$ 层的结点分配随机标签，而查找表能够确保这个过程是一致的。另一方面，当 $\mathcal{B}'$ 处于其攻击游戏的实验 $0$ 时，它可以有效地给第 $j$ 层的结点分配伪随机标签，这就等于是给这些结点在第 $j-1$ 层的父结点分配随机标签；而无前缀的假设能够保证，在标有 ($*$) 的那一行，这些父结点中的任何一个都不会被分配一个不一致的随机标签。
 
 证明的剩余部分与定理 \ref{theo:4-10} 相同，不再赘述。
 \end{proof}

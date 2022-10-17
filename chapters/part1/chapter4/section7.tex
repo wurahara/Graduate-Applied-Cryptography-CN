@@ -24,7 +24,7 @@
 理想密码查询的作用是很重要的。从本质上讲，它们模拟了对手``离线" 评估 $E$ 和 $D$ 的能力。
 
 \begin{snote}[理想置换模型。]
-一些构造，如艾文-曼苏尔构造（下面将要介绍），利用的是一个置换 $\pi:\mathcal{X}\to\mathcal{X}$，而不是一个分组密码。在安全分析中，我们可以启发式地将 $\pi$ 建模为一个随机置换 $\Pi$，攻击游戏中的参与各方都可以对 $\Pi$ 和 $\Pi^{-1}$ 发起预言机查询。我们称其为\textbf{理想置换模型 (ideal permutation model)}。对于某个固定的、公开可访问的密钥 $\mathpzc{k}_0\in\mathcal{K}$，只要简单地定义 $\Pi=\Pi_{\mathpzc{k}_0}$，我们就可以将其看作是理想密码模型的一个特例。
+一些构造，如 Even-Mansour 构造（下面将要介绍），利用的是一个置换 $\pi:\mathcal{X}\to\mathcal{X}$，而不是一个分组密码。在安全分析中，我们可以启发式地将 $\pi$ 建模为一个随机置换 $\Pi$，攻击游戏中的参与各方都可以对 $\Pi$ 和 $\Pi^{-1}$ 发起预言机查询。我们称其为\textbf{理想置换模型 (ideal permutation model)}。对于某个固定的、公开可访问的密钥 $\mathpzc{k}_0\in\mathcal{K}$，只要简单地定义 $\Pi=\Pi_{\mathpzc{k}_0}$，我们就可以将其看作是理想密码模型的一个特例。
 \end{snote}
 
 \subsection{理想密码模型中的穷举搜索}\label{subsec:4-7-2}
@@ -124,9 +124,9 @@ i=1,\dots,Q
 
 总结我们对 Triple-DES 的讨论，我们可以注意到，$3\mathcal{E}$ 构造并不总是可以加强密码。比如说，如果 $\mathcal{E}=(E,D)$ 满足 $|\mathcal{K}|$ 置换排列 $\{E(\mathpzc{k},\cdot):\mathpzc{k}\in\mathcal{K}\}$ 集合是一个群，那么 $3\mathcal{E}$ 构造并不比 $\mathcal{E}$ 更安全。事实上，在这种情况下，$\pi=E_3((k_1,k_2,k_3),\cdot)$ 与 $E(k,\cdot)$ 对于某些 $k\in\mathcal{K}$ 是相同的。因此，区分 $3\mathcal{E}$ 和随机置换排列并不比区分 $\mathcal{E}$ 与随机置换排列更难。
 
-\subsection{艾文-曼苏尔分组密码和 $\mathcal{E}X$ 构造}\label{subsec:4-7-3}
+\subsection{Even-Mansour 分组密码和 $\mathcal{E}X$ 构造}\label{subsec:4-7-3}
 
-令 $\mathcal{X}=\{0,1\}^n$。令 $\pi:\mathcal{X}\to\mathcal{X}$ 是一个置换，并令 $\pi^{-1}$ 是其反函数。西蒙·艾文(Shimon Even)和伊沙伊·曼苏尔(Yishay Mansour)定义了下面这种简单的分组密码 $\mathcal{E}_{EM}=(E,D)$，它定义在 $(\mathcal{X}^2,\mathcal{X})$ 上：
+令 $\mathcal{X}=\{0,1\}^n$。令 $\pi:\mathcal{X}\to\mathcal{X}$ 是一个置换，并令 $\pi^{-1}$ 是其反函数。Shimon Even 和 Yishay Mansour 定义了下面这种简单的分组密码 $\mathcal{E}_{EM}=(E,D)$，它定义在 $(\mathcal{X}^2,\mathcal{X})$ 上：
 \begin{equation}\label{eq:4-35}
 E((P_1,P_2),\;x):=\pi(x\oplus P_1)\oplus P_2
 \quad\quad\text{and}\quad\quad
@@ -138,20 +138,20 @@ D((P_1,P_2),\;y):=\pi^{-1}(y\oplus P_2)\oplus P_1
 \begin{equation}\label{eq:4-36}
 {\rm BC^{ic}\mathsf{adv}}[\mathcal{A},3\mathcal{E}]\leq\frac{2Q_{\rm s}Q_{\rm ic}}{|\mathcal{X}|}
 \end{equation}
-其中 $Q_{\rm s}$ 是 $\mathcal{A}$ 向 $\mathcal{E}_{EM}$ 发起的查询次数，而 $Q_{\rm ic}$ 是 $\mathcal{A}$ 对 $\Pi$ 和 $\Pi^{-1}$ 发起的查询次数。因此，只要 $|\mathcal{X}|$ 足够大，艾文-曼苏尔分组密码（在理想密码模型下）就是安全的。
+其中 $Q_{\rm s}$ 是 $\mathcal{A}$ 向 $\mathcal{E}_{EM}$ 发起的查询次数，而 $Q_{\rm ic}$ 是 $\mathcal{A}$ 对 $\Pi$ 和 $\Pi^{-1}$ 发起的查询次数。因此，只要 $|\mathcal{X}|$ 足够大，Even-Mansour 分组密码（在理想密码模型下）就是安全的。
 
-艾文-曼苏尔安全性定理 \ref{theo:4-14} 并不要求密钥 $P_1$ 和 $P_2$ 是独立的。事实上，如果我们令 $P_1=P_2$，$\mathcal{E}_{EM}$ 的密钥就是 $\mathcal{X}$ 中的单个元素，此时式 \ref{eq:4-36} 中的上界仍然保持不变。我们注意到，如果我们不考虑 $P_1$ 或 $P_2$ 中的任何一个，这个构造就会完全丧失安全性（见练习 \ref{exer:4-20}）。
+Even-Mansour 安全性定理 \ref{theo:4-14} 并不要求密钥 $P_1$ 和 $P_2$ 是独立的。事实上，如果我们令 $P_1=P_2$，$\mathcal{E}_{EM}$ 的密钥就是 $\mathcal{X}$ 中的单个元素，此时式 \ref{eq:4-36} 中的上界仍然保持不变。我们注意到，如果我们不考虑 $P_1$ 或 $P_2$ 中的任何一个，这个构造就会完全丧失安全性（见练习 \ref{exer:4-20}）。
 
-\begin{snote}[迭代艾文-曼苏尔密码和 AES。]
-回顾我们对 AES 的描述（图 \ref{fig:4-11}），我们发现艾文-曼苏尔密码看起来很像 AES 中的一轮，其中轮函数 $\Pi_{\rm AES}$ 扮演了 $\pi$ 的角色。当然，一轮 AES 并不是一个安全的分组密码：式 \ref{eq:4-36} 中的上界并不能保证安全性，因为 $\Pi_{\rm AES}$ 并不是一个随机置换。
+\begin{snote}[迭代 Even-Mansour 密码和 AES。]
+回顾我们对 AES 的描述（图 \ref{fig:4-11}），我们发现 Even-Mansour 密码看起来很像 AES 中的一轮，其中轮函数 $\Pi_{\rm AES}$ 扮演了 $\pi$ 的角色。当然，一轮 AES 并不是一个安全的分组密码：式 \ref{eq:4-36} 中的上界并不能保证安全性，因为 $\Pi_{\rm AES}$ 并不是一个随机置换。
 
-假设我们将图 \ref{fig:4-11} 中 $\Pi_{\rm AES}$ 的每一次出现都替换称不同的置换，即对AES的每一轮都赋予一个新的函数。那么由此产生的结构，称为\textbf{迭代艾文-曼苏尔 (iterated Even-Mandour)}，可以在理想密码模型下进行分析，它所产生的安全上界比式 \ref{eq:4-36} 中所述的更好。
+假设我们将图 \ref{fig:4-11} 中 $\Pi_{\rm AES}$ 的每一次出现都替换称不同的置换，即对AES的每一轮都赋予一个新的函数。那么由此产生的结构，称为\textbf{迭代 Even-Mansour (iterated Even-Mandour)}，可以在理想密码模型下进行分析，它所产生的安全上界比式 \ref{eq:4-36} 中所述的更好。
 
 以上这些结果表明，理想密码模型下的 AES 构造在理论上是合理的。
 \end{snote}
 
 \begin{snote}[$\mathcal{E}X$ 构造和 DESX。]
-如果我们将艾文-曼苏尔构造应用于定义在 $(\mathcal{K},\mathcal{X})$ 上的一个发展完备的分组密码 $\mathcal{E}=(E,D)$，我们就能得到一个新的分组密码 $\mathcal{E}X=(EX,DX)$，其中：
+如果我们将 Even-Mansour 构造应用于定义在 $(\mathcal{K},\mathcal{X})$ 上的一个发展完备的分组密码 $\mathcal{E}=(E,D)$，我们就能得到一个新的分组密码 $\mathcal{E}X=(EX,DX)$，其中：
 \begin{equation}\label{eq:4-37}
 EX((k,P_1,P_2),\;x)=E(k,\;x\oplus P_1)\oplus P_2,
 \quad\quad\quad
@@ -164,11 +164,11 @@ DX((k,P_1,P_2),\;y)=D(k,\;y\oplus P_2)\oplus P_1
 将 $\mathcal{E}X$ 应用于 DES 分组密码，可以提供一种有效的方法，使得 DES 免受穷举搜索攻击。在 $P_1=P_2$ 的情况下，我们可以得到一个称作 \textbf{DESX} 的分组密码，其密钥大小为 $56+64=120$ 比特，这足以抵抗穷举搜索。定理 \ref{theo:4-14} 表明，在理想密码模型下，对这种密码的攻击是不具备可行性的。由于评估 DESX 只需要调用一次 DES，因此 DESX 密码比 Triple-DES 密码快三倍，这使得 DESX 似乎是加强 DES 的首选方式。然而，像差分密码分析和线性密码分析这样的非黑箱攻击仍然适用于 DESX，但它们对 Triple-DES 无效。因此，DESX 在实践中不应该被使用。
 \end{snote}
 
-\subsection{对艾文-曼苏尔和 $\mathcal{E}X$ 定理的证明}\label{subsec:4-7-4}
+\subsection{对 Even-Mansour 和 $\mathcal{E}X$ 定理的证明}\label{subsec:4-7-4}
 
-我们下面证明，艾文-曼苏尔分组密码（式 \ref{eq:4-35}）在理想置换模型下是安全的，并且 $\mathcal{E}X$ 构造（式 \ref{eq:4-37}）在理想密码模型下也是安全的。
+我们下面证明，Even-Mansour 分组密码（式 \ref{eq:4-35}）在理想置换模型下是安全的，并且 $\mathcal{E}X$ 构造（式 \ref{eq:4-37}）在理想密码模型下也是安全的。
 
-我们在下面的一个定理中证明它们的安全性。以一个单密钥分组密码（即 $|\mathcal{K}|=1$）来证明艾文-曼苏尔密码在理想置换模型下的安全性。以一个具有较大密钥空间的分组密码来证明 $\mathcal{E}X$ 构造的安全性。请注意，$P_1$ 和 $P_2$ 不需要一定是独立的，就算我们令 $P_2=P_1$，该定理仍然成立。
+我们在下面的一个定理中证明它们的安全性。以一个单密钥分组密码（即 $|\mathcal{K}|=1$）来证明 Even-Mansour 密码在理想置换模型下的安全性。以一个具有较大密钥空间的分组密码来证明 $\mathcal{E}X$ 构造的安全性。请注意，$P_1$ 和 $P_2$ 不需要一定是独立的，就算我们令 $P_2=P_1$，该定理仍然成立。
 
 \begin{theorem}\label{theo:4-14}
 令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码。假设 $\mathcal{E}X=(EX,DX)$ 是由 $\mathcal{E}$ 以式 \ref{eq:4-37} 中介绍的方式派生的分组密码，其中 $P_1$ 和 $P_2$ 各自均匀分布在 $\mathcal{X}$ 的一个子集 $\mathcal{X}'$ 上。 如果我们将 $\mathcal{E}$ 建模为一个理想密码，如果 $\mathcal{A}$ 是攻击游戏 \ref{game:4-1} 中攻击 $\mathcal{E}X$ 的对手，它最多能够发起 $Q_{\rm s}$ 次标准查询（即 $EX$ 查询）和 $Q_{\rm ic}$ 次理想密码查询（即 $\Pi$ 或 $\Pi^{-1}$ 查询），那么我们有：
