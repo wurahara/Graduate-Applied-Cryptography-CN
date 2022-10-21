@@ -18,22 +18,22 @@ The Chinese translation of _A Graduate Course in Applied Cryptography_ by __Dan 
 
 ### Part II: Public Key Cryptography（公钥密码学）
 
-- [] Chap. 10. Public Key Tools（公钥基本工具）
-- [] Chap. 11. Public Key Encryption（公钥加密）
-- [] Chap. 12. Chosen Ciphertext Secure Public Key Encryption（选择密文安全的公钥加密）
-- [] Chap. 13. Digital Signatures（数字签名）
-- [] Chap. 14. Fast Hash-Based Signatures（基于哈希的快速签名）
-- [] Chap. 15. Elliptic Curve Cryptography and Pairings（椭圆曲线密码学与配对）
-- [] Chap. 16. Post-Quantum Cryptography: Lattices and Isogenies（后量子密码学）
-- [] Chap. 17. Analysis of Number Theoretic Assumptions（对数论假设的分析）
+- [ ] Chap. 10. Public Key Tools（公钥基本工具）
+- [ ] Chap. 11. Public Key Encryption（公钥加密）
+- [ ] Chap. 12. Chosen Ciphertext Secure Public Key Encryption（选择密文安全的公钥加密）
+- [ ] Chap. 13. Digital Signatures（数字签名）
+- [ ] Chap. 14. Fast Hash-Based Signatures（基于哈希的快速签名）
+- [ ] Chap. 15. Elliptic Curve Cryptography and Pairings（椭圆曲线密码学与配对）
+- [ ] Chap. 16. Post-Quantum Cryptography: Lattices and Isogenies（后量子密码学）
+- [ ] Chap. 17. Analysis of Number Theoretic Assumptions（对数论假设的分析）
 
 ### Part III: Protocols（密码学协议）
 
 - [x] Chap. 18. Protocols for Identification and Login（用于身份识别与认证的协议）
 - [x] Chap. 19. Identification and Signatures from Sigma Protocols（基于 Sigma 协议的身份识别与签名）
 - [x] Chap. 20. Proving properties in zero-knowledge（在零知识中证明属性）
-- [] Chap. 21. Authenticated Key Exchange（认证密钥交换）
-- [] Chap. 22. Secure Multi-Party Computation（安全多方计算）
+- [ ] Chap. 21. Authenticated Key Exchange（认证密钥交换）
+- [ ] Chap. 22. Secure Multi-Party Computation（安全多方计算）
 
 ### Part IV: Appendices（附录）
 
