@@ -1,46 +1,46 @@
 \section{理想密码模型}\label{sec:4-7}
 
-分组密码被用于各种密码学构造中。有时，在标准安全假设下，我们不可能或很难证明其中一些构造的安全性。在这些情况下，有时我们会采用一种启发式的技术，称为\textbf{理想密码模型 (ideal cipher model)}。粗略地说，在这种模型中，我们将分组密码\emph{当作}一个随机置换族，以对其进行安全分析。如果 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码，那么我们可以将随机置换族记为 $\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$，其中的每个 $\Pi_\mathpzc{k}$ 都是 $\mathcal{X}$ 上真正的随机置换，并且 $\Pi_\mathpzc{k}$ 的集合是相互独立的。这些随机置换太大，以至于我们无法将其完整记录下来，也不能将它们用于真正的密码构造。事实上，我们通常用它们来构造一个基于真实分组密码的构造模型，来获得对于特定构造的启发式安全论证。我们需要强调理想密码模型的启发式性质：尽管这个模型的安全证明聊胜于无，但它并不排除对手利用特定分组密码的设计进行攻击，即使该密码在定义 \ref{def:4-1} 的意义上是安全的。
+分组密码被用于各种密码学构造中。有时，在标准的安全假设下，我们不可能或很难证明其中一些构造的安全性。在这些情况下，我们有时会采用一种启发式技术，称为\textbf{理想密码模型 (ideal cipher model)}。粗略地说，在这种模型中，我们将分组密码\emph{当作}一个随机置换族，以对其进行安全分析。如果 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码，那么我们就可以将随机置换族记为 $\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$，其中的每个 $\Pi_\mathpzc{k}$ 都是 $\mathcal{X}$ 上的真随机置换，并且 $\Pi_\mathpzc{k}$ 之间是相互独立的。这些随机置换实在太大，以至于我们无法将其完整记录下来，更不能将它们用于真正的密码构造。事实上，我们通常用它们来构造一个基于真实的分组密码的\emph{模型}，来获得对于特定构造的\emph{启发式的}安全性论证。我们需要强调理想密码模型的启发式性质：尽管该模型下的安全证明聊胜于无，但它并能不排除对手利用特定分组密码的设计进行攻击，即使该密码在定义 \ref{def:4-1} 的意义上是安全的。
 
 \subsection{正式定义}\label{subsec:4-7-1}
 
-假设我们有某种类型的密码学方案 $\mathcal{S}$，它的实现利用了定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码 $\mathcal{E}=(E,D)$。此外，假设方案 $\mathcal{S}$ 在不同的输入 $(\mathpzc{k},\mathpzc{a})\in\mathcal{K}\times\mathcal{X}$ 上评估 $E$，在不同的输入 $(\mathpzc{k},\mathpzc{b})\in\mathcal{K}\times\mathcal{X}$ 上评估 $D$，但不深究 $\mathcal{E}$ 的内部实现。在这种情况下，我们称 $\mathcal{S}$ 将 $\mathcal{E}$ 作为一个预言机(oracle)。
+假设我们有某类密码学方案 $\mathcal{S}$，其实现利用了一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码 $\mathcal{E}=(E,D)$。此外，假设方案 $\mathcal{S}$ 在不同的输入 $(\mathpzc{k},\mathpzc{a})\in\mathcal{K}\times\mathcal{X}$ 上评估 $E$，在不同的输入 $(\mathpzc{k},\mathpzc{b})\in\mathcal{K}\times\mathcal{X}$ 上评估 $D$，但不深究 $\mathcal{E}$ 的内部实现。在这种情况下，我们称 \textbf{$\mathcal{S}$ 将 $\mathcal{E}$ 用作一个预言机($\mathcal{S}$ uses $\mathcal{E}$ as an oracle)}。
 
-我们想要分析 $\mathcal{S}$ 的安全性。让我们假设我们感兴趣的任何一个安全属性，例如``属性 X"，被建模为挑战者（特定于属性 X）和一个任意对手 $\mathcal{A}$ 之间的游戏（与往常一样）。在应答某些查询时，挑战者可能会计算与方案 $\mathcal{S}$ 有关的各种函数，而这些函数有可能需要在某些时候对算法 $E$ 和/或算法 $D$ 进行评估。该游戏定义了一个优势 ${\rm X}\mathsf{adv}[\mathcal{A},\mathcal{S}]$，而关于属性 X 的安全性意味着，对于所有有效对手 $\mathcal{A}$，这个优势都是可忽略不计的。
+我们想要分析 $\mathcal{S}$ 的安全性。让我们假设我们感兴趣的任何一个安全属性，例如``属性 X"，（和之前一样）被建模为挑战者（特定于属性 X）和一个任意对手 $\mathcal{A}$ 之间的游戏。在应答某些查询时，挑战者可能会计算与方案 $\mathcal{S}$ 有关的各种函数，而这些函数有可能需要在某些点上评估算法 $E$ 和/或算法 $D$。该游戏定义了一个优势 ${\rm X}\mathsf{adv}[\mathcal{A},\mathcal{S}]$，而关于属性 X 的安全性意味着，对于所有的有效对手 $\mathcal{A}$，该优势都是可忽略不计的。
 
-如果我们想要在理想密码模型中分析 $\mathcal{S}$，那么定义安全性的攻击游戏就需要修改，这样，$\mathcal{E}$就会被上面所介绍的随机置换族$\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$有效地替换，而对手和挑战者都对这个置换族拥有预言机的访问权限。更确切地说，该游戏会被修改如下：
+如果我们想要在理想密码模型下分析 $\mathcal{S}$，那么定义安全性的攻击游戏就需要被修改，用上面介绍的随机置换族 $\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$ 有效地替换 $\mathcal{E}$，而对手和挑战者都可以对这个置换族发起预言机访问。更确切地说，该游戏会被修改如下：
 \begin{itemize}
 	\item 在游戏开始时，对于每个 $\mathpzc{k}\in\mathcal{K}$，挑战者随机选择 $\Pi_\mathpzc{k}\in\rm{Perms}[\mathcal{K}]$。
 	\item 除了标准查询外，对手 $\mathcal{A}$ 还可以发起\emph{理想密码查询}。包含以下两种类型：$\Pi$-查询和 $\Pi^{-1}$-查询。
 	\begin{itemize}
-		\item 对于一个 $\Pi$-查询，对手提交一对 $(\mathpzc{k},\mathpzc{a})\in\mathcal{K}\times\mathcal{X}$，挑战者以 $\Pi_\mathpzc{k}(\mathpzc{a})$ 作为应答。
-		\item 对于一个 $\Pi^{-1}$-查询，对手提交一对 $(\mathpzc{k},\mathpzc{b})\in\mathcal{K}\times\mathcal{X}$，挑战者以 $\Pi_\mathpzc{k}^{-1}(\mathpzc{b})$ 作为应答。
+		\item 对于一个 $\Pi$-查询，对手提交一个数对 $(\mathpzc{k},\mathpzc{a})\in\mathcal{K}\times\mathcal{X}$，挑战者以 $\Pi_\mathpzc{k}(\mathpzc{a})$ 作为应答。
+		\item 对于一个 $\Pi^{-1}$-查询，对手提交一个数对 $(\mathpzc{k},\mathpzc{b})\in\mathcal{K}\times\mathcal{X}$，挑战者以 $\Pi_\mathpzc{k}^{-1}(\mathpzc{b})$ 作为应答。
 	\end{itemize}
-	对手可以发起任何数量的理想密码查询，可任意地与标准查询交错进行。
+	对手可以发起任意多次理想密码查询，它们可以任意地与标准查询交错进行。
 	\item 在处理标准查询时，挑战者用 $\Pi_\mathpzc{k}(\mathpzc{a})$ 代替 $E(\mathpzc{k},\mathpzc{a})$，用 $\Pi_\mathpzc{k}^{-1}(\mathpzc{b})$ 代替 $D(\mathpzc{k},\mathpzc{b})$ 进行计算。
 \end{itemize}
-对手优势的定义与之前的规则相同，但表示为 ${\rm X^{ic}}\mathsf{adv}[\mathcal{A},\mathcal{S}]$，以强调这是在\emph{理想密码模型中}的优势。理想密码模型中的安全性意味着 ${\rm X^{ic}}\mathsf{adv}[\mathcal{A},\mathcal{S}]$ 对于所有有效对手 $\mathcal{A}$ 来说都应该是可忽略不计的。
+对手优势的定义与之前的规则相同，但表示为 ${\rm X^{ic}}\mathsf{adv}[\mathcal{A},\mathcal{S}]$，以强调这是在\emph{理想密码模型下}的优势。理想密码模型下的安全性意味着，对于所有的有效对手 $\mathcal{A}$，${\rm X^{ic}}\mathsf{adv}[\mathcal{A},\mathcal{S}]$ 都可忽略不计。
 
-理想密码查询的作用是很重要的。从本质上讲，它们模拟了对手``离线" 评估 $E$ 和 $D$ 的能力。
+理解理想密码查询的作用至关重要。从本质上讲，它们模拟了对手``离线" 评估 $E$ 和 $D$ 的能力。
 
 \begin{snote}[理想置换模型。]
-一些构造，如 Even-Mansour 构造（下面将要介绍），利用的是一个置换 $\pi:\mathcal{X}\to\mathcal{X}$，而不是一个分组密码。在安全分析中，我们可以启发式地将 $\pi$ 建模为一个随机置换 $\Pi$，攻击游戏中的参与各方都可以对 $\Pi$ 和 $\Pi^{-1}$ 发起预言机查询。我们称其为\textbf{理想置换模型 (ideal permutation model)}。对于某个固定的、公开可访问的密钥 $\mathpzc{k}_0\in\mathcal{K}$，只要简单地定义 $\Pi=\Pi_{\mathpzc{k}_0}$，我们就可以将其看作是理想密码模型的一个特例。
+一些构造，比如 Even-Mansour（下面将要介绍），利用的是一个置换 $\pi:\mathcal{X}\to\mathcal{X}$，而不是一个分组密码。在安全分析中，我们可以启发式地将 $\pi$ 建模为一个随机置换 $\Pi$，攻击游戏中的所有参与方都可以对 $\Pi$ 和 $\Pi^{-1}$ 发起预言机访问。我们将其称为\textbf{理想置换模型 (ideal permutation model)}。对于某个固定的、公开可访问的密钥 $\mathpzc{k}_{\,0}\in\mathcal{K}$，我们只要简单地定义 $\Pi=\Pi_{\mathpzc{k}_{\,0}}$，就可以将其看作是理想密码模型的一个特例。
 \end{snote}
 
-\subsection{理想密码模型中的穷举搜索}\label{subsec:4-7-2}
+\subsection{理想密码模型下的穷举搜索}\label{subsec:4-7-2}
 
-令 $(E, D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码，并令 $k$ 是 $\mathcal{K}$ 上的某个随机密钥。假设一个对手能够截获使用 $k$ 生成的少量输入/输出对 $(x_i,y_i)$：
+令 $(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码，并令 $k$ 是某个 $\mathcal{K}$ 上的随机密钥。假设一个对手能够截获少量由 $k$ 生成的输入/输出对 $(x_i,y_i)$：
 \[
+\text{对于所有的}\;i=1,\dots,Q,
+\quad
 y_i=E(k,x_i)
-\quad\text{ for all }\;
-i=1,\dots,Q
 \]
-对手现在可以通过尝试 $\mathpzc{k}\in\mathcal{K}$ 中所有可能的密钥来试图恢复 $k$，直到找到一个对于所有$i=1,\dots,Q$，$y_i=E(\mathpzc{k},x_i)$都成立的密钥 $\mathpzc{k}$。对于在实践中使用的分组密码，这个 $\mathpzc{k}$ 在很大概率上就等于实际使用的密钥 $k$。这种对密钥空间的\textbf{穷举搜索}可以在 $O(|\mathcal{K}|)$ 时间内使用少量的输入/输出对恢复分组密码的密钥。我们将在下面的定理 \ref{theo:4-12} 中分析攻击成功所需的输入/输出对的数量。
+现在，为了恢复 $k$，对手可以尝试 $\mathpzc{k}\in\mathcal{K}$ 中所有可能的密钥，直到找到一个对于所有 $i=1,\dots,Q$，$y_i=E(\mathpzc{k},x_i)$ 都成立的密钥 $\mathpzc{k}$。对于实践中所使用的分组密码，这个 $\mathpzc{k}$ 在很大概率上就等于用来生成那些给定数对的密钥 $k$。只需要少量的输入/输出对，这种密钥空间上的\textbf{穷举搜索}就可以在 $O(|\mathcal{K}|)$ 时间内恢复分组密码的密钥。我们将在下面的定理 \ref{theo:4-12} 中分析攻击成功所需的输入/输出对数量。
 
-穷举搜索是密钥恢复攻击的一个最简单例子。我们下面将要介绍几种具体的密钥恢复攻击的方法，但是，我们首先要详细定义密钥恢复攻击的攻击游戏。我们将主要使用这个密钥恢复游戏作为展示攻击的手段。
+穷举搜索是密钥恢复攻击的一个最简单的例子。我们将要在下面介绍几种密钥恢复攻击，但我们首先要详细定义密钥恢复攻击游戏。我们将主要使用这个密钥恢复游戏作为展示攻击的手段。
 
 \begin{game}\label{game:4-4}
-对于一个给定的定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码 $\mathcal{E}=(E,D)$，对于一个给定有效对手 $\mathcal{A}$，游戏过程如下：
+对于一个定义在 $(\mathcal{K},\mathcal{X})$ 上的给定分组密码 $\mathcal{E}=(E,D)$ 和一个给定对手 $\mathcal{A}$，定义如下游戏：
 \begin{itemize}
 	\item 挑战者随机选取 $k\overset{\rm R}\leftarrow\mathcal{K}$。
 	\item 对手 $\mathcal{A}$ 向挑战者发起多次查询。对于 $i=1,2,\dots$，第 $i$ 次查询包含一条消息 $x_i\in\mathcal{M}$。挑战者在给定 $x_i$ 的情况下计算 $y_i\overset{\rm R}\leftarrow E(k,x_i)$，并将 $y_i$ 发送给 $\mathcal{A}$。
@@ -49,45 +49,47 @@ i=1,\dots,Q
 如果 $\mathpzc{k}=k$，我们就称 $\mathcal{A}$ 赢得了游戏。我们令 $\rm{KR}\mathsf{adv}[\mathcal{A},\mathcal{E}]$ 为 $\mathcal{A}$ 赢得该游戏的概率。
 \end{game}
 
-密钥恢复游戏很自然地就能被扩展到理想密码模型中，此时 $E(\mathpzc{k},\mathpzc{a})=\Pi_\mathpzc{k}(\mathpzc{a})$，$D(\mathpzc{k},\mathpzc{b})=\Pi^{-1}_\mathpzc{k}(\mathpzc{b})$，并且 $\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$ 是一个独立随机置换族。在该模型中，除了对 $E(k,\cdot)$ 的标准查询之外，我们还允许对手发起任意地$\Pi$-查询和 $\Pi^{-1}$ 查询。当 $\mathcal{E}$ 是一个理想密码时，我们令 $\rm{KR^{ic}}\mathsf{adv}[\mathcal{A},\mathcal{E}]$ 为对手的密钥恢复优势。
+我们很自然地就能将密钥恢复游戏扩展到理想密码模型下，此时 $E(\mathpzc{k},\mathpzc{a})=\Pi_\mathpzc{k}(\mathpzc{a})$，$D(\mathpzc{k},\mathpzc{b})=\Pi^{-1}_\mathpzc{k}(\mathpzc{b})$，并且 $\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$ 是一个由互相独立的随机置换组成的置换族。在该模型下，除了对 $E(k,\cdot)$ 的标准查询外，我们还允许对手发起任意地 $\Pi$-查询和 $\Pi^{-1}$ 查询。当 $\mathcal{E}$ 是一个理想密码时，我们令 $\rm{KR^{ic}}\mathsf{adv}[\mathcal{A},\mathcal{E}]$ 为对手的密钥恢复优势。
 
-需要注意的是，对密钥恢复攻击的安全性并不意味着不可区分性意义上的安全性（定义 \ref{def:4-1}）。最简单的例子是恒定的分组密码 $E(k,x)=x$，针对它进行密钥恢复是不可能的（因为对手无法获得任何关于密钥 $k$ 的信息），但是我们很容易将其与随机的置换区分开。
+需要注意的是，针对密钥恢复攻击的安全性并不意味着不可区分性意义上的安全性（定义 \ref{def:4-1}）。最简单的例子是恒定分组密码 $E(k,x)=x$，针对它进行密钥恢复是不可能的（因为对手无法获得任何关于密钥 $k$ 的信息），但是我们还是很容易将其与随机置换区分开。
 
 \begin{snote}[穷举搜索。]
-假设密码是一个理想密码，下面的定理限制了穷举搜索所需的输入/输出对的数量。对于现实世界中的参数，取 $Q=3$ 基本上就足以确保攻击成功。
+假设密码是一个理想密码，下面的定理限制了穷举搜索所需的输入/输出对数量。对于现实世界中的参数，取 $Q=3$ 基本上就足以确保攻击成功。
 \end{snote}
 
 \begin{theorem}\label{theo:4-12}
-令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码。那么存在一个就 $\mathcal{E}$ 进行攻击游戏 \ref{game:4-4} 的对手 $\mathcal{A}_{{\rm E}X}$，它被建模为一个理想密码，发起 $Q$ 次标准查询和 $Q|\mathcal{K}|$ 次理想密码查询，且满足：
+令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的分组密码。那么存在一个就 $\mathcal{E}$ 进行攻击游戏 \ref{game:4-4} 的对手 $\mathcal{A}_{{\rm E}X}$，它被建模为一个理想密码，发起 $Q$ 次标准查询和 $Q|\mathcal{K}|$ 次理想密码查询，满足：
 \begin{equation}\label{eq:4-34}
-\mathrm{KR^{ic}}\mathsf{adv}[\mathcal{A},\mathcal{E}]\geq1-\epsilon
-\quad\text{where}\quad
+\mathrm{KR^{ic}}\mathsf{adv}[\mathcal{A}_{{\rm E}X},\mathcal{E}]
+\geq
+1-\epsilon,
+\quad\text{其中}\quad
 \epsilon:=\frac{|\mathcal{K}|}{(|\mathcal{X}|-Q)^Q}
 \end{equation}
 \end{theorem}
 
 \begin{proof}
-在理想密码模型中，我们将分组密码 $\mathcal{E}=(E,D)$ 建模为一个 $\mathcal{X}$ 上的随机置换族 $\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$。在攻击游戏 \ref{game:4-4} 中，挑战者随机选择一个 $k\in\mathcal{K}$。对手可以进行标准查询，以获得它选择的点 $x\in\mathcal{X}$ 处的 $E(k,x)=\Pi_k(x)$ 值。对手也可以进行理想密码查询，以获得它选择的点 $\mathpzc{k}\in\mathcal{K}$，$\mathpzc{a},\mathpzc{b}\in\mathcal{X}$ 处的 $\Pi_\mathpzc{k}(\mathpzc{a})$ 和 $\Pi_\mathpzc{k}^{-1}(\mathpzc{b})$ 值。这些理想密码查询对应 $E$ 和 $D$ 的``离线"计算。
+在理想密码模型中，我们将分组密码 $\mathcal{E}=(E,D)$ 建模为一个 $\mathcal{X}$ 上的随机置换族 $\{\Pi_\mathpzc{k}\}_{\mathpzc{k}\in\mathcal{K}}$。在攻击游戏 \ref{game:4-4} 中，挑战者随机选择一个 $k\in\mathcal{K}$。对手可以进行标准查询，以获得它选择的点 $x\in\mathcal{X}$ 处 $E(k,x)=\Pi_k(x)$ 的值。对手也可以进行理想密码查询，以获得它选择的点 $\mathpzc{k}\in\mathcal{K}$，$\mathpzc{a},\mathpzc{b}\in\mathcal{X}$ 处 $\Pi_\mathpzc{k}(\mathpzc{a})$ 和 $\Pi_\mathpzc{k}^{-1}(\mathpzc{b})$ 的值。这些理想密码查询对应着对 $E$ 和 $D$ 的``离线"评估。
 
-我们的对手 $\mathcal{A}_{{\rm E}X}$ 的工作方式如下：
+我们的对手 $\mathcal{A}_{{\rm E}X}$ 运行如下：
 
-\vspace{5pt}
+\vspace{10pt}
 
-\hspace*{5pt} 令 $\{x_1,\dots,x_Q\}$ 是 $\mathcal{X}$ 中不同消息的一个任意集合\\
+\hspace*{5pt} 令 $\{x_1,\dots,x_Q\}$ 是一个任意的由 $\mathcal{X}$ 中各不相同的消息组成的集合\\
 \hspace*{26pt} 对于 $i=1,\dots,Q$：\\
 \hspace*{50pt} 发起一次标准查询，以获得 $y_i:=E(k,x_i)=\Pi_k(x_i)$\\
 \hspace*{26pt} 对于每个 $\mathpzc{k}\in\mathcal{K}$：\\
 \hspace*{50pt} 对于 $i=1,\dots,Q$：\\
 \hspace*{75pt} 发起一次理想密码查询，以获得 $\mathpzc{b}_i:=\Pi_\mathpzc{k}(x_i)$\\
-\hspace*{50pt} 如果对于所有 $i=1,\dots,Q$ 都有 $y_i=\mathpzc{b}_i$：\\
+\hspace*{50pt} 如果对于所有 $i=1,\dots,Q$，都有 $y_i=\mathpzc{b}_i$：\\
 \hspace*{75pt} 输出 $\mathpzc{k}$ 并停机。
 
-\vspace{5pt}
+\vspace{10pt}
 
 \noindent
-令 $k$ 是挑战者的密钥。我们表明，$\mathcal{A}_{{\rm E}X}$ 以至少 $1-\epsilon$ 的概率输出 $k$，$\epsilon$ 的定义如式 \ref{eq:4-34}。由于 $\mathcal{A}_{{\rm E}X}$ 尝试了所有的密钥，这相当于表明，存在一个以上的密钥能够与给定的 $(x_i,y_i)$ 相匹配的概率最多只有 $\epsilon$。我们将表明这对每一个可能的 $k$ 的选择都成立，所以在证明的其余部分，我们将 $k$ 视为固定值。我们还将 $x_1,\dots,x_Q$ 视为固定值，这样，对于$\mathpzc{k}\in\mathcal{K}$，所有的概率都取决于随机置换 $\Pi_\mathpzc{k}$。
+令 $k$ 是挑战者的密钥。我们表明，$\mathcal{A}_{{\rm E}X}$ 以至少 $1-\epsilon$ 的概率输出 $k$，$\epsilon$ 的定义如式 \ref{eq:4-34}。由于 $\mathcal{A}_{{\rm E}X}$ 尝试了所有的密钥，这相当于表明，存在一个以上的密钥能与给定数对 $(x_i,y_i)$ 一致的概率最多只有 $\epsilon$。我们将表明，这对 $k$ 的每个可能选择都成立，所以在证明的其余部分，我们会将 $k$ 视为一个固定值。我们还会将 $x_1,\dots,x_Q$ 视为固定值，这样，对于 $\mathpzc{k}\in\mathcal{K}$，所有的概率都是就随机置换 $\Pi_\mathpzc{k}$ 而言的。
 
-对于每个 $\mathpzc{k}\in\mathcal{K}$，令 $W_\mathpzc{k}$ 为对于所有的 $i=1,\dots,Q$，$y_i=\Pi_\mathpzc{k}(x_i)$ 都成立的事件。注意到，根据定义，$W_k$ 的发生概率为 $1$。令 $W$ 是 $W_\mathpzc{k}$ 在某个 $\mathpzc{k}\neq k$ 时发生的事件。我们想要证明 $\Pr[W]\leq\epsilon$。
+对于每个 $\mathpzc{k}\in\mathcal{K}$，令 $W_\mathpzc{k}$ 为对于所有的 $i=1,\dots,Q$，$y_i=\Pi_\mathpzc{k}(x_i)$ 都成立的事件。注意到，根据定义，$W_k$ 以 $1$ 的概率发生。令 $W$ 是 $W_\mathpzc{k}$ 发生的事件，其中 $\mathpzc{k}\neq k$。我们想要证明 $\Pr[W]\leq\epsilon$。
 
 固定 $\mathpzc{k}\neq k$。由于置换 $\Pi_k$ 的选择与置换 $\Pi_\mathpzc{k}$ 无关，我们可知：
 \[
@@ -99,30 +101,37 @@ i=1,\dots,Q
 \right)
 ^Q
 \]
-由于上式对所有 $\mathpzc{k}\neq k$ 都成立，所以由联合约束就可以得到定理。
+由于上式对所有 $\mathpzc{k}\neq k$ 都成立，所以根据联合约束，定理得证。
 \end{proof}
 
 \subsubsection{$3\mathcal{E}$ 构造的安全性}
 
 定理 \ref{theo:4-2} 中提出的攻击对 $3\mathcal{E}$ 构造同样有效。密钥空间的大小是 $|\mathcal{K}|^3$，但我们可以通过``中间相遇"构造一个密钥恢复算法，其运行时间仅为 $O(|\mathcal{K}^2|\cdot Q)$。对于 Triple-DES 来说，该算法需要计算超过 $2^{2\cdot56}$ 次 Triple-DES，这远超目前计算机的计算能力。
 
-我们现在想要知道的是，是否存在针对 $3\mathcal{E}$ 构造的效率更高的攻击方法。事实上，当 $\mathcal{E}$ 是一个理想密码时，我们可以证明，区分 $3\mathcal{E}$ 密码和随机置换的计算量存在一个下界。
+我们现在想要知道的是，是否存在针对 $3\mathcal{E}$ 的效率更高的攻击方法。事实上，当 $\mathcal{E}$ 是一个理想密码时，我们可以证明，区分 $3\mathcal{E}$ 和随机置换的工作量存在一个下界。
 
 \begin{theorem}\label{theo:4-13}
 令 $\mathcal{E}=(E,D)$ 是一个定义在 $(\mathcal{K},\mathcal{X})$ 上的理想分组密码。考虑在理想密码模型下针对 $3\mathcal{E}$ 构造的攻击。如果 $\mathcal{A}$ 是一个对手，它在攻击游戏 \ref{game:4-1} 的理想密码变体中最多能够发起 $Q$ 次查询（包括标准查询和理想密码查询），那么：
 \[
-{\rm BC^{ic}\mathsf{adv}}[\mathcal{A},3\mathcal{E}]\leq C_1L\frac{Q^2}{|\mathcal{K}|^3}+C_2\frac{Q^{2/3}}{|\mathcal{K}|^{2/3}|\mathcal{X}|^{1/3}}+C_3\frac{1}{|\mathcal{K}|}
+{\rm BC^{ic}\mathsf{adv}}[\mathcal{A},3\mathcal{E}]
+\leq C_1L\frac{Q^2}{|\mathcal{K}|^3}
++C_2\frac{Q^{2/3}}{|\mathcal{K}|^{2/3}|\mathcal{X}|^{1/3}}
++C_3\frac{1}{|\mathcal{K}|}
 \]
 其中 $L:=\max({|\mathcal{K}|}/{|\mathcal{X}|},\log_2|\mathcal{X}|)$，并且 $C_1,C_2,C_3$ 都是常数（不取决于 $\mathcal{A}$ 或 $\mathcal{E}$）。
 \end{theorem}
 
-如果我们假设 $|\mathcal{K}|\leq|\mathcal{X}|$，定理的陈述就更加容易理解，就像 DES 的情况一样。在这种情况下，这个约束可以重述为：
+如果我们假设 $|\mathcal{K}|\leq|\mathcal{X}|$，定理的陈述就更加容易理解，因为此时，情况就与 DES 完全一样。在这种情况下，这个约束可以重述为：
 \[
-{\rm BC^{ic}\mathsf{adv}}[\mathcal{A},3\mathcal{E}]\leq C\log_2|\mathcal{X}|\frac{Q^2}{|\mathcal{K}|^3}
+{\rm BC^{ic}\mathsf{adv}}[\mathcal{A},3\mathcal{E}]
+\leq 
+C\log_2|\mathcal{X}|\frac{Q^2}{|\mathcal{K}|^3}
 \]
-其中 $C$ 是一个常数。忽略 $\log\mathcal{X}$ 项，这意味着对手必须进行大约 $|\mathcal{K}|^{1.5}$ 次查询才能获得明显的优势。将其与中间相遇攻击进行比较，为了获得显著的优势，对手必须进行大约 $|\mathcal{K}|^2$ 次查询。因此中间相遇攻击可能不是最高效的攻击。
+其中 $C$ 是一个常数。忽略 $\log\mathcal{X}$ 项，上式就意味着，对手必须进行大约 $|\mathcal{K}|^{1.5}$ 次查询才能获得一个较为明显的优势（比如 $1/4$）。将其与中间相遇攻击进行比较，为了获得显著的优势，对手必须进行大约 $|\mathcal{K}|^2$ 次查询。因此，中间相遇攻击可能并不是最高效的攻击。
 
-总结我们对 Triple-DES 的讨论，我们可以注意到，$3\mathcal{E}$ 构造并不总是可以加强密码。比如说，如果 $\mathcal{E}=(E,D)$ 满足 $|\mathcal{K}|$ 置换排列 $\{E(\mathpzc{k},\cdot):\mathpzc{k}\in\mathcal{K}\}$ 集合是一个群，那么 $3\mathcal{E}$ 构造并不比 $\mathcal{E}$ 更安全。事实上，在这种情况下，$\pi=E_3((k_1,k_2,k_3),\cdot)$ 与 $E(k,\cdot)$ 对于某些 $k\in\mathcal{K}$ 是相同的。因此，区分 $3\mathcal{E}$ 和随机置换排列并不比区分 $\mathcal{E}$ 与随机置换排列更难。
+总结我们对 Triple-DES 的讨论，我们可以注意到，$3\mathcal{E}$ 构造并不是总会加强密码。比如说，如果 $\mathcal{E}=(E,D)$ 满足 $|\mathcal{K}|$ 个置换排列 $\{E(\mathpzc{k},\cdot):\mathpzc{k}\in\mathcal{K}\}$ 的集合是一个群，那么 $3\mathcal{E}$ 构造就并不会比 $\mathcal{E}$ 更安全。事实上，在这种情况下，$\pi=E_3\big((k_1,k_2,k_3),\cdot\big)$ 与 $E(k,\cdot)$ 对于某些 $k\in\mathcal{K}$ 是相同的。因此，区分 $3\mathcal{E}$ 和随机置换排列并不比区分 $\mathcal{E}$ 与随机置换排列更难。当然，（据我们所知）实践中使用的分组密码并不是群。
+
+% TODO: here
 
 \subsection{Even-Mansour 分组密码和 $\mathcal{E}X$ 构造}\label{subsec:4-7-3}
 

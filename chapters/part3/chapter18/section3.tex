@@ -1,25 +1,25 @@
 \section{口令协议：针对直接攻击的安全性}\label{sec:18-3}
 
-在\textbf{基本口令协议 (Basic Password protocol)}中，证明者的密钥是一个\textbf{口令} $pw$。在该协议中，证明者将 $pw$ 发送给验证者，验证者需要检查 $pw$ 是否是合法的口令。因此，该协议的密钥 $sk$ 就是 $pw$。显然，只有当对手无法窃听证明者和验证者之间的交互时，这个协议才可以被使用。为了完善对基本口令协议的定义，我们还需要指定验证者如何检查给定的口令是否合法。
+在\textbf{基本口令协议 (basic password protocol)}中，证明者的密钥是一个\textbf{口令 (password)} $pw$。在该协议中，证明者将 $pw$ 发送给验证者，验证者需要检查 $pw$ 是否是合法的口令。因此，该协议的密钥 $sk$ 就是 $pw$。显然，只有当对手无法窃听证明者和验证者之间的交互时，这个协议才可以被使用。为了完善对基本口令协议的定义，我们还需要指定验证者如何检查给定的口令是否合法。
 
 首先想到的方法是直接将验证者的公钥也定义为 $vk:=pw$，这样验证者只需要检查它从证明者那里收到的口令与 $vk$ 是否相等即可。但是这种简陋的协议显然是有问题的，因为如果验证者被攻破，所有验证者存储的口令都会直接泄露。
 
 为了避免这个问题，我们可以让验证者保存口令的哈希值，而不是口令本身。我们称这个修改后的口令协议为\textbf{版本 1}。我们下面用一种相当理想化的方式来描述这个协议，在该协议中，我们从某个有限的口令空间中随机均匀地选择口令，但实际情况可能并非如此。
 
-\begin{snote}[口令协议版本 1.]
-证明者的私钥 $sk$ 是一个从有限口令空间 $\mathcal P$ 中随机均匀选出的口令 $pw$，验证者的公钥 $vk=H(pw)$，其中的哈希函数为 $H:\mathcal{P}\to\mathcal{Y}$。这样，\textbf{口令身份认证协议} $\mathcal{I}_{\rm pwd}=(G,P,V)$ 的定义如下：
+\begin{snote}[口令协议（版本 1）。]
+证明者的私钥 $sk$ 是一个从有限口令空间 $\mathcal P$ 中随机均匀选出的口令 $pw$，验证者的公钥 $vk$ 为 $H(pw)$，其中 $H:\mathcal{P}\to\mathcal{Y}$ 是一个哈希函数。正式地说，\textbf{口令身份识别协议} $\mathcal{I}_{\rm pwd}=(G,P,V)$ 的定义如下：
 \begin{itemize}
-    \item $G$：令 $pw\xleftarrow{\rm R}\mathcal{P}$ 并输出 $sk=pw$ 和 $vk=H(pw)$。
-    \item 以 $sk=pw$ 为输入的算法 $P$ 及以 $vk=H(pw)$ 为输入的算法 $V$，它们按照以下方式交互：
+    \item $G$：设置 $pw\xleftarrow{\rm R}\mathcal{P}$ 并输出 $sk:=pw$ 和 $vk:=H(pw)$。
+    \item 算法 $P$ 以 $sk=pw$ 为输入，算法 $V$ 以 $vk=H(pw)$ 为输入，它们按以下方式交互：
     \begin{enumerate}
         \item $P$ 将 $pw$ 发送给 $V$；
         \item 如果收到的 $pw$ 满足 $H(pw)=vk$，$V$ 输出 $\mathsf{accept}$，否则输出 $\mathsf{reject}$。
     \end{enumerate}
 \end{itemize}
 
-在一个多用户系统中，验证者（服务器）通常会在数据库中维护一张口令映射表，就像图 \ref{fig:18-2} 一样。因此，对服务器的攻击不会泄露出任何的明文口令。
+在一个多用户系统中，验证者（服务器）通常会在数据库中维护一张口令映射表，就像图 \ref{fig:18-2} 展示的那样。因此，对服务器的攻击不会泄露任何明文口令。
 
-为了分析上述口令协议的安全性，我们下面首先正式定义针对直接攻击的安全性，然后解释为什么上面的协议能够满足这个安全定义。
+为了分析上述口令协议的安全性，我们先正式定义针对直接攻击的安全性，然后解释为什么上面的协议能够满足这个安全定义。
 \end{snote}
 
 \begin{figure}
@@ -29,23 +29,23 @@
     \label{fig:18-2}
 \end{figure}
 
-\begin{game}[针对直接攻击安全的身份识别]\label{game:18-1}
-对于一个给定的身份识别协议 $\mathcal{I}=(G,P,V)$ 和一个给定对手 $\mathcal{A}$，攻击游戏按照以下方式运行：
+\begin{game}[安全的身份识别：直接攻击]\label{game:18-1}
+对于一个给定身份识别协议 $\mathcal{I}=(G,P,V)$ 和一个给定对手 $\mathcal{A}$，攻击游戏运行如下：
 \begin{itemize}
-    \item 密钥生成阶段。挑战者运行 $(vk,sk)\xleftarrow{\rm R} G()$ 并将 $vk$ 发送给 $\mathcal{A}$。
-    \item 仿冒尝试阶段。挑战者与 $\mathcal{A}$ 交互，其中挑战者掌握 $vk$，并按照验证者的算法 $V$ 运行，而对手 $\mathcal{A}$ 扮演证明者的角色，但不一定会诚实执行证明者的算法 $P$（事实上 $\mathcal{A}$ 根本没有获取到私钥 $sk$）。
+    \item \emph{密钥生成阶段。}挑战者运行 $(vk,sk)\xleftarrow{\rm R} G()$，并将 $vk$ 发送给 $\mathcal{A}$。
+    \item \emph{冒充尝试。}挑战者与 $\mathcal{A}$ 交互，挑战者遵循验证者算法 $V$ （以 $vk$ 为输入），而 $\mathcal{A}$ 扮演证明者的角色，但不一定遵循证明者算法 $P$（事实上，$\mathcal{A}$ 根本没有收到私钥 $sk$）。
 \end{itemize}
-如果 $V$ 在交互结束时输出 $\mathsf{accept}$，我们就称对手 $\mathcal{A}$ 赢得了本游戏。我们定义 $\rm{ID1\mathsf{adv}}[\mathcal{A},\mathcal{I}]$ 为对手 $\mathcal{A}$ 相对 $\mathcal{I}$ 的优势，其值为 $\mathcal{A}$ 赢得本游戏的概率。{\hfill $\square$}
+如果 $V$ 在交互结束时输出 $\mathsf{accept}$，我们就称对手 $\mathcal{A}$ 赢得了游戏。我们将 $\mathcal{A}$ 相对于 $\mathcal{I}$ 的优势定义为 $\rm{ID1\mathsf{adv}}[\mathcal{A},\mathcal{I}]$，即 $\mathcal{A}$ 赢得游戏的概率。
 \end{game}
 
 \begin{definition}\label{def:18-2}
-如果对于任意有效对手 $\mathcal{A}$，$\rm{ID1\mathsf{adv}}[\mathcal{A},\mathcal{I}]$ 的值都可以忽略不计，我们就称身份识别协议 $\mathcal{I}$ \textbf{对于直接攻击是安全的}。
+如果对于所有的有效对手 $\mathcal{A}$，$\rm{ID1\mathsf{adv}}[\mathcal{A},\mathcal{I}]$ 的值都可忽略不计，我们就称身份识别协议 $\mathcal{I}$ \textbf{针对直接攻击是安全的 (secure against direct attacks)}。
 \end{definition}
 
-请注意，在游戏 \ref{game:18-1} 中，对手 $\mathcal{A}$ 能够获得的是验证密钥 $vk$。因此，一个将明文口令直接存储的简陋口令协议并不满足定义 \ref{def:18-2}。下面的简单定理表明，版本1的协议是安全的。
+请注意，在游戏 \ref{game:18-1} 中，对手 $\mathcal{A}$ 会被给予验证者密钥 $vk$。因此，一个将明文口令直接存储的简陋口令协议并不满足定义 \ref{def:18-2}。下面的简单定理将表明，版本 $1$ 协议是安全的。
 
 \begin{theorem}\label{theo:18-1}
-如果哈希函数 $H:\mathcal{P}\to\mathcal{Y}$ 是单向的，那么口令协议 $\mathcal{I}_{pwd}$ 针对直接攻击是安全的。
+假设哈希函数 $H:\mathcal{P}\to\mathcal{Y}$ 是单向的（如定义 \ref{def:8-6}）。那么，ID 协议 $\mathcal{I}_{pwd}$ 针对直接攻击是安全的。
 \end{theorem}
 
 \begin{proof}[证明简述]

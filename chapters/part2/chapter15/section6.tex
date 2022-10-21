@@ -15,7 +15,7 @@
 在解释如何使用这样的方案之前，我们先更精确地定义 IBE。
 
 \begin{definition}\label{def:15-7}
-一个\textbf{基于身份的加密方案} $\mathcal{E}_\mathit{id}=(S,G,E,D)$ 是由四个有效算法组成的四元组：一个\textbf{设置算法} $S$，一个\textbf{密钥生成算法} $G$，一个\textbf{加密算法} $E$，以及一个\textbf{解密算法} $D$。
+一个\textbf{基于身份的加密方案} $\mathcal{E}_{\mathrm{i}d}=(S,G,E,D)$ 是由四个有效算法组成的四元组：一个\textbf{设置算法} $S$，一个\textbf{密钥生成算法} $G$，一个\textbf{加密算法} $E$，以及一个\textbf{解密算法} $D$。
 \begin{itemize}
 	\item $S$ 是一个概率性算法，调用方式为 $(\mathit{mpk},\mathit{msk})\overset{\rm R}\leftarrow S()$，其中 $\mathit{mpk}$ 被称为\textbf{主公钥(master public key)}，$\mathit{msk}$ 被称为\textbf{主私钥(master secret key)}。
 	\item $G$ 是一个概率性算法，调用方式为 $\mathit{sk}_\mathit{id}\overset{\rm R}\leftarrow G(\mathit{msk},\mathit{id})$，其中 $\mathit{msk}$ 是（由 $S$ 输出的）主私钥，$\mathit{id}\in\mathcal{ID}$ 是一个身份，$\mathit{sk}_\mathit{id}$ 是与 $\mathit{id}$ 对应的私钥。
@@ -25,7 +25,7 @@
 	\[
 	\Pr\left[D\big(G(\mathit{msk},\mathit{id}),\;E(\mathit{mpk},\mathit{id},m)\big)=m\right]=1
 	\]
-	\item 我们假设，身份位于某个有限的\textbf{身份空间} $\mathcal{ID}$ 中，消息位于某个有限的\textbf{消息空间} $\mathcal{M}$ 中，密文位于某个有限的\textbf{密文空间} $\mathcal{C}$ 中。我们称 IBE 方案 $\mathcal{E}_\mathit{id}$ 定义在 $(\mathcal{ID},\mathcal{M},\mathcal{C})$ 上。
+	\item 我们假设，身份位于某个有限的\textbf{身份空间} $\mathcal{ID}$ 中，消息位于某个有限的\textbf{消息空间} $\mathcal{M}$ 中，密文位于某个有限的\textbf{密文空间} $\mathcal{C}$ 中。我们称 IBE 方案 $\mathcal{E}_{\mathrm{i}d}$ 定义在 $(\mathcal{ID},\mathcal{M},\mathcal{C})$ 上。
 \end{itemize}
 \end{definition}
 
@@ -53,7 +53,7 @@
 \end{snote}
 
 \begin{game}[语义安全性]\label{game:15-4}
-对于一个定义在 $(\mathcal{ID},\mathcal{M},\mathcal{C})$ 上的给定 IBE 方案 $\mathcal{E}_\mathit{id}=(S,G,E,D)$，以及一个给定对手 $\mathcal{A}$，我们定义两个实验：实验 $0$ 和实验 $1$。对于 $b=0,1$，我们定义：
+对于一个定义在 $(\mathcal{ID},\mathcal{M},\mathcal{C})$ 上的给定 IBE 方案 $\mathcal{E}_{\mathrm{i}d}=(S,G,E,D)$，以及一个给定对手 $\mathcal{A}$，我们定义两个实验：实验 $0$ 和实验 $1$。对于 $b=0,1$，我们定义：
 
 \vspace{5pt}
 
@@ -68,7 +68,7 @@
 	我们要求，挑战者从未对其加密查询中所使用的身份 $\mathit{id}$ 发起过密钥查询。
 	\item 在游戏结束时，对手输出一个比特 $\hat{b}\in\{0,1\}$。
 \end{itemize}
-令 $W_b$ 是 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件。我们将 $\mathcal{A}$ 相对于 $\mathcal{E}_\mathit{id}$ 的优势定义为：
+令 $W_b$ 是 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件。我们将 $\mathcal{A}$ 相对于 $\mathcal{E}_{\mathrm{i}d}$ 的优势定义为：
 \[
 \mathrm{SS}\mathsf{adv}[\mathcal{A},\mathcal{E}_\mathrm{id}]:=
 \big\lvert
@@ -78,38 +78,89 @@
 \end{game}
 
 \begin{definition}\label{def:15-8}
-如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{SS}\mathsf{adv}[\mathcal{A},\mathcal{E}_\mathrm{id}]$ 的值都可忽略不计，我们就称 IBE 方案 $\mathcal{E}_\mathit{id}$ 是语义安全的。
+如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{SS}\mathsf{adv}[\mathcal{A},\mathcal{E}_\mathrm{id}]$ 的值都可忽略不计，我们就称 IBE 方案 $\mathcal{E}_{\mathrm{i}d}$ 是语义安全的。
 \end{definition}
 
 这种语义安全的概念有时也被称为\textbf{自适应安全的 IBE (adaptively secure IBE)}，因为对手可以在看到它选择的许多密钥后，自适应地选择挑战身份 $\mathit{id}$。
 
 \subsection{相关的安全概念}\label{subsec:15-6-2}
 
+除了定义 \ref{def:15-8} 中的语义安全性外，我们对 IBE 还有其他一些相关的安全性要求。这里，我们介绍三个要求：私有 IBE，选择性安全的 IBE，以及选择密文安全的 IBE。
+
 \subsubsection{私有 IBE}\label{subsubsec:15-6-2-1}
 
+\textbf{私有 IBE(private IBE)} 是一种更强的 IBE 安全性要求。在私有 IBE 中，拥有 $\mathit{mpk}$ 并截获密文 $c\overset{\rm R}\leftarrow E(\mathit{mpk},\mathit{id},m)$ 的窃听者也无法得知目标接收方的身份 $\mathit{id}$。我们将在 \ref{subsec:15-6-4} 小节看到这个更强的安全性概念的应用。私有 IBE 有时也被称为\textbf{匿名 IBE(anonymous IBE)}。我们通过加强攻击游戏 \ref{game:15-4} 中对手的加密查询来捕捉这种更强的 IBE 安全属性。
+
 \begin{game}[私有 IBE]\label{game:15-5}
-	
+对于一个定义在 $(\mathcal{ID},\mathcal{M},\mathcal{C})$ 上的给定 IBE 方案 $\mathcal{E}_{\mathrm{i}d}=(S,G,E,D)$ 和一个给定对手 $\mathcal{A}$，攻击游戏的流程与攻击游戏 \ref{game:15-4} 大致相同。唯一的不同之处在于，在 $\mathcal{A}$ 的单次加密查询中，对手会提交两个 $\mathcal{ID}\times\mathcal{M}$ 上的数对 $(\mathit{id}_0,m_0)$ 和 $(\mathit{id}_1,m_1)$，其中 $m_0$ 和 $m_1$ 是两条等长消息。挑战者计算 $c\overset{\rm R}\leftarrow E(\mathit{mpk},\mathit{id}_b,m_b)$，并将 $c$ 发送给 $\mathcal{A}$。和之前一样，我们要求，挑战者永远不会对 $\mathit{id}_0$ 和 $\mathit{id}_1$ 发起密钥查询。
+
+记 $\mathrm{PrSS}\mathsf{adv}[\mathcal{A},\mathcal{E}_\mathrm{id}]$ 为 $\mathcal{A}$ 赢得该私有 IBE 游戏的优势。
 \end{game}
 
+为了说明这个增强的游戏确实抓住了我们想要的隐私属性，观察到，如果挑战密文能够揭示目标身份，那么攻击者就可以很容易地预测比特 $b$ 并赢得游戏。攻击游戏 \ref{game:15-4} 其实就是这个增强游戏的一个特例，我们只要要求加密查询中的 $\mathit{id}_0=\mathit{id}_1$，就可以将本游戏退化到游戏 \ref{game:15-4}。
+
 \begin{definition}[私有 IBE]\label{def:15-9}
-	
+如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{PrSS}\mathsf{adv}[\mathcal{A},\mathcal{E}_\mathrm{id}]$ 的值都可忽略不计，我们就称 IBE 方案 $\mathcal{E}_{\mathrm{i}d}$ 是\textbf{语义安全且私有的(semantically secure and private)}。
 \end{definition}
 
 \subsubsection{选择性安全的 IBE}\label{subsubsec:15-6-2-2}
 
+\textbf{选择性安全性(selective security)}是一个较弱的 IBE 安全性概念，其中，对手在发出加密查询的方式上受到了限制。具体地说，我们修改攻击游戏 \ref{game:15-4}，使得对手必须在游戏开始时，在收到挑战者的 $\mathit{mpk}$ 之前就选择挑战 $\mathit{id}$。
+
 \begin{game}[选择性语义安全性]\label{game:15-6}
-	
+对于一个定义在 $(\mathcal{ID},\mathcal{M},\mathcal{C})$ 上的给定 IBE 方案 $\mathcal{E}_{\mathrm{i}d}=(S,G,E,D)$ 和一个给定对手 $\mathcal{A}$，游戏开始时，$\mathcal{A}$ 向挑战者发送 $\mathit{id}\in\mathcal{ID}$。接下来，挑战者计算 $(\mathit{mpk},\mathit{msk})\overset{\rm R}\leftarrow S()$，并将 $\mathit{mpk}$ 发送给 $\mathcal{A}$。自此之后的游戏进程与攻击游戏 \ref{game:15-4} 相同。然而，对手的加密查询只是一对等长消息 $m_0,m_1\in\mathcal{M}$，而挑战者的应答是 $c\overset{\rm R}\leftarrow E(\mathit{mpk},\mathit{id},m_b)$，其中的 $\mathit{id}$ 就是对手在游戏开始时发出的第一条消息。除此之外，其他的进程都没有变化。
+
+对于攻击 IBE 方案 $\mathcal{E}_{\mathrm{i}d}$ 的对手 $\mathcal{A}$，我们记 $\mathrm{SelSS}\mathsf{adv}[\mathcal{A},\mathcal{E}_{\mathrm{i}d}]$ 为 $\mathcal{A}$ 针对 $\mathcal{E}_{\mathrm{i}d}$ 赢得该选择性安全性游戏的优势。
 \end{game}
 
 \begin{definition}[选择性安全性]\label{def:15-10}
-	
+如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{SelSS}\mathsf{adv}[\mathcal{A},\mathcal{E}_{\mathrm{i}d}]$ 的值都可忽略不计，我们就称 IBE 方案 $\mathcal{E}_{\mathrm{i}d}$ 是\textbf{选择性安全的(selectively secure)}。
 \end{definition}
 
+在攻击游戏 \ref{game:15-6} 中，对手必须在看到 IBE 主公钥 mpk 之前就选择挑战身份。因为我们以这种方式限制了对手的权限，所以构建一个选择性安全的 IBE 比构建一个自适应安全的 IBE 更容易。正如我们将看到的，选择性安全性对某些应用来说也已经足够了（见 \ref{subsec:15-6-4} 小节）。
+
+\vspace{5pt}
+
+我们可以将一个选择性安全的 IBE 方案增强为一个满足定义 \ref{def:15-8} 要求的自适应安全的 IBE 方案。为此，我们需要一个哈希函数 $H:\mathcal{ID}'\to\mathcal{ID}$。令 $\mathcal{E}_{\mathrm{i}d}=(S,G,E,D)$ 是一个具有身份空间 $\mathcal{ID}$ 的选择性安全的 IBE 方案。我们下面构建一个身份空间为 $\mathcal{ID}'$ 的增强 IBE 方案 $\mathcal{E}_{\mathrm{i}d}'=(S,G',E',D)$，其中 $G'$ 和 $E'$ 操作如下：
+\begin{equation}\label{eq:15-24}
+G'(\mathit{msk},\mathit{id})
+:=G\big(\mathit{msk},\,H(\mathit{id})\big),
+\quad
+E'(\mathit{sk}_\mathrm{p},\mathit{id},m)
+:=
+E\big(\mathit{sk}_\mathrm{p},\,H(\mathit{id}),\,m\big)
+\end{equation}
+算法 $S$ 和 $D$ 没有变化。下面的定理表明，$\mathcal{E}_{\mathrm{i}d}'$ 满足定义 \ref{def:15-8} 中的自适应安全性。该定理表明，在随机预言机模型下，想要构造一个语义安全的 IBE，我们只需要先构造一个选择性安全的方案，然后应用式 \ref{eq:15-24} 即可。
+
 \begin{theorem}\label{theo:15-5}
-	
+令 $\mathcal{E}_{\mathrm{i}d}=(S,G,E,D)$ 是一个选择性安全的 IBE，其中 $|\mathcal{ID}|$ 是超多项式的。那么 $\mathcal{E}_{\mathrm{i}d}'=(S,G',E',D)$ 就满足定义 \ref{def:15-8} 中的安全性，其中 $H$ 被建模为一个随机预言机。
+\begin{quote}
+特别地，令 $\mathcal{A}$ 是一个如攻击游戏 \ref{game:15-8} 中那样攻击 $\mathcal{E}_{\mathrm{i}d}'$ 的对手。此外，假设 $\mathcal{A}$ 最多能够发起 $Q_\mathrm{s}$ 次密钥查询和最多 $Q_\mathrm{ro}$ 次对 $H$ 的查询，则存在一个选择性 IBE 对手 $\mathcal{B}$，其中 $\mathcal{B}$ 是一个围绕 $\mathcal{A}$ 的基本包装器，满足：
+\end{quote}
+\begin{equation}\label{eq:15-25}
+\mathrm{SS}^\mathrm{ro}\mathsf{adv}[\mathcal{A},\mathcal{E}_{\mathrm{i}d}']
+\leq
+(Q_\mathrm{ro}+1)\cdot
+\mathrm{SelSS}\mathsf{adv}[\mathcal{B},\mathcal{E}_{\mathrm{i}d}]
++Q_\mathrm{s}/|\mathcal{ID}|
+\end{equation}
 \end{theorem}
 
+\begin{proof}[证明简述]
+选择性 IBE 对手 $\mathcal{B}$ 在开始时随机选取一个 $\omega\overset{\rm R}\leftarrow\{1,\dots,Q_\mathrm{ro}+1\}$ 和一个 $\mathit{id}_\mathrm{ch}\overset{\rm R}\leftarrow\mathcal{ID}$。它将 $\mathit{id}_\mathrm{ch}$ 作为挑战身份发送给它的挑战者，并得到一个 $\mathcal{E}_{\mathrm{i}d}'$ 的 $\mathit{mpk}$。接下来，$\mathcal{B}$ 扮演 $\mathcal{A}$ 的 IBE 挑战者，并在开始时将 $\mathit{mpk}$ 发送给它。此后，$\mathcal{A}$ 可以发起三类查询：$H$ 查询，密钥查询和单次加密查询。
+\begin{itemize}
+	\item 当 $\mathcal{A}$ 发起第 $j$ 次 $H(\mathit{id'}_j)$ 查询时，我们的 $\mathcal{B}$ （一致地）将 $H(\mathit{id'}_j)$ 映射到 $\mathcal{ID}$ 中的一个随机元素，并以之作为应答。唯一的例外是第 $\omega$ 次查询，此时 $\mathcal{B}$ 会定义 $H(\mathit{id'}_j):=\mathit{id}_\mathrm{ch}$。
+	\item 当 $\mathcal{A}$ 发起第 $j$ 次 $\mathit{id'}_j\in\mathcal{ID}'$ 密钥查询时，我们的 $\mathcal{B}$ 设置 $\mathit{id}_j\leftarrow H(\mathit{id'}_j)$。如果 $H(\mathit{id'}_j)$ 尚未定义，那么 $\mathcal{B}$ 定义 $H(\mathit{id'}_j):=\mathit{id}_j$，其中 $\mathit{id}_j\overset{\rm R}\leftarrow\mathcal{ID}$。如果 $\mathit{id}_j\neq\mathit{id}_\mathrm{ch}$，$\mathcal{B}$ 就向它的选择性挑战者对 $\mathit{id}_j$ 发出密钥查询，并将挑战者的应答发送给 $\mathcal{A}$。然而，如果 $\mathit{id}_j=\mathit{id}_\mathrm{ch}$，$\mathcal{B}$ 就不允许向它的挑战者查询这个密钥。在这种情况下，$\mathcal{B}$ 会停机并终止。这种失败事件在每次查询中以 $1/|\mathcal{ID}|$ 的概率发生。
+	\item 当 $\mathcal{A}$ 对 $(\mathit{id'},m_0,m_1)$ 发出单次加密查询时，我们的 $\mathcal{B}$ 首先对 $\mathit{id}\leftarrow H(\mathit{id'})$ 发起一个内部查询。如果 $H(\mathit{id'})$ 已在第 $\omega$ 次哈希查询中被定义，就令 $\mathit{id}=\mathit{id}_\mathrm{ch}$。然后，$\mathcal{B}$ 将 $(m_0,m_1)$ 转发给它的选择性 IBE 挑战者，并将应答 $c\overset{\rm R}\leftarrow E(\mathit{mpk},\mathit{id},m_b)$ 发送给 $\mathcal{A}$。这里的 $b\in\{0,1\}$ 是挑战者的挑战比特。
+\end{itemize}
+最终，$\mathcal{B}$ 输出 $\mathcal{A}$ 终止时输出的比特 $\hat{b}\in\{0,1\}$。根据联合约束，$\mathcal{B}$ 因密钥查询而中止的概率最多为 $Q_\mathrm{s}/|\mathcal{ID}|$，这就是式 \ref{eq:15-25} 中加性误差项的原因。$\mathcal{B}$ 能以 $1/(Q_\mathrm{ro}+1)$ 的概率猜中 $\mathcal{A}$ 即将用于它的加密查询中的 $H$ 查询，这就是式 \ref{eq:15-25} 中乘性误差项的原因。请注意，用于密钥查询的身份不能再被用于加密查询，这就是乘性项不是 $1/(Q_\mathrm{ro}+Q_\mathrm{s}+1)$ 的原因。
+\end{proof}
+
 \subsubsection{选择密文安全的 IBE}\label{subsubsec:15-6-2-3}
+
+我们考虑的第三个 IBE 安全性定义是选择密文安全的 IBE。这是一个更强的安全性概念，我们允许攻击游戏 \ref{theo:15-4} 中的对手发出解密查询。一个解密查询是的内容一个数对 $(\mathit{id}',c')$。挑战者计算 $\mathit{sk}_\mathit{id}\overset{\rm R}\leftarrow G(\mathit{msk},\mathit{id}')$ 和 $m'\leftarrow D(\mathit{sk}_\mathit{id},c')$，并将 $m′$ 发送给对手。和之前一样，对手可以对 $\mathcal{ID}\times\mathcal{C}$ 中的所有数对发出解密查询，除了与对手的加密查询相关的数对 $(\mathit{id},c)$。
+
+有一些通用的变换，可以将语义安全的 IBE 转换为选择密文安全的 IBE \cite{bentahar2008generic}。这些转换与 \ref{sec:12-6} 节中描述的将语义安全的公钥加密方案转换为选择密文安全的方案的通用方法相似。我们将在练习 \ref{exer:15-16} 中描述一个这样的转换。
 
 \subsection{来自配对的 IBE}\label{subsec:15-6-3}
 
@@ -124,7 +175,7 @@
 
 \subsubsection{构造 1}\label{subsubsec:15-6-3-1}
 
-令 $\mathcal{E}_\mathit{BF}=(S,G,E,D)$ 是如下的具有身份空间 $\mathcal{ID}$ 和消息空间 $\mathcal{M}$ 的 IBE 方案：
+令 $\mathcal{E}_\mathrm{BF}=(S,G,E,D)$ 是如下的具有身份空间 $\mathcal{ID}$ 和消息空间 $\mathcal{M}$ 的 IBE 方案：
 \begin{itemize}
 	\item $S()$：设置算法运行如下：
 	
@@ -174,21 +225,95 @@ e(\mathit{sk}_\mathit{id},w_1)
 \]
 而右侧的值正是加密过程中所使用的 $z$ 值。
 
-\subsubsection{确定性 BDH 假设}\label{subsubsec:15-6-3-2}
+\subsubsection{决定性 BDH 假设}\label{subsubsec:15-6-3-2}
 
-\begin{game}[确定性双线性 Diffie-Hellman]\label{game:15-7}
-	
+$\mathcal{E}_\mathrm{BF}$ 的安全性来自于一个被称为\textbf{双线性 Diffie-Hellman(bilinear Diffie-Hellman, BDH)} 的假设。这里，我们使用该假设的决定性版本。该假设说，给定随机元素 $g_0^\alpha,g_0^\beta,g_0^\gamma\in\mathbb{G}_0$ 以及少量附加项，$e(g_0,g_1)^{\alpha\beta\gamma}\in\mathbb{G}_\mathrm{T}$ 与 $\mathbb{G}_\mathrm{T}$ 上的随机元素是不可区分的。
+
+\begin{game}[决定性双线性 Diffie-Hellman]\label{game:15-7}
+令 $e:\mathbb{G}_0\times\mathbb{G}_1\to\mathbb{G}_\mathrm{T}$ 是一个配对，其中 $\mathbb{G}_0,\mathbb{G}_1,\mathbb{G}_\mathrm{T}$ 是三个 $q$ 阶循环群，$q$ 为素数，并且 $g_0\in\mathbb{G}_0$ 和 $g_1\in\mathbb{G}_1$ 是生成元。对于一个给定对手 $\mathcal{A}$，我们定义两个实验：实验 $0$ 和实验 $1$。对于 $b=0,1$，我们定义：
+
+\vspace{5pt}
+
+\textbf{实验 $b$：}
+\begin{itemize}
+	\item 挑战者计算：
+	\[
+		\begin{aligned}
+			& \alpha,\beta,\gamma,\delta\overset{\rm R}\leftarrow\mathbb{Z}_q,\quad
+			u_0\leftarrow g_0^\alpha,\quad
+			u_1\leftarrow g_1^\alpha,\quad
+			v_0\leftarrow g_0^\beta,\quad
+			w_1\leftarrow g_1^\gamma,\\
+			& z^{(0)}\leftarrow e(g_0,g_1)^{\alpha\beta\gamma}\in\mathbb{G}_\mathrm{T},\quad
+			z^{(1)}\leftarrow e(g_0,g_1)^{\delta}\in\mathbb{G}_\mathrm{T}
+		\end{aligned}
+	\]
+	并将 $\big(u_0,u_1,v_0,w_1,z^{(b)}\big)$ 发送给对手。
+	\item 对手输出一个比特 $\hat{b}\in\{0,1\}$。
+\end{itemize}
+令 $W_b$ 为 $\mathcal{A}$ 在实验 $b$ 中输出 $1$ 的事件。我们将 $\mathcal{A}$ 解决决定性双线性 Diffie-Hellman 问题的优势定义为：
+\[
+\mathrm{DBDH}\mathsf{adv}[\mathcal{A},e]
+:=
+\big\lvert
+\Pr[W_0]-\Pr[W_1]
+\big\rvert
+\]
 \end{game}
 
-\begin{definition}[确定性 BDH 假设]\label{def:15-11}
-	
+\begin{definition}[决定性 BDH 假设]\label{def:15-11}
+如果对于所有的有效对手 $\mathcal{A}$，$\mathrm{DBDH}\mathsf{adv}[\mathcal{A},e]$ 的值都可忽略不计，我们就称\textbf{决定性双线性 Diffie-Hellman (DBDH)} 假设对于配对 $e$ 成立。
 \end{definition}
 
 \subsubsection{IBE 方案 $\mathcal{E}_\mathrm{BF}$ 的安全性}\label{subsubsec:15-6-3-3}
 
+我们使用决定性 BDH 来证明 $\mathcal{E}_\mathrm{BF}$ 在随机预言机模型下是语义安全的私有 IBE。我们将 $H_0:\mathcal{ID}\to\mathbb{G}_0$ 建模为一个随机预言机，将 $H_1:\mathbb{G}_1\times\mathbb{G}_\mathrm{T}\to\mathcal{K}$ 建模为一个满足定义 \ref{def:11-5} 的安全密钥派生函数 (KDF)。
+
 \begin{theorem}\label{theo:15-6}
-	
+如果决定性 BDH 对 $e$ 成立，$H_0$ 被建模为一个随机预言机，$H_1$ 是一个安全的 KDF，并且 $\mathcal{E}_\mathrm{s}$ 是语义安全的，那么（来自 \ref{subsubsec:15-6-3-1} 小节的）$\mathcal{E}_\mathrm{BF}$ 就是一个语义安全的私有 IBE。
+\begin{quote}
+特别地，令 $\mathcal{A}$ 是一个如攻击游戏 \ref{game:15-5} 中那样攻击 $\mathcal{E}_\mathrm{BF}$ 的对手。假设 $\mathcal{A}$ 最多能够发起 $Q_\mathrm{s}$ 次密钥查询。那么存在一个决定性 BDH 对手 $\mathcal{B}_\mathrm{e}$，一个就 $H_1$ 进行攻击游戏 \ref{game:11-3} 的 KDF 对手 $\mathcal{B}_\mathrm{kdf}$，以及一个就 $\mathcal{E}_\mathrm{s}$ 进行攻击游戏 \ref{game:2-1} 的 SS 对手 $\mathcal{B}_\mathrm{s}$，其中 $\mathcal{B}_\mathrm{e}$、$\mathcal{B}_\mathrm{kdf}$ 和 $\mathcal{B}_\mathrm{s}$ 都是围绕 $\mathcal{A}$ 的基本包装器，满足：
+\end{quote}
+\begin{equation}\label{eq:15-26}
+\begin{aligned}
+\mathrm{SS}^\mathrm{ro}\mathsf{adv}[\mathcal{A},\mathcal{E}_\mathrm{BF}]
+\leq\;
+& 2\cdot2.72\cdot(Q_\mathrm{s}+1)\cdot
+\mathrm{DBDH}\mathsf{adv}[\mathcal{B}_\mathrm{e},e]\\
+&\qquad +2\cdot
+\mathrm{KDF}\mathsf{adv}[\mathcal{B}_\mathrm{kdf},H_1]
++
+\mathrm{SS}\mathsf{adv}[\mathcal{B}_\mathrm{s},\mathcal{E}_\mathrm{s}]
+\end{aligned}
+\end{equation}
 \end{theorem}
+
+\begin{proof}[证明简述]
+对手 $\mathcal{B}_\mathrm{e}$ 被赋予一个决定性 BDH 挑战：
+\[
+(u_0=g_0^\alpha,\quad u_1=g_1^\alpha,\quad v_0=g_0^\tau,\quad w_1=g_1^\beta,\quad z)
+\]
+其中 $\alpha,\beta,\tau\overset{\rm R}\leftarrow\mathbb{Z}_q$。它需要确定 $z=e(g_0,g_1)^{\alpha\beta\tau}$ 是否成立，或者 $z$ 是否均匀分布在 $\mathbb{G}_\mathrm{T}$ 上。对手首先将 IBE 公共参数 $\mathit{mpk}:=u_1$ 发送给 IBE 对手 $\mathcal{A}$。
+
+接下来，$\mathcal{A}$ 对 $H_0$ 发起一系列的 $Q_\mathrm{s}$ 次密钥查询和 $Q_\mathrm{ro}$ 次 $H_0$ 查询。对于 $j=1,2,\dots$，我们的对手 $\mathcal{B}_\mathrm{e}$ 随机选取 $\rho_j\overset{\rm R}\leftarrow\mathbb{Z}_q$ 并设置 $H(\mathit{id}^{(j)}):=g_0^{\rho_j}$，以此应答第 $j$ 次哈希查询。这使得 $\mathcal{B}_\mathrm{e}$ 能够回答 $\mathcal{A}$ 的所有密钥查询。对于 $\mathit{id}^{(j)}$，密钥就是：
+\[
+\mathit{sk}_j:=H_0\big(\mathit{id}^{(j)}\big)^\alpha=g_0^{\rho_j\alpha}=u_0^{\rho_j}
+\]
+而该值可由 $\mathcal{B}_\mathrm{e}$ 自行计算得到。这就是我们在决定性 BDH 假设中包括 $u_0$ 的原因。
+
+上述情况的一个例外是，在游戏开始时，$\mathcal{B}_\mathrm{e}$ 在 $1$ 到 $(Q_\mathrm{ro}+1)$ 之间随机选取一个 $\omega$，然后以 $H\big(\mathit{id}^{(\omega)}\big):=v_0$ 应答第 $\omega$ 次哈希查询。如果 $\mathcal{A}$ 曾经对 $\mathit{id}^{(\omega)}$ 发起过密钥查询，那么 $\mathcal{B}_\mathrm{e}$ 就无法应答它，$\mathcal{B}_\mathrm{e}$ 就必须中止并且失败。
+
+在某个时间点上，$\mathcal{A}$ 像在私有 IBE 安全性游戏中那样对数对 $(\mathit{id}_0,m_0)$ 和 $(\mathit{id}_1,m_1)$ 发起单次加密查询。$\mathcal{B}_\mathrm{e}$ 随机选取一个 $b\overset{\rm R}\leftarrow\{0,1\}$，并对 $H_0(\mathit{id}_b)$ 发起一次内部查询。如果 $\mathcal{B}_\mathrm{e}$ 猜中了 $\omega$，则有 $\mathit{id}_b=\mathit{id}^{(\omega)}$，因此 $H_0(\mathit{id}_b)=v_0$。然后，$\mathcal{B}_\mathrm{e}$ 计算 $k\leftarrow H_1(w_1,z)$ 和 $c\overset{\rm R}\leftarrow E_\mathrm{s}(k,m_b)$ 作为应答，并将挑战密文 $(w_1,c)$ 发送给 $\mathcal{A}$。重点在于，如果 $z=e(g_0,g_1)^{\alpha\beta\tau}$，则：
+\[
+z=e(v_0,g_1^{\alpha\beta})
+=e\big(H_0(\mathit{id}_b),u_1^\beta\big)
+\]
+而该值正是当使用随机的 $\beta\in\mathbb{Z}_q$ 加密 $m_b$ 得到的 $z$ 的正确值。然而，如果 $z$ 均匀分布在 $\mathbb{G}_\mathrm{T}$ 上，那么 $k:=H_1(w_1,z)$ 就均匀分布在 $\mathcal{K}$ 上，并且与对手的观察无关。现在，由于 $E_\mathrm{s}$ 的语义安全，$\mathcal{A}$ 就无法知道它收到的到底是 $m_0$ 的加密，还是 $m_1$ 的加密。
+
+当 $\mathcal{A}$ 最终输出一个比特 $\hat{b}\in\{0,1\}$ 时，如果 $b=\hat{b}$，我们的 $\mathcal{B}_\mathrm{e}$ 就输出 $1$，否则就输出 $0$。那么，根据式 \ref{eq:2-10} 的论证，$\mathcal{B}_\mathrm{e}$ 对决定性 BDH 的优势就是 $\mathcal{A}$ 区分 $E(\mathit{mpk},\mathit{id}_0,m_0)$ 和 $E(\mathit{mpk},\mathit{id}_1,m_1)$ 的优势的二分之一。
+
+这种证明策略是有效的，但与 $\mathcal{A}$ 相比，$\mathcal{B}_\mathrm{e}$ 的成功概率会有一个 $(Q_\mathrm{ro}+1)$ 系数的损失，这是因为 $\mathcal{B}_\mathrm{e}$ 需要猜中 $\omega$。使用练习 \ref{exer:15-5}，我们可以进一步将该损失减少到 $2.72\cdot(Q_\mathrm{s}+1)$，正如式 \ref{eq:15-26} 所要求的那样。
+\end{proof}
 
 \subsubsection{构造 2}\label{subsubsec:15-6-3-4}
 

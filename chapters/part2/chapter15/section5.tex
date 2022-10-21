@@ -62,7 +62,7 @@ $\mathcal{S}_{\rm BLS}$ 方案是一个\textbf{唯一签名方案 (unique signat
 
 这里我们使用 $z_0$ 表示 Diffie-Hellman 秘密 $z_0:=g_0^{\alpha\beta}$。更一般地，在本章的攻击游戏中，我们总是使用变量 $z$ 来表示对手试图从随机采样中计算或区分出的未知值。
 
-\begin{definition}[co-CDH 假设。]\label{def:15-3}
+\begin{definition}[co-CDH 假设]\label{def:15-3}
 如果对于所有的有效对手 $\mathcal{A}$，$\rm{coCDH\mathsf{adv}}[\mathcal{A},e]$ 的值都可忽略不计，我们就称 \textbf{co-CDH} 假设对配对 $e$ 成立。
 \end{definition}
 
@@ -98,7 +98,7 @@ BLS 签名方案是非常灵活的，很容易使用 BLS 建立阈值签名方�
 聚合签名方案 $\mathcal{S}\mathcal{A}$ 是一种包含两个额外的有效算法 $A$ 和 $\textit{VA}$ 的签名方案：
 \begin{itemize}
 	\item 一个签名聚合算法 $A(\boldsymbol{pk},\boldsymbol{\sigma})$：接受两个等长向量作为输入，即一个公钥向量 $\boldsymbol{pk}=(pk_1,pk_2,\dots,\allowbreak pk_n)$ 和一个签名向量 $\boldsymbol{\sigma}=(\sigma_1,\sigma_2,\dots,\sigma_n)$。它输出一个聚合签名 $\sigma_{\rm ag}$。
-	\item 一个确定性的聚合验证算法 $\textit{VA}(\boldsymbol{pk},\boldsymbol{m},\sigma_{ag})$：接受两个等长向量作为输入，即一个公钥向量 $\boldsymbol{pk}=(pk_1,pk_2,\dots,pk_n)$，一个消息向量 $\boldsymbol{m}=(m_1, m_2, \dots, m_n)$，和一个聚合签名 $\sigma_{\rm ag}$。它输出 $\mathsf{accept}$ 或者 $\mathsf{reject}$。
+	\item 一个1的聚合验证算法 $\textit{VA}(\boldsymbol{pk},\boldsymbol{m},\sigma_{ag})$：接受两个等长向量作为输入，即一个公钥向量 $\boldsymbol{pk}=(pk_1,pk_2,\dots,pk_n)$，一个消息向量 $\boldsymbol{m}=(m_1, m_2, \dots, m_n)$，和一个聚合签名 $\sigma_{\rm ag}$。它输出 $\mathsf{accept}$ 或者 $\mathsf{reject}$。
 	\item 如果对于所有的 $\boldsymbol{pk}=(pk_1,pk_2,\dots, pk_n)$，$\boldsymbol{m}=(m_1, m_2, \dots, m_n)$ 和 $\boldsymbol{\sigma}=(\sigma_1, \sigma_2, \dots, \sigma_n)$，只要 $V(pk_i,m_i,\sigma_i)=\mathsf{accept}$ 对所有的 $i=1,2,\dots,n$ 都成立，就有 $\Pr[\textit{VA}(\boldsymbol{pk},\boldsymbol{m},A(\boldsymbol{pk},\boldsymbol{\sigma}))=\mathsf{accept}]=1$，则该方案是正确的。
 \end{itemize}
 上述方案中，所有输入向量的长度 $n$ 都小于某个上界参数 $N$。
